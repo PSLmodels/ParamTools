@@ -1,0 +1,27 @@
+{
+    "schema_name": "policy",
+    "dims": {
+        "year": {
+            "type": "int",
+            "validator": {"name": "Range", "args": {"min": 2013, "max": 2027}}
+        },
+        "MARS": {
+            "type": "str",
+            "validator": {"name": "OneOf", "args": {"choices": ["single", "joint", "separate", "headhousehold", "widow"]}}
+        },
+        "idedtype": {
+            "type": "str",
+            "validator": {"name": "OneOf", "args": {"choices": ["medical", "statelocal", "realestate", "casualty", "misc", "interest", "charity"]}}
+        }
+    },
+    "optional_params": {
+        "section_1": {"type": "str", "number_dims": 0},
+        "section_2": {"type": "str", "number_dims": 0},
+        "section_3": {"type": "str", "number_dims": 0},
+        "irs_ref": {"type": "str", "number_dims": 0},
+        "start_year": {"type": "int", "number_dims": 0},
+        "cpi_inflatable": {"type": "bool", "number_dims": 0},
+        "cpi_inflated": {"type": "bool", "number_dims": 0},
+        "compatible_data": {"type": "compatible_data", "number_dims": null}
+    }
+}
