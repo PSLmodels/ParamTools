@@ -3,7 +3,11 @@ import os
 
 from marshmallow import fields
 
-from paramtools.schema import EmptySchema, BaseValidatorSchema, get_param_schema
+from paramtools.schema import (
+    EmptySchema,
+    BaseValidatorSchema,
+    get_param_schema,
+)
 from paramtools import utils
 
 
@@ -66,8 +70,8 @@ class SchemaBuilder:
 
         classattrs = {k: fields.Nested(v) for k, v in param_dict.items()}
         ParamSchema = type("ParamSchema", (EmptySchema,), classattrs)
-        self.param_schema = ParamSchema()
-        cleaned_base_spec = self.param_schema.load(self.base_spec)
+        param_schema = ParamSchema()
+        cleaned_base_spec = param_schema.load(self.base_spec)
 
         classattrs = {
             k: fields.Nested(v(many=True)) for k, v in validator_dict.items()
@@ -75,25 +79,6 @@ class SchemaBuilder:
         ValidatorSchema = type(
             "ValidatorSchema", (BaseValidatorSchema,), classattrs
         )
-        self.validator_schema = ValidatorSchema()
-        self.validator_schema.context["base_spec"] = cleaned_base_spec
+        validator_schema = ValidatorSchema()
 
-    def load_params(self, params_or_path):
-        """
-        Method to deserialize and validate parameter revision.
-        `params_or_path` can be a file path or a `dict` that has not been
-        fully deserialized.
-
-        Returns: serialized data.
-
-        Throws: `marshmallow.exceptions.ValidationError` if data is not valid.
-        """
-        if isinstance(params_or_path, str) and os.path.exists(params_or_path):
-            params = utils.read_json(params_or_path)
-        elif isinstance(params_or_path, str):
-            params = json.loads(params_or_path)
-        elif isinstance(params_or_path, dict):
-            params = params_or_path
-        else:
-            raise ValueError("params_or_path is not dict or file path")
-        return self.validator_schema.load(params)
+        return cleaned_base_spec, validator_schema

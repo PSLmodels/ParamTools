@@ -4,7 +4,7 @@ import pytest
 
 from marshmallow import exceptions, fields, Schema
 
-from paramtools.build_schema import SchemaBuilder
+from paramtools.parameters import Parameters
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -16,6 +16,7 @@ class CompatibleDataSchema(Schema):
         "compatible_data": {"data1": bool, "data2": bool, ...}
     }
     """
+
     puf = fields.Boolean()
     cps = fields.Boolean()
 
@@ -48,105 +49,98 @@ def base_spec_path():
     return os.path.join(CURRENT_PATH, "../../examples/taxcalc/baseline.json")
 
 
-def test_load_schema(revision, schema_def_path, base_spec_path, field_map):
-    sb = SchemaBuilder(schema_def_path, base_spec_path, field_map)
-    sb.build_schemas()
+@pytest.fixture
+def TaxcalcParams(schema_def_path, base_spec_path, field_map):
+    class _TaxcalcParams(Parameters):
+        project_schema = schema_def_path
+        baseline_parameters = base_spec_path
+        field_map = {"compatible_data": fields.Nested(CompatibleDataSchema())}
 
-    with open(base_spec_path, "r") as f:
-        res = sb.param_schema.loads(f.read())
-    res = sb.load_params(revision)
+    return _TaxcalcParams
 
 
-def test_schema_with_errors(revision, schema_def_path, base_spec_path, field_map):
-    sb = SchemaBuilder(schema_def_path, base_spec_path, field_map)
-    sb.build_schemas()
+def test_load_schema(revision, TaxcalcParams):
+    params = TaxcalcParams()
+
+
+def test_schema_with_errors(revision, TaxcalcParams):
+    params = TaxcalcParams()
 
     a = revision.copy()
     a["_cpi_offset"][0]["year"] = 2000
     with pytest.raises(exceptions.ValidationError) as excinfo:
-        sb.load_params(a)
+        params.revise(a)
 
     b = revision.copy()
     b["_STD"][0]["MARS"] = "notastatus"
     with pytest.raises(exceptions.ValidationError) as excinfo:
-        sb.load_params(b)
+        params.revise(b)
 
     c = revision.copy()
     c["_II_brk1"][0]["value"] = "abc"
     with pytest.raises(exceptions.ValidationError) as excinfo:
-        sb.load_params(c)
+        params.revise(c)
 
     c = revision.copy()
     c["_II_em"][0]["value"] = [4000.0]
     with pytest.raises(exceptions.ValidationError) as excinfo:
-        sb.load_params(c)
+        params.revise(c)
 
 
-def test_range_validation(schema_def_path, base_spec_path, field_map):
+def test_range_validation(TaxcalcParams):
     revision = {"_II_em": [{"year": 2020, "value": 5000}]}
-    sb = SchemaBuilder(schema_def_path, base_spec_path, field_map)
-    sb.build_schemas()
+    params = TaxcalcParams()
     # parse baseline parameters to specified formats and store in
     # validator_schema context
-    base_spec = sb.param_schema.load(sb.base_spec)
-    sb.validator_schema.context["base_spec"] = base_spec
-    sb.load_params(revision)
+    params.revise(revision)
 
 
-def test_range_validation_fail(schema_def_path, base_spec_path, field_map):
+def test_range_validation_fail(TaxcalcParams):
     revision = {"_II_em": [{"year": 2020, "value": -1}]}
-    sb = SchemaBuilder(schema_def_path, base_spec_path, field_map)
-    sb.build_schemas()
+    params = TaxcalcParams()
     with pytest.raises(exceptions.ValidationError) as excinfo:
-        sb.load_params(revision)
+        params.revise(revision)
     print(excinfo)
 
 
-def test_range_validation_on_named_variable(schema_def_path, base_spec_path,
-                                            field_map):
+def test_range_validation_on_named_variable(TaxcalcParams):
     revision = {
         "_II_brk1": [{"year": 2016, "MARS": "single", "value": 37649.00}]
     }
-    sb = SchemaBuilder(schema_def_path, base_spec_path, field_map)
-    sb.build_schemas()
-    sb.load_params(revision)
+    params = TaxcalcParams()
+    params.revise(revision)
 
 
-def test_range_validation_on_named_variable_fails(
-    schema_def_path, base_spec_path, field_map
-):
+def test_range_validation_on_named_variable_fails(TaxcalcParams):
     revision = {
         "_II_brk1": [{"year": 2016, "MARS": "single", "value": 37651.00}]
     }
-    sb = SchemaBuilder(schema_def_path, base_spec_path, field_map)
-    sb.build_schemas()
+    params = TaxcalcParams()
     with pytest.raises(exceptions.ValidationError) as excinfo:
-        sb.load_params(revision)
+        params.revise(revision)
     print(excinfo)
 
 
-def test_range_validation_on_default_variable(schema_def_path, base_spec_path,
-                                              field_map):
-    revision = {"_STD": [{"year": 2018, "MARS": "separate", "value": 12001.00}]}
-    sb = SchemaBuilder(schema_def_path, base_spec_path, field_map)
-    sb.build_schemas()
-    sb.load_params(revision)
+def test_range_validation_on_default_variable(TaxcalcParams):
+    revision = {
+        "_STD": [{"year": 2018, "MARS": "separate", "value": 12001.00}]
+    }
+    params = TaxcalcParams()
+    params.revise(revision)
 
 
-def test_range_validation_on_default_variable_fails(
-    schema_def_path, base_spec_path, field_map
-):
-    revision = {"_STD": [{"year": 2018, "MARS": "separate", "value": 11999.00}]}
-    sb = SchemaBuilder(schema_def_path, base_spec_path, field_map)
-    sb.build_schemas()
+def test_range_validation_on_default_variable_fails(TaxcalcParams):
+    revision = {
+        "_STD": [{"year": 2018, "MARS": "separate", "value": 11999.00}]
+    }
+    params = TaxcalcParams()
     with pytest.raises(exceptions.ValidationError) as excinfo:
-        sb.load_params(revision)
+        params.revise(revision)
     print(excinfo)
 
 
-# def test_doc_example(schema_def_path, base_spec_path, field_map):
-#     from paramtools.build_schema import SchemaBuilder
-
+# def test_doc_example(TaxcalcParams):
+#
 #     revision = """{
 #         "_cpi_offset": [{"year": "2015", "value": 0.0025},
 #                         {"year": "2017", "value": 0.0025}],
@@ -155,6 +149,5 @@ def test_range_validation_on_default_variable_fails(
 #         "_II_brk1": [{"year": 2016, "MARS": "single", "value": 37649.00}]
 #     }"""
 
-#     sb = SchemaBuilder(schema_def_path, base_spec_path, field_map)
-#     sb.build_schemas()
-#     deserialized_revision = sb.load_params(revision)
+#     params = TaxcalcParams(schema_def_path, base_spec_path, field_map)
+#     deserialized_revision = params.revise(revision)

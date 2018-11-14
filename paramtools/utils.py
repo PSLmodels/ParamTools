@@ -53,10 +53,13 @@ def read_json(path):
 
 def get_example_paths(name):
     import os
-    assert name in ('taxcalc', 'weather')
+
+    assert name in ("taxcalc", "weather")
     current_path = os.path.abspath(os.path.dirname(__file__))
-    schema_def_path = os.path.join(current_path,
-                                   f"../examples/{name}/baseschema.json")
-    base_spec_path = os.path.join(current_path,
-                                  f"../examples/{name}/baseline.json")
+    schema_def_path = os.path.join(
+        current_path, f"../examples/{name}/baseschema.json"
+    )
+    base_spec_path = os.path.join(
+        current_path, f"../examples/{name}/baseline.json"
+    )
     return (schema_def_path, base_spec_path)

@@ -137,7 +137,7 @@ class BaseValidatorSchema(Schema):
         """
         Do range validation for a parameter.
         """
-        param_info = self.context["base_spec"][param_name]
+        param_info = getattr(self.context["base_spec"], param_name)
         min_value = param_info["range"]["min"]
         min_value = self.resolve_op_value(
             min_value, param_name, param_spec, raw_data
@@ -184,14 +184,14 @@ class BaseValidatorSchema(Schema):
         TODO: if min/max point to another variable, first check whether that
         variable was specified in the revision.
         """
-        oth_param = self.context["base_spec"][oth_param_name]
+        oth_param = getattr(self.context["base_spec"], oth_param_name)
         vals = oth_param["value"]
         dims_to_check = tuple(k for k in param_spec if k != "value")
-        iterres = filter(
-            lambda item: all(item[k] == param_spec[k] for k in dims_to_check),
-            vals,
-        )
-        res = list(iterres)
+        res = [
+            val
+            for val in vals
+            if all(val[k] == param_spec[k] for k in dims_to_check)
+        ]
         assert len(res) == 1
         return res[0]["value"]
 

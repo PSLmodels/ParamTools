@@ -158,56 +158,75 @@ Step 4: Use the `pararmtools` implementation!
 - reads, deserializes, and validates the baseline parameter file
 - validates user revisions on a type, range, and structure basis
   - the range includes min/max on "default" and against other parameters
+- Attaches parameters to a class instance to be accessed by the downstream project
 
 It does not yet do:
-- Attach parameters to a class instance to be accessed by the downstream project
 - Format parameters into an array or other structures that the downstream project may find more convenient
 
-`pararmtools` can be used like:
+
+Subclass the `Parameters` class and set your config files:
 
 ```python
-# in directory pararmtools/
-from paramtools.build_schema import SchemaBuilder
+from paramtools import parameters
 from paramtools.utils import get_example_paths
 
-revision = """
-{
-    "average_high_temperature": [
-        {"city": "Washington, D.C.",
-        "month": "November",
-        "dayofmonth": 1,
-        "value": 60},
-        {"city": "Washington, D.C.",
-        "month": "November",
-        "dayofmonth": 2,
-        "value": 63}
-    ]
-}
-"""
-schema_def_path, base_spec_path = get_example_paths('weather')
-sb = SchemaBuilder(schema_def_path, base_spec_path)
-sb.build_schemas()
-deserialized_revision = sb.load_params(revision)
-print(deserialized_revision)
+# example weather parameters
+project_schema, baseline_parameters = get_example_paths('weather')
 
-# output:
-{'average_high_temperature': [{'dayofmonth': 1,
-   'month': 'November',
-   'city': 'Washington, D.C.',
-   'value': 60},
-  {'dayofmonth': 2,
-   'month': 'November',
-   'city': 'Washington, D.C.',
-   'value': 63}]}
+class WeatherParams(parameters.Parameters):
+    project_schema = project_schema
+    baseline_parameters = baseline_parameters
 
+params = WeatherParams()
 
-# change value of int parameter to string:
-revision["average_high_temperature"][0]["value"] = "HOT"
-# ==> raises error:
-deserialized_revision = sb.load_params(revision)
 ```
 
-`deserialized_revision` is a validated, deserialized Python object that can now safely be used for modeling, running simulations, etc.
+Query along allowed dimensions:
+
+```python
+print(params.get("average_high_temperature", month="November"))
+
+# output: [{'month': 'November', 'city': 'Washington, D.C.', 'value': 59, 'dayofmonth': 1}, {'month': 'November', 'city': 'Atlanta, GA', 'value': 64, 'dayofmonth': 1}]
+
+```
+
+revise the basline parameters
+```python
+revision = {
+    "average_high_temperature": [
+        {
+            "city": "Washington, D.C.",
+            "month": "November",
+            "dayofmonth": 1,
+            "value": 60,
+        },
+        {
+            "city": "Atlanta, GA",
+            "month": "November",
+            "dayofmonth": 1,
+            "value": 63,
+        },
+    ]
+}
+
+params.revise(revision)
+
+# check to make sure the values were updated:
+print(params.get("average_high_temperature", month="November"))
+
+# output: [{'month': 'November', 'city': 'Washington, D.C.', 'value': 60, 'dayofmonth': 1}, {'month': 'November', 'city': 'Atlanta, GA', 'value': 63, 'dayofmonth': 1}]
+```
+
+
+Errors on invalid input:
+```python
+revision["average_high_temperature"][0]["value"] = "HOT"
+# ==> raises error:
+params.revise(revision)
+
+```
+
+`params` is a validated, deserialized Python object that can now safely be used for modeling, running simulations, etc.
 
 Credits: ParamTools is built on top of the excellent [marshmallow][] JSON schema and validation framework. I encourage everyone to checkout their repo and documentation. ParamTools was modeled off of [Tax-Calculator's][] parameter processing and validation engine due to its maturity and sophisticated capabilities.
 
