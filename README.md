@@ -1,3 +1,5 @@
+# ParamTools
+
 ParamTools defines the parameter input space for computational modeling projects.
 - Defines the baseline parameter space.
 - Facilitates updating that space.
@@ -207,8 +209,9 @@ deserialized_revision = sb.load_params(revision)
 
 `deserialized_revision` is a validated, deserialized Python object that can now safely be used for modeling, running simulations, etc.
 
-Credits: `pararmtools` is built on top of the excellent [marshmallow][] JSON schema and validation framework. I encourage everyone to checkout their repo and documentation.
+Credits: ParamTools is built on top of the excellent [marshmallow][] JSON schema and validation framework. I encourage everyone to checkout their repo and documentation. ParamTools was modeled off of [Tax-Calculator's][] parameter processing and validation engine due to its maturity and sophisticated capabilities.
 
 
 [`numpy.ndim`]: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.ndim.html
 [marshmallow]: https://marshmallow.readthedocs.io/en/3.0/
+[Tax-Calculator's]: https://github.com/open-source-economics/Tax-Calculator
