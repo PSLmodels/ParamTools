@@ -126,7 +126,7 @@ Define the baseline values of the project's parameter space
 Step 3: Revision Schema
 ----------------------------
 
-Revise the schema
+Revise the Baseline Parameters
 
 ```json
 {
