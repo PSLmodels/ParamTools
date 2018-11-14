@@ -190,7 +190,8 @@ print(params.get("average_high_temperature", month="November"))
 
 ```
 
-revise the basline parameters
+Revise the basline parameters:
+
 ```python
 revision = {
     "average_high_temperature": [
