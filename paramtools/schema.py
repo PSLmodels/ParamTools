@@ -14,10 +14,10 @@ class Float64(fields.Number):
 
 class Int8(fields.Number):
     """
-    Define field to match up with numpy int8 type
+    Define field to match up with numpy int64 type
     """
 
-    num_type = np.int8
+    num_type = np.int64
 
 
 class Bool_(fields.Boolean):
@@ -149,9 +149,13 @@ class BaseValidatorSchema(Schema):
 
         def comp(v, min_value, max_value):
             if v < min_value:
-                return [f"{param_name} must be greater than {min_value}"]
+                dims = ', '.join([f"{k}={param_spec[k]}" for k in param_spec
+                                  if k != "value"])
+                return [{"value": f"{param_name} {v} must be greater than {min_value} for dimensions {dims}"}]
             if v > max_value:
-                return [f"{param_name} must be less than {max_value}"]
+                dims = ', '.join([f"{k}={param_spec[k]}" for k in param_spec
+                                  if k != "value"])
+                return [{"value": f"{param_name} {v} must be less than {max_value} for dimensions {dims}"}]
             return []
 
         value = param_spec["value"]

@@ -125,3 +125,11 @@ def test_doc_example(schema_def_path, base_spec_path):
     # raises error:
     with pytest.raises(exceptions.ValidationError) as excinfo:
         params.revise(revision)
+
+    # raises error:
+    revision["average_high_temperature"][0]["value"] = 2000
+    revision["average_high_temperature"][1]["value"] = 3000
+
+    with pytest.raises(exceptions.ValidationError) as excinfo:
+        params.revise(revision)
+    print(excinfo)

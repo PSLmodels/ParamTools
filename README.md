@@ -225,6 +225,19 @@ revision["average_high_temperature"][0]["value"] = "HOT"
 # ==> raises error:
 params.revise(revision)
 
+# output: ValidationError: {'average_high_temperature': {0: {'value': ['Not a valid number.']}}}
+
+```
+
+Errors on input that's out of range:
+```python
+revision["average_high_temperature"][0]["value"] = 2000
+revision["average_high_temperature"][1]["value"] = 3000
+
+params.revise(revision)
+
+# ouput: ValidationError: {'_schema': defaultdict(<class 'list'>, {'average_high_temperature': [{'value': 'average_high_temperature 2000 must be less than 135 for dimensions city=Washington, D.C., month=November, dayofmonth=1'}, {'value': 'average_high_temperature 3000 must be less than 135 for dimensions city=Atlanta, GA, month=November, dayofmonth=1'}]})}
+
 ```
 
 `params` is a validated, deserialized Python object that can now safely be used for modeling, running simulations, etc.
