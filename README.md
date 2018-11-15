@@ -240,8 +240,6 @@ params.revise(revision)
 
 ```
 
-`params` is a validated, deserialized Python object that can now safely be used for modeling, running simulations, etc.
-
 Credits: ParamTools is built on top of the excellent [marshmallow][] JSON schema and validation framework. I encourage everyone to checkout their repo and documentation. ParamTools was modeled off of [Tax-Calculator's][] parameter processing and validation engine due to its maturity and sophisticated capabilities.
 
 
