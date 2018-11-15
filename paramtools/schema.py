@@ -1,7 +1,13 @@
 from collections import defaultdict
 
 from marshmallow import Schema, fields, validate, validates_schema, exceptions
-import numpy as np
+
+# only use numpy if its installed
+try:
+    import numpy as np
+    fieldfloat, fieldint, fieldbool = np.float64, np.int64, np.bool_
+except ModuleNotFoundError:
+    fieldfloat, fieldint, fieldbool = float, int, bool
 
 
 class Float64(fields.Number):
@@ -9,7 +15,7 @@ class Float64(fields.Number):
     Define field to match up with numpy float64 type
     """
 
-    num_type = np.float64
+    num_type = fieldfloat
 
 
 class Int8(fields.Number):
@@ -17,7 +23,7 @@ class Int8(fields.Number):
     Define field to match up with numpy int64 type
     """
 
-    num_type = np.int64
+    num_type = fieldint
 
 
 class Bool_(fields.Boolean):
@@ -25,7 +31,7 @@ class Bool_(fields.Boolean):
     Define field to match up with numpy bool_ type
     """
 
-    num_type = np.bool_
+    num_type = fieldbool
 
 
 class RangeSchema(Schema):
