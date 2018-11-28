@@ -6,7 +6,7 @@ ParamTools defines the parameter input space for computational modeling projects
 - Performs validation on the baseline space and the updated space.
 
 
-Step 1: Project Schema
+Project Schema
 --------------------------------------
 
 Define the dimensions of the parameter space
@@ -46,7 +46,7 @@ The "dims" component of the Parameter Schema specifies type and range informatio
 It is likely that the project needs extra information in addition to that required by the minimum parameter definition required by `pararmtools`. This information could add extra documentation or specify parameters for filling out the remaining parts of the baseline parameter space. It is stored in the "optional_parameters" component of the Parameter Schema.
 
 
-Step 2: Baseline Parameters
+Baseline Parameters
 ---------------------------------------------
 
 Define the baseline values of the project's parameter space
@@ -123,7 +123,7 @@ Define the baseline values of the project's parameter space
 - `out_of_range_action`: action to take when specified parameter is outside of the specified range. options are `stop` or `warn`
 
 
-Step 3: Revision Schema
+Revision Schema
 ----------------------------
 
 Revise the Baseline Parameters
@@ -151,7 +151,7 @@ Revise the Baseline Parameters
 
 The Revision Schema defines the data format used for revising baseline parameters. This schema is defined using the parameter space dimension from the Project Schema and the "type" and "num_dimensions" fields in the Baseline parameters.
 
-Step 4: Use the `pararmtools` implementation!
+Use the `pararmtools` implementation!
 -------------------------------------------
 
 `pararmtools` implements the following parameter validation functionality:
