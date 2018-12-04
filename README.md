@@ -5,6 +5,23 @@ ParamTools defines the parameter input space for computational modeling projects
 - Facilitates updating that space.
 - Performs validation on the baseline space and the updated space.
 
+How to get it
+-----------------------------------------
+
+Install from PyPI:
+
+```
+pip install paramtools
+```
+
+Install from source:
+
+```
+git clone https://github.com/hdoupe/ParamTools
+cd ParamTools
+pip install -e .
+```
+
 
 Project Schema
 --------------------------------------
