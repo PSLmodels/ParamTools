@@ -2,6 +2,8 @@ from collections import defaultdict
 
 from marshmallow import Schema, fields, validate, validates_schema, exceptions
 
+from paramtools import validate as ptvalidate
+
 # only use numpy if its installed
 try:
     import numpy as np
@@ -249,7 +251,10 @@ def get_param_schema(base_spec, field_map={}):
     )
     dim_validators = {}
     for name, dim in base_spec["dims"].items():
-        validator_cls = getattr(validate, dim["validator"]["name"])
+        if hasattr(ptvalidate, dim["validator"]["name"]):
+            validator_cls = getattr(ptvalidate, dim["validator"]["name"])
+        else:
+            validator_cls = getattr(validate, dim["validator"]["name"])
         validator = validator_cls(**dim["validator"]["args"])
         fieldtype = CLASS_FIELD_MAP[dim["type"]]
         dim_validators[name] = fieldtype(validate=validator)
