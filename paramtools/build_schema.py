@@ -3,11 +3,7 @@ import os
 
 from marshmallow import fields
 
-from paramtools.schema import (
-    EmptySchema,
-    BaseValidatorSchema,
-    get_param_schema,
-)
+from paramtools.schema import EmptySchema, BaseValidatorSchema, get_param_schema
 from paramtools import utils
 
 

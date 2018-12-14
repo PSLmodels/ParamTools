@@ -1,6 +1,13 @@
 from collections import defaultdict
 
-from marshmallow import Schema, fields, validate, validates_schema, exceptions
+from marshmallow import (
+    Schema,
+    fields,
+    validate,
+    validates_schema,
+    exceptions,
+    ValidationError,
+)
 
 from paramtools import validate as ptvalidate
 
@@ -49,6 +56,18 @@ class RangeSchema(Schema):
     _max = fields.Field(attribute="max", data_key="max")
 
 
+class DateRangeSchema(Schema):
+    """
+    Schema for range object
+    {
+        "range": {"min": field, "max": field}
+    }
+    """
+
+    _min = fields.Date(attribute="min", data_key="min")
+    _max = fields.Date(attribute="max", data_key="max")
+
+
 class OneOfSchema(Schema):
     choices = fields.List(fields.Field)
 
@@ -59,6 +78,7 @@ class ValueValidatorSchema(Schema):
     """
 
     Range = fields.Nested(RangeSchema(), required=False)
+    DateRange = fields.Nested(DateRangeSchema(), required=False)
     OneOf = fields.Nested(OneOfSchema(), required=False)
 
 
@@ -149,58 +169,64 @@ class BaseValidatorSchema(Schema):
                     errors_exist = True
                     errors[name] += iserrors
         if errors_exist:
-            raise exceptions.ValidationError(errors)
+            raise exceptions.ValidationError(dict(errors))
 
     def validate_param(self, param_name, param_spec, raw_data):
         """
         Do range validation for a parameter.
         """
         param_info = getattr(self.context["base_spec"], param_name)
-
-        if "Range" in param_info:
-            min_value = param_info["Range"].get("min", None)
-            if min_value is not None:
-                min_value = self.resolve_op_value(
-                    min_value, param_name, param_spec, raw_data
-                )
-            max_value = param_info["Range"].get("max", None)
-            if max_value is not None:
-                max_value = self.resolve_op_value(
-                    max_value, param_name, param_spec, raw_data
-                )
-
-        def comp(v, min_value, max_value):
-            if min_value is not None and v < min_value:
-                dims = ", ".join(
-                    [
-                        f"{k}={param_spec[k]}"
-                        for k in param_spec
-                        if k != "value"
-                    ]
-                )
-                return [
-                    {
-                        "value": f"{param_name} {v} must be greater than {min_value} for dimensions {dims}"
-                    }
-                ]
-            if max_value is not None and v > max_value:
-                dims = ", ".join(
-                    [
-                        f"{k}={param_spec[k]}"
-                        for k in param_spec
-                        if k != "value"
-                    ]
-                )
-                return [
-                    {
-                        "value": f"{param_name} {v} must be less than {max_value} for dimensions {dims}"
-                    }
-                ]
-            return []
+        dims = ", ".join(
+            [f"{k}={param_spec[k]}" for k in param_spec if k != "value"]
+        )
+        validator_spec = param_info["validators"]
+        validators = {}
+        if "Range" in param_info["validators"]:
+            validators["range"] = self.get_range_validator(
+                validator_spec["Range"], param_name, param_spec, raw_data, dims
+            )
+        if "DateRange" in param_info["validators"]:
+            validators["date_range"] = self.get_range_validator(
+                validator_spec["DateRange"],
+                param_name,
+                param_spec,
+                raw_data,
+                dims,
+            )
 
         value = param_spec["value"]
-        errors = comp(value, min_value, max_value)
+        errors = []
+        for name, validator in validators.items():
+            try:
+                validator(value)
+            except ValidationError as ve:
+                errors.append(str(ve))
+
         return errors
+
+    def get_range_validator(
+        self, range_dict, param_name, param_spec, raw_data, dims
+    ):
+        min_value = range_dict.get("min", None)
+        if min_value is not None:
+            min_value = self.resolve_op_value(
+                min_value, param_name, param_spec, raw_data
+            )
+        max_value = range_dict.get("max", None)
+        if max_value is not None:
+            max_value = self.resolve_op_value(
+                max_value, param_name, param_spec, raw_data
+            )
+        min_error = (
+            "{param_name} {input} must be greater than "
+            "{min} for dimensions {dims}"
+        ).format(param_name=param_name, dims=dims, input="{input}", min="{min}")
+        max_error = (
+            "{param_name} {input} must be less than "
+            "{max} for dimensions {dims}"
+        ).format(param_name=param_name, dims=dims, input="{input}", max="{max}")
+
+        return ptvalidate.Range(min_value, max_value, min_error, max_error)
 
     def resolve_op_value(self, op_value, param_name, param_spec, raw_data):
         """

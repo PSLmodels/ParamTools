@@ -122,17 +122,13 @@ def test_range_validation_on_named_variable_fails(TaxcalcParams):
 
 
 def test_range_validation_on_default_variable(TaxcalcParams):
-    revision = {
-        "_STD": [{"year": 2018, "MARS": "separate", "value": 12001.00}]
-    }
+    revision = {"_STD": [{"year": 2018, "MARS": "separate", "value": 12001.00}]}
     params = TaxcalcParams()
     params.revise(revision)
 
 
 def test_range_validation_on_default_variable_fails(TaxcalcParams):
-    revision = {
-        "_STD": [{"year": 2018, "MARS": "separate", "value": 11999.00}]
-    }
+    revision = {"_STD": [{"year": 2018, "MARS": "separate", "value": 11999.00}]}
     params = TaxcalcParams()
     with pytest.raises(exceptions.ValidationError) as excinfo:
         params.revise(revision)

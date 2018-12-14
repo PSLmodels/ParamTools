@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from marshmallow import exceptions
+from marshmallow import ValidationError
 
 from paramtools import parameters
 
@@ -53,3 +53,8 @@ def test_revise_schema(BaseballParams, revision):
     params = BaseballParams()
     params.revise(revision)
     assert params.get("pitcher") == revision["pitcher"]
+
+    revision["start_date"] = [{"value": "2007-01-01"}]
+    params = BaseballParams()
+    with pytest.raises(ValidationError):
+        params.revise(revision)
