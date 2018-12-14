@@ -7,6 +7,7 @@ from paramtools import validate as ptvalidate
 # only use numpy if its installed
 try:
     import numpy as np
+
     fieldfloat, fieldint, fieldbool = np.float64, np.int64, np.bool_
 except ModuleNotFoundError:
     fieldfloat, fieldint, fieldbool = float, int, bool
@@ -44,12 +45,22 @@ class RangeSchema(Schema):
     }
     """
 
-    _min = fields.Field(
-        attribute="min", data_key="min"
-    )
-    _max = fields.Field(
-        attribute="max", data_key="max"
-    )
+    _min = fields.Field(attribute="min", data_key="min")
+    _max = fields.Field(attribute="max", data_key="max")
+
+
+class OneOfSchema(Schema):
+    choices = fields.List(fields.Field)
+
+
+class ValueValidatorSchema(Schema):
+    """
+    Schema for validation specification for each parameter value
+    """
+
+    Range = fields.Nested(RangeSchema(), required=False)
+    OneOf = fields.Nested(OneOfSchema(), required=False)
+
 
 class BaseParamSchema(Schema):
     """
@@ -77,15 +88,15 @@ class BaseParamSchema(Schema):
     notes = fields.Str(required=True)
     _type = fields.Str(
         required=True,
-        validate=validate.OneOf(choices=["str", "float", "int", "bool"]),
+        validate=validate.OneOf(
+            choices=["str", "float", "int", "bool", "date"]
+        ),
         attribute="type",
         data_key="type",
     )
     number_dims = fields.Integer(required=True)
     value = fields.Field(required=True)  # will be specified later
-    _range = fields.Nested(
-        RangeSchema(), required=True, attribute="range", data_key="range"
-    )
+    validators = fields.Nested(ValueValidatorSchema(), required=True)
     out_of_range_minmsg = fields.Str()
     out_of_range_maxmsg = fields.Str()
     out_of_range_action = fields.Str(
@@ -145,26 +156,46 @@ class BaseValidatorSchema(Schema):
         Do range validation for a parameter.
         """
         param_info = getattr(self.context["base_spec"], param_name)
-        min_value = param_info["range"].get("min", None)
-        if min_value is not None:
-            min_value = self.resolve_op_value(
-                min_value, param_name, param_spec, raw_data
-            )
-        max_value = param_info["range"].get("max", None)
-        if max_value is not None:
-            max_value = self.resolve_op_value(
-                max_value, param_name, param_spec, raw_data
-            )
+
+        if "Range" in param_info:
+            min_value = param_info["Range"].get("min", None)
+            if min_value is not None:
+                min_value = self.resolve_op_value(
+                    min_value, param_name, param_spec, raw_data
+                )
+            max_value = param_info["Range"].get("max", None)
+            if max_value is not None:
+                max_value = self.resolve_op_value(
+                    max_value, param_name, param_spec, raw_data
+                )
 
         def comp(v, min_value, max_value):
             if min_value is not None and v < min_value:
-                dims = ', '.join([f"{k}={param_spec[k]}" for k in param_spec
-                                  if k != "value"])
-                return [{"value": f"{param_name} {v} must be greater than {min_value} for dimensions {dims}"}]
+                dims = ", ".join(
+                    [
+                        f"{k}={param_spec[k]}"
+                        for k in param_spec
+                        if k != "value"
+                    ]
+                )
+                return [
+                    {
+                        "value": f"{param_name} {v} must be greater than {min_value} for dimensions {dims}"
+                    }
+                ]
             if max_value is not None and v > max_value:
-                dims = ', '.join([f"{k}={param_spec[k]}" for k in param_spec
-                                  if k != "value"])
-                return [{"value": f"{param_name} {v} must be less than {max_value} for dimensions {dims}"}]
+                dims = ", ".join(
+                    [
+                        f"{k}={param_spec[k]}"
+                        for k in param_spec
+                        if k != "value"
+                    ]
+                )
+                return [
+                    {
+                        "value": f"{param_name} {v} must be less than {max_value} for dimensions {dims}"
+                    }
+                ]
             return []
 
         value = param_spec["value"]

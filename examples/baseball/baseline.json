@@ -1,0 +1,46 @@
+{
+    "pitcher": {
+        "long_name": "Pitcher Name",
+        "description": "Name of pitcher to pull data on",
+        "section_1": "Parameters",
+        "section_2": "Pitcher",
+        "notes": "Make sure the name of the pitcher is correct. A good place to reference this is baseball-reference.com",
+        "type": "str",
+        "number_dims": 0,
+        "value": [{"value": "Clayton Kershaw"}],
+        "validators": {"OneOf": {"choices": ["Clayton Kershaw", "Julio Teheran", "Max Scherzer"]}}
+    },
+    "batter": {
+        "long_name": "Batter Name",
+        "description": "Name of batter for pitching matchup analysis",
+        "section_1": "Parameters",
+        "section_2": "Batter",
+        "notes": "Make sure the name of the batter is correct. A good place to reference this is baseball-reference.com",
+        "type": "str",
+        "number_dims": 0,
+        "value": [{"value": "Freddie Freeman"}],
+        "validators": {"OneOf": {"choices": ["Freddie Freeman", "Bryce Harper", "Mookie Betts"]}}
+    },
+    "start_date": {
+        "long_name": "Start Date",
+        "description": "Date to start pulling statcast information",
+        "section_1": "Parameters",
+        "section_2": "Date",
+        "notes": "If using the 2018 dataset, only use dates in 2018.",
+        "type": "date",
+        "number_dims": 0,
+        "value": [{"value": "2018-01-01"}],
+        "validators": {"Range": {"min": "2008-01-01", "max": "2018-11-10"}}
+    },
+    "end_date": {
+        "long_name": "End Date",
+        "description": "Date to quit pulling statcast information",
+        "section_1": "Parameters",
+        "section_2": "Date",
+        "notes": "If using the 2018 dataset, only use dates in 2018.",
+        "type": "date",
+        "number_dims": 0,
+        "value": [{"value": "2018-11-10"}],
+        "validators": {"Range": {"min": "2008-01-01", "max": "2018-11-10"}}
+    }
+}
