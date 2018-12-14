@@ -11,7 +11,6 @@ class ParameterUpdateException(Exception):
 
 
 class Parameters:
-
     project_schema = None
     baseline_parameters = None
     field_map = {}

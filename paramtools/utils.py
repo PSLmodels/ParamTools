@@ -2,7 +2,7 @@ import json
 
 from marshmallow import fields
 
-from paramtools.schema import Float64, Int8, Bool_
+from paramtools.schema import Float64, Int8, Bool_, FIELD_MAP
 
 # def get_type(data, max_dim=2):
 #     """
@@ -33,7 +33,8 @@ def get_type(data):
     """
     would be used if "type" is defined
     """
-    types = {"int": Int8(), "bool": Bool_(), "float": Float64()}
+    numeric_types = {"int": Int8(), "bool": Bool_(), "float": Float64()}
+    types = dict(FIELD_MAP, **numeric_types)
     fieldtype = types[data["type"]]
     dim = data["number_dims"]
     while dim > 0:

@@ -46,11 +46,10 @@ class RangeSchema(Schema):
 
     _min = fields.Field(
         attribute="min", data_key="min"
-    )  # fields.Float(attribute='min')
+    )
     _max = fields.Field(
         attribute="max", data_key="max"
-    )  # fields.Float(attribute='max')
-
+    )
 
 class BaseParamSchema(Schema):
     """
@@ -87,10 +86,10 @@ class BaseParamSchema(Schema):
     _range = fields.Nested(
         RangeSchema(), required=True, attribute="range", data_key="range"
     )
-    out_of_range_minmsg = fields.Str(required=True)
-    out_of_range_maxmsg = fields.Str(required=True)
+    out_of_range_minmsg = fields.Str()
+    out_of_range_maxmsg = fields.Str()
     out_of_range_action = fields.Str(
-        required=True, validate=validate.OneOf(choices=["stop", "warn"])
+        required=False, validate=validate.OneOf(choices=["stop", "warn"])
     )
 
 
@@ -146,21 +145,23 @@ class BaseValidatorSchema(Schema):
         Do range validation for a parameter.
         """
         param_info = getattr(self.context["base_spec"], param_name)
-        min_value = param_info["range"]["min"]
-        min_value = self.resolve_op_value(
-            min_value, param_name, param_spec, raw_data
-        )
-        max_value = param_info["range"]["max"]
-        max_value = self.resolve_op_value(
-            max_value, param_name, param_spec, raw_data
-        )
+        min_value = param_info["range"].get("min", None)
+        if min_value is not None:
+            min_value = self.resolve_op_value(
+                min_value, param_name, param_spec, raw_data
+            )
+        max_value = param_info["range"].get("max", None)
+        if max_value is not None:
+            max_value = self.resolve_op_value(
+                max_value, param_name, param_spec, raw_data
+            )
 
         def comp(v, min_value, max_value):
-            if v < min_value:
+            if min_value is not None and v < min_value:
                 dims = ', '.join([f"{k}={param_spec[k]}" for k in param_spec
                                   if k != "value"])
                 return [{"value": f"{param_name} {v} must be greater than {min_value} for dimensions {dims}"}]
-            if v > max_value:
+            if max_value is not None and v > max_value:
                 dims = ', '.join([f"{k}={param_spec[k]}" for k in param_spec
                                   if k != "value"])
                 return [{"value": f"{param_name} {v} must be less than {max_value} for dimensions {dims}"}]
@@ -214,6 +215,7 @@ CLASS_FIELD_MAP = {
     "int": fields.Integer,
     "float": fields.Float,
     "bool": fields.Boolean,
+    "date": fields.Date,
 }
 
 
@@ -223,6 +225,7 @@ FIELD_MAP = {
     "int": fields.Integer(),
     "float": fields.Float(),
     "bool": fields.Boolean(),
+    "date": fields.Date(),
 }
 
 
@@ -251,11 +254,14 @@ def get_param_schema(base_spec, field_map={}):
     )
     dim_validators = {}
     for name, dim in base_spec["dims"].items():
-        if hasattr(ptvalidate, dim["validator"]["name"]):
-            validator_cls = getattr(ptvalidate, dim["validator"]["name"])
+        if dim["validator"]:
+            if hasattr(ptvalidate, dim["validator"]["name"]):
+                validator_cls = getattr(ptvalidate, dim["validator"]["name"])
+            else:
+                validator_cls = getattr(validate, dim["validator"]["name"])
+            validator = validator_cls(**dim["validator"]["args"])
         else:
-            validator_cls = getattr(validate, dim["validator"]["name"])
-        validator = validator_cls(**dim["validator"]["args"])
+            validator = None
         fieldtype = CLASS_FIELD_MAP[dim["type"]]
         dim_validators[name] = fieldtype(validate=validator)
     return ParamSchema, dim_validators
