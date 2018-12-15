@@ -9,7 +9,7 @@ from marshmallow import (
     ValidationError,
 )
 
-from paramtools import validate as ptvalidate
+from paramtools.contrib import validate as contrib_validate
 
 # only use numpy if its installed
 try:
@@ -68,7 +68,7 @@ class DateRangeSchema(Schema):
     _max = fields.Date(attribute="max", data_key="max")
 
 
-class OneOfSchema(Schema):
+class ChoiceSchema(Schema):
     choices = fields.List(fields.Field)
 
 
@@ -77,9 +77,11 @@ class ValueValidatorSchema(Schema):
     Schema for validation specification for each parameter value
     """
 
-    Range = fields.Nested(RangeSchema(), required=False)
-    DateRange = fields.Nested(DateRangeSchema(), required=False)
-    OneOf = fields.Nested(OneOfSchema(), required=False)
+    _range = fields.Nested(
+        RangeSchema(), attribute="range", data_key="range", required=False
+    )
+    date_range = fields.Nested(DateRangeSchema(), required=False)
+    choice = fields.Nested(ChoiceSchema(), required=False)
 
 
 class BaseParamSchema(Schema):
@@ -152,6 +154,12 @@ class BaseValidatorSchema(Schema):
     class.
     """
 
+    WRAPPER_MAP = {
+        "range": "_get_range_validator",
+        "date_range": "_get_range_validator",
+        "choice": "_get_choice_validator",
+    }
+
     @validates_schema
     def validate_params(self, data):
         """
@@ -176,27 +184,25 @@ class BaseValidatorSchema(Schema):
         Do range validation for a parameter.
         """
         param_info = getattr(self.context["base_spec"], param_name)
-        dims = ", ".join(
+        dims = " , ".join(
             [f"{k}={param_spec[k]}" for k in param_spec if k != "value"]
         )
         validator_spec = param_info["validators"]
-        validators = {}
-        if "Range" in param_info["validators"]:
-            validators["range"] = self.get_range_validator(
-                validator_spec["Range"], param_name, param_spec, raw_data, dims
-            )
-        if "DateRange" in param_info["validators"]:
-            validators["date_range"] = self.get_range_validator(
-                validator_spec["DateRange"],
-                param_name,
-                param_spec,
-                raw_data,
-                dims,
-            )
+        validators = []
+        for validator_name, method_name in self.WRAPPER_MAP.items():
+            if validator_name in validator_spec:
+                validator = getattr(self, method_name)(
+                    validator_spec[validator_name],
+                    param_name,
+                    dims,
+                    param_spec,
+                    raw_data,
+                )
+                validators.append(validator)
 
         value = param_spec["value"]
         errors = []
-        for name, validator in validators.items():
+        for validator in validators:
             try:
                 validator(value)
             except ValidationError as ve:
@@ -204,31 +210,47 @@ class BaseValidatorSchema(Schema):
 
         return errors
 
-    def get_range_validator(
-        self, range_dict, param_name, param_spec, raw_data, dims
+    def _get_range_validator(
+        self, range_dict, param_name, dims, param_spec, raw_data
     ):
         min_value = range_dict.get("min", None)
         if min_value is not None:
-            min_value = self.resolve_op_value(
+            min_value = self._resolve_op_value(
                 min_value, param_name, param_spec, raw_data
             )
         max_value = range_dict.get("max", None)
         if max_value is not None:
-            max_value = self.resolve_op_value(
+            max_value = self._resolve_op_value(
                 max_value, param_name, param_spec, raw_data
             )
         min_error = (
             "{param_name} {input} must be greater than "
-            "{min} for dimensions {dims}"
+            "{min} for dimensions{dims}"
         ).format(param_name=param_name, dims=dims, input="{input}", min="{min}")
         max_error = (
             "{param_name} {input} must be less than "
-            "{max} for dimensions {dims}"
+            "{max} for dimensions{dims}"
         ).format(param_name=param_name, dims=dims, input="{input}", max="{max}")
+        return contrib_validate.Range(
+            min_value, max_value, min_error, max_error
+        )
 
-        return ptvalidate.Range(min_value, max_value, min_error, max_error)
+    def _get_choice_validator(
+        self, choice_dict, param_name, dims, param_spec, raw_data
+    ):
+        choices = choice_dict["choices"]
+        error = (
+            '{param_name} "{input}" must be in list of choices '
+            "{choices} for dimensions{dims}"
+        ).format(
+            param_name=param_name,
+            dims=dims,
+            input="{input}",
+            choices="{choices}",
+        )
+        return validate.OneOf(choices, error=error)
 
-    def resolve_op_value(self, op_value, param_name, param_spec, raw_data):
+    def _resolve_op_value(self, op_value, param_name, param_spec, raw_data):
         """
         Operator values (`op_value`) are the values pointed to by the "min"
         and "max" keys. These can be values to compare against, another
@@ -236,16 +258,16 @@ class BaseValidatorSchema(Schema):
         variable.
         """
         if op_value in self.fields:
-            return self.get_comparable_value(
+            return self._get_comparable_value(
                 op_value, param_name, param_spec, raw_data
             )
         if op_value == "default":
-            return self.get_comparable_value(
+            return self._get_comparable_value(
                 param_name, param_name, param_spec, raw_data
             )
         return op_value
 
-    def get_comparable_value(
+    def _get_comparable_value(
         self, oth_param_name, param_name, param_spec, raw_data
     ):
         """
@@ -285,6 +307,12 @@ FIELD_MAP = {
     "date": fields.Date(),
 }
 
+VALIDATOR_MAP = {
+    "range": validate.Range,
+    "date_range": contrib_validate.DateRange,
+    "choice": validate.OneOf,
+}
+
 
 def get_param_schema(base_spec, field_map={}):
     """
@@ -312,11 +340,8 @@ def get_param_schema(base_spec, field_map={}):
     dim_validators = {}
     for name, dim in base_spec["dims"].items():
         if dim["validator"]:
-            if hasattr(ptvalidate, dim["validator"]["name"]):
-                validator_cls = getattr(ptvalidate, dim["validator"]["name"])
-            else:
-                validator_cls = getattr(validate, dim["validator"]["name"])
-            validator = validator_cls(**dim["validator"]["args"])
+            validator_class = VALIDATOR_MAP[dim["validator"]["name"]]
+            validator = validator_class(**dim["validator"]["args"])
         else:
             validator = None
         fieldtype = CLASS_FIELD_MAP[dim["type"]]

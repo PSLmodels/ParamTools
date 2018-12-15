@@ -18,8 +18,8 @@ def field_map():
 @pytest.fixture
 def revision():
     return {
-        "pitcher": [{"value": "Stephen Strasburg"}],
-        "batter": [{"value": "Aaron Judge"}],
+        "pitcher": [{"value": "Julio Teheran"}],
+        "batter": [{"value": "Bryce Harper"}],
         "start_date": [{"value": "2018-04-10"}],
         "end_date": [{"value": "2018-05-01"}],
     }
@@ -54,7 +54,12 @@ def test_revise_schema(BaseballParams, revision):
     params.revise(revision)
     assert params.get("pitcher") == revision["pitcher"]
 
-    revision["start_date"] = [{"value": "2007-01-01"}]
+    r1 = dict(revision, **{"start_date": [{"value": "2007-01-01"}]})
     params = BaseballParams()
     with pytest.raises(ValidationError):
-        params.revise(revision)
+        params.revise(r1)
+
+    r2 = dict(revision, **{"pitcher": [{"value": "not a pitcher"}]})
+    params = BaseballParams()
+    with pytest.raises(ValidationError):
+        params.revise(r2)
