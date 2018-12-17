@@ -1,7 +1,7 @@
 {
     "schema_name": "baseball",
     "dims": {
-        "use_2018": {"type": "bool", "validator": {}}
+        "use_2018": {"type": "bool", "validators": {}}
     },
     "optional_params": {
         "section_1": {"type": "str", "number_dims": 0},

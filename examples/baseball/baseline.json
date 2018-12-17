@@ -30,7 +30,7 @@
         "type": "date",
         "number_dims": 0,
         "value": [{"value": "2018-01-01"}],
-        "validators": {"date_range": {"min": "2008-01-01", "max": "2018-11-10"}}
+        "validators": {"date_range": {"min": "2008-01-01", "max": "end_date"}}
     },
     "end_date": {
         "long_name": "End Date",

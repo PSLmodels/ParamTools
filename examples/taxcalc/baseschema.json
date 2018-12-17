@@ -3,26 +3,23 @@
     "dims": {
         "year": {
             "type": "int",
-            "validator": {"name": "Range", "args": {"min": 2013, "max": 2027}}
+            "validators": {"range": {"min": 2013, "max": 2027}}
         },
         "MARS": {
             "type": "str",
-            "validator": {"name": "OneOf",
-                          "args": {"choices": ["single", "joint", "separate",
-                                               "headhousehold", "widow"]}}
+            "validators": {"choice": {"choices": ["single", "joint", "separate",
+                                                 "headhousehold", "widow"]}}
         },
         "idedtype": {
             "type": "str",
-            "validator": {"name": "OneOf",
-                          "args": {"choices": ["medical", "statelocal",
-                                               "realestate", "casualty",
-                                               "misc", "interest", "charity"]}}
+            "validators": {"choice": {"choices": ["medical", "statelocal",
+                                                 "realestate", "casualty",
+                                                 "misc", "interest", "charity"]}}
         },
         "EIC": {
             "type": "str",
-            "validator": {"name": "OneOf",
-                          "args": {"choices": ["0kids", "1kid",
-                                               "2kids", "3+kids"]}}
+            "validators": {"choice": {"choices": ["0kids", "1kid",
+                                                 "2kids", "3+kids"]}}
         }
     },
     "optional_params": {
