@@ -34,21 +34,20 @@ Define the dimensions of the parameter space
     "dims": {
         "city": {
             "type": "str",
-            "validator": {"name": "OneOf",
-                          "args": {"choices": ["Atlanta, GA",
-                                               "Washington, D.C."]}}
+            "validators": {"choice": {"choices": ["Atlanta, GA",
+                                                  "Washington, D.C."]}}
         },
         "month": {
             "type": "str",
-            "validator": {"name": "OneOf",
-                          "args": {"choices": ["January", "February", "March",
-                                               "April", "May", "June", "July",
-                                               "August", "September", "October",
-                                               "November", "December"]}}
+            "validators": {"choice": {"choices": ["January", "February",
+                                                  "March", "April", "May",
+                                                  "June", "July", "August",
+                                                  "September", "October",
+                                                  "November", "December"]}}
         },
         "dayofmonth": {
             "type": "int",
-            "validator": {"name": "Range", "args": {"min": 1, "max": 31}}
+            "validators": {"range": {"min": 1, "max": 31}}
         }
     },
     "optional_params": {
@@ -58,7 +57,7 @@ Define the dimensions of the parameter space
 }
 ```
 
-The "dims" component of the Parameter Schema specifies type and range information for each dimension in the parameter space. `pararmtools` uses this information to check whether the value is the correct type and meets validation requirements, such as a number falling in the correct range. The "dims" component is used to validate the baseline parameter specification and user revisions to it.
+The "dims" component of the Parameter Schema specifies type and validation information for each dimension in the parameter space. `pararmtools` uses this information to check whether the value is the correct type and meets validation requirements, such as a number falling in the correct range. The "dims" component is used to validate the baseline parameter specification and user revisions to it.
 
 It is likely that the project needs extra information in addition to that required by the minimum parameter definition required by `pararmtools`. This information could add extra documentation or specify parameters for filling out the remaining parts of the baseline parameter space. It is stored in the "optional_parameters" component of the Parameter Schema.
 
@@ -81,10 +80,30 @@ Define the baseline values of the project's parameter space
         "value": [
             {"city": "Washington, D.C.", "month": "January", "dayofmonth": 1, "value": 43},
             {"city": "Washington, D.C.", "month": "February", "dayofmonth": 1, "value": 47},
+            {"city": "Washington, D.C.", "month": "March", "dayofmonth": 1, "value": 56},
+            {"city": "Washington, D.C.", "month": "April", "dayofmonth": 1, "value": 67},
+            {"city": "Washington, D.C.", "month": "May", "dayofmonth": 1, "value": 76},
+            {"city": "Washington, D.C.", "month": "June", "dayofmonth": 1, "value": 85},
+            {"city": "Washington, D.C.", "month": "July", "dayofmonth": 1, "value": 89},
+            {"city": "Washington, D.C.", "month": "August", "dayofmonth": 1, "value": 87},
+            {"city": "Washington, D.C.", "month": "September", "dayofmonth": 1, "value": 81},
+            {"city": "Washington, D.C.", "month": "October", "dayofmonth": 1, "value": 69},
+            {"city": "Washington, D.C.", "month": "November", "dayofmonth": 1, "value": 59},
+            {"city": "Washington, D.C.", "month": "December", "dayofmonth": 1, "value": 48},
             {"city": "Atlanta, GA", "month": "January", "dayofmonth": 1, "value": 53},
             {"city": "Atlanta, GA", "month": "February", "dayofmonth": 1, "value": 58},
+            {"city": "Atlanta, GA", "month": "March", "dayofmonth": 1, "value": 66},
+            {"city": "Atlanta, GA", "month": "April", "dayofmonth": 1, "value": 73},
+            {"city": "Atlanta, GA", "month": "May", "dayofmonth": 1, "value": 80},
+            {"city": "Atlanta, GA", "month": "June", "dayofmonth": 1, "value": 86},
+            {"city": "Atlanta, GA", "month": "July", "dayofmonth": 1, "value": 89},
+            {"city": "Atlanta, GA", "month": "August", "dayofmonth": 1, "value": 88},
+            {"city": "Atlanta, GA", "month": "September", "dayofmonth": 1, "value": 82},
+            {"city": "Atlanta, GA", "month": "October", "dayofmonth": 1, "value": 74},
+            {"city": "Atlanta, GA", "month": "November", "dayofmonth": 1, "value": 64},
+            {"city": "Atlanta, GA", "month": "December", "dayofmonth": 1, "value": 55}
         ],
-        "range": {"min": -130, "max": 135},
+        "validators": {"range": {"min": -130, "max": 135}},
         "out_of_range_minmsg": "",
         "out_of_range_maxmsg": "",
         "out_of_range_action": "warn"
@@ -100,10 +119,30 @@ Define the baseline values of the project's parameter space
         "value": [
             {"city": "Washington, D.C.", "month": "January", "value": 3.1},
             {"city": "Washington, D.C.", "month": "February", "value": 2.6},
+            {"city": "Washington, D.C.", "month": "March", "value": 3.5},
+            {"city": "Washington, D.C.", "month": "April", "value": 3.3},
+            {"city": "Washington, D.C.", "month": "May", "value": 4.3},
+            {"city": "Washington, D.C.", "month": "June", "value": 4.3},
+            {"city": "Washington, D.C.", "month": "July", "value": 4.6},
+            {"city": "Washington, D.C.", "month": "August", "value": 3.8},
+            {"city": "Washington, D.C.", "month": "September", "value": 3.9},
+            {"city": "Washington, D.C.", "month": "October", "value": 3.7},
+            {"city": "Washington, D.C.", "month": "November", "value": 3},
+            {"city": "Washington, D.C.", "month": "December", "value": 3.5},
             {"city": "Atlanta, GA", "month": "January", "value": 3.6},
             {"city": "Atlanta, GA", "month": "February", "value": 3.7},
+            {"city": "Atlanta, GA", "month": "March", "value": 4.3},
+            {"city": "Atlanta, GA", "month": "April", "value": 3.5},
+            {"city": "Atlanta, GA", "month": "May", "value": 3.8},
+            {"city": "Atlanta, GA", "month": "June", "value": 3.6},
+            {"city": "Atlanta, GA", "month": "July", "value": 5},
+            {"city": "Atlanta, GA", "month": "August", "value": 3.8},
+            {"city": "Atlanta, GA", "month": "September", "value": 3.7},
+            {"city": "Atlanta, GA", "month": "October", "value": 2.8},
+            {"city": "Atlanta, GA", "month": "November", "value": 3.6},
+            {"city": "Atlanta, GA", "month": "December", "value": 4.1}
         ],
-        "range": {"min": 0, "max": 50},
+        "validators": {"range": {"min": 0, "max": 50}},
         "out_of_range_minmsg": "str",
         "out_of_range_maxmsg": "str",
         "out_of_range_action": "stop"
@@ -133,9 +172,11 @@ Define the baseline values of the project's parameter space
          "value": 49}
     ]
   ```
-- `range`: describes a minimum and maximum value for the parameter
-  - the minimum and maximum can point to either "default" or another parameter by its `parameter_name`
-  - it could be helpful to have a `choices` operation describing a discrete set of valid values for the parameter
+- `validators`: declares the validation methods that should be used for this parameter.
+    - `range`: describes a minimum and maximum value for the parameter
+        - the minimum and maximum can point to either "default" or another parameter by its `parameter_name`
+        - it could be helpful to have a `choices` operation describing a discrete set of valid values for the parameter
+    - `choices`: list of allowed values the parameter's value
 - `out_of_range_{min/max/other op}_msg`: extra information to be used in the message(s) that will be displayed if the parameter value is outside of the specified range
 - `out_of_range_action`: action to take when specified parameter is outside of the specified range. options are `stop` or `warn`
 
@@ -253,7 +294,7 @@ revision["average_high_temperature"][1]["value"] = 3000
 
 params.revise(revision)
 
-# ouput: ValidationError: {'_schema': defaultdict(<class 'list'>, {'average_high_temperature': [{'value': 'average_high_temperature 2000 must be less than 135 for dimensions city=Washington, D.C., month=November, dayofmonth=1'}, {'value': 'average_high_temperature 3000 must be less than 135 for dimensions city=Atlanta, GA, month=November, dayofmonth=1'}]})}
+# ouput: ValidationError: {'average_high_temperature': ['average_high_temperature 2000 must be less than 135 for dimensionsmonth=November , city=Washington, D.C. , dayofmonth=1', 'average_high_temperature 3000 must be less than 135 for dimensionsmonth=November , city=Atlanta, GA , dayofmonth=1']}
 
 ```
 
