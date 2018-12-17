@@ -64,6 +64,12 @@ class Parameters:
             )
         return ret
 
+    def get_all(self, **kwargs):
+        all_params = {}
+        for param in self._validator_schema.fields:
+            all_params[param] = self.get(param, **kwargs)
+        return all_params
+
     def _update_param(self, param, new_values):
         curr_vals = getattr(self, param)["value"]
         for i in range(len(new_values)):
