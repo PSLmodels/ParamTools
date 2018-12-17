@@ -56,18 +56,6 @@ class RangeSchema(Schema):
     _max = fields.Field(attribute="max", data_key="max")
 
 
-class DateRangeSchema(Schema):
-    """
-    Schema for range object
-    {
-        "range": {"min": field, "max": field}
-    }
-    """
-
-    _min = fields.Date(attribute="min", data_key="min")
-    _max = fields.Date(attribute="max", data_key="max")
-
-
 class ChoiceSchema(Schema):
     choices = fields.List(fields.Field)
 
@@ -80,7 +68,7 @@ class ValueValidatorSchema(Schema):
     _range = fields.Nested(
         RangeSchema(), attribute="range", data_key="range", required=False
     )
-    date_range = fields.Nested(DateRangeSchema(), required=False)
+    date_range = fields.Nested(RangeSchema(), required=False)
     choice = fields.Nested(ChoiceSchema(), required=False)
 
 
@@ -192,6 +180,7 @@ class BaseValidatorSchema(Schema):
         for validator_name, method_name in self.WRAPPER_MAP.items():
             if validator_name in validator_spec:
                 validator = getattr(self, method_name)(
+                    validator_name,
                     validator_spec[validator_name],
                     param_name,
                     dims,
@@ -211,8 +200,14 @@ class BaseValidatorSchema(Schema):
         return errors
 
     def _get_range_validator(
-        self, range_dict, param_name, dims, param_spec, raw_data
+        self, vname, range_dict, param_name, dims, param_spec, raw_data
     ):
+        if vname == "range":
+            range_class = contrib_validate.Range
+        elif vname == "date_range":
+            range_class = contrib_validate.DateRange
+        else:
+            raise ValidationError(f"{vname} is not an allowed validator")
         min_value = range_dict.get("min", None)
         if min_value is not None:
             min_value = self._resolve_op_value(
@@ -226,17 +221,19 @@ class BaseValidatorSchema(Schema):
         min_error = (
             "{param_name} {input} must be greater than "
             "{min} for dimensions{dims}"
-        ).format(param_name=param_name, dims=dims, input="{input}", min="{min}")
+        ).format(
+            param_name=param_name, dims=dims, input="{input}", min="{min}"
+        )
         max_error = (
             "{param_name} {input} must be less than "
             "{max} for dimensions{dims}"
-        ).format(param_name=param_name, dims=dims, input="{input}", max="{max}")
-        return contrib_validate.Range(
-            min_value, max_value, min_error, max_error
+        ).format(
+            param_name=param_name, dims=dims, input="{input}", max="{max}"
         )
+        return range_class(min_value, max_value, min_error, max_error)
 
     def _get_choice_validator(
-        self, choice_dict, param_name, dims, param_spec, raw_data
+        self, vname, choice_dict, param_name, dims, param_spec, raw_data
     ):
         choices = choice_dict["choices"]
         error = (

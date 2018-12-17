@@ -1,4 +1,4 @@
-import json
+import datetime
 
 from marshmallow import validate, ValidationError, fields
 
@@ -28,14 +28,13 @@ class Range(validate.Range):
 
 class DateRange(Range):
     """
-    Mimic behavior in Range above, but tries to cast min/max values to "Date" 
+    Mimic behavior in Range above, but tries to cast min/max values to "Date"
     first.
     """
 
     def __init__(self, min=None, max=None, error_min=None, error_max=None):
-        if min is not None:
+        if min is not None and not isinstance(min, datetime.date):
             min = fields.Date()._deserialize(min, None, None)
-        if max is not None:
-            max = fields.Date()._deserialize(min, None, None)
-        print(min, max)
-        super().__init__(self, min, max, error_min, error_max)
+        if max is not None and not isinstance(max, datetime.date):
+            max = fields.Date()._deserialize(max, None, None)
+        super().__init__(min, max, error_min, error_max)
