@@ -14,7 +14,6 @@ class Range(validate.Range):
         return message.format(input=value, min=self.min, max=self.max)
 
     def __call__(self, value):
-        print(value, self.min, self.max)
         if self.min is not None and value < self.min:
             message = self.error_min or self.message_min
             raise ValidationError(self._format_error(value, message))
