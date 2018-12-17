@@ -311,14 +311,17 @@ VALIDATOR_MAP = {
 }
 
 
-def get_param_schema(base_spec, field_map={}):
+def get_param_schema(base_spec, field_map=None):
     """
     Read in data from the initializing schema. This will be used to fill in the
     optional parameters on classes derived from the `BaseParamSchema` class.
     This data is also used to build validators for schema for each parameter
     that will be set on the `BaseValidatorSchema` class
     """
-    field_map = dict(FIELD_MAP, **field_map)
+    if field_map is not None:
+        field_map = dict(FIELD_MAP, **field_map)
+    else:
+        field_map = FIELD_MAP.copy()
     optional_fields = {}
     for k, v in base_spec["optional_params"].items():
         fieldtype = field_map[v["type"]]
@@ -336,11 +339,10 @@ def get_param_schema(base_spec, field_map={}):
     )
     dim_validators = {}
     for name, dim in base_spec["dims"].items():
-        if dim["validator"]:
-            validator_class = VALIDATOR_MAP[dim["validator"]["name"]]
-            validator = validator_class(**dim["validator"]["args"])
-        else:
-            validator = None
+        validators = []
+        for vname, kwargs in dim["validators"].items():
+            validator_class = VALIDATOR_MAP[vname]
+            validators.append(validator_class(**kwargs))
         fieldtype = CLASS_FIELD_MAP[dim["type"]]
-        dim_validators[name] = fieldtype(validate=validator)
+        dim_validators[name] = fieldtype(validate=validators)
     return ParamSchema, dim_validators
