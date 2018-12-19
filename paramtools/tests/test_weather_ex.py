@@ -1,4 +1,5 @@
 import os
+import json
 
 import pytest
 
@@ -59,6 +60,47 @@ def WeatherParams(schema_def_path, base_spec_path):
 
 def test_load_schema(revision, WeatherParams):
     params = WeatherParams()
+
+
+def test_get_all_parameters(WeatherParams, base_spec_path):
+    wp = WeatherParams()
+    params = wp.get_all()
+    assert set(params.keys()) == set(
+        ["average_high_temperature", "average_precipitation"]
+    )
+    with open(base_spec_path) as f:
+        exp = json.loads(f.read())
+    assert (
+        params["average_high_temperature"]
+        == exp["average_high_temperature"]["value"]
+    )
+    assert (
+        params["average_precipitation"]
+        == exp["average_precipitation"]["value"]
+    )
+
+    exp = {
+        "average_high_temperature": [
+            {
+                "value": 59,
+                "month": "November",
+                "city": "Washington, D.C.",
+                "dayofmonth": 1,
+            },
+            {
+                "value": 64,
+                "month": "November",
+                "city": "Atlanta, GA",
+                "dayofmonth": 1,
+            },
+        ],
+        "average_precipitation": [
+            {"value": 3.0, "month": "November", "city": "Washington, D.C."},
+            {"value": 3.6, "month": "November", "city": "Atlanta, GA"},
+        ],
+    }
+
+    assert wp.get_all(month="November") == exp
 
 
 def test_failed_udpate(WeatherParams):
