@@ -125,7 +125,7 @@ class EmptySchema(Schema):
 
 class BaseValidatorSchema(Schema):
     """
-    Schema that validates parameter revisions such as:
+    Schema that validates parameter adjustments such as:
     ```
     {
         "STD": [{
@@ -171,7 +171,7 @@ class BaseValidatorSchema(Schema):
         """
         Do range validation for a parameter.
         """
-        param_info = getattr(self.context["base_spec"], param_name)
+        param_info = getattr(self.context["spec"], param_name)
         dims = " , ".join(
             [f"{k}={param_spec[k]}" for k in param_spec if k != "value"]
         )
@@ -251,7 +251,7 @@ class BaseValidatorSchema(Schema):
         """
         Operator values (`op_value`) are the values pointed to by the "min"
         and "max" keys. These can be values to compare against, another
-        variable to compare against, or the default value of the revised
+        variable to compare against, or the default value of the adjusted
         variable.
         """
         if op_value in self.fields:
@@ -268,12 +268,12 @@ class BaseValidatorSchema(Schema):
         self, oth_param_name, param_name, param_spec, raw_data
     ):
         """
-        Get the value that the revised variable will be compared against.
+        Get the value that the adjusted variable will be compared against.
 
         TODO: if min/max point to another variable, first check whether that
-        variable was specified in the revision.
+        variable was specified in the adjustment.
         """
-        oth_param = getattr(self.context["base_spec"], oth_param_name)
+        oth_param = getattr(self.context["spec"], oth_param_name)
         vals = oth_param["value"]
         dims_to_check = tuple(k for k in param_spec if k != "value")
         res = [

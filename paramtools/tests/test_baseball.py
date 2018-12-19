@@ -16,7 +16,7 @@ def field_map():
 
 
 @pytest.fixture
-def revision():
+def adjustment():
     return {
         "pitcher": [{"value": "Julio Teheran"}],
         "batter": [{"value": "Bryce Harper"}],
@@ -31,15 +31,15 @@ def schema_def_path():
 
 
 @pytest.fixture
-def base_spec_path():
-    return os.path.join(CURRENT_PATH, "../../examples/baseball/baseline.json")
+def defaults_spec_path():
+    return os.path.join(CURRENT_PATH, "../../examples/baseball/defaults.json")
 
 
 @pytest.fixture
-def BaseballParams(schema_def_path, base_spec_path):
+def BaseballParams(schema_def_path, defaults_spec_path):
     class _BaseballParams(parameters.Parameters):
-        project_schema = schema_def_path
-        baseline_parameters = base_spec_path
+        schema = schema_def_path
+        defaults = defaults_spec_path
 
     return _BaseballParams
 
@@ -49,17 +49,17 @@ def test_load_schema(BaseballParams):
     assert params
 
 
-def test_revise_schema(BaseballParams, revision):
+def test_adjust_schema(BaseballParams, adjustment):
     params = BaseballParams()
-    params.revise(revision)
-    assert params.get("pitcher") == revision["pitcher"]
+    params.adjust(adjustment)
+    assert params.get("pitcher") == adjustment["pitcher"]
 
-    r1 = dict(revision, **{"start_date": [{"value": "2007-01-01"}]})
+    a1 = dict(adjustment, **{"start_date": [{"value": "2007-01-01"}]})
     params = BaseballParams()
     with pytest.raises(ValidationError):
-        params.revise(r1)
+        params.adjust(a1)
 
-    r2 = dict(revision, **{"pitcher": [{"value": "not a pitcher"}]})
+    a2 = dict(adjustment, **{"pitcher": [{"value": "not a pitcher"}]})
     params = BaseballParams()
     with pytest.raises(ValidationError):
-        params.revise(r2)
+        params.adjust(a2)

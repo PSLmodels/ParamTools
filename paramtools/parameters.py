@@ -14,22 +14,22 @@ class ParameterUpdateException(Exception):
 
 
 class Parameters:
-    project_schema = None
-    baseline_parameters = None
+    schema = None
+    defaults = None
     field_map = {}
 
     def __init__(self):
         sb = SchemaBuilder(
-            self.project_schema, self.baseline_parameters, self.field_map
+            self.schema, self.defaults, self.field_map
         )
-        base_spec, self._validator_schema = sb.build_schemas()
-        for k, v in base_spec.items():
+        defaults, self._validator_schema = sb.build_schemas()
+        for k, v in defaults.items():
             setattr(self, k, v)
-        self._validator_schema.context["base_spec"] = self
+        self._validator_schema.context["spec"] = self
 
-    def revise(self, params_or_path):
+    def adjust(self, params_or_path):
         """
-        Method to deserialize and validate parameter revision.
+        Method to deserialize and validate parameter adjustments.
         `params_or_path` can be a file path or a `dict` that has not been
         fully deserialized.
 
@@ -48,7 +48,7 @@ class Parameters:
         clean_params = self._validator_schema.load(params)
         for param, value in clean_params.items():
             self._update_param(param, value)
-        self._validator_schema.context["base_spec"] = self
+        self._validator_schema.context["spec"] = self
 
     def get(self, param, **kwargs):
         value = getattr(self, param)["value"]

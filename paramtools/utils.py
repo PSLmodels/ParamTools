@@ -34,9 +34,9 @@ def get_example_paths(name):
     assert name in ("taxcalc", "weather")
     current_path = os.path.abspath(os.path.dirname(__file__))
     schema_def_path = os.path.join(
-        current_path, f"../examples/{name}/baseschema.json"
+        current_path, f"../examples/{name}/schema.json"
     )
-    base_spec_path = os.path.join(
-        current_path, f"../examples/{name}/baseline.json"
+    default_spec_path = os.path.join(
+        current_path, f"../examples/{name}/defaults.json"
     )
-    return (schema_def_path, base_spec_path)
+    return (schema_def_path, default_spec_path)
