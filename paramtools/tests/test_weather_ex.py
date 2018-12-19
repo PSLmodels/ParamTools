@@ -17,65 +17,42 @@ def field_map():
 
 
 @pytest.fixture
-def revision():
-    return {
-        "average_high_temperature": [
-            {
-                "city": "Washington, D.C.",
-                "month": "November",
-                "dayofmonth": 1,
-                "value": 60,
-            },
-            {
-                "city": "Washington, D.C.",
-                "month": "November",
-                "dayofmonth": 2,
-                "value": 63,
-            },
-        ],
-        "average_precipitation": [
-            {"city": "Atlanta, GA", "month": "November", "value": 1}
-        ],
-    }
-
-
-@pytest.fixture
 def schema_def_path():
-    return os.path.join(CURRENT_PATH, "../../examples/weather/baseschema.json")
+    return os.path.join(CURRENT_PATH, "../../examples/weather/schema.json")
 
 
 @pytest.fixture
-def base_spec_path():
-    return os.path.join(CURRENT_PATH, "../../examples/weather/baseline.json")
+def defaults_spec_path():
+    return os.path.join(CURRENT_PATH, "../../examples/weather/defaults.json")
 
 
 @pytest.fixture
-def WeatherParams(schema_def_path, base_spec_path):
+def WeatherParams(schema_def_path, defaults_spec_path):
     class _WeatherParams(parameters.Parameters):
-        project_schema = schema_def_path
-        baseline_parameters = base_spec_path
+        schema = schema_def_path
+        defaults = defaults_spec_path
 
     return _WeatherParams
 
 
-def test_load_schema(revision, WeatherParams):
+def test_load_schema(WeatherParams):
     params = WeatherParams()
 
 
-def test_get_all_parameters(WeatherParams, base_spec_path):
+def test_specification(WeatherParams, defaults_spec_path):
     wp = WeatherParams()
-    params = wp.get_all()
-    assert set(params.keys()) == set(
+    spec = wp.specification()
+    assert set(spec.keys()) == set(
         ["average_high_temperature", "average_precipitation"]
     )
-    with open(base_spec_path) as f:
+    with open(defaults_spec_path) as f:
         exp = json.loads(f.read())
     assert (
-        params["average_high_temperature"]
+        spec["average_high_temperature"]
         == exp["average_high_temperature"]["value"]
     )
     assert (
-        params["average_precipitation"]
+        spec["average_precipitation"]
         == exp["average_precipitation"]["value"]
     )
 
@@ -100,11 +77,11 @@ def test_get_all_parameters(WeatherParams, base_spec_path):
         ],
     }
 
-    assert wp.get_all(month="November") == exp
+    assert wp.specification(month="November") == exp
 
 
 def test_failed_udpate(WeatherParams):
-    revision = {
+    adjustment = {
         "average_high_temperature": [
             {
                 "city": "Washington, D.C.",
@@ -122,7 +99,7 @@ def test_failed_udpate(WeatherParams):
     }
     params = WeatherParams()
     with pytest.raises(parameters.ParameterUpdateException):
-        params.revise(revision)
+        params.adjust(adjustment)
 
 
 def test_failed_get(WeatherParams):
@@ -131,11 +108,11 @@ def test_failed_get(WeatherParams):
         params.get("average_precipitation", notallowed=1)
 
 
-def test_doc_example(schema_def_path, base_spec_path):
+def test_doc_example(schema_def_path, defaults_spec_path):
     from paramtools.parameters import Parameters
     from paramtools.utils import get_example_paths
 
-    revision = {
+    adjustment = {
         "average_high_temperature": [
             {
                 "city": "Washington, D.C.",
@@ -153,25 +130,25 @@ def test_doc_example(schema_def_path, base_spec_path):
     }
     # project_schema, baseline_parameters = get_example_paths('weather')
     class WeatherParams(parameters.Parameters):
-        project_schema = schema_def_path
-        baseline_parameters = base_spec_path
+        schema = schema_def_path
+        defaults = defaults_spec_path
 
     params = WeatherParams()
     print(params.get("average_high_temperature", month="November"))
 
-    params.revise(revision)
+    params.adjust(adjustment)
     print(params.get("average_high_temperature", month="November"))
 
-    revision["average_high_temperature"][0]["value"] = "HOT"
+    adjustment["average_high_temperature"][0]["value"] = "HOT"
 
     # raises error:
     with pytest.raises(exceptions.ValidationError) as excinfo:
-        params.revise(revision)
+        params.adjust(adjustment)
 
     # raises error:
-    revision["average_high_temperature"][0]["value"] = 2000
-    revision["average_high_temperature"][1]["value"] = 3000
+    adjustment["average_high_temperature"][0]["value"] = 2000
+    adjustment["average_high_temperature"][1]["value"] = 3000
 
     with pytest.raises(exceptions.ValidationError) as excinfo:
-        params.revise(revision)
+        params.adjust(adjustment)
     print(excinfo)

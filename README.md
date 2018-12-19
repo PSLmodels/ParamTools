@@ -1,9 +1,9 @@
 # ParamTools
 
 ParamTools defines the parameter input space for computational modeling projects.
-- Defines the baseline parameter space.
-- Facilitates updating that space.
-- Performs validation on the baseline space and the updated space.
+- Defines the default parameter space.
+- Facilitates adjusting that space.
+- Performs validation on the default space and the adjusted space.
 
 How to get it
 -----------------------------------------
@@ -23,7 +23,7 @@ pip install -e .
 ```
 
 
-Project Schema
+Specification Schema
 --------------------------------------
 
 Define the dimensions of the parameter space
@@ -57,15 +57,15 @@ Define the dimensions of the parameter space
 }
 ```
 
-The "dims" component of the Parameter Schema specifies type and validation information for each dimension in the parameter space. `pararmtools` uses this information to check whether the value is the correct type and meets validation requirements, such as a number falling in the correct range. The "dims" component is used to validate the baseline parameter specification and user revisions to it.
+The "dims" component of the Specification Schema specifies type and validation information for each dimension in the parameter space. `pararmtools` uses this information to check whether the value is the correct type and meets validation requirements, such as a number falling in the correct range. The "dims" component is used to validate the Default Specification and user adjustments to it.
 
-It is likely that the project needs extra information in addition to that required by the minimum parameter definition required by `pararmtools`. This information could add extra documentation or specify parameters for filling out the remaining parts of the baseline parameter space. It is stored in the "optional_parameters" component of the Parameter Schema.
+It is likely that the project needs extra information in addition to that required by the minimum parameter definition required by `pararmtools`. This information could add extra documentation or specify parameters for filling out the remaining parts of the default parameter space. It is stored in the "optional_parameters" component of the Parameter Schema.
 
 
-Baseline Parameters
+Default Specification
 ---------------------------------------------
 
-Define the baseline values of the project's parameter space
+Define the default values of the project's parameter space
 
 ```json
 {
@@ -157,9 +157,9 @@ Define the baseline values of the project's parameter space
 - `type`: Type of the parameter (integer, float, string, boolean, etc)
 - `number_dims`: The number of dimensions for the specified value as in [`numpy.ndim`][]
   - e.g. `number_dims` is 1 for `"value': {"city": "Washington", "state": "D.C.", "value": [38, -77]}`, that is "value" points to a one dimensional array `[38, -77]`
-- `value`: the baseline value for this parameter
-  - this describes a baseline value for all points in the parameter space for this particular parameter
-  - e.g. if describing the baseline value for the average temperature in a given city on a given day:
+- `value`: the default value for this parameter
+  - this describes a default value for all points in the parameter space for this particular parameter
+  - e.g. if describing the default value for the average temperature in a given city on a given day:
   ```json
     "value": [
         {"city": "Washington, D.C.",
@@ -181,10 +181,10 @@ Define the baseline values of the project's parameter space
 - `out_of_range_action`: action to take when specified parameter is outside of the specified range. options are `stop` or `warn`
 
 
-Revision Schema
+Adjustment Schema
 ----------------------------
 
-Revise the Baseline Parameters
+Adjust a specification
 
 ```json
 {
@@ -207,14 +207,14 @@ Revise the Baseline Parameters
 }
 ```
 
-The Revision Schema defines the data format used for revising baseline parameters. This schema is defined using the parameter space dimension from the Project Schema and the "type" and "num_dimensions" fields in the Baseline parameters.
+The Adjustment Schema defines the data format used for adjusting a given specification.
 
 Use the `pararmtools` implementation!
 -------------------------------------------
 
 `pararmtools` implements the following parameter validation functionality:
-- reads, deserializes, and validates the baseline parameter file
-- validates user revisions on a type, range, and structure basis
+- reads, deserializes, and validates the default specification file
+- validates user adjustments on a type, range, and structure basis
   - the range includes min/max on "default" and against other parameters
 - Attaches parameters to a class instance to be accessed by the downstream project
 
@@ -222,18 +222,32 @@ It does not yet do:
 - Format parameters into an array or other structures that the downstream project may find more convenient
 
 
-Subclass the `Parameters` class and set your config files:
+Subclass the `Parameters` class and set your schema and specification files:
 
 ```python
-from paramtools import parameters
+from paramtools.parameters import Parameters
 from paramtools.utils import get_example_paths
 
-# example weather parameters
-project_schema, baseline_parameters = get_example_paths('weather')
-
-class WeatherParams(parameters.Parameters):
-    project_schema = project_schema
-    baseline_parameters = baseline_parameters
+adjustment = {
+    "average_high_temperature": [
+        {
+            "city": "Washington, D.C.",
+            "month": "November",
+            "dayofmonth": 1,
+            "value": 60,
+        },
+        {
+            "city": "Atlanta, GA",
+            "month": "November",
+            "dayofmonth": 1,
+            "value": 63,
+        },
+    ]
+}
+schema, defaults = get_example_paths('weather')
+class WeatherParams(Parameters):
+    schema = schema
+    defaults = defaults
 
 params = WeatherParams()
 
@@ -248,10 +262,10 @@ print(params.get("average_high_temperature", month="November"))
 
 ```
 
-Revise the basline parameters:
+Adjust the default specification:
 
 ```python
-revision = {
+adjustment = {
     "average_high_temperature": [
         {
             "city": "Washington, D.C.",
@@ -268,7 +282,7 @@ revision = {
     ]
 }
 
-params.revise(revision)
+params.adjust(adjustment)
 
 # check to make sure the values were updated:
 print(params.get("average_high_temperature", month="November"))
@@ -279,9 +293,9 @@ print(params.get("average_high_temperature", month="November"))
 
 Errors on invalid input:
 ```python
-revision["average_high_temperature"][0]["value"] = "HOT"
+adjustment["average_high_temperature"][0]["value"] = "HOT"
 # ==> raises error:
-params.revise(revision)
+params.adjust(adjustment)
 
 # output: ValidationError: {'average_high_temperature': {0: {'value': ['Not a valid number.']}}}
 
@@ -289,10 +303,10 @@ params.revise(revision)
 
 Errors on input that's out of range:
 ```python
-revision["average_high_temperature"][0]["value"] = 2000
-revision["average_high_temperature"][1]["value"] = 3000
+adjustment["average_high_temperature"][0]["value"] = 2000
+adjustment["average_high_temperature"][1]["value"] = 3000
 
-params.revise(revision)
+params.adjust(adjustment)
 
 # ouput: ValidationError: {'average_high_temperature': ['average_high_temperature 2000 must be less than 135 for dimensionsmonth=November , city=Washington, D.C. , dayofmonth=1', 'average_high_temperature 3000 must be less than 135 for dimensionsmonth=November , city=Atlanta, GA , dayofmonth=1']}
 

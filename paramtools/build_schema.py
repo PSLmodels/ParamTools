@@ -1,6 +1,3 @@
-import json
-import os
-
 from marshmallow import fields
 
 from paramtools.schema import EmptySchema, BaseValidatorSchema, get_param_schema
@@ -21,12 +18,12 @@ class SchemaBuilder:
     deserialize and validate parameter data.
     """
 
-    def __init__(self, schema_def_path, base_spec_path, field_map={}):
-        schema_def = utils.read_json(schema_def_path)
+    def __init__(self, schema, defaults, field_map={}):
+        schema = utils.read_json(schema)
         (self.BaseParamSchema, self.dim_validators) = get_param_schema(
-            schema_def, field_map=field_map
+            schema, field_map=field_map
         )
-        self.base_spec = utils.read_json(base_spec_path)
+        self.defaults = utils.read_json(defaults)
 
     def build_schemas(self):
         """
@@ -52,7 +49,7 @@ class SchemaBuilder:
         """
         param_dict = {}
         validator_dict = {}
-        for k, v in self.base_spec.items():
+        for k, v in self.defaults.items():
             fieldtype = utils.get_type(v)
             classattrs = {"value": fieldtype, **self.dim_validators}
             validator_dict[k] = type(
@@ -67,7 +64,7 @@ class SchemaBuilder:
         classattrs = {k: fields.Nested(v) for k, v in param_dict.items()}
         ParamSchema = type("ParamSchema", (EmptySchema,), classattrs)
         param_schema = ParamSchema()
-        cleaned_base_spec = param_schema.load(self.base_spec)
+        cleaned_defaults = param_schema.load(self.defaults)
 
         classattrs = {
             k: fields.Nested(v(many=True)) for k, v in validator_dict.items()
@@ -77,4 +74,4 @@ class SchemaBuilder:
         )
         validator_schema = ValidatorSchema()
 
-        return cleaned_base_spec, validator_schema
+        return cleaned_defaults, validator_schema
