@@ -1,3 +1,6 @@
+import os
+import json
+
 from paramtools.build_schema import SchemaBuilder
 from paramtools import utils
 

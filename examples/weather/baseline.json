@@ -33,7 +33,7 @@
             {"city": "Atlanta, GA", "month": "November", "dayofmonth": 1, "value": 64},
             {"city": "Atlanta, GA", "month": "December", "dayofmonth": 1, "value": 55}
         ],
-        "range": {"min": -130, "max": 135},
+        "validators": {"range": {"min": -130, "max": 135}},
         "out_of_range_minmsg": "",
         "out_of_range_maxmsg": "",
         "out_of_range_action": "warn"
@@ -72,7 +72,7 @@
             {"city": "Atlanta, GA", "month": "November", "value": 3.6},
             {"city": "Atlanta, GA", "month": "December", "value": 4.1}
         ],
-        "range": {"min": 0, "max": 50},
+        "validators": {"range": {"min": 0, "max": 50}},
         "out_of_range_minmsg": "str",
         "out_of_range_maxmsg": "str",
         "out_of_range_action": "stop"
