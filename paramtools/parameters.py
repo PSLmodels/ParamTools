@@ -64,7 +64,7 @@ class Parameters:
             )
         return ret
 
-    def get_all(self, **kwargs):
+    def specification(self, **kwargs):
         all_params = {}
         for param in self._validator_schema.fields:
             all_params[param] = self.get(param, **kwargs)
