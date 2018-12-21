@@ -40,3 +40,18 @@ def get_example_paths(name):
         current_path, f"../examples/{name}/defaults.json"
     )
     return (schema_def_path, default_spec_path)
+
+
+def get_leaves(item):
+    """
+    Return all values of a dictionary or the values of a list that
+    is a value of a dictionary.
+    """
+    if isinstance(item, dict):
+        for k, v in item.items():
+            return get_leaves(v)
+    elif isinstance(item, list):
+        for li in item:
+            return get_leaves(li)
+    else:
+        return item
