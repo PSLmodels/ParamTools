@@ -10,25 +10,17 @@ def test_get_leaves():
         },
     }
 
-    gl = utils.LeafGetter()
-    gl.get(t)
-    assert gl.leaves == [f"leaf{i}" for i in range(1, 9)]
+    leaves = utils.get_leaves(t)
+    assert leaves == [f"leaf{i}" for i in range(1, 9)]
 
-    gl = utils.LeafGetter()
-    gl.get([t])
-    assert gl.leaves == [f"leaf{i}" for i in range(1, 9)]
+    leaves = utils.get_leaves([t])
+    assert leaves == [f"leaf{i}" for i in range(1, 9)]
 
-    gl = utils.LeafGetter()
-    gl.get({})
-    assert gl.leaves == []
+    leaves = utils.get_leaves({})
+    assert leaves == []
 
-    gl = utils.LeafGetter()
-    gl.get([])
-    assert gl.leaves == []
+    leaves = utils.get_leaves([])
+    assert leaves == []
 
-    gl = utils.LeafGetter()
-    gl.get("leaf")
-    assert gl.leaves == ["leaf"]
-
-    gl.clear()
-    assert gl.leaves == []
+    leaves = utils.get_leaves("leaf")
+    assert leaves == ["leaf"]

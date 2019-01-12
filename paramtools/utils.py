@@ -66,5 +66,8 @@ class LeafGetter:
         else:
             self.leaves.append(item)
 
-    def clear(self):
-        self.leaves = []
+
+def get_leaves(item):
+    gl = LeafGetter()
+    gl.get(item)
+    return gl.leaves
