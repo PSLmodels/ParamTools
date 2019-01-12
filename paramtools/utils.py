@@ -42,16 +42,29 @@ def get_example_paths(name):
     return (schema_def_path, default_spec_path)
 
 
-def get_leaves(item):
+class LeafGetter:
     """
-    Return all values of a dictionary or the values of a list that
-    is a value of a dictionary.
+    Return all non-dict or non-list items of a given object. This object
+    should be an item or a list or dictionary composed of non-iterable items,
+    nested dictionaries or nested lists.
+
+    A functional approach was considered instead of this class. However, I was
+    unable to come up with a way to store all of the leaves without "cheating"
+    and keeping "leaf" state.
     """
-    if isinstance(item, dict):
-        for k, v in item.items():
-            return get_leaves(v)
-    elif isinstance(item, list):
-        for li in item:
-            return get_leaves(li)
-    else:
-        return item
+
+    def __init__(self):
+        self.leaves = []
+
+    def get(self, item):
+        if isinstance(item, dict):
+            for _, v in item.items():
+                self.get(v)
+        elif isinstance(item, list):
+            for li in item:
+                self.get(li)
+        else:
+            self.leaves.append(item)
+
+    def clear(self):
+        self.leaves = []
