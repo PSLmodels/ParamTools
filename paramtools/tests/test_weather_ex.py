@@ -52,8 +52,7 @@ def test_specification(WeatherParams, defaults_spec_path):
         == exp["average_high_temperature"]["value"]
     )
     assert (
-        spec["average_precipitation"]
-        == exp["average_precipitation"]["value"]
+        spec["average_precipitation"] == exp["average_precipitation"]["value"]
     )
 
     exp = {
