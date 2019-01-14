@@ -19,9 +19,7 @@ class Parameters:
     field_map = {}
 
     def __init__(self):
-        sb = SchemaBuilder(
-            self.schema, self.defaults, self.field_map
-        )
+        sb = SchemaBuilder(self.schema, self.defaults, self.field_map)
         defaults, self._validator_schema = sb.build_schemas()
         for k, v in defaults.items():
             setattr(self, k, v)
