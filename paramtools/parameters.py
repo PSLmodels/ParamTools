@@ -47,20 +47,12 @@ class Parameters:
         else:
             raise ValueError("params_or_path is not dict or file path")
 
-        def format_errors(validation_error):
-            if compress_errors:
-                for param, messages in validation_error.messages.items():
-                    self.errors[param] = utils.get_leaves(messages)
-                validation_error.messages = self.errors
-            else:
-                self.errors.update(validation_error.messages)
-
         self.errors = {}
         # do type validation
         try:
             clean_params = self._validator_schema.load(params)
         except ValidationError as ve:
-            format_errors(ve)
+            self.format_errors(ve, compress_errors)
 
         # if no errors from type validation, do choice, range, etc. validation.
         if not self.errors:
@@ -68,7 +60,7 @@ class Parameters:
                 try:
                     self._update_param(param, value)
                 except ValidationError as ve:
-                    format_errors(ve)
+                    self.format_errors(ve, compress_errors)
 
         self._validator_schema.context["spec"] = self
 
@@ -99,6 +91,14 @@ class Parameters:
             except ParameterGetException:
                 pass
         return all_params
+
+    def format_errors(self, validation_error, compress_errors=True):
+        if compress_errors:
+            for param, messages in validation_error.messages.items():
+                self.errors[param] = utils.get_leaves(messages)
+            validation_error.messages = self.errors
+        else:
+            self.errors.update(validation_error.messages)
 
     def _update_param(self, param, new_values):
         curr_vals = getattr(self, param)["value"]
