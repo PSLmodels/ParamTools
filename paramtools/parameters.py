@@ -95,7 +95,10 @@ class Parameters:
     def format_errors(self, validation_error, compress_errors=True):
         if compress_errors:
             for param, messages in validation_error.messages.items():
-                self.errors[param] = utils.get_leaves(messages)
+                if param in self.errors:
+                    self.errors[param].append(utils.get_leaves(messages))
+                else:
+                    self.errors[param] = utils.get_leaves(messages)
             validation_error.messages = self.errors
         else:
             self.errors.update(validation_error.messages)
