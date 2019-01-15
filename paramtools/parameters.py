@@ -1,6 +1,8 @@
 import os
 import json
 
+from marshmallow import ValidationError
+
 from paramtools.build_schema import SchemaBuilder
 from paramtools import utils
 
@@ -24,8 +26,9 @@ class Parameters:
         for k, v in defaults.items():
             setattr(self, k, v)
         self._validator_schema.context["spec"] = self
+        self.errors = {}
 
-    def adjust(self, params_or_path):
+    def adjust(self, params_or_path, raise_errors=True, compress_errors=True):
         """
         Method to deserialize and validate parameter adjustments.
         `params_or_path` can be a file path or a `dict` that has not been
@@ -43,10 +46,34 @@ class Parameters:
             params = params_or_path
         else:
             raise ValueError("params_or_path is not dict or file path")
-        clean_params = self._validator_schema.load(params)
-        for param, value in clean_params.items():
-            self._update_param(param, value)
+
+        def format_errors(validation_error):
+            if compress_errors:
+                for param, messages in validation_error.messages.items():
+                    self.errors[param] = utils.get_leaves(messages)
+                validation_error.messages = self.errors
+            else:
+                self.errors.update(validation_error.messages)
+
+        self.errors = {}
+        # do type validation
+        try:
+            clean_params = self._validator_schema.load(params)
+        except ValidationError as ve:
+            format_errors(ve)
+
+        # if no errors from type validation, do choice, range, etc. validation.
+        if not self.errors:
+            for param, value in clean_params.items():
+                try:
+                    self._update_param(param, value)
+                except ValidationError as ve:
+                    format_errors(ve)
+
         self._validator_schema.context["spec"] = self
+
+        if raise_errors and self.errors:
+            raise ValidationError(self.errors)
 
     def get(self, param, **kwargs):
         value = getattr(self, param)["value"]
@@ -65,7 +92,12 @@ class Parameters:
     def specification(self, **kwargs):
         all_params = {}
         for param in self._validator_schema.fields:
-            all_params[param] = self.get(param, **kwargs)
+            try:
+                result = self.get(param, **kwargs)
+                if result:
+                    all_params[param] = result
+            except ParameterGetException:
+                pass
         return all_params
 
     def _update_param(self, param, new_values):

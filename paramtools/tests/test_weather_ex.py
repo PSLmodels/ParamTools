@@ -151,3 +151,6 @@ def test_doc_example(schema_def_path, defaults_spec_path):
     with pytest.raises(exceptions.ValidationError) as excinfo:
         params.adjust(adjustment)
     print(excinfo)
+
+    params.adjust(adjustment, raise_errors=False)
+    print(params.errors)

@@ -220,13 +220,13 @@ class BaseValidatorSchema(Schema):
             )
         min_error = (
             "{param_name} {input} must be greater than "
-            "{min} for dimensions{dims}"
+            "{min} for dimensions {dims}"
         ).format(
             param_name=param_name, dims=dims, input="{input}", min="{min}"
         )
         max_error = (
             "{param_name} {input} must be less than "
-            "{max} for dimensions{dims}"
+            "{max} for dimensions {dims}"
         ).format(
             param_name=param_name, dims=dims, input="{input}", max="{max}"
         )
@@ -238,7 +238,7 @@ class BaseValidatorSchema(Schema):
         choices = choice_dict["choices"]
         error = (
             '{param_name} "{input}" must be in list of choices '
-            "{choices} for dimensions{dims}"
+            "{choices} for dimensions {dims}"
         ).format(
             param_name=param_name,
             dims=dims,
@@ -254,13 +254,9 @@ class BaseValidatorSchema(Schema):
         variable to compare against, or the default value of the adjusted
         variable.
         """
-        if op_value in self.fields:
+        if op_value in self.fields or op_value == "default":
             return self._get_comparable_value(
                 op_value, param_name, param_spec, raw_data
-            )
-        if op_value == "default":
-            return self._get_comparable_value(
-                param_name, param_name, param_spec, raw_data
             )
         return op_value
 
@@ -269,12 +265,21 @@ class BaseValidatorSchema(Schema):
     ):
         """
         Get the value that the adjusted variable will be compared against.
-
-        TODO: if min/max point to another variable, first check whether that
-        variable was specified in the adjustment.
+        Candidates are:
+        - the parameter's own default value if "default" is specified
+        - a reference variable's value
+          - first, look in the raw adjustment data
+          - second, look in the defaults data
         """
-        oth_param = getattr(self.context["spec"], oth_param_name)
-        vals = oth_param["value"]
+        if oth_param_name in raw_data:
+            vals = raw_data[oth_param_name]
+        else:
+            # If comparing against the "default" value then get the current
+            # value of the parameter being updated.
+            if oth_param_name == "default":
+                oth_param_name = param_name
+            oth_param = getattr(self.context["spec"], oth_param_name)
+            vals = oth_param["value"]
         dims_to_check = tuple(k for k in param_spec if k != "value")
         res = [
             val
