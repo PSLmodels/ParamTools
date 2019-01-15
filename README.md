@@ -297,7 +297,17 @@ adjustment["average_high_temperature"][0]["value"] = "HOT"
 # ==> raises error:
 params.adjust(adjustment)
 
-# output: ValidationError: {'average_high_temperature': {0: {'value': ['Not a valid number.']}}}
+# output: marshmallow.exceptions.ValidationError: {'average_high_temperature': ['Not a valid number.']}
+
+```
+
+Silence the errors by setting `raise_errors` to `False`:
+```python
+adjustment["average_high_temperature"][0]["value"] = "HOT"
+# ==> raises error:
+params.adjust(adjustment, raise_errors=False)
+print(params.errors)
+# output: {'average_high_temperature': ['Not a valid number.']}
 
 ```
 
@@ -306,9 +316,13 @@ Errors on input that's out of range:
 adjustment["average_high_temperature"][0]["value"] = 2000
 adjustment["average_high_temperature"][1]["value"] = 3000
 
-params.adjust(adjustment)
+params.adjust(adjustment, raise_errors=False)
+print(params.errors)
 
-# ouput: ValidationError: {'average_high_temperature': ['average_high_temperature 2000 must be less than 135 for dimensionsmonth=November , city=Washington, D.C. , dayofmonth=1', 'average_high_temperature 3000 must be less than 135 for dimensionsmonth=November , city=Atlanta, GA , dayofmonth=1']}
+# ouput:
+# {
+#     'average_high_temperature': ['average_high_temperature 2000 must be less than 135 for dimensions month=November , city=Washington, D.C. , dayofmonth=1', 'average_high_temperature 3000 must be less than 135 for dimensions month=November , city=Atlanta, GA , dayofmonth=1']
+# }
 
 ```
 
