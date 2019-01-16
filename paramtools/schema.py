@@ -77,7 +77,7 @@ class BaseParamSchema(Schema):
     Defines a base parameter schema. This specifies the required fields and
     their types.
     {
-        "long_name": str,
+        "title": str,
         "description": str,
         "notes": str,
         "type": str (limited to 'int', 'float', 'bool', 'str'),
@@ -93,7 +93,7 @@ class BaseParamSchema(Schema):
     are required by the implementer of the schema.
     """
 
-    long_name = fields.Str(required=True)
+    title = fields.Str(required=True)
     description = fields.Str(required=True)
     notes = fields.Str(required=True)
     _type = fields.Str(
