@@ -1,14 +1,11 @@
 import os
 import json
+from collections import OrderedDict
 
 from marshmallow import ValidationError
 
 from paramtools.build_schema import SchemaBuilder
 from paramtools import utils
-
-
-class ParameterGetException(Exception):
-    pass
 
 
 class ParameterUpdateException(Exception):
@@ -68,28 +65,20 @@ class Parameters:
             raise ValidationError(self.errors)
 
     def get(self, param, **kwargs):
-        value = getattr(self, param)["value"]
-        ret = []
-        try:
-            for v in value:
-                if all(v[k] == kwargs[k] for k in kwargs):
-                    ret.append(v)
-        except KeyError:
-            raise ParameterGetException(
-                f"One of the provided keys {kwargs.keys()} is "
-                f"not allowed for parameter {param}"
-            )
-        return ret
+        """
+        Query a parameter's values along dimensions specified in `kwargs`.
+        """
+        return self._get(param, True, **kwargs)
 
-    def specification(self, **kwargs):
-        all_params = {}
+    def specification(self, meta_data=False, **kwargs):
+        all_params = OrderedDict()
         for param in self._validator_schema.fields:
-            try:
-                result = self.get(param, **kwargs)
-                if result:
-                    all_params[param] = result
-            except ParameterGetException:
-                pass
+            result = self._get(param, False, **kwargs)
+            if result:
+                if meta_data:
+                    param_data = getattr(self, param)
+                    result = dict(param_data, **{"value": result})
+                all_params[param] = result
         return all_params
 
     def format_errors(self, validation_error, compress_errors=True):
@@ -102,6 +91,21 @@ class Parameters:
             validation_error.messages = self.errors
         else:
             self.errors.update(validation_error.messages)
+
+    def _get(self, param, exact_match, **kwargs):
+        """
+        Private method for querying a parameter along some dimensions. If
+        exact_match is True, all values in `kwargs` must be equal to the
+        corresponding dimension in the parameter's "value" dictionary.
+        """
+        value = getattr(self, param)["value"]
+        ret = []
+        for v in value:
+            match = all(v[k] == kwargs[k] for k in kwargs
+                        if (k in v or exact_match))
+            if match:
+                ret.append(v)
+        return ret
 
     def _update_param(self, param, new_values):
         curr_vals = getattr(self, param)["value"]

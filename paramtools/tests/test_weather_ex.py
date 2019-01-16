@@ -103,7 +103,7 @@ def test_failed_udpate(WeatherParams):
 
 def test_failed_get(WeatherParams):
     params = WeatherParams()
-    with pytest.raises(parameters.ParameterGetException):
+    with pytest.raises(KeyError):
         params.get("average_precipitation", notallowed=1)
 
 

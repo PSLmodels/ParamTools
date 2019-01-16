@@ -34,22 +34,39 @@ def test_load_schema(TestParams):
     assert params
 
 
-def test_specification(TestParams, defaults_spec_path):
+def test_specification_and_get(TestParams, defaults_spec_path):
     params = TestParams()
-    spec = params.specification()
+    spec1 = params.specification()
 
     with open(defaults_spec_path) as f:
         exp = json.loads(f.read())
 
-    assert set(spec.keys()) == set(exp.keys())
+    assert set(spec1.keys()) == set(exp.keys())
 
-    assert spec["min_int_param"] == exp["min_int_param"]["value"]
+    assert spec1["min_int_param"] == exp["min_int_param"]["value"]
 
     exp = {
         "min_int_param": [{"dim0": "one", "dim1": 2, "value": 2}],
         "max_int_param": [{"dim0": "one", "dim1": 2, "value": 4}],
     }
-    assert params.specification(dim0="one") == exp
+    spec2 = params.specification(dim0="one")
+    # check that specification method got only the value item with dim0="one"
+    assert spec2["min_int_param"] == exp["min_int_param"]
+    assert spec2["max_int_param"] == exp["max_int_param"]
+
+    # check that get method got only value item with dim0="one"
+    assert params.get("min_int_param", dim0="one") == exp["min_int_param"]
+    assert params.get("max_int_param", dim0="one") == exp["max_int_param"]
+
+    # check that specification method gets other data, not containing a dim0
+    # dimension.
+    for param, data in spec1.items():
+        if all("dim0" not in val_item for val_item in data):
+            assert spec2[param] == data
+
+    # check that get method throws a KeyError when the dimension is wrong
+    with pytest.raises(KeyError):
+        params.get("max_int_param", notadimension="heyo")
 
 
 def test_adjust_int_param(TestParams):
