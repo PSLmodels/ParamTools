@@ -1,6 +1,6 @@
 {
     "average_high_temperature": {
-        "long_name": "Average High Temperature",
+        "title": "Average High Temperature",
         "description": "Average high temperature for each day for a selection of cities",
         "notes": "Data has only been collected for Atlanta and Washington and for only the first of the month.",
         "scale": "fahrenheit",
@@ -39,7 +39,7 @@
         "out_of_range_action": "warn"
     },
     "average_precipitation": {
-        "long_name": "Average Precipitation",
+        "title": "Average Precipitation",
         "description": "Average precipitation for a selection of cities by month",
         "notes": "Data has only been collected for Atlanta and Washington",
         "scale": "inches",

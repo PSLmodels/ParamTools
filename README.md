@@ -70,7 +70,7 @@ Define the default values of the project's parameter space
 ```json
 {
     "average_high_temperature": {
-        "long_name": "Average High Temperature",
+        "title": "Average High Temperature",
         "description": "Average high temperature for each day for a selection of cities",
         "notes": "Data has only been collected for Atlanta and Washington and for only the first of the month.",
         "scale": "fahrenheit",
@@ -109,7 +109,7 @@ Define the default values of the project's parameter space
         "out_of_range_action": "warn"
     },
     "average_precipitation": {
-        "long_name": "Average Precipitation",
+        "title": "Average Precipitation",
         "description": "Average precipitation for a selection of cities by month",
         "notes": "Data has only been collected for Atlanta and Washington",
         "scale": "inches",
@@ -151,7 +151,7 @@ Define the default values of the project's parameter space
 ```
 
 - `parameter_name`: Name of the variable where this value will be stored
-- `long_name`: A "human readable" name that you might use when speaking or writing about this parameter
+- `title`: A "human readable" name that you might use when speaking or writing about this parameter
 - `description`: Describes the parameter
 - `notes`: Advice for the user pertaining to this parameter
 - `type`: Type of the parameter (integer, float, string, boolean, etc)
@@ -209,8 +209,8 @@ Adjust a specification
 
 The Adjustment Schema defines the data format used for adjusting a given specification.
 
-Use the `pararmtools` implementation!
--------------------------------------------
+Use `pararmtools`
+-------------------
 
 `pararmtools` implements the following parameter validation functionality:
 - reads, deserializes, and validates the default specification file

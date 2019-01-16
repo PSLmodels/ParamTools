@@ -1,6 +1,6 @@
 {
     "pitcher": {
-        "long_name": "Pitcher Name",
+        "title": "Pitcher Name",
         "description": "Name of pitcher to pull data on",
         "section_1": "Parameters",
         "section_2": "Pitcher",
@@ -11,7 +11,7 @@
         "validators": {"choice": {"choices": ["Clayton Kershaw", "Julio Teheran", "Max Scherzer"]}}
     },
     "batter": {
-        "long_name": "Batter Name",
+        "title": "Batter Name",
         "description": "Name of batter for pitching matchup analysis",
         "section_1": "Parameters",
         "section_2": "Batter",
@@ -22,7 +22,7 @@
         "validators": {"choice": {"choices": ["Freddie Freeman", "Bryce Harper", "Mookie Betts"]}}
     },
     "start_date": {
-        "long_name": "Start Date",
+        "title": "Start Date",
         "description": "Date to start pulling statcast information",
         "section_1": "Parameters",
         "section_2": "Date",
@@ -33,7 +33,7 @@
         "validators": {"date_range": {"min": "2008-01-01", "max": "end_date"}}
     },
     "end_date": {
-        "long_name": "End Date",
+        "title": "End Date",
         "description": "Date to quit pulling statcast information",
         "section_1": "Parameters",
         "section_2": "Date",

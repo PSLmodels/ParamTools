@@ -1,6 +1,6 @@
 {
     "min_int_param": {
-        "long_name": "min integer parameter",
+        "title": "min integer parameter",
         "description": "Serves as minimum reference variable.",
         "notes": "See max_int_param",
         "opt0": "an option",
@@ -16,7 +16,7 @@
         "out_of_range_action": "stop"
     },
     "max_int_param": {
-        "long_name": "max integer parameter",
+        "title": "max integer parameter",
         "description": "Serves as maximum reference variable.",
         "notes": "See min_int_param",
         "opt0": "an option",
@@ -32,7 +32,7 @@
         "out_of_range_action": "stop"
     },
     "str_choice_param": {
-        "long_name": "String Choice Param",
+        "title": "String Choice Param",
         "description": "Example for string type params using a choice validator",
         "notes": "",
         "opt0": "another option",
@@ -47,7 +47,7 @@
         "out_of_range_action": "stop"
     },
     "date_param": {
-        "long_name": "Date parameter",
+        "title": "Date parameter",
         "description": "Example for a date parameter",
         "notes": "",
         "opt0": "another option",
@@ -62,7 +62,7 @@
         "out_of_range_action": "stop"
     },
     "date_min_param": {
-        "long_name": "Date Min Param",
+        "title": "Date Min Param",
         "description": "Serves as minimum reference variable.",
         "notes": "See date_max_param.",
         "opt0": "an option",
@@ -77,7 +77,7 @@
         "out_of_range_action": "stop"
     },
     "date_max_param": {
-        "long_name": "Date max parameter",
+        "title": "Date max parameter",
         "description": "Serves as maximum reference variable.",
         "notes": "See date_min_param.",
         "opt0": "an option",
@@ -92,7 +92,7 @@
         "out_of_range_action": "stop"
     },
     "float_list_param": {
-        "long_name": "Float List Param",
+        "title": "Float List Param",
         "description": "Example for a float, list param.",
         "notes": "",
         "opt0": "an option",
@@ -107,7 +107,7 @@
         "out_of_range_action": "stop"
     },
     "int_default_param": {
-        "long_name": "Integer Default Reference Param",
+        "title": "Integer Default Reference Param",
         "description": "Example for a int param using a default reference value",
         "notes": "",
         "opt0": "an option",
