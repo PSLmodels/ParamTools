@@ -15,6 +15,7 @@ from paramtools.parameters import Parameters
 from paramtools.utils import get_example_paths
 
 schema, defaults = get_example_paths('weather')
+
 class WeatherParams(Parameters):
     schema = schema
     defaults = defaults
@@ -64,7 +65,6 @@ print(params.get("average_high_temperature", month="November"))
 Errors on invalid input:
 ```python
 adjustment["average_high_temperature"][0]["value"] = "HOT"
-# ==> raises error:
 params.adjust(adjustment)
 
 # output: marshmallow.exceptions.ValidationError: {'average_high_temperature': ['Not a valid number.']}
@@ -74,9 +74,10 @@ params.adjust(adjustment)
 Silence the errors by setting `raise_errors` to `False`:
 ```python
 adjustment["average_high_temperature"][0]["value"] = "HOT"
-# ==> raises error:
 params.adjust(adjustment, raise_errors=False)
+
 print(params.errors)
+
 # output: {'average_high_temperature': ['Not a valid number.']}
 
 ```
