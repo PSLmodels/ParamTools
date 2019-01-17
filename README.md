@@ -14,22 +14,6 @@ Subclass the `Parameters` class and set your [schema](#specification-schema) and
 from paramtools.parameters import Parameters
 from paramtools.utils import get_example_paths
 
-adjustment = {
-    "average_high_temperature": [
-        {
-            "city": "Washington, D.C.",
-            "month": "November",
-            "dayofmonth": 1,
-            "value": 60,
-        },
-        {
-            "city": "Atlanta, GA",
-            "month": "November",
-            "dayofmonth": 1,
-            "value": 63,
-        },
-    ]
-}
 schema, defaults = get_example_paths('weather')
 class WeatherParams(Parameters):
     schema = schema
