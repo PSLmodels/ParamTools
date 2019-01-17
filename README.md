@@ -5,7 +5,114 @@ ParamTools defines the parameter input space for computational modeling projects
 - Facilitates adjusting that space.
 - Performs validation on the default space and the adjusted space.
 
-How to get it
+How to use ParamTools
+---------------------------
+
+Subclass the `Parameters` class and set your [schema](#specification-schema) and [specification](#default-specification) files:
+
+```python
+from paramtools.parameters import Parameters
+from paramtools.utils import get_example_paths
+
+adjustment = {
+    "average_high_temperature": [
+        {
+            "city": "Washington, D.C.",
+            "month": "November",
+            "dayofmonth": 1,
+            "value": 60,
+        },
+        {
+            "city": "Atlanta, GA",
+            "month": "November",
+            "dayofmonth": 1,
+            "value": 63,
+        },
+    ]
+}
+schema, defaults = get_example_paths('weather')
+class WeatherParams(Parameters):
+    schema = schema
+    defaults = defaults
+
+params = WeatherParams()
+
+```
+
+Query along allowed dimensions:
+
+```python
+print(params.get("average_high_temperature", month="November"))
+
+# output: [{'month': 'November', 'city': 'Washington, D.C.', 'value': 59, 'dayofmonth': 1}, {'month': 'November', 'city': 'Atlanta, GA', 'value': 64, 'dayofmonth': 1}]
+
+```
+
+[Adjust](#adjustment-schema) the default specification:
+
+```python
+adjustment = {
+    "average_high_temperature": [
+        {
+            "city": "Washington, D.C.",
+            "month": "November",
+            "dayofmonth": 1,
+            "value": 60,
+        },
+        {
+            "city": "Atlanta, GA",
+            "month": "November",
+            "dayofmonth": 1,
+            "value": 63,
+        },
+    ]
+}
+
+params.adjust(adjustment)
+
+# check to make sure the values were updated:
+print(params.get("average_high_temperature", month="November"))
+
+# output: [{'month': 'November', 'city': 'Washington, D.C.', 'value': 60, 'dayofmonth': 1}, {'month': 'November', 'city': 'Atlanta, GA', 'value': 63, 'dayofmonth': 1}]
+```
+
+
+Errors on invalid input:
+```python
+adjustment["average_high_temperature"][0]["value"] = "HOT"
+# ==> raises error:
+params.adjust(adjustment)
+
+# output: marshmallow.exceptions.ValidationError: {'average_high_temperature': ['Not a valid number.']}
+
+```
+
+Silence the errors by setting `raise_errors` to `False`:
+```python
+adjustment["average_high_temperature"][0]["value"] = "HOT"
+# ==> raises error:
+params.adjust(adjustment, raise_errors=False)
+print(params.errors)
+# output: {'average_high_temperature': ['Not a valid number.']}
+
+```
+
+Errors on input that's out of range:
+```python
+adjustment["average_high_temperature"][0]["value"] = 2000
+adjustment["average_high_temperature"][1]["value"] = 3000
+
+params.adjust(adjustment, raise_errors=False)
+print(params.errors)
+
+# ouput:
+# {
+#     'average_high_temperature': ['average_high_temperature 2000 must be less than 135 for dimensions month=November , city=Washington, D.C. , dayofmonth=1', 'average_high_temperature 3000 must be less than 135 for dimensions month=November , city=Atlanta, GA , dayofmonth=1']
+# }
+
+```
+
+How to install ParamTools
 -----------------------------------------
 
 Install from PyPI:
@@ -22,6 +129,7 @@ cd ParamTools
 pip install -e .
 ```
 
+Credits: ParamTools is built on top of the excellent [marshmallow][] JSON schema and validation framework. I encourage everyone to checkout their repo and documentation. ParamTools was modeled off of [Tax-Calculator's][] parameter processing and validation engine due to its maturity and sophisticated capabilities.
 
 Specification Schema
 --------------------------------------
@@ -322,125 +430,6 @@ JSON Object and Property Definitions
        "value": [{"city": "Washington", "state": "D.C.", "value": [38, -77]}]
    }
    ```
-
-Use `pararmtools`
--------------------
-
-`pararmtools` implements the following parameter validation functionality:
-- reads, deserializes, and validates the default specification file
-- validates user adjustments on a type, range, and structure basis
-  - the range includes min/max on "default" and against other parameters
-- Attaches parameters to a class instance to be accessed by the downstream project
-
-It does not yet do:
-- Format parameters into an array or other structures that the downstream project may find more convenient
-
-
-Subclass the `Parameters` class and set your schema and specification files:
-
-```python
-from paramtools.parameters import Parameters
-from paramtools.utils import get_example_paths
-
-adjustment = {
-    "average_high_temperature": [
-        {
-            "city": "Washington, D.C.",
-            "month": "November",
-            "dayofmonth": 1,
-            "value": 60,
-        },
-        {
-            "city": "Atlanta, GA",
-            "month": "November",
-            "dayofmonth": 1,
-            "value": 63,
-        },
-    ]
-}
-schema, defaults = get_example_paths('weather')
-class WeatherParams(Parameters):
-    schema = schema
-    defaults = defaults
-
-params = WeatherParams()
-
-```
-
-Query along allowed dimensions:
-
-```python
-print(params.get("average_high_temperature", month="November"))
-
-# output: [{'month': 'November', 'city': 'Washington, D.C.', 'value': 59, 'dayofmonth': 1}, {'month': 'November', 'city': 'Atlanta, GA', 'value': 64, 'dayofmonth': 1}]
-
-```
-
-Adjust the default specification:
-
-```python
-adjustment = {
-    "average_high_temperature": [
-        {
-            "city": "Washington, D.C.",
-            "month": "November",
-            "dayofmonth": 1,
-            "value": 60,
-        },
-        {
-            "city": "Atlanta, GA",
-            "month": "November",
-            "dayofmonth": 1,
-            "value": 63,
-        },
-    ]
-}
-
-params.adjust(adjustment)
-
-# check to make sure the values were updated:
-print(params.get("average_high_temperature", month="November"))
-
-# output: [{'month': 'November', 'city': 'Washington, D.C.', 'value': 60, 'dayofmonth': 1}, {'month': 'November', 'city': 'Atlanta, GA', 'value': 63, 'dayofmonth': 1}]
-```
-
-
-Errors on invalid input:
-```python
-adjustment["average_high_temperature"][0]["value"] = "HOT"
-# ==> raises error:
-params.adjust(adjustment)
-
-# output: marshmallow.exceptions.ValidationError: {'average_high_temperature': ['Not a valid number.']}
-
-```
-
-Silence the errors by setting `raise_errors` to `False`:
-```python
-adjustment["average_high_temperature"][0]["value"] = "HOT"
-# ==> raises error:
-params.adjust(adjustment, raise_errors=False)
-print(params.errors)
-# output: {'average_high_temperature': ['Not a valid number.']}
-
-```
-
-Errors on input that's out of range:
-```python
-adjustment["average_high_temperature"][0]["value"] = 2000
-adjustment["average_high_temperature"][1]["value"] = 3000
-
-params.adjust(adjustment, raise_errors=False)
-print(params.errors)
-
-# ouput:
-# {
-#     'average_high_temperature': ['average_high_temperature 2000 must be less than 135 for dimensions month=November , city=Washington, D.C. , dayofmonth=1', 'average_high_temperature 3000 must be less than 135 for dimensions month=November , city=Atlanta, GA , dayofmonth=1']
-# }
-
-```
-
-Credits: ParamTools is built on top of the excellent [marshmallow][] JSON schema and validation framework. I encourage everyone to checkout their repo and documentation. ParamTools was modeled off of [Tax-Calculator's][] parameter processing and validation engine due to its maturity and sophisticated capabilities.
 
 
 [`numpy.ndim`]: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.ndim.html
