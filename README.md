@@ -181,9 +181,9 @@ Adjust a given specification.
 JSON Object and Property Definitions
 ---------------------------------------
 
-## Objects
+### Objects
 
-### Dimension object
+#### Dimension object
 - Used for defining the dimensions of the parameter space.
   - "type": Define the datatype of the dimension values. See the [Type property](#type-property).
   - "validators": A mapping of [Validator objects](#validator-object)
@@ -201,7 +201,7 @@ JSON Object and Property Definitions
     }
     ```
 
-### Optional object
+#### Optional object
 - Used for defining optional parameters on the schema. Upstream projects may
   find it value to attach additional information to each parameter that is
   not essential for ParamTools to perform validation.
@@ -216,7 +216,7 @@ JSON Object and Property Definitions
     ```
   - Note: [Validator objects](#validator-object) may be defined on this object in the future.
 
-### Parameter object
+#### Parameter object
 - Used for documenting the parameter and defining the default value of a parameter over the entire parameter space and its validation behavior.
   - Arguments:
     - "param_name": The name of the parameter as it is used in the modeling project.
@@ -252,7 +252,7 @@ JSON Object and Property Definitions
     }
     ```
 
-### Validator object
+#### Validator object
 - Used for validating user input.
 - Available validators:
   - "range": Define a minimum and maximum value for a given parameter.
@@ -275,10 +275,10 @@ JSON Object and Property Definitions
         }
         ```
 
-### Value object
+#### Value object
 - Used to describe the value of a parameter for one or more points in the parameter space.
   - "value": The value of the parameter at this point in space.
-  - Zero or more dimension properties that define which parts of the parameter space this value should be applied to. These dimension properties are defined by [Dimension objects](#dimension-object) in the Specification Schema.
+  - Zero or more dimension properties that define which parts of the parameter space this value should be applied to. These dimension properties are defined by [Dimension objects](#dimension-object) in the [Specification Schema](#specification-schema).
   - Example:
   ```json
         {"city": "Washington, D.C.",
@@ -288,9 +288,9 @@ JSON Object and Property Definitions
   ```
 
 
-## Properties
+### Properties
 
-### Type property
+#### Type property
 - "type": The parameter's data type. Supported types are:
     - "int": Integer.
     - "float": Floating point.
@@ -304,7 +304,7 @@ JSON Object and Property Definitions
         }
         ```
 
-### Number-Dimensions property
+#### Number-Dimensions property
 - "number_dims": The number of dimensions for the specified value. A scalar (e.g. 10) has zero dimensions, a list (e.g. [1, 2]) has one dimension, a nested list (e.g. [[1, 2], [3, 4]]) has two dimensions, etc.
   - Example:
    Note that "value" is a scalar.
