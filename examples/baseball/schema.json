@@ -3,7 +3,7 @@
     "dims": {
         "use_2018": {"type": "bool", "validators": {}}
     },
-    "optional_params": {
+    "optional": {
         "section_1": {"type": "str", "number_dims": 0},
         "section_2": {"type": "str", "number_dims": 0}
     }

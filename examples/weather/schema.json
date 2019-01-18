@@ -19,7 +19,7 @@
             "validators": {"range": {"min": 1, "max": 31}}
         }
     },
-    "optional_params": {
+    "optional": {
         "scale": {"type": "str", "number_dims": 0},
         "source": {"type": "str", "number_dims": 0}
     }
