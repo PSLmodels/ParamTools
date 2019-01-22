@@ -18,6 +18,7 @@ from paramtools import utils
 class ParameterUpdateException(Exception):
     pass
 
+
 class SparseValueObjectsException(Exception):
     pass
 
@@ -108,6 +109,18 @@ class Parameters:
         return all_params
 
     def to_array(self, param):
+        """
+        Convert a Value object to an n-dimensional array. The Value object
+        must span the parameter space specified by the Order object.
+
+        Returns: n-dimensional NumPy array.
+
+        Raises:
+            NotImplementedError: NumPy must be installed. A pure Python
+                version has not yet been implemented.
+            SparseValueObjectsException: Value object does not span the
+                entire space specified by the Order object.
+        """
         if np is None:
             # In the future, an alternative method will be implemented in
             # pure Python.
@@ -134,6 +147,7 @@ class Parameters:
             )
         list_2_tuple = lambda x: tuple(x) if isinstance(x, list) else x
         for vi in value_items:
+            # ix stores the indices of `arr` that need to be filled in.
             ix = [[] for i in range(len(dim_order))]
             for dim_pos, dim_name in enumerate(dim_order):
                 # assume value_items is dense in the sense that it spans
@@ -144,21 +158,23 @@ class Parameters:
         return arr
 
     def from_array(self, param, array):
+        """
+        Convert NumPy array to a Value object.
+
+        Returns: Value object (shape: [{"value": val, dims:...}])
+        """
         param_meta = getattr(self, param)
         dim_order = param_meta["order"]["dim_order"]
         value_order = param_meta["order"]["value_order"]
-        dim_values = list(itertools.product(*value_order.values()))
-        dim_indices = list(itertools.product(
-            *map(lambda x: range(len(x)), value_order.values())))
+        dim_values = itertools.product(*value_order.values())
+        dim_indices = itertools.product(
+            *map(lambda x: range(len(x)), value_order.values())
+        )
         value_items = []
-        for i in range(len(dim_values)):
-            value_items.append(
-                dict(
-                    {dim_order[j]: dim_values[i][j]
-                     for j in range(len(dim_values[i]))},
-                    **{"value": array[dim_indices[i]]}
-                )
-            )
+        for dv, di in zip(dim_values, dim_indices):
+            vi = {dim_order[j]: dv[j] for j in range(len(dv))}
+            vi["value"] = array[di]
+            value_items.append(vi)
         return value_items
 
     def format_errors(self, validation_error, compress_errors=True):
@@ -188,8 +204,9 @@ class Parameters:
         value = getattr(self, param)["value"]
         ret = []
         for v in value:
-            match = all(v[k] == kwargs[k] for k in kwargs
-                        if (k in v or exact_match))
+            match = all(
+                v[k] == kwargs[k] for k in kwargs if (k in v or exact_match)
+            )
             if match:
                 ret.append(v)
         return ret
