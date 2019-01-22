@@ -375,7 +375,7 @@ JSON Object and Property Definitions
         "number_dims": 0,
         "order": {
             "dim_order": ["city", "month"],
-            "dim_values": {
+            "value_order": {
                 "city": ["Washington, D.C", "Atlanta, GA"],
                 "month": ["January", "February"],
             }
