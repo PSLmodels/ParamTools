@@ -7,6 +7,7 @@ install:
   - pip install numpy
   - pip install pytest
   - pip install -e .
+  - export `pwd`
 # command to run tests
 script:
   - pytest tests/ -v
