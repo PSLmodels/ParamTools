@@ -9,6 +9,10 @@
         "dim1": {
             "type": "int",
             "validators": {"range": {"min": 0, "max": 5}}
+        },
+        "dim2": {
+            "type": "int",
+            "validators": {"range": {"min": 0, "max": 2}}
         }
     },
     "optional": {

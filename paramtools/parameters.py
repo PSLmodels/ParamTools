@@ -1,6 +1,13 @@
 import os
 import json
+import itertools
 from collections import OrderedDict
+from functools import reduce
+
+try:
+    import numpy as np
+except ModuleNotFoundError:
+    np = None
 
 from marshmallow import ValidationError
 
@@ -9,6 +16,10 @@ from paramtools import utils
 
 
 class ParameterUpdateException(Exception):
+    pass
+
+
+class SparseValueObjectsException(Exception):
     pass
 
 
@@ -97,6 +108,75 @@ class Parameters:
                 all_params[param] = result
         return all_params
 
+    def to_array(self, param):
+        """
+        Convert a Value object to an n-dimensional array. The Value object
+        must span the parameter space specified by the Order object.
+
+        Returns: n-dimensional NumPy array.
+
+        Raises:
+            NotImplementedError: NumPy must be installed. A pure Python
+                version has not yet been implemented.
+            SparseValueObjectsException: Value object does not span the
+                entire space specified by the Order object.
+        """
+        if np is None:
+            # In the future, an alternative method will be implemented in
+            # pure Python.
+            raise NotImplementedError(
+                "Numpy must be installed to use `to_array`."
+            )
+        param_meta = getattr(self, param)
+        dim_order = param_meta["order"]["dim_order"]
+        value_order = param_meta["order"]["value_order"]
+        shape = []
+        for dim in dim_order:
+            shape.append(len(value_order[dim]))
+        shape = tuple(shape)
+        arr = np.zeros(shape)
+        value_items = param_meta["value"]
+        # Compare len value items with the expected length if they are full.
+        # In the futute, sparse objects should be supported by filling in the
+        # unspecified dimensions.
+        exp_full_shape = reduce(lambda x, y: x * y, shape)
+        if len(value_items) != exp_full_shape:
+            raise SparseValueObjectsException(
+                f"The Value objects for {param} do not span the specified "
+                f"parameter space."
+            )
+        list_2_tuple = lambda x: tuple(x) if isinstance(x, list) else x
+        for vi in value_items:
+            # ix stores the indices of `arr` that need to be filled in.
+            ix = [[] for i in range(len(dim_order))]
+            for dim_pos, dim_name in enumerate(dim_order):
+                # assume value_items is dense in the sense that it spans
+                # the dimension space.
+                ix[dim_pos].append(value_order[dim_name].index(vi[dim_name]))
+            ix = tuple(map(list_2_tuple, ix))
+            arr[ix] = vi["value"]
+        return arr
+
+    def from_array(self, param, array):
+        """
+        Convert NumPy array to a Value object.
+
+        Returns: Value object (shape: [{"value": val, dims:...}])
+        """
+        param_meta = getattr(self, param)
+        dim_order = param_meta["order"]["dim_order"]
+        value_order = param_meta["order"]["value_order"]
+        dim_values = itertools.product(*value_order.values())
+        dim_indices = itertools.product(
+            *map(lambda x: range(len(x)), value_order.values())
+        )
+        value_items = []
+        for dv, di in zip(dim_values, dim_indices):
+            vi = {dim_order[j]: dv[j] for j in range(len(dv))}
+            vi["value"] = array[di]
+            value_items.append(vi)
+        return value_items
+
     def format_errors(self, validation_error, compress_errors=True):
         """
         Format error messages from ValidationError instance. If
@@ -124,8 +204,9 @@ class Parameters:
         value = getattr(self, param)["value"]
         ret = []
         for v in value:
-            match = all(v[k] == kwargs[k] for k in kwargs
-                        if (k in v or exact_match))
+            match = all(
+                v[k] == kwargs[k] for k in kwargs if (k in v or exact_match)
+            )
             if match:
                 ret.append(v)
         return ret

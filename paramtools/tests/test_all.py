@@ -175,3 +175,40 @@ def test_errors_multiple_params(TestParams):
         "date_param": ["Not a valid date."],
     }
     assert params.errors == exp
+
+
+def test_to_array(TestParams):
+    params = TestParams()
+    res = params.to_array("int_dense_array_param")
+
+    exp = [
+        [
+            [ 1,  2,  3],
+            [ 4,  5,  6],
+            [ 7,  8,  9],
+            [10, 11, 12],
+            [13, 14, 15],
+            [16, 17, 18]
+        ],
+
+        [
+            [19, 20, 21],
+            [22, 23, 24],
+            [25, 26, 27],
+            [28, 29, 30],
+            [31, 32, 33],
+            [34, 35, 36]
+        ]
+    ]
+
+    assert res.tolist() == exp
+
+    exp = params.int_dense_array_param["value"]
+    assert (
+        params.from_array("int_dense_array_param", res) == exp
+    )
+
+    params.int_dense_array_param["value"].pop(0)
+
+    with pytest.raises(parameters.SparseValueObjectsException):
+        params.to_array("int_dense_array_param")
