@@ -155,3 +155,9 @@ def test_doc_example(schema_def_path, defaults_spec_path):
 
     params.adjust(adjustment, raise_errors=False)
     print(params.errors)
+
+    arr = params.to_array("average_precipitation")
+    print(arr.tolist())
+
+    vi_list = params.from_array("average_precipitation", arr)
+    print(vi_list[:2])

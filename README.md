@@ -101,6 +101,22 @@ print(params.errors)
 
 ```
 
+Convert [Value objects](#value-object) to and from arrays:
+```python
+arr = params.to_array("average_precipitation")
+print(arr.tolist())
+
+# output:
+# [[3.1, 2.6, 3.5, 3.3, 4.3, 4.3, 4.6, 3.8, 3.9, 3.7, 3.0, 3.5], [3.6, 3.7, 4.3, 3.5, 3.8, 3.6, 5.0, 3.8, 3.7, 2.8, 3.6, 4.1]]
+
+vi_list = params.from_array("average_precipitation", arr)
+print(vi_list[:2])
+
+# output:
+# [{'city': 'Washington, D.C.', 'month': 'January', 'value': 3.1}, {'city': 'Washington, D.C.', 'month': 'February', 'value': 2.6}]
+
+```
+
 How to install ParamTools
 -----------------------------------------
 
@@ -313,6 +329,26 @@ JSON Object and Property Definitions
     ```
   - Note: [Validator objects](#validator-object) may be defined on this object in the future.
 
+#### Order object
+- Used for converting [Value objects](#value-objects) into n-dimensional arrays.
+  - Arguments:
+    - "dim_order": List specifying the ordering of the dimensions.
+    - "dim_values": Mapping specifying the allowed values for each dimension.
+  - Example:
+    ```json
+    {
+        "dim_order": ["dim0", "dim1", "dim2"],
+        "value_order": {
+            "dim0": ["zero", "one"],
+            "dim1": [0, 1, 2, 3, 4, 5],
+            "dim2": [0, 1, 2]
+        }
+    }
+    ```
+  - Note: The Order object is not required in general, but it must be specified
+    to use the `Parameters.to_array` and `Parameters.from_array` methods.
+
+
 #### Parameter object
 - Used for documenting the parameter and defining the default value of a parameter over the entire parameter space and its validation behavior.
   - Arguments:
@@ -322,6 +358,7 @@ JSON Object and Property Definitions
     - "notes": Additional advice or information.
     - "type": Data type of the parameter. See [Type property](#type-property).
     - "number_dims": Number of dimensions of the parameter. See [Number-Dimensions property](#number-dimensions-property)
+    - "order": An [Order object](#order-object)
     - "value": A list of (Value objects)[#value-object].
     - "validators": A mapping of (Validator objects)[#validator-object]
     - "out_of_range_{min/max/other op}_msg": Extra information to be used in the message(s) that will be displayed if the parameter value is outside of the specified range. Note that this is in the spec but not currently implemented.
@@ -336,6 +373,13 @@ JSON Object and Property Definitions
         "source": "NOAA",
         "type": "float",
         "number_dims": 0,
+        "order": {
+            "dim_order": ["city", "month"],
+            "dim_values": {
+                "city": ["Washington, D.C", "Atlanta, GA"],
+                "month": ["January", "February"],
+            }
+        },
         "value": [
             {"city": "Washington, D.C.", "month": "January", "value": 3.1},
             {"city": "Washington, D.C.", "month": "February", "value": 2.6},
