@@ -1,7 +1,7 @@
 import os
 import json
 import itertools
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from functools import reduce
 
 try:
@@ -9,19 +9,13 @@ try:
 except ModuleNotFoundError:
     np = None
 
-from marshmallow import ValidationError
+from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.build_schema import SchemaBuilder
 from paramtools import utils
-
-
-class ParameterUpdateException(Exception):
-    pass
-
-
-class SparseValueObjectsException(Exception):
-    pass
-
+from paramtools.exceptions import (ParameterUpdateException,
+                                   SparseValueObjectsException,
+                                   ValidationError)
 
 class Parameters:
     schema = None
@@ -36,7 +30,7 @@ class Parameters:
         self._validator_schema.context["spec"] = self
         self.errors = {}
 
-    def adjust(self, params_or_path, raise_errors=True, compress_errors=True):
+    def adjust(self, params_or_path, raise_errors=True):
         """
         Method to deserialize and validate parameter adjustments.
         `params_or_path` can be a file path or a `dict` that has not been
@@ -61,16 +55,39 @@ class Parameters:
         # do type validation
         try:
             clean_params = self._validator_schema.load(params)
-        except ValidationError as ve:
-            self.format_errors(ve, compress_errors)
+        except MarshmallowValidationError as ve:
+            # format messages.
+            error_info = defaultdict(list)
+            for pname, data in ve.messages.items():
+                for ix, messages in data.items():
+                    bad_dims = {k: v for k, v in params[pname][ix].items()
+                                if k != "value"}
+                    for attribute, message in messages.items():
+                        value = params[pname][ix][attribute]
+                        if isinstance(value, list):
+                            value = ' ,'.join(map(str, value))
+                        # assume all messages are the same!
+                        # drop the period at the end.
+                        is_type_error = (
+                            message[0].startswith("Invalid") or
+                            message[0].startswith("Not a valid")
+                        )
+                        if is_type_error:
+                            formatted = f"{message[0][:-1]}: {value}"
+                        else:
+                            formatted = message[0]
+                        print(formatted)
+                        error_info[pname].append(formatted) #{
+                            # "value": value,
+                            # "dims": bad_dims,
+                            # "message": f"{message}: {value}",
+                            # "raw_message": message
+                        # }
+            self.errors.update(dict(error_info))
 
-        # if no errors from type validation, do choice, range, etc. validation.
         if not self.errors:
             for param, value in clean_params.items():
-                try:
-                    self._update_param(param, value)
-                except ValidationError as ve:
-                    self.format_errors(ve, compress_errors)
+                self._update_param(param, value)
 
         self._validator_schema.context["spec"] = self
 
@@ -176,22 +193,6 @@ class Parameters:
             vi["value"] = array[di]
             value_items.append(vi)
         return value_items
-
-    def format_errors(self, validation_error, compress_errors=True):
-        """
-        Format error messages from ValidationError instance. If
-        `compress_errors` is `True`, all messages are collected and
-        stored in a list.
-        """
-        if compress_errors:
-            for param, messages in validation_error.messages.items():
-                if param in self.errors:
-                    self.errors[param].append(utils.get_leaves(messages))
-                else:
-                    self.errors[param] = utils.get_leaves(messages)
-            validation_error.messages = self.errors
-        else:
-            self.errors.update(validation_error.messages)
 
     def _get(self, param, exact_match, **kwargs):
         """

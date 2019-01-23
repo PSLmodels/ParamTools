@@ -157,18 +157,18 @@ class BaseValidatorSchema(Schema):
     def validate_params(self, data):
         """
         Loop over all parameters defined on this class. Validate them using
-        the `self.validate_param_method`. Errors are stored until all
+        the `self.validate_param`. Errors are stored until all
         parameters have been validated. Note that all data has been
         type-validated. These methods only do range validation.
         """
-        errors = defaultdict(list)
+        errors = defaultdict(dict)
         errors_exist = False
         for name, specs in data.items():
-            for spec in specs:
+            for i, spec in enumerate(specs):
                 iserrors = self.validate_param(name, spec, data)
                 if iserrors:
                     errors_exist = True
-                    errors[name] += iserrors
+                    errors[name][i] = {"value": iserrors}
         if errors_exist:
             raise exceptions.ValidationError(dict(errors))
 
