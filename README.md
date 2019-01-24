@@ -268,7 +268,7 @@ Adjustment Schema
 ----------------------------
 
 Adjust a given specification.
-- A mapping of parameters and lists of (Value objects)[#value-object].
+- A mapping of parameters and lists of [Value objects](#value-object).
 - Example:
     ```json
     {
