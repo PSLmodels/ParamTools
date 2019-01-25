@@ -8,7 +8,7 @@ ParamTools defines the parameter input space for computational modeling projects
 How to use ParamTools
 ---------------------------
 
-Subclass the `Parameters` class and set your [schema](#specification-schema) and [specification](#default-specification) files:
+Subclass the `Parameters` class and set your [specification schema](#specification-schema) and [default specification](#default-specification) files:
 
 ```python
 from paramtools.parameters import Parameters
