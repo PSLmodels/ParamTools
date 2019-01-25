@@ -1,4 +1,4 @@
-
+from paramtools import utils
 
 class ParamToolsError(Exception):
     pass
@@ -11,9 +11,11 @@ class SparseValueObjectsException(ParamToolsError):
 
 class ValidationError(ParamToolsError):
 
-    def __init__(self, message, parameter_name=None, adjustment=None, errant_value=None):
-        self.message = message
-        self.parameter_name = parameter_name
-        self.adjustment = adjustment
-        self.errant_value = errant_value
-        super().__init__(self.message)
+    def __init__(self, messages, dims):
+        self.messages = messages
+        self.dims = dims
+        raveled_messages = {
+            param: utils.ravel(msgs) for param, msgs in self.messages.items()
+        }
+        print(raveled_messages)
+        super().__init__(raveled_messages)

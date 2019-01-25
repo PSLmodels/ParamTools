@@ -71,3 +71,17 @@ def get_leaves(item):
     gl = LeafGetter()
     gl.get(item)
     return gl.leaves
+
+
+def ravel(ndim_list):
+    """ only up to 2D for now. """
+    if not isinstance(ndim_list, list):
+        return ndim_list
+    raveled = []
+    for maybe_list in ndim_list:
+        if isinstance(maybe_list, list):
+            for item in maybe_list:
+                raveled.append(item)
+        else:
+            raveled.append(maybe_list)
+    return raveled

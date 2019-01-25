@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from marshmallow import exceptions
+from paramtools.exceptions import ValidationError, SparseValueObjectsException
 
 from paramtools import parameters
 
@@ -106,36 +106,37 @@ def test_simultaneous_adjust(TestParams):
 def test_errors_choice_param(TestParams):
     params = TestParams()
     adjustment = {"str_choice_param": [{"value": "not a valid choice"}]}
-    with pytest.raises(exceptions.ValidationError) as excinfo:
-        params.adjust(adjustment, compress_errors=False)
-    msg = (
+    with pytest.raises(ValidationError) as excinfo:
+        params.adjust(adjustment)
+    msg = [
         'str_choice_param "not a valid choice" must be in list of choices value0, '
         "value1 for dimensions "
-    )
+    ]
     assert excinfo.value.messages["str_choice_param"][0] == msg
 
     params = TestParams()
     adjustment = {"str_choice_param": [{"value": 4}]}
     params = TestParams()
-    with pytest.raises(exceptions.ValidationError) as excinfo:
-        params.adjust(adjustment, compress_errors=False)
-    msg = {0: {"value": ["Not a valid string."]}}
-    assert excinfo.value.messages["str_choice_param"] == msg
-
-    params = TestParams()
-    params.adjust(adjustment, compress_errors=False, raise_errors=False)
-    msg = {0: {"value": ["Not a valid string."]}}
-    assert params.errors["str_choice_param"] == msg
-
-    params = TestParams()
-    with pytest.raises(exceptions.ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         params.adjust(adjustment)
-    msg = ["Not a valid string."]
-    assert excinfo.value.messages["str_choice_param"] == msg
+    msg = ["Not a valid string: 4."]
+    assert excinfo.value.args[0]["str_choice_param"] == msg
 
     params = TestParams()
     params.adjust(adjustment, raise_errors=False)
-    params.errors["str_choice_param"] == ["Not a valid string."]
+    msg = ["Not a valid string: 4."]
+    assert params.errors["str_choice_param"] == msg
+
+    params = TestParams()
+    with pytest.raises(ValidationError) as excinfo:
+        params.adjust(adjustment)
+    msg = ["Not a valid string: 4."]
+    assert excinfo.value.args[0]["str_choice_param"] == msg
+
+    params = TestParams()
+    params.adjust(adjustment, raise_errors=False)
+    params.errors["str_choice_param"] == ["Not a valid string: 4"]
+    # params.errors["str_choice_param"] == ["Not a valid string: 4"]
 
 
 def test_errors_default_reference_param(TestParams):
@@ -155,7 +156,7 @@ def test_errors_int_param(TestParams):
     }
 
     params.adjust(adjustment, raise_errors=False)
-    exp = {"min_int_param": ["Not a valid number."]}
+    exp = {"min_int_param": ["Not a valid number: not a number."]}
     assert params.errors == exp
 
 
@@ -171,8 +172,8 @@ def test_errors_multiple_params(TestParams):
 
     params.adjust(adjustment, raise_errors=False)
     exp = {
-        "min_int_param": ["Not a valid number.", "Not a valid number."],
-        "date_param": ["Not a valid date."],
+        "min_int_param": ["Not a valid number: not a number.", "Not a valid number: still not a number."],
+        "date_param": ["Not a valid date: not a date."],
     }
     assert params.errors == exp
 
@@ -210,5 +211,5 @@ def test_to_array(TestParams):
 
     params.int_dense_array_param["value"].pop(0)
 
-    with pytest.raises(parameters.SparseValueObjectsException):
+    with pytest.raises(SparseValueObjectsException):
         params.to_array("int_dense_array_param")

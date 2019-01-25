@@ -28,7 +28,7 @@ class Parameters:
         for k, v in defaults.items():
             setattr(self, k, v)
         self._validator_schema.context["spec"] = self
-        self.errors = {}
+        self._errors = {}
 
     def adjust(self, params_or_path, raise_errors=True):
         """
@@ -51,48 +51,62 @@ class Parameters:
         else:
             raise ValueError("params_or_path is not dict or file path")
 
-        self.errors = {}
+        self._errors = {}
         # do type validation
         try:
             clean_params = self._validator_schema.load(params)
         except MarshmallowValidationError as ve:
             # format messages.
-            error_info = defaultdict(list)
+            error_info = {"messages": defaultdict(dict),
+                          "dims": defaultdict(dict)}
             for pname, data in ve.messages.items():
-                for ix, messages in data.items():
-                    bad_dims = {k: v for k, v in params[pname][ix].items()
-                                if k != "value"}
-                    for attribute, message in messages.items():
+                error_dims = []
+                formatted_errors = []
+                for ix, marshmessages in data.items():
+                    error_dims.append({k: v for k, v in params[pname][ix].items()
+                                       if k != "value"})
+                    formatted_errors_ix = []
+                    for attribute, messages in marshmessages.items():
                         value = params[pname][ix][attribute]
                         if isinstance(value, list):
                             value = ' ,'.join(map(str, value))
                         # assume all messages are the same!
                         # drop the period at the end.
-                        is_type_error = (
-                            message[0].startswith("Invalid") or
-                            message[0].startswith("Not a valid")
-                        )
-                        if is_type_error:
-                            formatted = f"{message[0][:-1]}: {value}"
-                        else:
-                            formatted = message[0]
-                        print(formatted)
-                        error_info[pname].append(formatted) #{
-                            # "value": value,
-                            # "dims": bad_dims,
-                            # "message": f"{message}: {value}",
-                            # "raw_message": message
-                        # }
-            self.errors.update(dict(error_info))
+                        for message in messages:
+                            is_type_error = (
+                                message.startswith("Invalid") or
+                                message.startswith("Not a valid")
+                            )
+                            if is_type_error:
+                                formatted_errors_ix.append(
+                                    f"{message[:-1]}: {value}."
+                                )
+                            else:
+                                formatted_errors_ix.append(message)
+                    formatted_errors.append(formatted_errors_ix)
+                error_info["messages"][pname] = formatted_errors
+                error_info["dims"] = error_dims
+            self._errors.update(dict(error_info))
 
-        if not self.errors:
+        if not self._errors:
             for param, value in clean_params.items():
                 self._update_param(param, value)
 
         self._validator_schema.context["spec"] = self
 
-        if raise_errors and self.errors:
-            raise ValidationError(self.errors)
+        if raise_errors and self._errors:
+            raise self.validation_error
+
+    @property
+    def errors(self):
+        new_errors = {}
+        for param, messages in self._errors["messages"].items():
+            new_errors[param] = utils.ravel(messages)
+        return new_errors
+
+    @property
+    def validation_error(self):
+        return ValidationError(self._errors["messages"], self._errors["dims"])
 
     def get(self, param, **kwargs):
         """
