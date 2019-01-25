@@ -2,6 +2,8 @@ import datetime
 
 from marshmallow import validate, ValidationError, fields
 
+from paramtools import utils
+
 
 class Range(validate.Range):
     def __init__(self, min=None, max=None, error_min=None, error_max=None):
@@ -14,13 +16,19 @@ class Range(validate.Range):
         return message.format(input=value, min=self.min, max=self.max)
 
     def __call__(self, value):
-        if self.min is not None and value < self.min:
-            message = self.error_min or self.message_min
-            raise ValidationError(self._format_error(value, message))
+        if not isinstance(value, list):
+            value_list = [value]
+        else:
+            value_list = utils.ravel(value)
 
-        if self.max is not None and value > self.max:
-            message = self.error_max or self.message_max
-            raise ValidationError(self._format_error(value, message))
+        for val in value_list:
+            if self.min is not None and val < self.min:
+                message = self.error_min or self.message_min
+                raise ValidationError(self._format_error(value, message))
+
+            if self.max is not None and val > self.max:
+                message = self.error_max or self.message_max
+                raise ValidationError(self._format_error(value, message))
 
         return value
 
