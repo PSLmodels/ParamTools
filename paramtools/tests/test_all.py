@@ -213,3 +213,67 @@ def test_to_array(TestParams):
 
     with pytest.raises(SparseValueObjectsException):
         params.to_array("int_dense_array_param")
+
+
+def test_list_type_errors(TestParams):
+    params = TestParams()
+
+    adj = {
+        "float_list_param": [
+            {"value": ["abc", 0, "def", 1], "dim0": "zero", "dim1": 1},
+            {"value": [-1, "ijk"], "dim0": "one", "dim1": 2}
+        ]
+    }
+    with pytest.raises(ValidationError) as excinfo:
+        params.adjust(adj)
+    exp_user_message = {
+        'float_list_param': [
+            'Not a valid number: abc.',
+            'Not a valid number: def.',
+            'Not a valid number: ijk.'
+        ]
+    }
+    assert excinfo.value.args[0] == exp_user_message
+
+    exp_internal_message = {
+        'float_list_param': [
+            ['Not a valid number: abc.', 'Not a valid number: def.'],
+            ['Not a valid number: ijk.']
+        ]
+    }
+    assert excinfo.value.messages == exp_internal_message
+
+    exp_dims = [
+        {"dim0": "zero", "dim1": 1},
+        {"dim0": "one", "dim1": 2}
+    ]
+    assert excinfo.value.dims == exp_dims
+
+
+def test_errors(TestParams):
+    params = TestParams()
+    adj = {"min_int_param": [{"value": "abc"}]}
+    with pytest.raises(ValidationError) as excinfo:
+        params.adjust(adj)
+
+    exp_user_message = {
+        'min_int_param': ['Not a valid number: abc.']
+    }
+    assert excinfo.value.args[0] == exp_user_message
+
+    exp_internal_message = {
+        'min_int_param': [['Not a valid number: abc.']]
+    }
+    assert excinfo.value.messages == exp_internal_message
+
+    exp_dims = [{}]
+    assert excinfo.value.dims == exp_dims
+
+
+def test_range_validation_on_list_param(TestParams):
+    params = TestParams()
+    adj = {"float_list_param": [{"value": [-1, 1], "dim0": "zero", "dim1": 1}]}
+    params.adjust(adj, raise_errors=False)
+    exp = ['float_list_param [-1.0, 1.0] must be greater than 0 for dimensions dim0=zero , dim1=1']
+
+    assert params.errors["float_list_param"] == exp
