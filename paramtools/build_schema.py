@@ -3,6 +3,7 @@ from marshmallow import fields
 from paramtools.schema import (
     EmptySchema,
     BaseValidatorSchema,
+    get_type,
     get_param_schema,
 )
 from paramtools import utils
@@ -54,7 +55,7 @@ class SchemaBuilder:
         param_dict = {}
         validator_dict = {}
         for k, v in self.defaults.items():
-            fieldtype = utils.get_type(v)
+            fieldtype = get_type(v)
             classattrs = {"value": fieldtype, **self.dim_validators}
             validator_dict[k] = type(
                 "ValidatorItem", (EmptySchema,), classattrs

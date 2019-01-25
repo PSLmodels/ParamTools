@@ -177,8 +177,9 @@ class BaseValidatorSchema(Schema):
         Do range validation for a parameter.
         """
         param_info = getattr(self.context["spec"], param_name)
+        # sort keys to guarantee order.
         dims = " , ".join(
-            [f"{k}={param_spec[k]}" for k in param_spec if k != "value"]
+            [f"{k}={param_spec[k]}" for k in sorted(param_spec) if k != "value"]
         )
         validator_spec = param_info["validators"]
         validators = []
@@ -319,6 +320,17 @@ VALIDATOR_MAP = {
     "date_range": contrib_validate.DateRange,
     "choice": validate.OneOf,
 }
+
+
+def get_type(data):
+    numeric_types = {"int": Int8(), "bool": Bool_(), "float": Float64()}
+    types = dict(FIELD_MAP, **numeric_types)
+    fieldtype = types[data["type"]]
+    dim = data["number_dims"]
+    while dim > 0:
+        fieldtype = fields.List(fieldtype)
+        dim -= 1
+    return fieldtype
 
 
 def get_param_schema(base_spec, field_map=None):
