@@ -13,9 +13,12 @@ from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.build_schema import SchemaBuilder
 from paramtools import utils
-from paramtools.exceptions import (ParameterUpdateException,
-                                   SparseValueObjectsException,
-                                   ValidationError)
+from paramtools.exceptions import (
+    ParameterUpdateException,
+    SparseValueObjectsException,
+    ValidationError,
+)
+
 
 class Parameters:
     schema = None
@@ -276,19 +279,15 @@ class Parameters:
         }
 
         """
-        error_info = {"messages": defaultdict(dict),
-                      "dims": defaultdict(dict)}
-        print('errors: ', ve.messages)
+        error_info = {"messages": defaultdict(dict), "dims": defaultdict(dict)}
+
         def to_list(value, messages, formatted_errors):
             for message in messages:
-                is_type_error = (
-                    message.startswith("Invalid") or
-                    message.startswith("Not a valid")
-                )
+                is_type_error = message.startswith(
+                    "Invalid"
+                ) or message.startswith("Not a valid")
                 if is_type_error:
-                    formatted_errors_ix.append(
-                        f"{message[:-1]}: {value}."
-                    )
+                    formatted_errors_ix.append(f"{message[:-1]}: {value}.")
                 else:
                     formatted_errors_ix.append(message)
 
@@ -296,8 +295,13 @@ class Parameters:
             error_dims = []
             formatted_errors = []
             for ix, marshmessages in data.items():
-                error_dims.append({k: v for k, v in params[pname][ix].items()
-                                    if k != "value"})
+                error_dims.append(
+                    {
+                        k: v
+                        for k, v in params[pname][ix].items()
+                        if k != "value"
+                    }
+                )
                 formatted_errors_ix = []
                 for attribute, messages in marshmessages.items():
                     value = params[pname][ix][attribute]
@@ -305,7 +309,9 @@ class Parameters:
                         to_list(value, messages, formatted_errors)
                     else:
                         for val_ix, messagelist in messages.items():
-                            to_list(value[val_ix], messagelist, formatted_errors_ix)
+                            to_list(
+                                value[val_ix], messagelist, formatted_errors_ix
+                            )
                 formatted_errors.append(formatted_errors_ix)
             error_info["messages"][pname] = formatted_errors
             error_info["dims"] = error_dims

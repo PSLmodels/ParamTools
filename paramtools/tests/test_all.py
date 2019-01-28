@@ -145,7 +145,9 @@ def test_errors_default_reference_param(TestParams):
     curr = params.get("int_default_param")[0]["value"]
     adjustment = {"int_default_param": [{"value": curr - 1}]}
     params.adjust(adjustment, raise_errors=False)
-    exp = [f'int_default_param {curr-1} must be greater than 2 for dimensions ']
+    exp = [
+        f"int_default_param {curr-1} must be greater than 2 for dimensions "
+    ]
     assert params.errors["int_default_param"] == exp
 
 
@@ -172,7 +174,10 @@ def test_errors_multiple_params(TestParams):
 
     params.adjust(adjustment, raise_errors=False)
     exp = {
-        "min_int_param": ["Not a valid number: not a number.", "Not a valid number: still not a number."],
+        "min_int_param": [
+            "Not a valid number: not a number.",
+            "Not a valid number: still not a number.",
+        ],
         "date_param": ["Not a valid date: not a date."],
     }
     assert params.errors == exp
@@ -184,30 +189,27 @@ def test_to_array(TestParams):
 
     exp = [
         [
-            [ 1,  2,  3],
-            [ 4,  5,  6],
-            [ 7,  8,  9],
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
             [10, 11, 12],
             [13, 14, 15],
-            [16, 17, 18]
+            [16, 17, 18],
         ],
-
         [
             [19, 20, 21],
             [22, 23, 24],
             [25, 26, 27],
             [28, 29, 30],
             [31, 32, 33],
-            [34, 35, 36]
-        ]
+            [34, 35, 36],
+        ],
     ]
 
     assert res.tolist() == exp
 
     exp = params.int_dense_array_param["value"]
-    assert (
-        params.from_array("int_dense_array_param", res) == exp
-    )
+    assert params.from_array("int_dense_array_param", res) == exp
 
     params.int_dense_array_param["value"].pop(0)
 
@@ -221,32 +223,29 @@ def test_list_type_errors(TestParams):
     adj = {
         "float_list_param": [
             {"value": ["abc", 0, "def", 1], "dim0": "zero", "dim1": 1},
-            {"value": [-1, "ijk"], "dim0": "one", "dim1": 2}
+            {"value": [-1, "ijk"], "dim0": "one", "dim1": 2},
         ]
     }
     with pytest.raises(ValidationError) as excinfo:
         params.adjust(adj)
     exp_user_message = {
-        'float_list_param': [
-            'Not a valid number: abc.',
-            'Not a valid number: def.',
-            'Not a valid number: ijk.'
+        "float_list_param": [
+            "Not a valid number: abc.",
+            "Not a valid number: def.",
+            "Not a valid number: ijk.",
         ]
     }
     assert excinfo.value.args[0] == exp_user_message
 
     exp_internal_message = {
-        'float_list_param': [
-            ['Not a valid number: abc.', 'Not a valid number: def.'],
-            ['Not a valid number: ijk.']
+        "float_list_param": [
+            ["Not a valid number: abc.", "Not a valid number: def."],
+            ["Not a valid number: ijk."],
         ]
     }
     assert excinfo.value.messages == exp_internal_message
 
-    exp_dims = [
-        {"dim0": "zero", "dim1": 1},
-        {"dim0": "one", "dim1": 2}
-    ]
+    exp_dims = [{"dim0": "zero", "dim1": 1}, {"dim0": "one", "dim1": 2}]
     assert excinfo.value.dims == exp_dims
 
 
@@ -256,14 +255,10 @@ def test_errors(TestParams):
     with pytest.raises(ValidationError) as excinfo:
         params.adjust(adj)
 
-    exp_user_message = {
-        'min_int_param': ['Not a valid number: abc.']
-    }
+    exp_user_message = {"min_int_param": ["Not a valid number: abc."]}
     assert excinfo.value.args[0] == exp_user_message
 
-    exp_internal_message = {
-        'min_int_param': [['Not a valid number: abc.']]
-    }
+    exp_internal_message = {"min_int_param": [["Not a valid number: abc."]]}
     assert excinfo.value.messages == exp_internal_message
 
     exp_dims = [{}]
@@ -274,6 +269,8 @@ def test_range_validation_on_list_param(TestParams):
     params = TestParams()
     adj = {"float_list_param": [{"value": [-1, 1], "dim0": "zero", "dim1": 1}]}
     params.adjust(adj, raise_errors=False)
-    exp = ['float_list_param [-1.0, 1.0] must be greater than 0 for dimensions dim0=zero , dim1=1']
+    exp = [
+        "float_list_param [-1.0, 1.0] must be greater than 0 for dimensions dim0=zero , dim1=1"
+    ]
 
     assert params.errors["float_list_param"] == exp

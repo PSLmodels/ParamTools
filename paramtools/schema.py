@@ -74,7 +74,10 @@ class ValueValidatorSchema(Schema):
 
 class OrderField(Schema):
     dim_order = fields.List(fields.Str)
-    value_order = fields.Dict(values=fields.List(fields.Field), keys=fields.Str)
+    value_order = fields.Dict(
+        values=fields.List(fields.Field), keys=fields.Str
+    )
+
 
 class BaseParamSchema(Schema):
     """
@@ -179,7 +182,11 @@ class BaseValidatorSchema(Schema):
         param_info = getattr(self.context["spec"], param_name)
         # sort keys to guarantee order.
         dims = " , ".join(
-            [f"{k}={param_spec[k]}" for k in sorted(param_spec) if k != "value"]
+            [
+                f"{k}={param_spec[k]}"
+                for k in sorted(param_spec)
+                if k != "value"
+            ]
         )
         validator_spec = param_info["validators"]
         validators = []

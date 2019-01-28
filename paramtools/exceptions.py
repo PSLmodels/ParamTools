@@ -1,16 +1,19 @@
 from paramtools import utils
 
+
 class ParamToolsError(Exception):
     pass
+
 
 class ParameterUpdateException(ParamToolsError):
     pass
 
+
 class SparseValueObjectsException(ParamToolsError):
     pass
 
-class ValidationError(ParamToolsError):
 
+class ValidationError(ParamToolsError):
     def __init__(self, messages, dims):
         self.messages = messages
         self.dims = dims
