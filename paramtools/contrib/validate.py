@@ -1,11 +1,15 @@
 import datetime
 
-from marshmallow import validate, ValidationError, fields
+from marshmallow import (
+    validate as marshmallow_validate,
+    ValidationError,
+    fields,
+)
 
 from paramtools import utils
 
 
-class Range(validate.Range):
+class Range(marshmallow_validate.Range):
     def __init__(self, min=None, max=None, error_min=None, error_max=None):
         self.min = min
         self.max = max

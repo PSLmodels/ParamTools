@@ -3,9 +3,9 @@ import json
 
 import pytest
 
-from paramtools.exceptions import ValidationError, SparseValueObjectsException
+from paramtools import ValidationError, SparseValueObjectsException
 
-from paramtools import parameters
+from paramtools import Parameters
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -22,7 +22,7 @@ def defaults_spec_path():
 
 @pytest.fixture
 def TestParams(schema_def_path, defaults_spec_path):
-    class _TestParams(parameters.Parameters):
+    class _TestParams(Parameters):
         schema = schema_def_path
         defaults = defaults_spec_path
 

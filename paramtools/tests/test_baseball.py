@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from paramtools.exceptions import ValidationError
+from paramtools import ValidationError
 from paramtools import parameters
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
