@@ -68,7 +68,7 @@ adjustment["average_high_temperature"][0]["value"] = "HOT"
 # ==> raises error
 params.adjust(adjustment)
 
-# output: marshmallow.exceptions.ValidationError: {'average_high_temperature': ['Not a valid number.']}
+# output: paramtools.exceptions.ValidationError: {'average_high_temperature': ['Not a valid number: HOT.']}
 
 ```
 
@@ -79,7 +79,7 @@ params.adjust(adjustment, raise_errors=False)
 
 print(params.errors)
 
-# output: {'average_high_temperature': ['Not a valid number.']}
+# output: {'average_high_temperature': ['Not a valid number: HOT.']}
 
 ```
 
