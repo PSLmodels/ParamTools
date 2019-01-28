@@ -1,0 +1,4 @@
+numpy
+black
+pre-commit
+pytest

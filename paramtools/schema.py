@@ -5,8 +5,7 @@ from marshmallow import (
     fields,
     validate,
     validates_schema,
-    exceptions,
-    ValidationError,
+    ValidationError as MarshmallowValidationError,
 )
 
 from paramtools.contrib import validate as contrib_validate
@@ -173,7 +172,7 @@ class BaseValidatorSchema(Schema):
                     errors_exist = True
                     errors[name][i] = {"value": iserrors}
         if errors_exist:
-            raise exceptions.ValidationError(dict(errors))
+            raise MarshmallowValidationError(dict(errors))
 
     def validate_param(self, param_name, param_spec, raw_data):
         """
@@ -207,7 +206,7 @@ class BaseValidatorSchema(Schema):
         for validator in validators:
             try:
                 validator(value)
-            except ValidationError as ve:
+            except MarshmallowValidationError as ve:
                 errors.append(str(ve))
 
         return errors
@@ -220,7 +219,9 @@ class BaseValidatorSchema(Schema):
         elif vname == "date_range":
             range_class = contrib_validate.DateRange
         else:
-            raise ValidationError(f"{vname} is not an allowed validator")
+            raise MarshmallowValidationError(
+                f"{vname} is not an allowed validator"
+            )
         min_value = range_dict.get("min", None)
         if min_value is not None:
             min_value = self._resolve_op_value(

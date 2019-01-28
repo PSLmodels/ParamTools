@@ -3,8 +3,8 @@ import json
 
 import pytest
 
-from paramtools import parameters
-from paramtools.exceptions import ValidationError, ParameterUpdateException
+from paramtools import Parameters
+from paramtools import ValidationError, ParameterUpdateException
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -27,7 +27,7 @@ def defaults_spec_path():
 
 @pytest.fixture
 def WeatherParams(schema_def_path, defaults_spec_path):
-    class _WeatherParams(parameters.Parameters):
+    class _WeatherParams(Parameters):
         schema = schema_def_path
         defaults = defaults_spec_path
 
@@ -107,8 +107,8 @@ def test_failed_get(WeatherParams):
 
 
 def test_doc_example(schema_def_path, defaults_spec_path):
-    from paramtools.parameters import Parameters
-    from paramtools.utils import get_example_paths
+    from paramtools import Parameters
+    from paramtools import get_example_paths
 
     adjustment = {
         "average_high_temperature": [
@@ -127,7 +127,7 @@ def test_doc_example(schema_def_path, defaults_spec_path):
         ]
     }
     # project_schema, baseline_parameters = get_example_paths('weather')
-    class WeatherParams(parameters.Parameters):
+    class WeatherParams(Parameters):
         schema = schema_def_path
         defaults = defaults_spec_path
 
