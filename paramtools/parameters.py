@@ -229,21 +229,56 @@ class Parameters:
     def _parse_errors(self, ve, params):
         """
         Parse the error messages given by marshmallow.
-        Error structure:
+
+        Marshamllow error structure:
+
         {
-            param:
-                {
-                    0: {
-                        "value": {0: [msg0, msg1, ...],
-                        "dim0": [if dim errors]
-                    },
-                    n: another message at the n-th Value object
-                }
+            "list_param": {
+                0: {
+                    "value": {
+                        0: [err message for first item in value list]
+                        i: [err message for i-th item in value list]
+                    }
+                },
+                i-th value object: {
+                    "value": {
+                        0: [...],
+                        ...
+                    }
+                },
+            }
+            "nonlist_param": {
+                0: {
+                    "value": [err message]
+                },
+                ...
+            }
         }
+
+        self._errors structure:
+        {
+            "messages": {
+                "param": [
+                    ["value": {0: [msg0, msg1, ...], other_bad_ix: ...},
+                     "dim0": {0: msg, ...} // if errors on dimension values.
+                ],
+                ...
+            },
+            "dim": {
+                "param": [
+                    {dim_name: dim_value, other_dim_name: other_dim_value},
+                    ...
+                    // list indices correspond to the error messages' indices
+                    // of the error messages caused by the value of this value
+                    // object.
+                ]
+            }
+        }
+
         """
         error_info = {"messages": defaultdict(dict),
                       "dims": defaultdict(dict)}
-
+        print('errors: ', ve.messages)
         def to_list(value, messages, formatted_errors):
             for message in messages:
                 is_type_error = (
