@@ -74,7 +74,10 @@ class ValueValidatorSchema(Schema):
 
 class OrderField(Schema):
     dim_order = fields.List(fields.Str)
-    value_order = fields.Dict(values=fields.List(fields.Field), keys=fields.Str)
+    value_order = fields.Dict(
+        values=fields.List(fields.Field), keys=fields.Str
+    )
+
 
 class BaseParamSchema(Schema):
     """
@@ -157,18 +160,18 @@ class BaseValidatorSchema(Schema):
     def validate_params(self, data):
         """
         Loop over all parameters defined on this class. Validate them using
-        the `self.validate_param_method`. Errors are stored until all
+        the `self.validate_param`. Errors are stored until all
         parameters have been validated. Note that all data has been
         type-validated. These methods only do range validation.
         """
-        errors = defaultdict(list)
+        errors = defaultdict(dict)
         errors_exist = False
         for name, specs in data.items():
-            for spec in specs:
+            for i, spec in enumerate(specs):
                 iserrors = self.validate_param(name, spec, data)
                 if iserrors:
                     errors_exist = True
-                    errors[name] += iserrors
+                    errors[name][i] = {"value": iserrors}
         if errors_exist:
             raise exceptions.ValidationError(dict(errors))
 
@@ -177,8 +180,13 @@ class BaseValidatorSchema(Schema):
         Do range validation for a parameter.
         """
         param_info = getattr(self.context["spec"], param_name)
+        # sort keys to guarantee order.
         dims = " , ".join(
-            [f"{k}={param_spec[k]}" for k in param_spec if k != "value"]
+            [
+                f"{k}={param_spec[k]}"
+                for k in sorted(param_spec)
+                if k != "value"
+            ]
         )
         validator_spec = param_info["validators"]
         validators = []
@@ -319,6 +327,17 @@ VALIDATOR_MAP = {
     "date_range": contrib_validate.DateRange,
     "choice": validate.OneOf,
 }
+
+
+def get_type(data):
+    numeric_types = {"int": Int8(), "bool": Bool_(), "float": Float64()}
+    types = dict(FIELD_MAP, **numeric_types)
+    fieldtype = types[data["type"]]
+    dim = data["number_dims"]
+    while dim > 0:
+        fieldtype = fields.List(fieldtype)
+        dim -= 1
+    return fieldtype
 
 
 def get_param_schema(base_spec, field_map=None):

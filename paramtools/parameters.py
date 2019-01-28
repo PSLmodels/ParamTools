@@ -1,7 +1,7 @@
 import os
 import json
 import itertools
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from functools import reduce
 
 try:
@@ -9,18 +9,15 @@ try:
 except ModuleNotFoundError:
     np = None
 
-from marshmallow import ValidationError
+from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.build_schema import SchemaBuilder
 from paramtools import utils
-
-
-class ParameterUpdateException(Exception):
-    pass
-
-
-class SparseValueObjectsException(Exception):
-    pass
+from paramtools.exceptions import (
+    ParameterUpdateException,
+    SparseValueObjectsException,
+    ValidationError,
+)
 
 
 class Parameters:
@@ -34,9 +31,9 @@ class Parameters:
         for k, v in defaults.items():
             setattr(self, k, v)
         self._validator_schema.context["spec"] = self
-        self.errors = {}
+        self._errors = {}
 
-    def adjust(self, params_or_path, raise_errors=True, compress_errors=True):
+    def adjust(self, params_or_path, raise_errors=True):
         """
         Method to deserialize and validate parameter adjustments.
         `params_or_path` can be a file path or a `dict` that has not been
@@ -57,25 +54,33 @@ class Parameters:
         else:
             raise ValueError("params_or_path is not dict or file path")
 
-        self.errors = {}
+        self._errors = {}
+
         # do type validation
         try:
             clean_params = self._validator_schema.load(params)
-        except ValidationError as ve:
-            self.format_errors(ve, compress_errors)
+        except MarshmallowValidationError as ve:
+            self._parse_errors(ve, params)
 
-        # if no errors from type validation, do choice, range, etc. validation.
-        if not self.errors:
+        if not self._errors:
             for param, value in clean_params.items():
-                try:
-                    self._update_param(param, value)
-                except ValidationError as ve:
-                    self.format_errors(ve, compress_errors)
+                self._update_param(param, value)
 
         self._validator_schema.context["spec"] = self
 
-        if raise_errors and self.errors:
-            raise ValidationError(self.errors)
+        if raise_errors and self._errors:
+            raise self.validation_error
+
+    @property
+    def errors(self):
+        new_errors = {}
+        for param, messages in self._errors["messages"].items():
+            new_errors[param] = utils.ravel(messages)
+        return new_errors
+
+    @property
+    def validation_error(self):
+        return ValidationError(self._errors["messages"], self._errors["dims"])
 
     def get(self, param, **kwargs):
         """
@@ -177,22 +182,6 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def format_errors(self, validation_error, compress_errors=True):
-        """
-        Format error messages from ValidationError instance. If
-        `compress_errors` is `True`, all messages are collected and
-        stored in a list.
-        """
-        if compress_errors:
-            for param, messages in validation_error.messages.items():
-                if param in self.errors:
-                    self.errors[param].append(utils.get_leaves(messages))
-                else:
-                    self.errors[param] = utils.get_leaves(messages)
-            validation_error.messages = self.errors
-        else:
-            self.errors.update(validation_error.messages)
-
     def _get(self, param, exact_match, **kwargs):
         """
         Private method for querying a parameter along some dimensions. If
@@ -239,3 +228,92 @@ class Parameters:
                     f"Failed to match along any of the "
                     f"following dimensions: {d}"
                 )
+
+    def _parse_errors(self, ve, params):
+        """
+        Parse the error messages given by marshmallow.
+
+        Marshamllow error structure:
+
+        {
+            "list_param": {
+                0: {
+                    "value": {
+                        0: [err message for first item in value list]
+                        i: [err message for i-th item in value list]
+                    }
+                },
+                i-th value object: {
+                    "value": {
+                        0: [...],
+                        ...
+                    }
+                },
+            }
+            "nonlist_param": {
+                0: {
+                    "value": [err message]
+                },
+                ...
+            }
+        }
+
+        self._errors structure:
+        {
+            "messages": {
+                "param": [
+                    ["value": {0: [msg0, msg1, ...], other_bad_ix: ...},
+                     "dim0": {0: msg, ...} // if errors on dimension values.
+                ],
+                ...
+            },
+            "dim": {
+                "param": [
+                    {dim_name: dim_value, other_dim_name: other_dim_value},
+                    ...
+                    // list indices correspond to the error messages' indices
+                    // of the error messages caused by the value of this value
+                    // object.
+                ]
+            }
+        }
+
+        """
+        error_info = {"messages": defaultdict(dict), "dims": defaultdict(dict)}
+
+        def to_list(value, messages, formatted_errors):
+            for message in messages:
+                is_type_error = message.startswith(
+                    "Invalid"
+                ) or message.startswith("Not a valid")
+                if is_type_error:
+                    formatted_errors_ix.append(f"{message[:-1]}: {value}.")
+                else:
+                    formatted_errors_ix.append(message)
+
+        for pname, data in ve.messages.items():
+            error_dims = []
+            formatted_errors = []
+            for ix, marshmessages in data.items():
+                error_dims.append(
+                    {
+                        k: v
+                        for k, v in params[pname][ix].items()
+                        if k != "value"
+                    }
+                )
+                formatted_errors_ix = []
+                for attribute, messages in marshmessages.items():
+                    value = params[pname][ix][attribute]
+                    if isinstance(messages, list):
+                        to_list(value, messages, formatted_errors)
+                    else:
+                        for val_ix, messagelist in messages.items():
+                            to_list(
+                                value[val_ix], messagelist, formatted_errors_ix
+                            )
+                formatted_errors.append(formatted_errors_ix)
+            error_info["messages"][pname] = formatted_errors
+            error_info["dims"] = error_dims
+
+        self._errors.update(dict(error_info))

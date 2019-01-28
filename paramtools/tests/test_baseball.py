@@ -2,8 +2,7 @@ import os
 
 import pytest
 
-from marshmallow import ValidationError
-
+from paramtools.exceptions import ValidationError
 from paramtools import parameters
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))

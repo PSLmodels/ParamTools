@@ -1,23 +1,5 @@
 import json
 
-from marshmallow import fields
-
-from paramtools.schema import Float64, Int8, Bool_, FIELD_MAP
-
-
-def get_type(data):
-    """
-    would be used if "type" is defined
-    """
-    numeric_types = {"int": Int8(), "bool": Bool_(), "float": Float64()}
-    types = dict(FIELD_MAP, **numeric_types)
-    fieldtype = types[data["type"]]
-    dim = data["number_dims"]
-    while dim > 0:
-        fieldtype = fields.List(fieldtype)
-        dim -= 1
-    return fieldtype
-
 
 def read_json(path):
     """
@@ -71,3 +53,17 @@ def get_leaves(item):
     gl = LeafGetter()
     gl.get(item)
     return gl.leaves
+
+
+def ravel(ndim_list):
+    """ only up to 2D for now. """
+    if not isinstance(ndim_list, list):
+        return ndim_list
+    raveled = []
+    for maybe_list in ndim_list:
+        if isinstance(maybe_list, list):
+            for item in maybe_list:
+                raveled.append(item)
+        else:
+            raveled.append(maybe_list)
+    return raveled

@@ -2,9 +2,10 @@ import os
 
 import pytest
 
-from marshmallow import exceptions, fields, Schema
+from marshmallow import fields, Schema
 
 from paramtools.parameters import Parameters
+from paramtools.exceptions import ValidationError
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -68,22 +69,22 @@ def test_schema_with_errors(adjustment, TaxcalcParams):
 
     a = adjustment.copy()
     a["_cpi_offset"][0]["year"] = 2000
-    with pytest.raises(exceptions.ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         params.adjust(a)
 
     b = adjustment.copy()
     b["_STD"][0]["MARS"] = "notastatus"
-    with pytest.raises(exceptions.ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         params.adjust(b)
 
     c = adjustment.copy()
     c["_II_brk1"][0]["value"] = "abc"
-    with pytest.raises(exceptions.ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         params.adjust(c)
 
     c = adjustment.copy()
     c["_II_em"][0]["value"] = [4000.0]
-    with pytest.raises(exceptions.ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         params.adjust(c)
 
 
@@ -98,7 +99,7 @@ def test_range_validation(TaxcalcParams):
 def test_range_validation_fail(TaxcalcParams):
     adjustment = {"_II_em": [{"year": 2020, "value": -1}]}
     params = TaxcalcParams()
-    with pytest.raises(exceptions.ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         params.adjust(adjustment)
     print(excinfo)
 
@@ -116,7 +117,7 @@ def test_range_validation_on_named_variable_fails(TaxcalcParams):
         "_II_brk1": [{"year": 2016, "MARS": "single", "value": 37651.00}]
     }
     params = TaxcalcParams()
-    with pytest.raises(exceptions.ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         params.adjust(adjustment)
     print(excinfo)
 
@@ -134,7 +135,7 @@ def test_range_validation_on_default_variable_fails(TaxcalcParams):
         "_STD": [{"year": 2018, "MARS": "separate", "value": 11999.00}]
     }
     params = TaxcalcParams()
-    with pytest.raises(exceptions.ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         params.adjust(adjustment)
     print(excinfo)
 

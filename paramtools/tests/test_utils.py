@@ -24,3 +24,20 @@ def test_get_leaves():
 
     leaves = utils.get_leaves("leaf")
     assert leaves == ["leaf"]
+
+
+def test_ravel():
+    a = 1
+    assert utils.ravel(a) == 1
+
+    b = [1, 2, 3]
+    assert utils.ravel(b) == [1, 2, 3]
+
+    c = [[1], 2, 3]
+    assert utils.ravel(c) == [1, 2, 3]
+
+    d = [[1, 2, 3], [4, 5, 6]]
+    assert utils.ravel(d) == [1, 2, 3, 4, 5, 6]
+
+    e = [0, [1, 2, 3], 4, [5, 6, 7], 8]
+    assert utils.ravel(e) == [0, 1, 2, 3, 4, 5, 6, 7, 8]

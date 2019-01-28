@@ -3,9 +3,8 @@ import json
 
 import pytest
 
-from marshmallow import exceptions
-
 from paramtools import parameters
+from paramtools.exceptions import ValidationError, ParameterUpdateException
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -97,7 +96,7 @@ def test_failed_udpate(WeatherParams):
         ]
     }
     params = WeatherParams()
-    with pytest.raises(parameters.ParameterUpdateException):
+    with pytest.raises(ParameterUpdateException):
         params.adjust(adjustment)
 
 
@@ -141,7 +140,7 @@ def test_doc_example(schema_def_path, defaults_spec_path):
     adjustment["average_high_temperature"][0]["value"] = "HOT"
 
     # raises error:
-    with pytest.raises(exceptions.ValidationError) as excinfo:
+    with pytest.raises(ValidationError) as excinfo:
         params.adjust(adjustment)
     print(excinfo)
 
