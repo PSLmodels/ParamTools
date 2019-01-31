@@ -274,3 +274,8 @@ def test_range_validation_on_list_param(TestParams):
     ]
 
     assert params.errors["float_list_param"] == exp
+
+
+def test_errors_attribute(TestParams):
+    params = TestParams()
+    assert params.errors
