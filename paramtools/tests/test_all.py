@@ -278,4 +278,4 @@ def test_range_validation_on_list_param(TestParams):
 
 def test_errors_attribute(TestParams):
     params = TestParams()
-    assert params.errors
+    assert params.errors == {}
