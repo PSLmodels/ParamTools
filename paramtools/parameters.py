@@ -313,6 +313,6 @@ class Parameters:
                             )
                 formatted_errors.append(formatted_errors_ix)
             error_info["messages"][pname] = formatted_errors
-            error_info["dims"] = error_dims
+            error_info["dims"][pname] = error_dims
 
         self._errors.update(dict(error_info))
