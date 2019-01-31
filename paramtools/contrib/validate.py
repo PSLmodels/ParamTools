@@ -49,3 +49,18 @@ class DateRange(Range):
         if max is not None and not isinstance(max, datetime.date):
             max = fields.Date()._deserialize(max, None, None)
         super().__init__(min, max, error_min, error_max)
+
+
+class OneOf(marshmallow_validate.OneOf):
+    def __call__(self, value):
+        if not isinstance(value, list):
+            values = [value]
+        else:
+            values = utils.ravel(value)
+        for val in values:
+            try:
+                if val not in self.choices:
+                    raise ValidationError(self._format_error(val))
+            except TypeError:
+                raise ValidationError(self._format_error(val))
+        return value

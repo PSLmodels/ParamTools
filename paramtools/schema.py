@@ -250,16 +250,23 @@ class BaseValidatorSchema(Schema):
         self, vname, choice_dict, param_name, dims, param_spec, raw_data
     ):
         choices = choice_dict["choices"]
-        error = (
-            '{param_name} "{input}" must be in list of choices '
-            "{choices} for dimensions {dims}"
-        ).format(
+        if len(choices) < 20:
+            error_template = (
+                '{param_name} "{input}" must be in list of choices '
+                "{choices} for dimensions {dims}."
+            )
+        else:
+            error_template = (
+                '{param_name} "{input}" must be in list of choices '
+                "for dimensions {dims}."
+            )
+        error = error_template.format(
             param_name=param_name,
             dims=dims,
             input="{input}",
             choices="{choices}",
         )
-        return validate.OneOf(choices, error=error)
+        return contrib_validate.OneOf(choices, error=error)
 
     def _resolve_op_value(self, op_value, param_name, param_spec, raw_data):
         """

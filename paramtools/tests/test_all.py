@@ -110,7 +110,7 @@ def test_errors_choice_param(TestParams):
         params.adjust(adjustment)
     msg = [
         'str_choice_param "not a valid choice" must be in list of choices value0, '
-        "value1 for dimensions "
+        "value1 for dimensions ."
     ]
     assert excinfo.value.messages["str_choice_param"][0] == msg
 
