@@ -54,8 +54,6 @@ class Parameters:
         else:
             raise ValueError("params_or_path is not dict or file path")
 
-        self._errors = {}
-
         # do type validation
         try:
             clean_params = self._validator_schema.load(params)
@@ -74,8 +72,9 @@ class Parameters:
     @property
     def errors(self):
         new_errors = {}
-        for param, messages in self._errors["messages"].items():
-            new_errors[param] = utils.ravel(messages)
+        if self._errors:
+            for param, messages in self._errors["messages"].items():
+                new_errors[param] = utils.ravel(messages)
         return new_errors
 
     @property
@@ -314,6 +313,6 @@ class Parameters:
                             )
                 formatted_errors.append(formatted_errors_ix)
             error_info["messages"][pname] = formatted_errors
-            error_info["dims"] = error_dims
+            error_info["dims"][pname] = error_dims
 
         self._errors.update(dict(error_info))

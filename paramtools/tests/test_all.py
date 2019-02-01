@@ -245,7 +245,12 @@ def test_list_type_errors(TestParams):
     }
     assert excinfo.value.messages == exp_internal_message
 
-    exp_dims = [{"dim0": "zero", "dim1": 1}, {"dim0": "one", "dim1": 2}]
+    exp_dims = {
+        "float_list_param": [
+            {"dim0": "zero", "dim1": 1},
+            {"dim0": "one", "dim1": 2},
+        ]
+    }
     assert excinfo.value.dims == exp_dims
 
 
@@ -261,7 +266,7 @@ def test_errors(TestParams):
     exp_internal_message = {"min_int_param": [["Not a valid number: abc."]]}
     assert excinfo.value.messages == exp_internal_message
 
-    exp_dims = [{}]
+    exp_dims = {"min_int_param": [{}]}
     assert excinfo.value.dims == exp_dims
 
 
@@ -274,3 +279,8 @@ def test_range_validation_on_list_param(TestParams):
     ]
 
     assert params.errors["float_list_param"] == exp
+
+
+def test_errors_attribute(TestParams):
+    params = TestParams()
+    assert params.errors == {}

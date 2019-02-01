@@ -20,5 +20,4 @@ class ValidationError(ParamToolsError):
         raveled_messages = {
             param: utils.ravel(msgs) for param, msgs in self.messages.items()
         }
-        print(raveled_messages)
         super().__init__(raveled_messages)
