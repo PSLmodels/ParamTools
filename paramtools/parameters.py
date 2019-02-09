@@ -4,11 +4,7 @@ import itertools
 from collections import OrderedDict, defaultdict
 from functools import reduce
 
-try:
-    import numpy as np
-except ModuleNotFoundError:
-    np = None
-
+import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.build_schema import SchemaBuilder
@@ -125,12 +121,6 @@ class Parameters:
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
         """
-        if np is None:
-            # In the future, an alternative method will be implemented in
-            # pure Python.
-            raise NotImplementedError(
-                "Numpy must be installed to use `to_array`."
-            )
         param_meta = getattr(self, param)
         dim_order = param_meta["order"]["dim_order"]
         value_order = param_meta["order"]["value_order"]

@@ -14,7 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/hdoupe/ParamTools",
     packages=setuptools.find_packages(),
-    install_requires= ["marshmallow>=3.*"],
+    install_requires= ["marshmallow>=3.*", "numpy"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
