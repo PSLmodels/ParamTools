@@ -1,4 +1,5 @@
 import json
+from collections import OrderedDict
 
 
 def read_json(path):
@@ -6,7 +7,7 @@ def read_json(path):
     Read JSON file shortcut
     """
     with open(path, "r") as f:
-        r = json.loads(f.read())
+        r = json.loads(f.read(), object_pairs_hook=OrderedDict)
     return r
 
 

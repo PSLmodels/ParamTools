@@ -26,6 +26,9 @@ class Parameters:
         defaults, self._validator_schema = sb.build_schemas()
         for k, v in defaults.items():
             setattr(self, k, v)
+        self.dim_mesh = OrderedDict(
+            [(name, v.mesh()) for name, v in sb.dim_validators.items()]
+        )
         self._validator_schema.context["spec"] = self
         self._errors = {}
 
