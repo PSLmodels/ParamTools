@@ -116,8 +116,6 @@ class Parameters:
         Returns: n-dimensional NumPy array.
 
         Raises:
-            NotImplementedError: NumPy must be installed. A pure Python
-                version has not yet been implemented.
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
         """
