@@ -68,3 +68,16 @@ def ravel(ndim_list):
         else:
             raveled.append(maybe_list)
     return raveled
+
+
+def consistent_dims(value_items):
+    """
+    Get dimensions used consistently across all value objects.
+    Returns None if dimensions are omitted or added for
+    some value object(s).
+    """
+    used = set(k for k in value_items[0] if k != "value")
+    for vo in value_items:
+        if used != set(k for k in vo if k != "value"):
+            return None
+    return used

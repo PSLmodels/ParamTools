@@ -13,6 +13,7 @@ from paramtools.exceptions import (
     ParameterUpdateException,
     SparseValueObjectsException,
     ValidationError,
+    InconsistentDimensionsException,
 )
 
 
@@ -119,18 +120,19 @@ class Parameters:
         Returns: n-dimensional NumPy array.
 
         Raises:
+            InconsistentDimensionsException: Value objects do not have consistent
+                dimensions.
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
         """
         param_meta = getattr(self, param)
-        dim_order = param_meta["order"]["dim_order"]
-        value_order = param_meta["order"]["value_order"]
+        value_items = param_meta["value"]
+        dim_order, value_order = self._resolve_order(param_meta)
         shape = []
         for dim in dim_order:
             shape.append(len(value_order[dim]))
         shape = tuple(shape)
         arr = np.zeros(shape)
-        value_items = param_meta["value"]
         # Compare len value items with the expected length if they are full.
         # In the futute, sparse objects should be supported by filling in the
         # unspecified dimensions.
@@ -156,11 +158,15 @@ class Parameters:
         """
         Convert NumPy array to a Value object.
 
-        Returns: Value object (shape: [{"value": val, dims:...}])
+        Returns:
+            Value object (shape: [{"value": val, dims:...}])
+
+        Raises:
+            InconsistentDimensionsException: Value objects do not have consistent
+                dimensions.
         """
         param_meta = getattr(self, param)
-        dim_order = param_meta["order"]["dim_order"]
-        value_order = param_meta["order"]["value_order"]
+        dim_order, value_order = self._resolve_order(param_meta)
         dim_values = itertools.product(*value_order.values())
         dim_indices = itertools.product(
             *map(lambda x: range(len(x)), value_order.values())
@@ -171,6 +177,48 @@ class Parameters:
             vi["value"] = array[di]
             value_items.append(vi)
         return value_items
+
+    def _resolve_order(self, param_meta):
+        """
+        Resolve the order of the dimensions and their values by
+        inspecting data in the parameter's order attribute if specified
+        or the dimension mesh values.
+
+        The dimension mesh for all dimensions is stored in the dim_mesh
+        attribute. The dimensions to be used are the ones that are specified
+        for each value object. Note that the dimensions must be specified
+        _consistently_ for all value objects, i.e. none can be added or omitted
+        for any value object in the list.
+
+        Returns:
+            dim_order: The dimension order.
+            value_order: The values, in order, for each dimension.
+
+        Raises:
+            InconsistentDimensionsException: Value objects do not have consistent
+                dimensions.
+
+        Note:
+            One could make a case for being able to specify just the dimension order
+            or just the value order. Depending on demand/use cases, this could be
+            implemented relatively easily.
+        """
+        value_items = param_meta["value"]
+        if "order" in param_meta:
+            dim_order = param_meta["order"]["dim_order"]
+            value_order = param_meta["order"]["value_order"]
+        else:
+            used = utils.consistent_dims(value_items)
+            if used is None:
+                raise InconsistentDimensionsException(
+                    f"Some dimensions in {value_items} were added or omitted for some value object(s)."
+                )
+            dim_order, value_order = [], {}
+            for dim_name, dim_values in self.dim_mesh.items():
+                if dim_name in used:
+                    dim_order.append(dim_name)
+                    value_order[dim_name] = dim_values
+        return dim_order, value_order
 
     def _get(self, param, exact_match, **kwargs):
         """
