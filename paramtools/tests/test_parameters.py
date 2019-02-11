@@ -34,16 +34,17 @@ def TestParams(schema_def_path, defaults_spec_path):
     return _TestParams
 
 
-class TestBasic:
-    def test_init(self, TestParams):
-        params = TestParams()
-        assert params
-        assert params._data
-        for param in params._data:
-            assert getattr(params, param)
-        assert params.dim_mesh
-        assert params.dim_mesh == params._stateless_dim_mesh
+def test_init(TestParams):
+    params = TestParams()
+    assert params
+    assert params._data
+    for param in params._data:
+        assert getattr(params, param)
+    assert params.dim_mesh
+    assert params.dim_mesh == params._stateless_dim_mesh
 
+
+class TestAccess:
     def test_specification_and_get(self, TestParams, defaults_spec_path):
         params = TestParams()
         spec1 = params.specification()
@@ -389,7 +390,7 @@ class TestArray:
         with pytest.raises(InconsistentDimensionsException):
             params._resolve_order("madeup", {})
 
-    def test_to_array_with_state(self, TestParams):
+    def test_to_array_with_state1(self, TestParams):
         params = TestParams()
         params.set_state(dim0="zero")
         res = params.to_array("int_dense_array_param")
@@ -410,10 +411,37 @@ class TestArray:
         exp = params.int_dense_array_param
         assert params.from_array("int_dense_array_param", res) == exp
 
-        params.int_dense_array_param.pop(0)
+    def test_to_array_with_state2(self, TestParams):
+        params = TestParams()
+        # Drop values 3 and 4 from dim1
+        params.set_state(dim1=[0, 1, 2, 5])
+        print(len(params.int_dense_array_param))
+        res = params.to_array("int_dense_array_param")
 
-        with pytest.raises(SparseValueObjectsException):
-            params.to_array("int_dense_array_param")
+        # Values 3 and 4 were removed from dim1.
+        exp = [
+            [
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9],
+                # [10, 11, 12],
+                # [13, 14, 15],
+                [16, 17, 18],
+            ],
+            [
+                [19, 20, 21],
+                [22, 23, 24],
+                [25, 26, 27],
+                # [28, 29, 30],
+                # [31, 32, 33],
+                [34, 35, 36],
+            ],
+        ]
+
+        assert res.tolist() == exp
+
+        exp = params.int_dense_array_param
+        assert params.from_array("int_dense_array_param", res) == exp
 
 
 class TestState:
@@ -430,6 +458,8 @@ class TestState:
         assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state()
         assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+        params.set_state(dim1=[1, 2, 3])
+        assert params.state == {"dim0": "one", "dim1": [1, 2, 3], "dim2": 1}
 
     def test_dim_mesh(self, TestParams):
         params = TestParams()
@@ -447,6 +477,14 @@ class TestState:
         params.set_state(dim0="one", dim2=1)
         exp = {"dim0": ["one"], "dim1": [0, 1, 2, 3, 4, 5], "dim2": [1]}
         assert params.dim_mesh == exp
+
+        params.set_state(dim1=[0, 1, 2, 5])
+        exp = {"dim0": ["one"], "dim1": [0, 1, 2, 5], "dim2": [1]}
+        assert params.dim_mesh == {
+            "dim0": ["one"],
+            "dim1": [0, 1, 2, 5],
+            "dim2": [1],
+        }
 
     def test_set_state_updates_values(self, TestParams):
         params = TestParams()
@@ -472,3 +510,16 @@ class TestState:
         params = TestParams()
         with pytest.raises(ValidationError) as ve:
             params.set_state(notadim="notadim")
+
+    def test_state_with_list(self, TestParams):
+        params = TestParams()
+        params.set_state(dim0="zero", dim1=[0, 1])
+        exp = [
+            {"dim0": "zero", "dim1": 0, "dim2": 0, "value": 1},
+            {"dim0": "zero", "dim1": 0, "dim2": 1, "value": 2},
+            {"dim0": "zero", "dim1": 0, "dim2": 2, "value": 3},
+            {"dim0": "zero", "dim1": 1, "dim2": 0, "value": 4},
+            {"dim0": "zero", "dim1": 1, "dim2": 1, "value": 5},
+            {"dim0": "zero", "dim1": 1, "dim2": 2, "value": 6},
+        ]
+        assert params.int_dense_array_param == exp

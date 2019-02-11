@@ -52,23 +52,27 @@ class Parameters:
 
     def set_state(self, **dims):
         """
-        Update state. Assume that each value in state is a single
-        value and not a list of values.
+        Update state.
         """
         messages = {}
-        for name, value in dims.items():
+        for name, values in dims.items():
             if name not in self.dim_validators:
                 messages[name] = f"{name} is not a valid dimension."
                 continue
-            try:
-                self.dim_validators[name].deserialize(value)
-            except MarshmallowValidationError as ve:
-                messages[name] = str(ve)
+            if not isinstance(values, list):
+                values = [values]
+            for value in values:
+                try:
+                    self.dim_validators[name].deserialize(value)
+                except MarshmallowValidationError as ve:
+                    messages[name] = str(ve)
         if messages:
             raise ValidationError(messages, dims=None)
         self.state.update(dims)
         for dim_name, dim_value in self.state.items():
-            self.dim_mesh[dim_name] = [dim_value]
+            if not isinstance(dim_value, list):
+                dim_value = [dim_value]
+            self.dim_mesh[dim_name] = dim_value
         spec = self.specification(**dims)
         for name, value in spec.items():
             setattr(self, name, value)
@@ -140,8 +144,8 @@ class Parameters:
     def specification(self, use_state=True, meta_data=False, **dims):
         """
         Query value(s) of all parameters along dimensions specified in
-        `dims`. If `use_state` is `True`, `dims` is updated with the
-        current state. If `meta_data` is `True`, then parameter attributes
+        `dims`. If `use_state` is `True`, the current state is updated with
+        `dims`. If `meta_data` is `True`, then parameter attributes
         are included, too.
 
         Returns: serialized data of shape
@@ -149,7 +153,8 @@ class Parameters:
         """
         if use_state:
             # use shallow copy of self.state
-            dims.update(dict(self.state))
+            dims.update(self.state)
+
         all_params = OrderedDict()
         for param in self._validator_schema.fields:
             result = self._get(param, False, **dims)
@@ -278,14 +283,19 @@ class Parameters:
 
         Returns: [{"value": val, "dim0": ..., }]
         """
-        value = self._data[param]["value"]
+        value_objects = self._data[param]["value"]
         ret = []
-        for v in value:
-            match = all(
-                v[k] == dims[k] for k in dims if (k in v or exact_match)
-            )
-            if match:
-                ret.append(v)
+        for value_object in value_objects:
+            matches = []
+            for dim_name, dim_value in dims.items():
+                if dim_name in value_object or exact_match:
+                    if isinstance(dim_value, list):
+                        match = value_object[dim_name] in dim_value
+                    else:
+                        match = value_object[dim_name] == dim_value
+                    matches.append(match)
+            if all(matches):
+                ret.append(value_object)
         return ret
 
     def _update_param(self, param, new_values):
