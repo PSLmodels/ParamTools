@@ -51,7 +51,7 @@ def test_load_schema(BaseballParams):
 def test_adjust_schema(BaseballParams, adjustment):
     params = BaseballParams()
     params.adjust(adjustment)
-    assert params.get("pitcher") == adjustment["pitcher"]
+    assert params.pitcher == adjustment["pitcher"]
 
     a1 = dict(adjustment, **{"start_date": [{"value": "2007-01-01"}]})
     params = BaseballParams()

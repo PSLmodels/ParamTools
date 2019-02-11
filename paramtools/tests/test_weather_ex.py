@@ -100,12 +100,6 @@ def test_failed_udpate(WeatherParams):
         params.adjust(adjustment)
 
 
-def test_failed_get(WeatherParams):
-    params = WeatherParams()
-    with pytest.raises(KeyError):
-        params.get("average_precipitation", notallowed=1)
-
-
 def test_doc_example(schema_def_path, defaults_spec_path):
     from paramtools import Parameters
     from paramtools import get_example_paths
@@ -132,10 +126,10 @@ def test_doc_example(schema_def_path, defaults_spec_path):
         defaults = defaults_spec_path
 
     params = WeatherParams()
-    print(params.get("average_high_temperature", month="November"))
+    # print(params.get("average_high_temperature", month="November"))
 
-    params.adjust(adjustment)
-    print(params.get("average_high_temperature", month="November"))
+    # params.adjust(adjustment)
+    # print(params.get("average_high_temperature", month="November"))
 
     adjustment["average_high_temperature"][0]["value"] = "HOT"
 

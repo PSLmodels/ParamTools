@@ -128,19 +128,6 @@ class Parameters:
     def validation_error(self):
         return ValidationError(self._errors["messages"], self._errors["dims"])
 
-    def get(self, param, **dims):
-        """
-        Query a parameter's values along dimensions specified in `kwargs`.
-
-        Returns: [{"value": val, "dim0": ..., }]
-
-        Raises:
-            KeyError if queried dimension is not used by this parameter.
-            AttributeError if parameter does not exist.
-        """
-        print("`Parameters.get` is deprecated!!!")
-        return self._get(param, True, **dims)
-
     def specification(self, use_state=True, meta_data=False, **dims):
         """
         Query value(s) of all parameters along dimensions specified in
