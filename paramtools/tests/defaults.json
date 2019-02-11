@@ -121,10 +121,10 @@
         "out_of_range_maxmsg": "",
         "out_of_range_action": "stop"
     },
-    "int_dense_array_param": {
+    "int_dense_array_param_with_order": {
         "title": "Integer Dense Array Param",
-        "description": "Example of using an int type param that supports to/from_array.",
-        "notes": "Dense means that the full space is explicitly spanned in the list of Value objects.",
+        "description": "Example of using an int type param that supports to/from_array and specifies order.",
+        "notes": "See int_dense_array_param for an ex without order. Note that vals 3 and 4 were removed from dim1.",
         "opt0": "an option",
         "type": "int",
         "number_dims": 0,
@@ -132,10 +132,50 @@
             "dim_order": ["dim0", "dim1", "dim2"],
             "value_order": {
                 "dim0": ["zero", "one"],
-                "dim1": [0, 1, 2, 3, 4, 5],
+                "dim1": [0, 1, 2, 5],
                 "dim2": [0, 1, 2]
             }
         },
+        "value": [
+            {"dim0": "zero", "dim1": 0, "dim2": 0, "value": 1},
+            {"dim0": "zero", "dim1": 0, "dim2": 1, "value": 2},
+            {"dim0": "zero", "dim1": 0, "dim2": 2, "value": 3},
+            {"dim0": "zero", "dim1": 1, "dim2": 0, "value": 4},
+            {"dim0": "zero", "dim1": 1, "dim2": 1, "value": 5},
+            {"dim0": "zero", "dim1": 1, "dim2": 2, "value": 6},
+            {"dim0": "zero", "dim1": 2, "dim2": 0, "value": 7},
+            {"dim0": "zero", "dim1": 2, "dim2": 1, "value": 8},
+            {"dim0": "zero", "dim1": 2, "dim2": 2, "value": 9},
+            {"dim0": "zero", "dim1": 5, "dim2": 0, "value": 16},
+            {"dim0": "zero", "dim1": 5, "dim2": 1, "value": 17},
+            {"dim0": "zero", "dim1": 5, "dim2": 2, "value": 18},
+
+            {"dim0": "one", "dim1": 0, "dim2": 0, "value": 19},
+            {"dim0": "one", "dim1": 0, "dim2": 1, "value": 20},
+            {"dim0": "one", "dim1": 0, "dim2": 2, "value": 21},
+            {"dim0": "one", "dim1": 1, "dim2": 0, "value": 22},
+            {"dim0": "one", "dim1": 1, "dim2": 1, "value": 23},
+            {"dim0": "one", "dim1": 1, "dim2": 2, "value": 24},
+            {"dim0": "one", "dim1": 2, "dim2": 0, "value": 25},
+            {"dim0": "one", "dim1": 2, "dim2": 1, "value": 26},
+            {"dim0": "one", "dim1": 2, "dim2": 2, "value": 27},
+            {"dim0": "one", "dim1": 5, "dim2": 0, "value": 34},
+            {"dim0": "one", "dim1": 5, "dim2": 1, "value": 35},
+            {"dim0": "one", "dim1": 5, "dim2": 2, "value": 36}
+
+        ],
+        "validators": {"range": {"min": 1, "max": 9}},
+        "out_of_range_minmsg": "",
+        "out_of_range_maxmsg": "",
+        "out_of_range_action": "stop"
+    },
+    "int_dense_array_param": {
+        "title": "Integer Dense Array Param",
+        "description": "Example of using an int type param that supports to/from_array.",
+        "notes": "Dense means that the full space is explicitly spanned in the list of Value objects.",
+        "opt0": "an option",
+        "type": "int",
+        "number_dims": 0,
         "value": [
             {"dim0": "zero", "dim1": 0, "dim2": 0, "value": 1},
             {"dim0": "zero", "dim1": 0, "dim2": 1, "value": 2},

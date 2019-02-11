@@ -11,8 +11,8 @@ How to use ParamTools
 Subclass the `Parameters` class and set your [specification schema](#specification-schema) and [default specification](#default-specification) files:
 
 ```python
-from paramtools.parameters import Parameters
-from paramtools.utils import get_example_paths
+from paramtools import Parameters
+from paramtools import get_example_paths
 
 schema, defaults = get_example_paths('weather')
 

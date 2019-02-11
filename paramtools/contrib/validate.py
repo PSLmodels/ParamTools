@@ -3,7 +3,7 @@ import datetime
 from marshmallow import (
     validate as marshmallow_validate,
     ValidationError,
-    fields,
+    fields as marshmallow_fields,
 )
 
 from paramtools import utils
@@ -36,6 +36,9 @@ class Range(marshmallow_validate.Range):
 
         return value
 
+    def mesh(self):
+        return list(range(self.min, self.max + 1))
+
 
 class DateRange(Range):
     """
@@ -45,10 +48,13 @@ class DateRange(Range):
 
     def __init__(self, min=None, max=None, error_min=None, error_max=None):
         if min is not None and not isinstance(min, datetime.date):
-            min = fields.Date()._deserialize(min, None, None)
+            min = marshmallow_fields.Date()._deserialize(min, None, None)
         if max is not None and not isinstance(max, datetime.date):
-            max = fields.Date()._deserialize(max, None, None)
+            max = marshmallow_fields.Date()._deserialize(max, None, None)
         super().__init__(min, max, error_min, error_max)
+
+    def mesh(self):
+        return None
 
 
 class OneOf(marshmallow_validate.OneOf):
@@ -64,3 +70,6 @@ class OneOf(marshmallow_validate.OneOf):
             except TypeError:
                 raise ValidationError(self._format_error(val))
         return value
+
+    def mesh(self):
+        return self.choices

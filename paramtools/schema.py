@@ -9,31 +9,10 @@ from marshmallow import (
     ValidationError as MarshmallowValidationError,
 )
 
-from paramtools.contrib import validate as contrib_validate
-
-
-class Float64(fields.Number):
-    """
-    Define field to match up with numpy float64 type
-    """
-
-    num_type = np.float64
-
-
-class Int8(fields.Number):
-    """
-    Define field to match up with numpy int64 type
-    """
-
-    num_type = np.int64
-
-
-class Bool_(fields.Boolean):
-    """
-    Define field to match up with numpy bool_ type
-    """
-
-    num_type = np.bool_
+from paramtools.contrib import (
+    validate as contrib_validate,
+    fields as contrib_fields,
+)
 
 
 class RangeSchema(Schema):
@@ -306,32 +285,36 @@ class BaseValidatorSchema(Schema):
 
 # A few fields that have not been instantiated yet
 CLASS_FIELD_MAP = {
-    "str": fields.Str,
-    "int": fields.Integer,
-    "float": fields.Float,
-    "bool": fields.Boolean,
-    "date": fields.Date,
+    "str": contrib_fields.Str,
+    "int": contrib_fields.Integer,
+    "float": contrib_fields.Float,
+    "bool": contrib_fields.Boolean,
+    "date": contrib_fields.Date,
 }
 
 
 # A few fields that have been instantiated
 FIELD_MAP = {
-    "str": fields.Str(),
-    "int": fields.Integer(),
-    "float": fields.Float(),
-    "bool": fields.Boolean(),
-    "date": fields.Date(),
+    "str": contrib_fields.Str(),
+    "int": contrib_fields.Integer(),
+    "float": contrib_fields.Float(),
+    "bool": contrib_fields.Boolean(),
+    "date": contrib_fields.Date(),
 }
 
 VALIDATOR_MAP = {
-    "range": validate.Range,
+    "range": contrib_validate.Range,
     "date_range": contrib_validate.DateRange,
-    "choice": validate.OneOf,
+    "choice": contrib_validate.OneOf,
 }
 
 
 def get_type(data):
-    numeric_types = {"int": Int8(), "bool": Bool_(), "float": Float64()}
+    numeric_types = {
+        "int": contrib_fields.Int64(),
+        "bool": contrib_fields.Bool_(),
+        "float": contrib_fields.Float64(),
+    }
     types = dict(FIELD_MAP, **numeric_types)
     fieldtype = types[data["type"]]
     dim = data["number_dims"]
