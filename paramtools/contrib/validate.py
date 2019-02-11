@@ -10,6 +10,8 @@ from paramtools import utils
 
 
 class Range(marshmallow_validate.Range):
+    error = ""
+
     def __init__(self, min=None, max=None, error_min=None, error_max=None):
         self.min = min
         self.max = max

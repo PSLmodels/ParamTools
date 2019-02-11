@@ -1,3 +1,4 @@
+import copy
 import os
 import json
 import itertools
@@ -38,11 +39,11 @@ class Parameters:
     def __init__(self):
         sb = SchemaBuilder(self.schema, self.defaults, self.field_map)
         defaults, self._validator_schema = sb.build_schemas()
-        for k, v in defaults.items():
-            setattr(self, k, v)
-        self.dim_mesh = OrderedDict(
-            [(name, v.mesh()) for name, v in sb.dim_validators.items()]
+        self.dim_validators = sb.dim_validators
+        self._stateless_dim_mesh = OrderedDict(
+            [(name, v.mesh()) for name, v in self.dim_validators.items()]
         )
+        self.dim_mesh = copy.deepcopy(self._stateless_dim_mesh)
         self._data = defaults
         self._validator_schema.context["spec"] = self
         self._errors = {}
@@ -51,10 +52,23 @@ class Parameters:
 
     def set_state(self, **dims):
         """
-        Update state. Refresh values with complete updated state.
+        Update state. Assume that each value in state is a single
+        value and not a list of values.
         """
+        messages = {}
+        for name, value in dims.items():
+            if name not in self.dim_validators:
+                messages[name] = f"{name} is not a valid dimension."
+                continue
+            try:
+                self.dim_validators[name].deserialize(value)
+            except MarshmallowValidationError as ve:
+                messages[name] = str(ve)
+        if messages:
+            raise ValidationError(messages, dims=None)
         self.state.update(dims)
-        # TODO: update dim_mesh too.
+        for dim_name, dim_value in self.state.items():
+            self.dim_mesh[dim_name] = [dim_value]
         spec = self.specification(**dims)
         for name, value in spec.items():
             setattr(self, name, value)
@@ -64,7 +78,7 @@ class Parameters:
         Method to deserialize and validate parameter adjustments.
         `params_or_path` can be a file path or a `dict` that has not been
         fully deserialized. The adjusted values replace the current values
-        stored in the correspondig parameter attributes.
+        stored in the corresponding parameter attributes.
 
         Raises:
             marshmallow.exceptions.ValidationError if data is not valid.
@@ -94,6 +108,9 @@ class Parameters:
 
         if raise_errors and self._errors:
             raise self.validation_error
+
+        # Update attrs.
+        self.set_state()
 
     @property
     def errors(self):
@@ -131,13 +148,14 @@ class Parameters:
             {"param_name": [{"value": val, "dim0": ..., }], ...}
         """
         if use_state:
-            dims.update(self.state.copy())
+            # use shallow copy of self.state
+            dims.update(dict(self.state))
         all_params = OrderedDict()
         for param in self._validator_schema.fields:
             result = self._get(param, False, **dims)
             if result:
                 if meta_data:
-                    param_data = getattr(self, param)
+                    param_data = self._data[param]
                     result = dict(param_data, **{"value": result})
                 all_params[param] = result
         return all_params
@@ -157,7 +175,7 @@ class Parameters:
         """
         param_data = self._data[param]
         value_items = getattr(self, param)
-        dim_order, value_order = self._resolve_order(param_data)
+        dim_order, value_order = self._resolve_order(param, param_data)
         shape = []
         for dim in dim_order:
             shape.append(len(value_order[dim]))
@@ -196,7 +214,7 @@ class Parameters:
                 dimensions.
         """
         param_data = self._data[param]
-        dim_order, value_order = self._resolve_order(param_data)
+        dim_order, value_order = self._resolve_order(param, param_data)
         dim_values = itertools.product(*value_order.values())
         dim_indices = itertools.product(
             *map(lambda x: range(len(x)), value_order.values())
@@ -208,7 +226,7 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def _resolve_order(self, param_data):
+    def _resolve_order(self, param, param_data):
         """
         Resolve the order of the dimensions and their values by
         inspecting data in the parameter's order attribute if specified
@@ -233,8 +251,8 @@ class Parameters:
             or just the value order. Depending on demand/use cases, this could be
             implemented relatively easily.
         """
-        value_items = param_data["value"]
-        if "order" in param_data:
+        value_items = getattr(self, param)
+        if not self.state and "order" in param_data:
             dim_order = param_data["order"]["dim_order"]
             value_order = param_data["order"]["value_order"]
         else:
@@ -260,7 +278,7 @@ class Parameters:
 
         Returns: [{"value": val, "dim0": ..., }]
         """
-        value = getattr(self, param)["value"]
+        value = self._data[param]["value"]
         ret = []
         for v in value:
             match = all(
@@ -281,7 +299,7 @@ class Parameters:
             ParameterUpdateException if dimension values do not match at
                 least one existing value item's corresponding dimension values.
         """
-        curr_vals = getattr(self, param)["value"]
+        curr_vals = self._data[param]["value"]
         for i in range(len(new_values)):
             matched_at_least_once = False
             dims_to_check = tuple(k for k in new_values[i] if k != "value")

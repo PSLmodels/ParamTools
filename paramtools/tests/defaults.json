@@ -56,7 +56,7 @@
         "value": [
             {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
         ],
-        "validators": {"range": {"min": "2018-01-01", "max": "2018-12-31"}},
+        "validators": {"date_range": {"min": "2018-01-01", "max": "2018-12-31"}},
         "out_of_range_minmsg": "",
         "out_of_range_maxmsg": "",
         "out_of_range_action": "stop"

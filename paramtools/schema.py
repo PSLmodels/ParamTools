@@ -150,7 +150,7 @@ class BaseValidatorSchema(Schema):
         """
         Do range validation for a parameter.
         """
-        param_info = getattr(self.context["spec"], param_name)
+        param_info = self.context["spec"]._data[param_name]
         # sort keys to guarantee order.
         dims = " , ".join(
             [
@@ -271,7 +271,7 @@ class BaseValidatorSchema(Schema):
             # value of the parameter being updated.
             if oth_param_name == "default":
                 oth_param_name = param_name
-            oth_param = getattr(self.context["spec"], oth_param_name)
+            oth_param = self.context["spec"]._data[oth_param_name]
             vals = oth_param["value"]
         dims_to_check = tuple(k for k in param_spec if k != "value")
         res = [

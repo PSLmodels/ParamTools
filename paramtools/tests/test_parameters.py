@@ -1,5 +1,6 @@
 import os
 import json
+import datetime
 
 import pytest
 
@@ -34,9 +35,14 @@ def TestParams(schema_def_path, defaults_spec_path):
 
 
 class TestBasic:
-    def test_load_schema(self, TestParams):
+    def test_init(self, TestParams):
         params = TestParams()
         assert params
+        assert params._data
+        for param in params._data:
+            assert getattr(params, param)
+        assert params.dim_mesh
+        assert params.dim_mesh == params._stateless_dim_mesh
 
     def test_specification_and_get(self, TestParams, defaults_spec_path):
         params = TestParams()
@@ -72,6 +78,8 @@ class TestBasic:
         with pytest.raises(KeyError):
             params.get("max_int_param", notadimension="heyo")
 
+
+class TestAdjust:
     def test_adjust_int_param(self, TestParams):
         params = TestParams()
 
@@ -92,19 +100,42 @@ class TestBasic:
         specified.
         """
         params = TestParams()
+        params.set_state(dim0="zero", dim1=1)
         adjustment = {
             "min_int_param": [{"dim0": "zero", "dim1": 1, "value": 4}],
             "max_int_param": [{"dim0": "zero", "dim1": 1, "value": 5}],
         }
         params.adjust(adjustment)
-        assert (
-            params.get("min_int_param", dim0="zero", dim1=1)
-            == adjustment["min_int_param"]
-        )
-        assert (
-            params.get("max_int_param", dim0="zero", dim1=1)
-            == adjustment["max_int_param"]
-        )
+        assert params.min_int_param == adjustment["min_int_param"]
+        assert params.max_int_param == adjustment["max_int_param"]
+
+    def test_adjust_many_dimensions(self, TestParams):
+        """
+        Adjust min_int_param above original max_int_param value at same time as
+        max_int_param value is adjusted up. This tests that the new param is
+        compared against the adjusted reference param if the reference param is
+        specified.
+        """
+        params = TestParams()
+        params.set_state(dim0="zero", dim1=1)
+        adjustment = {
+            "min_int_param": [{"dim0": "one", "dim1": 2, "value": 2}],
+            "int_default_param": [{"value": 5}],
+            "date_param": [{"dim0": "zero", "dim1": 1, "value": "2018-01-17"}],
+        }
+        params.adjust(adjustment)
+        # min_int_param is adjusted in the _data attribute but the instance
+        # attribute min_int_param is not.
+        spec = params.specification(use_state=False, dim0="one", dim1=2)
+        assert spec["min_int_param"] == adjustment["min_int_param"]
+        assert params.min_int_param == [
+            {"dim0": "zero", "dim1": 1, "value": 1}
+        ]
+
+        assert params.int_default_param == adjustment["int_default_param"]
+        assert params.date_param == [
+            {"value": datetime.date(2018, 1, 17), "dim1": 1, "dim0": "zero"}
+        ]
 
 
 class TestErrors:
@@ -357,3 +388,87 @@ class TestArray:
         params.madeup[0]["dim1"] = 0
         with pytest.raises(InconsistentDimensionsException):
             params._resolve_order("madeup", {})
+
+    def test_to_array_with_state(self, TestParams):
+        params = TestParams()
+        params.set_state(dim0="zero")
+        res = params.to_array("int_dense_array_param")
+
+        exp = [
+            [
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9],
+                [10, 11, 12],
+                [13, 14, 15],
+                [16, 17, 18],
+            ]
+        ]
+
+        assert res.tolist() == exp
+
+        exp = params.int_dense_array_param
+        assert params.from_array("int_dense_array_param", res) == exp
+
+        params.int_dense_array_param.pop(0)
+
+        with pytest.raises(SparseValueObjectsException):
+            params.to_array("int_dense_array_param")
+
+
+class TestState:
+    def test_basic_set_state(self, TestParams):
+        params = TestParams()
+        assert params.state == {}
+        params.set_state(dim0="zero")
+        assert params.state == {"dim0": "zero"}
+        params.set_state(dim1=0)
+        assert params.state == {"dim0": "zero", "dim1": 0}
+        params.set_state(dim0="one", dim2=1)
+        assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+        params.set_state(**{})
+        assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+        params.set_state()
+        assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+
+    def test_dim_mesh(self, TestParams):
+        params = TestParams()
+        exp = {
+            "dim0": ["zero", "one"],
+            "dim1": [0, 1, 2, 3, 4, 5],
+            "dim2": [0, 1, 2],
+        }
+        assert params.dim_mesh == exp
+
+        params.set_state(dim0="one")
+        exp = {"dim0": ["one"], "dim1": [0, 1, 2, 3, 4, 5], "dim2": [0, 1, 2]}
+        assert params.dim_mesh == exp
+
+        params.set_state(dim0="one", dim2=1)
+        exp = {"dim0": ["one"], "dim1": [0, 1, 2, 3, 4, 5], "dim2": [1]}
+        assert params.dim_mesh == exp
+
+    def test_set_state_updates_values(self, TestParams):
+        params = TestParams()
+        exp = [
+            {"dim0": "zero", "dim1": 1, "value": 1},
+            {"dim0": "one", "dim1": 2, "value": 2},
+        ]
+        assert params.min_int_param == exp
+
+        params.set_state(dim0="zero")
+        assert params.min_int_param == [
+            {"dim0": "zero", "dim1": 1, "value": 1}
+        ]
+
+        # makes sure parameter that doesn't use dim0 is unaffected
+        assert params.str_choice_param == [{"value": "value0"}]
+
+    def test_set_state_errors(self, TestParams):
+        params = TestParams()
+        with pytest.raises(ValidationError) as ve:
+            params.set_state(dim0="notadim")
+
+        params = TestParams()
+        with pytest.raises(ValidationError) as ve:
+            params.set_state(notadim="notadim")
