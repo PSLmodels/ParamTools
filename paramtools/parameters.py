@@ -18,6 +18,19 @@ from paramtools.exceptions import (
 
 
 class Parameters:
+    """
+    Parameter definitions:
+        on attr: value at current state
+        in _data: all default values
+
+    specification:
+        use_state if true, use vals stored as attrs
+            if false, use vals stored as defaults
+
+    get:
+        deprecated --> use attr or grab from spec.
+    """
+
     schema = None
     defaults = None
     field_map = {}
@@ -30,8 +43,21 @@ class Parameters:
         self.dim_mesh = OrderedDict(
             [(name, v.mesh()) for name, v in sb.dim_validators.items()]
         )
+        self._data = defaults
         self._validator_schema.context["spec"] = self
         self._errors = {}
+        self.state = {}
+        self.set_state()
+
+    def set_state(self, **dims):
+        """
+        Update state. Refresh values with complete updated state.
+        """
+        self.state.update(dims)
+        # TODO: update dim_mesh too.
+        spec = self.specification(**dims)
+        for name, value in spec.items():
+            setattr(self, name, value)
 
     def adjust(self, params_or_path, raise_errors=True):
         """
@@ -81,7 +107,7 @@ class Parameters:
     def validation_error(self):
         return ValidationError(self._errors["messages"], self._errors["dims"])
 
-    def get(self, param, **kwargs):
+    def get(self, param, **dims):
         """
         Query a parameter's values along dimensions specified in `kwargs`.
 
@@ -91,20 +117,24 @@ class Parameters:
             KeyError if queried dimension is not used by this parameter.
             AttributeError if parameter does not exist.
         """
-        return self._get(param, True, **kwargs)
+        print("`Parameters.get` is deprecated!!!")
+        return self._get(param, True, **dims)
 
-    def specification(self, meta_data=False, **kwargs):
+    def specification(self, use_state=True, meta_data=False, **dims):
         """
         Query value(s) of all parameters along dimensions specified in
-        `kwargs`. If `meta_data` is `True`, then parameter attributes
+        `dims`. If `use_state` is `True`, `dims` is updated with the
+        current state. If `meta_data` is `True`, then parameter attributes
         are included, too.
 
         Returns: serialized data of shape
             {"param_name": [{"value": val, "dim0": ..., }], ...}
         """
+        if use_state:
+            dims.update(self.state.copy())
         all_params = OrderedDict()
         for param in self._validator_schema.fields:
-            result = self._get(param, False, **kwargs)
+            result = self._get(param, False, **dims)
             if result:
                 if meta_data:
                     param_data = getattr(self, param)
@@ -125,9 +155,9 @@ class Parameters:
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
         """
-        param_meta = getattr(self, param)
-        value_items = param_meta["value"]
-        dim_order, value_order = self._resolve_order(param_meta)
+        param_data = self._data[param]
+        value_items = getattr(self, param)
+        dim_order, value_order = self._resolve_order(param_data)
         shape = []
         for dim in dim_order:
             shape.append(len(value_order[dim]))
@@ -165,8 +195,8 @@ class Parameters:
             InconsistentDimensionsException: Value objects do not have consistent
                 dimensions.
         """
-        param_meta = getattr(self, param)
-        dim_order, value_order = self._resolve_order(param_meta)
+        param_data = self._data[param]
+        dim_order, value_order = self._resolve_order(param_data)
         dim_values = itertools.product(*value_order.values())
         dim_indices = itertools.product(
             *map(lambda x: range(len(x)), value_order.values())
@@ -178,7 +208,7 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def _resolve_order(self, param_meta):
+    def _resolve_order(self, param_data):
         """
         Resolve the order of the dimensions and their values by
         inspecting data in the parameter's order attribute if specified
@@ -203,10 +233,10 @@ class Parameters:
             or just the value order. Depending on demand/use cases, this could be
             implemented relatively easily.
         """
-        value_items = param_meta["value"]
-        if "order" in param_meta:
-            dim_order = param_meta["order"]["dim_order"]
-            value_order = param_meta["order"]["value_order"]
+        value_items = param_data["value"]
+        if "order" in param_data:
+            dim_order = param_data["order"]["dim_order"]
+            value_order = param_data["order"]["value_order"]
         else:
             used = utils.consistent_dims(value_items)
             if used is None:
@@ -220,11 +250,13 @@ class Parameters:
                     value_order[dim_name] = dim_values
         return dim_order, value_order
 
-    def _get(self, param, exact_match, **kwargs):
+    def _get(self, param, exact_match, **dims):
         """
         Private method for querying a parameter along some dimensions. If
-        exact_match is True, all values in `kwargs` must be equal to the
+        exact_match is True, all values in `dims` must be equal to the
         corresponding dimension in the parameter's "value" dictionary.
+
+        Ignores state.
 
         Returns: [{"value": val, "dim0": ..., }]
         """
@@ -232,7 +264,7 @@ class Parameters:
         ret = []
         for v in value:
             match = all(
-                v[k] == kwargs[k] for k in kwargs if (k in v or exact_match)
+                v[k] == dims[k] for k in dims if (k in v or exact_match)
             )
             if match:
                 ret.append(v)
