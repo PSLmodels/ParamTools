@@ -43,13 +43,6 @@ class ValueValidatorSchema(Schema):
     choice = fields.Nested(ChoiceSchema(), required=False)
 
 
-class OrderField(Schema):
-    dim_order = fields.List(fields.Str)
-    value_order = fields.Dict(
-        values=fields.List(fields.Field), keys=fields.Str
-    )
-
-
 class BaseParamSchema(Schema):
     """
     Defines a base parameter schema. This specifies the required fields and
@@ -83,7 +76,6 @@ class BaseParamSchema(Schema):
         data_key="type",
     )
     number_dims = fields.Integer(required=True)
-    order = fields.Nested(OrderField(), required=False)
     value = fields.Field(required=True)  # will be specified later
     validators = fields.Nested(ValueValidatorSchema(), required=True)
     out_of_range_minmsg = fields.Str()
@@ -150,7 +142,7 @@ class BaseValidatorSchema(Schema):
         """
         Do range validation for a parameter.
         """
-        param_info = getattr(self.context["spec"], param_name)
+        param_info = self.context["spec"]._data[param_name]
         # sort keys to guarantee order.
         dims = " , ".join(
             [
@@ -271,7 +263,7 @@ class BaseValidatorSchema(Schema):
             # value of the parameter being updated.
             if oth_param_name == "default":
                 oth_param_name = param_name
-            oth_param = getattr(self.context["spec"], oth_param_name)
+            oth_param = self.context["spec"]._data[oth_param_name]
             vals = oth_param["value"]
         dims_to_check = tuple(k for k in param_spec if k != "value")
         res = [

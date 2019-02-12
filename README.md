@@ -11,109 +11,168 @@ How to use ParamTools
 Subclass the `Parameters` class and set your [specification schema](#specification-schema) and [default specification](#default-specification) files:
 
 ```python
-from paramtools import Parameters
-from paramtools import get_example_paths
-
-schema, defaults = get_example_paths('weather')
-
-class WeatherParams(Parameters):
-    schema = schema
-    defaults = defaults
-
-params = WeatherParams()
+In [1]: from paramtools import Parameters
+   ...: from paramtools import get_example_paths
+   ...:
+   ...: schema, defaults = get_example_paths('weather')
+   ...:
+   ...: class WeatherParams(Parameters):
+   ...:     schema = schema
+   ...:     defaults = defaults
+   ...:
+   ...: params = WeatherParams()
+   ...:
+   ...:
 
 ```
 
-Query along allowed dimensions:
+Parameters are available via instance attributes:
 
 ```python
-print(params.get("average_high_temperature", month="November"))
+In [2]: params.average_precipitation
+Out[2]:
+[{'city': 'Washington, D.C.', 'value': 3.1, 'month': 'January'},
+ {'city': 'Washington, D.C.', 'value': 2.6, 'month': 'February'},
+ {'city': 'Washington, D.C.', 'value': 3.5, 'month': 'March'},
+ {'city': 'Washington, D.C.', 'value': 3.3, 'month': 'April'},
+ {'city': 'Washington, D.C.', 'value': 4.3, 'month': 'May'},
+ {'city': 'Washington, D.C.', 'value': 4.3, 'month': 'June'},
+ {'city': 'Washington, D.C.', 'value': 4.6, 'month': 'July'},
+ {'city': 'Washington, D.C.', 'value': 3.8, 'month': 'August'},
+ {'city': 'Washington, D.C.', 'value': 3.9, 'month': 'September'},
+ {'city': 'Washington, D.C.', 'value': 3.7, 'month': 'October'},
+ {'city': 'Washington, D.C.', 'value': 3.0, 'month': 'November'},
+ {'city': 'Washington, D.C.', 'value': 3.5, 'month': 'December'},
+ {'city': 'Atlanta, GA', 'value': 3.6, 'month': 'January'},
+ {'city': 'Atlanta, GA', 'value': 3.7, 'month': 'February'},
+ {'city': 'Atlanta, GA', 'value': 4.3, 'month': 'March'},
+ {'city': 'Atlanta, GA', 'value': 3.5, 'month': 'April'},
+ {'city': 'Atlanta, GA', 'value': 3.8, 'month': 'May'},
+ {'city': 'Atlanta, GA', 'value': 3.6, 'month': 'June'},
+ {'city': 'Atlanta, GA', 'value': 5.0, 'month': 'July'},
+ {'city': 'Atlanta, GA', 'value': 3.8, 'month': 'August'},
+ {'city': 'Atlanta, GA', 'value': 3.7, 'month': 'September'},
+ {'city': 'Atlanta, GA', 'value': 2.8, 'month': 'October'},
+ {'city': 'Atlanta, GA', 'value': 3.6, 'month': 'November'},
+ {'city': 'Atlanta, GA', 'value': 4.1, 'month': 'December'}]
 
-# output: [{'month': 'November', 'city': 'Washington, D.C.', 'value': 59, 'dayofmonth': 1}, {'month': 'November', 'city': 'Atlanta, GA', 'value': 64, 'dayofmonth': 1}]
 
+```
+
+Set state for the parameters:
+
+```python
+In [3]: params.set_state(month="November")
+
+In [3]: params.state
+Out[3]: {'month': 'November'}
+
+In [4]: params.average_precipitation
+Out[4]:
+[{'value': 3.0, 'month': 'November', 'city': 'Washington, D.C.'},
+ {'value': 3.6, 'month': 'November', 'city': 'Atlanta, GA'}]
 ```
 
 [Adjust](#adjustment-schema) the default specification:
 
 ```python
-adjustment = {
-    "average_high_temperature": [
-        {
-            "city": "Washington, D.C.",
-            "month": "November",
-            "dayofmonth": 1,
-            "value": 60,
-        },
-        {
-            "city": "Atlanta, GA",
-            "month": "November",
-            "dayofmonth": 1,
-            "value": 63,
-        },
-    ]
-}
-
-params.adjust(adjustment)
-
-# check to make sure the values were updated:
-print(params.get("average_high_temperature", month="November"))
-
-# output: [{'month': 'November', 'city': 'Washington, D.C.', 'value': 60, 'dayofmonth': 1}, {'month': 'November', 'city': 'Atlanta, GA', 'value': 63, 'dayofmonth': 1}]
+In [5]: adjustment = {
+   ...:     "average_precipitation": [
+   ...:         {
+   ...:             "city": "Washington, D.C.",
+   ...:             "month": "November",
+   ...:             "value": 10,
+   ...:         },
+   ...:         {
+   ...:             "city": "Atlanta, GA",
+   ...:             "month": "November",
+   ...:             "value": 15,
+   ...:         },
+   ...:     ]
+   ...: }
+   ...:
+   ...: params.adjust(adjustment)
+   ...:
+   ...: # check to make sure the values were updated:
+   ...: params.average_precipitation
+   ...:
+   ...:
+Out[5]:
+[{'value': 10.0, 'month': 'November', 'city': 'Washington, D.C.'},
+ {'value': 15.0, 'month': 'November', 'city': 'Atlanta, GA'}]
 ```
 
 
 Errors on invalid input:
 ```python
-adjustment["average_high_temperature"][0]["value"] = "HOT"
-# ==> raises error
-params.adjust(adjustment)
+In [6]: adjustment["average_precipitation"][0]["value"] = "rainy"
+   ...: # ==> raises error
+   ...: params.adjust(adjustment)
+   ...:
+   ...:
+---------------------------------------------------------------------------
+ValidationError                           Traceback (most recent call last)
+<ipython-input-6-af74e66e2b48> in <module>()
+      1 adjustment["average_precipitation"][0]["value"] = "rainy"
+      2 # ==> raises error
+----> 3 params.adjust(adjustment)
 
-# output: paramtools.exceptions.ValidationError: {'average_high_temperature': ['Not a valid number: HOT.']}
+~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors)
+    112
+    113         if raise_errors and self._errors:
+--> 114             raise self.validation_error
+    115
+    116         # Update attrs.
+
+ValidationError: {'average_precipitation': ['Not a valid number: rainy.']}
 
 ```
 
 Silence the errors by setting `raise_errors` to `False`:
 ```python
-adjustment["average_high_temperature"][0]["value"] = "HOT"
-params.adjust(adjustment, raise_errors=False)
-
-print(params.errors)
-
-# output: {'average_high_temperature': ['Not a valid number: HOT.']}
+In [7]: adjustment["average_precipitation"][0]["value"] = "rainy"
+   ...: params.adjust(adjustment, raise_errors=False)
+   ...:
+   ...: params.errors
+   ...:
+   ...:
+Out[7]: {'average_precipitation': ['Not a valid number: rainy.']}
 
 ```
 
 Errors on input that's out of range:
 ```python
-adjustment["average_high_temperature"][0]["value"] = 2000
-adjustment["average_high_temperature"][1]["value"] = 3000
-
-params.adjust(adjustment, raise_errors=False)
-print(params.errors)
-
-# ouput:
-# {
-#     'average_high_temperature': [
-#         'average_high_temperature 2000 must be less than 135 for dimensions month=November , city=Washington, D.C. , dayofmonth=1',
-#         'average_high_temperature 3000 must be less than 135 for dimensions month=November , city=Atlanta, GA , dayofmonth=1'
-#     ]
-# }
+In [8]: adjustment["average_precipitation"][0]["value"] = 1000
+   ...: adjustment["average_precipitation"][1]["value"] = 2000
+   ...:
+   ...: params.adjust(adjustment, raise_errors=False)
+   ...:
+   ...: params.errors
+   ...:
+   ...:
+Out[8]:
+{'average_precipitation': ['average_precipitation 1000.0 must be less than 50 for dimensions city=Washington, D.C. , month=November',
+  'average_precipitation 2000.0 must be less than 50 for dimensions city=Atlanta, GA , month=November']}
 
 ```
 
 Convert [Value objects](#value-object) to and from arrays:
 ```python
-arr = params.to_array("average_precipitation")
-print(arr.tolist())
+In [9]: arr = params.to_array("average_precipitation")
+   ...: arr
+   ...:
+   ...:
+Out[9]:
+array([[15.],
+       [10.]])
 
-# output:
-# [[3.1, 2.6, 3.5, 3.3, 4.3, 4.3, 4.6, 3.8, 3.9, 3.7, 3.0, 3.5], [3.6, 3.7, 4.3, 3.5, 3.8, 3.6, 5.0, 3.8, 3.7, 2.8, 3.6, 4.1]]
+In [10]: vi_list = params.from_array("average_precipitation", arr)
+    ...:
 
-vi_list = params.from_array("average_precipitation", arr)
-print(vi_list[:2])
-
-# output:
-# [{'city': 'Washington, D.C.', 'month': 'January', 'value': 3.1}, {'city': 'Washington, D.C.', 'month': 'February', 'value': 2.6}]
+In [11]: vi_list
+Out[11]:
+[{'city': 'Atlanta, GA', 'month': 'November', 'value': 15.0},
+ {'city': 'Washington, D.C.', 'month': 'November', 'value': 10.0}]
 
 ```
 
@@ -329,25 +388,6 @@ JSON Object and Property Definitions
     ```
   - Note: [Validator objects](#validator-object) may be defined on this object in the future.
 
-#### Order object
-- Used for converting [Value objects](#value-objects) into n-dimensional arrays.
-  - Arguments:
-    - "dim_order": List specifying the ordering of the dimensions.
-    - "dim_values": Mapping specifying the allowed values for each dimension.
-  - Example:
-    ```json
-    {
-        "dim_order": ["dim0", "dim1", "dim2"],
-        "value_order": {
-            "dim0": ["zero", "one"],
-            "dim1": [0, 1, 2, 3, 4, 5],
-            "dim2": [0, 1, 2]
-        }
-    }
-    ```
-  - Note: The Order object is not required in general, but it must be specified
-    to use the `Parameters.to_array` and `Parameters.from_array` methods.
-
 
 #### Parameter object
 - Used for documenting the parameter and defining the default value of a parameter over the entire parameter space and its validation behavior.
@@ -358,7 +398,6 @@ JSON Object and Property Definitions
     - "notes": Additional advice or information.
     - "type": Data type of the parameter. See [Type property](#type-property).
     - "number_dims": Number of dimensions of the parameter. See [Number-Dimensions property](#number-dimensions-property)
-    - "order": An [Order object](#order-object)
     - "value": A list of (Value objects)[#value-object].
     - "validators": A mapping of (Validator objects)[#validator-object]
     - "out_of_range_{min/max/other op}_msg": Extra information to be used in the message(s) that will be displayed if the parameter value is outside of the specified range. Note that this is in the spec but not currently implemented.
@@ -373,13 +412,6 @@ JSON Object and Property Definitions
         "source": "NOAA",
         "type": "float",
         "number_dims": 0,
-        "order": {
-            "dim_order": ["city", "month"],
-            "value_order": {
-                "city": ["Washington, D.C", "Atlanta, GA"],
-                "month": ["January", "February"],
-            }
-        },
         "value": [
             {"city": "Washington, D.C.", "month": "January", "value": 3.1},
             {"city": "Washington, D.C.", "month": "February", "value": 2.6},

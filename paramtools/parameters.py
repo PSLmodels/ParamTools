@@ -1,3 +1,4 @@
+import copy
 import os
 import json
 import itertools
@@ -25,20 +26,64 @@ class Parameters:
     def __init__(self):
         sb = SchemaBuilder(self.schema, self.defaults, self.field_map)
         defaults, self._validator_schema = sb.build_schemas()
-        for k, v in defaults.items():
-            setattr(self, k, v)
-        self.dim_mesh = OrderedDict(
-            [(name, v.mesh()) for name, v in sb.dim_validators.items()]
+        self.dim_validators = sb.dim_validators
+        self._stateless_dim_mesh = OrderedDict(
+            [(name, v.mesh()) for name, v in self.dim_validators.items()]
         )
+        self.dim_mesh = copy.deepcopy(self._stateless_dim_mesh)
+        self._data = defaults
         self._validator_schema.context["spec"] = self
         self._errors = {}
+        self.state = {}
+        self.set_state()
+
+    def set_state(self, **dims):
+        """
+        Sets state for the Parameters instance. The state, dim_mesh, and
+        parameter attributes are all updated with the new state.
+
+        Raises:
+            ValidationError if the dims kwargs contain dimensions that are not
+                specified in schema.json or if the dimension values fail the
+                validator set for the corresponding dimension in schema.json.
+        """
+        messages = {}
+        for name, values in dims.items():
+            if name not in self.dim_validators:
+                messages[name] = f"{name} is not a valid dimension."
+                continue
+            if not isinstance(values, list):
+                values = [values]
+            for value in values:
+                try:
+                    self.dim_validators[name].deserialize(value)
+                except MarshmallowValidationError as ve:
+                    messages[name] = str(ve)
+        if messages:
+            raise ValidationError(messages, dims=None)
+        self.state.update(dims)
+        for dim_name, dim_value in self.state.items():
+            if not isinstance(dim_value, list):
+                dim_value = [dim_value]
+            self.dim_mesh[dim_name] = dim_value
+        spec = self.specification(**self.state)
+        for name, value in spec.items():
+            setattr(self, name, value)
+
+    def clear_state(self):
+        """
+        Reset the state of the Parameters instance.
+        """
+        self.state = {}
+        self.dim_mesh = copy.deepcopy(self._stateless_dim_mesh)
+        self.set_state()
 
     def adjust(self, params_or_path, raise_errors=True):
         """
         Method to deserialize and validate parameter adjustments.
         `params_or_path` can be a file path or a `dict` that has not been
         fully deserialized. The adjusted values replace the current values
-        stored in the correspondig parameter attributes.
+        stored in the corresponding parameter attributes.
 
         Raises:
             marshmallow.exceptions.ValidationError if data is not valid.
@@ -69,6 +114,9 @@ class Parameters:
         if raise_errors and self._errors:
             raise self.validation_error
 
+        # Update attrs.
+        self.set_state()
+
     @property
     def errors(self):
         new_errors = {}
@@ -81,41 +129,36 @@ class Parameters:
     def validation_error(self):
         return ValidationError(self._errors["messages"], self._errors["dims"])
 
-    def get(self, param, **kwargs):
-        """
-        Query a parameter's values along dimensions specified in `kwargs`.
-
-        Returns: [{"value": val, "dim0": ..., }]
-
-        Raises:
-            KeyError if queried dimension is not used by this parameter.
-            AttributeError if parameter does not exist.
-        """
-        return self._get(param, True, **kwargs)
-
-    def specification(self, meta_data=False, **kwargs):
+    def specification(self, use_state=True, meta_data=False, **dims):
         """
         Query value(s) of all parameters along dimensions specified in
-        `kwargs`. If `meta_data` is `True`, then parameter attributes
+        `dims`. If `use_state` is `True`, the current state is updated with
+        `dims`. If `meta_data` is `True`, then parameter attributes
         are included, too.
 
         Returns: serialized data of shape
             {"param_name": [{"value": val, "dim0": ..., }], ...}
         """
+        if use_state:
+            # use shallow copy of self.state
+            dims.update(self.state)
+
         all_params = OrderedDict()
         for param in self._validator_schema.fields:
-            result = self._get(param, False, **kwargs)
+            result = self._get(param, False, **dims)
             if result:
                 if meta_data:
-                    param_data = getattr(self, param)
+                    param_data = self._data[param]
                     result = dict(param_data, **{"value": result})
                 all_params[param] = result
         return all_params
 
     def to_array(self, param):
         """
-        Convert a Value object to an n-dimensional array. The Value object
-        must span the parameter space specified by the Order object.
+        Convert a Value object to an n-dimensional array. The list of Value
+        objects must span the specified parameter space. The parameter space
+        is defined by inspecting the dimension validators in schema.json
+        and the state attribute of the Parameters instance.
 
         Returns: n-dimensional NumPy array.
 
@@ -125,9 +168,9 @@ class Parameters:
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
         """
-        param_meta = getattr(self, param)
-        value_items = param_meta["value"]
-        dim_order, value_order = self._resolve_order(param_meta)
+        param_data = self._data[param]
+        value_items = getattr(self, param)
+        dim_order, value_order = self._resolve_order(param)
         shape = []
         for dim in dim_order:
             shape.append(len(value_order[dim]))
@@ -165,8 +208,8 @@ class Parameters:
             InconsistentDimensionsException: Value objects do not have consistent
                 dimensions.
         """
-        param_meta = getattr(self, param)
-        dim_order, value_order = self._resolve_order(param_meta)
+        param_data = self._data[param]
+        dim_order, value_order = self._resolve_order(param)
         dim_values = itertools.product(*value_order.values())
         dim_indices = itertools.product(
             *map(lambda x: range(len(x)), value_order.values())
@@ -178,11 +221,10 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def _resolve_order(self, param_meta):
+    def _resolve_order(self, param):
         """
         Resolve the order of the dimensions and their values by
-        inspecting data in the parameter's order attribute if specified
-        or the dimension mesh values.
+        inspecting data in the dimension mesh values.
 
         The dimension mesh for all dimensions is stored in the dim_mesh
         attribute. The dimensions to be used are the ones that are specified
@@ -197,45 +239,43 @@ class Parameters:
         Raises:
             InconsistentDimensionsException: Value objects do not have consistent
                 dimensions.
-
-        Note:
-            One could make a case for being able to specify just the dimension order
-            or just the value order. Depending on demand/use cases, this could be
-            implemented relatively easily.
         """
-        value_items = param_meta["value"]
-        if "order" in param_meta:
-            dim_order = param_meta["order"]["dim_order"]
-            value_order = param_meta["order"]["value_order"]
-        else:
-            used = utils.consistent_dims(value_items)
-            if used is None:
-                raise InconsistentDimensionsException(
-                    f"Some dimensions in {value_items} were added or omitted for some value object(s)."
-                )
-            dim_order, value_order = [], {}
-            for dim_name, dim_values in self.dim_mesh.items():
-                if dim_name in used:
-                    dim_order.append(dim_name)
-                    value_order[dim_name] = dim_values
+        value_items = getattr(self, param)
+        used = utils.consistent_dims(value_items)
+        if used is None:
+            raise InconsistentDimensionsException(
+                f"Some dimensions in {value_items} were added or omitted for some value object(s)."
+            )
+        dim_order, value_order = [], {}
+        for dim_name, dim_values in self.dim_mesh.items():
+            if dim_name in used:
+                dim_order.append(dim_name)
+                value_order[dim_name] = dim_values
         return dim_order, value_order
 
-    def _get(self, param, exact_match, **kwargs):
+    def _get(self, param, exact_match, **dims):
         """
         Private method for querying a parameter along some dimensions. If
-        exact_match is True, all values in `kwargs` must be equal to the
+        exact_match is True, all values in `dims` must be equal to the
         corresponding dimension in the parameter's "value" dictionary.
+
+        Ignores state.
 
         Returns: [{"value": val, "dim0": ..., }]
         """
-        value = getattr(self, param)["value"]
+        value_objects = self._data[param]["value"]
         ret = []
-        for v in value:
-            match = all(
-                v[k] == kwargs[k] for k in kwargs if (k in v or exact_match)
-            )
-            if match:
-                ret.append(v)
+        for value_object in value_objects:
+            matches = []
+            for dim_name, dim_value in dims.items():
+                if dim_name in value_object or exact_match:
+                    if isinstance(dim_value, list):
+                        match = value_object[dim_name] in dim_value
+                    else:
+                        match = value_object[dim_name] == dim_value
+                    matches.append(match)
+            if all(matches):
+                ret.append(value_object)
         return ret
 
     def _update_param(self, param, new_values):
@@ -249,7 +289,7 @@ class Parameters:
             ParameterUpdateException if dimension values do not match at
                 least one existing value item's corresponding dimension values.
         """
-        curr_vals = getattr(self, param)["value"]
+        curr_vals = self._data[param]["value"]
         for i in range(len(new_values)):
             matched_at_least_once = False
             dims_to_check = tuple(k for k in new_values[i] if k != "value")

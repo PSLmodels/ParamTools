@@ -99,64 +99,49 @@ def test_failed_udpate(WeatherParams):
     with pytest.raises(ParameterUpdateException):
         params.adjust(adjustment)
 
+    def test_doc_example(schema_def_path, defaults_spec_path):
+        from paramtools import Parameters
+        from paramtools import get_example_paths
 
-def test_failed_get(WeatherParams):
-    params = WeatherParams()
-    with pytest.raises(KeyError):
-        params.get("average_precipitation", notallowed=1)
+        # schema, defaults = get_example_paths('weather')
 
+        class WeatherParams(Parameters):
+            schema = schema_def_path
+            defaults = defaults_spec_path
 
-def test_doc_example(schema_def_path, defaults_spec_path):
-    from paramtools import Parameters
-    from paramtools import get_example_paths
+        params = WeatherParams()
+        params.average_precipitation
+        params.set_state(month="November")
+        params.set_state(month="November")
+        params.state
 
-    adjustment = {
-        "average_high_temperature": [
-            {
-                "city": "Washington, D.C.",
-                "month": "November",
-                "dayofmonth": 1,
-                "value": 60,
-            },
-            {
-                "city": "Atlanta, GA",
-                "month": "November",
-                "dayofmonth": 1,
-                "value": 63,
-            },
-        ]
-    }
-    # project_schema, baseline_parameters = get_example_paths('weather')
-    class WeatherParams(Parameters):
-        schema = schema_def_path
-        defaults = defaults_spec_path
+        params.average_precipitation
+        adjustment = {
+            "average_precipitation": [
+                {"city": "Washington, D.C.", "month": "November", "value": 10},
+                {"city": "Atlanta, GA", "month": "November", "value": 15},
+            ]
+        }
 
-    params = WeatherParams()
-    print(params.get("average_high_temperature", month="November"))
-
-    params.adjust(adjustment)
-    print(params.get("average_high_temperature", month="November"))
-
-    adjustment["average_high_temperature"][0]["value"] = "HOT"
-
-    # raises error:
-    with pytest.raises(ValidationError) as excinfo:
         params.adjust(adjustment)
-    print(excinfo)
 
-    # silence the errors.
-    params.adjust(adjustment, raise_errors=False)
-    print(params.errors)
+        # check to make sure the values were updated:
+        params.average_precipitation
+        adjustment["average_precipitation"][0]["value"] = "rainy"
+        # ==> raises error
+        params.adjust(adjustment)
+        adjustment["average_precipitation"][0]["value"] = "rainy"
+        # ==> raises error
+        params.adjust(adjustment, raise_errors=False)
 
-    # raises error:
-    adjustment["average_high_temperature"][0]["value"] = 2000
-    adjustment["average_high_temperature"][1]["value"] = 3000
+        params.errors
+        adjustment["average_precipitation"][0]["value"] = 1000
+        adjustment["average_precipitation"][1]["value"] = 2000
 
-    params.adjust(adjustment, raise_errors=False)
-    print(params.errors)
+        params.adjust(adjustment, raise_errors=False)
 
-    arr = params.to_array("average_precipitation")
-    print(arr.tolist())
-
-    vi_list = params.from_array("average_precipitation", arr)
-    print(vi_list[:2])
+        params.errors
+        arr = params.to_array("average_precipitation")
+        arr
+        vi_list = params.from_array("average_precipitation", arr)
+        vi_list
