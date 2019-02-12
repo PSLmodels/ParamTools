@@ -46,66 +46,6 @@
         "out_of_range_maxmsg": "",
         "out_of_range_action": "stop"
     },
-    "date_param": {
-        "title": "Date parameter",
-        "description": "Example for a date parameter",
-        "notes": "",
-        "opt0": "another option",
-        "type": "date",
-        "number_dims": 0,
-        "value": [
-            {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
-        ],
-        "validators": {"date_range": {"min": "2018-01-01", "max": "2018-12-31"}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
-    },
-    "date_min_param": {
-        "title": "Date Min Param",
-        "description": "Serves as minimum reference variable.",
-        "notes": "See date_max_param.",
-        "opt0": "an option",
-        "type": "date",
-        "number_dims": 0,
-        "value": [
-            {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
-        ],
-        "validators": {"date_range": {"min": "2018-01-01", "max": "date_max_param"}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
-    },
-    "date_max_param": {
-        "title": "Date max parameter",
-        "description": "Serves as maximum reference variable.",
-        "notes": "See date_min_param.",
-        "opt0": "an option",
-        "type": "date",
-        "number_dims": 0,
-        "value": [
-            {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
-        ],
-        "validators": {"date_range": {"min": "date_min_param", "max": "2018-12-31"}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
-    },
-    "float_list_param": {
-        "title": "Float List Param",
-        "description": "Example for a float, list param.",
-        "notes": "",
-        "opt0": "an option",
-        "type": "float",
-        "number_dims": 1,
-        "value": [
-            {"dim0": "zero", "dim1": 1, "value": [1, 2.0, 3.5, 4.6]}
-        ],
-        "validators": {"range": {"min": 0, "max": 10}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
-    },
     "int_default_param": {
         "title": "Integer Default Reference Param",
         "description": "Example for a int param using a default reference value",
