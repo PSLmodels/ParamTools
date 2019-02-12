@@ -38,6 +38,10 @@ def test_DateRange():
     exp = [datetime.date(2019, 1, i) for i in range(1, 10 + 1)]
     assert drange.mesh() == exp
 
+    drange = DateRange("2019-01-01", "2019-01-10")
+    exp = [datetime.date(2019, 1, i) for i in range(1, 10 + 1)]
+    assert drange.mesh() == exp
+
     drange = DateRange("2019-01-01", "2019-01-10", step={"days": 3})
     exp = [datetime.date(2019, 1, i) for i in range(1, 10 + 1, 3)]
     assert drange.mesh() == exp
