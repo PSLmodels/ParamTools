@@ -285,41 +285,6 @@ class TestErrors:
 
 
 class TestArray:
-    def test_to_array_with_order(self, TestParams):
-        params = TestParams()
-        res = params.to_array("int_dense_array_param_with_order")
-        # Values 3 and 4 were removed from dimension 1.
-        exp = [
-            [
-                [1, 2, 3],
-                [4, 5, 6],
-                [7, 8, 9],
-                # [10, 11, 12],
-                # [13, 14, 15],
-                [16, 17, 18],
-            ],
-            [
-                [19, 20, 21],
-                [22, 23, 24],
-                [25, 26, 27],
-                # [28, 29, 30],
-                # [31, 32, 33],
-                [34, 35, 36],
-            ],
-        ]
-
-        assert res.tolist() == exp
-
-        exp = params.int_dense_array_param_with_order
-        assert (
-            params.from_array("int_dense_array_param_with_order", res) == exp
-        )
-
-        params.int_dense_array_param_with_order.pop(0)
-
-        with pytest.raises(SparseValueObjectsException):
-            params.to_array("int_dense_array_param_with_order")
-
     def test_to_array(self, TestParams):
         params = TestParams()
         res = params.to_array("int_dense_array_param")
@@ -354,10 +319,8 @@ class TestArray:
             params.to_array("int_dense_array_param")
 
     def test_resolve_order(self, TestParams):
-        order = {
-            "dim_order": ["dim0", "dim2"],
-            "value_order": {"dim0": ["zero", "one"], "dim2": [0, 1, 2]},
-        }
+        exp_dim_order = ["dim0", "dim2"]
+        exp_value_order = {"dim0": ["zero", "one"], "dim2": [0, 1, 2]}
         vi = [
             {"dim0": "zero", "dim2": 0, "value": None},
             {"dim0": "zero", "dim2": 1, "value": None},
@@ -366,25 +329,26 @@ class TestArray:
             {"dim0": "one", "dim2": 1, "value": None},
             {"dim0": "one", "dim2": 2, "value": None},
         ]
-        param_meta = {"order": order, "value": vi}
 
         params = TestParams()
         params.madeup = vi
 
-        assert params._resolve_order("madeup", param_meta) == (
-            order["dim_order"],
-            order["value_order"],
+        assert params._resolve_order("madeup") == (
+            exp_dim_order,
+            exp_value_order,
         )
 
-        # param_meta = {"value": vi}
-        assert params._resolve_order("madeup", {}) == (
-            order["dim_order"],
-            order["value_order"],
+        # test with specified state.
+        exp_value_order = {"dim0": ["zero", "one"], "dim2": [0, 1]}
+        params.set_state(dim2=[0, 1])
+        assert params._resolve_order("madeup") == (
+            exp_dim_order,
+            exp_value_order,
         )
 
         params.madeup[0]["dim1"] = 0
         with pytest.raises(InconsistentDimensionsException):
-            params._resolve_order("madeup", {})
+            params._resolve_order("madeup")
 
     def test_to_array_with_state1(self, TestParams):
         params = TestParams()
@@ -484,11 +448,11 @@ class TestState:
 
     def test_set_state_updates_values(self, TestParams):
         params = TestParams()
-        exp = [
+        defaultexp = [
             {"dim0": "zero", "dim1": 1, "value": 1},
             {"dim0": "one", "dim1": 2, "value": 2},
         ]
-        assert params.min_int_param == exp
+        assert params.min_int_param == defaultexp
 
         params.set_state(dim0="zero")
         assert params.min_int_param == [
@@ -497,6 +461,11 @@ class TestState:
 
         # makes sure parameter that doesn't use dim0 is unaffected
         assert params.str_choice_param == [{"value": "value0"}]
+
+        params.clear_state()
+        assert params.state == {}
+        assert params.min_int_param == defaultexp
+        assert params.dim_mesh == params._stateless_dim_mesh
 
     def test_set_state_errors(self, TestParams):
         params = TestParams()

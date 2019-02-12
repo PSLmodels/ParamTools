@@ -19,19 +19,6 @@ from paramtools.exceptions import (
 
 
 class Parameters:
-    """
-    Parameter definitions:
-        on attr: value at current state
-        in _data: all default values
-
-    specification:
-        use_state if true, use vals stored as attrs
-            if false, use vals stored as defaults
-
-    get:
-        deprecated --> use attr or grab from spec.
-    """
-
     schema = None
     defaults = None
     field_map = {}
@@ -52,7 +39,13 @@ class Parameters:
 
     def set_state(self, **dims):
         """
-        Update state.
+        Sets state for the Parameters instance. The state, dim_mesh, and
+        parameter attributes are all updated with the new state.
+
+        Raises:
+            ValidationError if the dims kwargs contain dimensions that are not
+                specified in schema.json or if the dimension values fail the
+                validator set for the corresponding dimension in schema.json.
         """
         messages = {}
         for name, values in dims.items():
@@ -73,9 +66,17 @@ class Parameters:
             if not isinstance(dim_value, list):
                 dim_value = [dim_value]
             self.dim_mesh[dim_name] = dim_value
-        spec = self.specification(**dims)
+        spec = self.specification(**self.state)
         for name, value in spec.items():
             setattr(self, name, value)
+
+    def clear_state(self):
+        """
+        Reset the state of the Parameters instance.
+        """
+        self.state = {}
+        self.dim_mesh = copy.deepcopy(self._stateless_dim_mesh)
+        self.set_state()
 
     def adjust(self, params_or_path, raise_errors=True):
         """
@@ -154,8 +155,10 @@ class Parameters:
 
     def to_array(self, param):
         """
-        Convert a Value object to an n-dimensional array. The Value object
-        must span the parameter space specified by the Order object.
+        Convert a Value object to an n-dimensional array. The list of Value
+        objects must span the specified parameter space. The parameter space
+        is defined by inspecting the dimension validators in schema.json
+        and the state attribute of the Parameters instance.
 
         Returns: n-dimensional NumPy array.
 
@@ -167,7 +170,7 @@ class Parameters:
         """
         param_data = self._data[param]
         value_items = getattr(self, param)
-        dim_order, value_order = self._resolve_order(param, param_data)
+        dim_order, value_order = self._resolve_order(param)
         shape = []
         for dim in dim_order:
             shape.append(len(value_order[dim]))
@@ -206,7 +209,7 @@ class Parameters:
                 dimensions.
         """
         param_data = self._data[param]
-        dim_order, value_order = self._resolve_order(param, param_data)
+        dim_order, value_order = self._resolve_order(param)
         dim_values = itertools.product(*value_order.values())
         dim_indices = itertools.product(
             *map(lambda x: range(len(x)), value_order.values())
@@ -218,11 +221,10 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def _resolve_order(self, param, param_data):
+    def _resolve_order(self, param):
         """
         Resolve the order of the dimensions and their values by
-        inspecting data in the parameter's order attribute if specified
-        or the dimension mesh values.
+        inspecting data in the dimension mesh values.
 
         The dimension mesh for all dimensions is stored in the dim_mesh
         attribute. The dimensions to be used are the ones that are specified
@@ -237,27 +239,18 @@ class Parameters:
         Raises:
             InconsistentDimensionsException: Value objects do not have consistent
                 dimensions.
-
-        Note:
-            One could make a case for being able to specify just the dimension order
-            or just the value order. Depending on demand/use cases, this could be
-            implemented relatively easily.
         """
         value_items = getattr(self, param)
-        if not self.state and "order" in param_data:
-            dim_order = param_data["order"]["dim_order"]
-            value_order = param_data["order"]["value_order"]
-        else:
-            used = utils.consistent_dims(value_items)
-            if used is None:
-                raise InconsistentDimensionsException(
-                    f"Some dimensions in {value_items} were added or omitted for some value object(s)."
-                )
-            dim_order, value_order = [], {}
-            for dim_name, dim_values in self.dim_mesh.items():
-                if dim_name in used:
-                    dim_order.append(dim_name)
-                    value_order[dim_name] = dim_values
+        used = utils.consistent_dims(value_items)
+        if used is None:
+            raise InconsistentDimensionsException(
+                f"Some dimensions in {value_items} were added or omitted for some value object(s)."
+            )
+        dim_order, value_order = [], {}
+        for dim_name, dim_values in self.dim_mesh.items():
+            if dim_name in used:
+                dim_order.append(dim_name)
+                value_order[dim_name] = dim_values
         return dim_order, value_order
 
     def _get(self, param, exact_match, **dims):

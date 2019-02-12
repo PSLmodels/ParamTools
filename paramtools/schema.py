@@ -43,13 +43,6 @@ class ValueValidatorSchema(Schema):
     choice = fields.Nested(ChoiceSchema(), required=False)
 
 
-class OrderField(Schema):
-    dim_order = fields.List(fields.Str)
-    value_order = fields.Dict(
-        values=fields.List(fields.Field), keys=fields.Str
-    )
-
-
 class BaseParamSchema(Schema):
     """
     Defines a base parameter schema. This specifies the required fields and
@@ -83,7 +76,6 @@ class BaseParamSchema(Schema):
         data_key="type",
     )
     number_dims = fields.Integer(required=True)
-    order = fields.Nested(OrderField(), required=False)
     value = fields.Field(required=True)  # will be specified later
     validators = fields.Nested(ValueValidatorSchema(), required=True)
     out_of_range_minmsg = fields.Str()
