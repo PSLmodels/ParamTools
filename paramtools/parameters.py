@@ -21,6 +21,7 @@ from paramtools.exceptions import (
 class Parameters:
     schema = None
     defaults = None
+    array_first = False
     field_map = {}
 
     def __init__(self):
@@ -69,6 +70,8 @@ class Parameters:
         spec = self.specification(**self.state)
         for name, value in spec.items():
             setattr(self, name, value)
+            if self.array_first:
+                setattr(self, name, self.to_array(name))
 
     def clear_state(self):
         """
@@ -179,7 +182,10 @@ class Parameters:
         # Compare len value items with the expected length if they are full.
         # In the futute, sparse objects should be supported by filling in the
         # unspecified dimensions.
-        exp_full_shape = reduce(lambda x, y: x * y, shape)
+        if not shape:
+            exp_full_shape = 1
+        else:
+            exp_full_shape = reduce(lambda x, y: x * y, shape)
         if len(value_items) != exp_full_shape:
             raise SparseValueObjectsException(
                 f"The Value objects for {param} do not span the specified "
