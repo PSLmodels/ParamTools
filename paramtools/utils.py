@@ -1,4 +1,5 @@
 import json
+import os
 from collections import OrderedDict
 
 
@@ -6,14 +7,17 @@ def read_json(path):
     """
     Read JSON file shortcut
     """
-    with open(path, "r") as f:
-        r = json.loads(f.read(), object_pairs_hook=OrderedDict)
-    return r
+    if isinstance(path, str) and os.path.exists(path):
+        with open(path, "r") as f:
+            r = json.loads(f.read(), object_pairs_hook=OrderedDict)
+        return r
+    elif isinstance(path, dict):
+        return path
+    else:
+        return json.loads(path)
 
 
 def get_example_paths(name):
-    import os
-
     assert name in ("taxcalc", "weather")
     current_path = os.path.abspath(os.path.dirname(__file__))
     schema_def_path = os.path.join(

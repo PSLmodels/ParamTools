@@ -26,12 +26,33 @@ def defaults_spec_path():
 
 
 @pytest.fixture
+def array_first_defaults(defaults_spec_path):
+    with open(defaults_spec_path) as f:
+        r = json.loads(f.read())
+    r.pop("float_list_param")
+    return r
+
+
+@pytest.fixture
 def TestParams(schema_def_path, defaults_spec_path):
     class _TestParams(Parameters):
         schema = schema_def_path
         defaults = defaults_spec_path
 
     return _TestParams
+
+
+@pytest.fixture(scope="function")
+def af_params(schema_def_path, array_first_defaults):
+    class AFParams(Parameters):
+        schema = schema_def_path
+        defaults = array_first_defaults
+        array_first = False
+
+    _af_params = AFParams()
+    _af_params.array_first = True
+    _af_params.set_state(dim0="zero", dim1=1)
+    return _af_params
 
 
 def test_init(TestParams):
@@ -313,10 +334,15 @@ class TestArray:
         exp = params.int_dense_array_param
         assert params.from_array("int_dense_array_param", res) == exp
 
-        params.int_dense_array_param.pop(0)
+        params._data["int_dense_array_param"]["value"].pop(0)
 
         with pytest.raises(SparseValueObjectsException):
             params.to_array("int_dense_array_param")
+
+    def test_from_array(self, TestParams):
+        params = TestParams()
+        with pytest.raises(TypeError):
+            params.from_array("min_int_param")
 
     def test_resolve_order(self, TestParams):
         exp_dim_order = ["dim0", "dim2"]
@@ -332,6 +358,7 @@ class TestArray:
 
         params = TestParams()
         params.madeup = vi
+        params._data["madeup"] = {"value": vi}
 
         assert params._resolve_order("madeup") == (
             exp_dim_order,
@@ -488,3 +515,29 @@ class TestState:
             {"dim0": "zero", "dim1": 1, "dim2": 2, "value": 6},
         ]
         assert params.int_dense_array_param == exp
+
+
+class TestArrayFirst:
+    def test_basic(self, af_params):
+        assert af_params
+        assert af_params.min_int_param.tolist() == [[1]]
+        assert af_params.date_max_param.tolist() == [
+            [datetime.date(2018, 1, 15)]
+        ]
+        assert af_params.int_dense_array_param.tolist() == [[[4, 5, 6]]]
+        assert af_params.str_choice_param.tolist() == "value0"
+
+    def test_from_array(self, af_params):
+        exp = [
+            {"dim0": "zero", "dim1": 1, "dim2": 0, "value": 4},
+            {"dim0": "zero", "dim1": 1, "dim2": 1, "value": 5},
+            {"dim0": "zero", "dim1": 1, "dim2": 2, "value": 6},
+        ]
+        assert af_params.from_array("int_dense_array_param") == exp
+
+        assert (
+            af_params.from_array(
+                "int_dense_array_param", af_params.int_dense_array_param
+            )
+            == exp
+        )

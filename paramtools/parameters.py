@@ -69,9 +69,10 @@ class Parameters:
             self.dim_mesh[dim_name] = dim_value
         spec = self.specification(**self.state)
         for name, value in spec.items():
-            setattr(self, name, value)
             if self.array_first:
                 setattr(self, name, self.to_array(name))
+            else:
+                setattr(self, name, value)
 
     def clear_state(self):
         """
@@ -172,13 +173,13 @@ class Parameters:
                 entire space specified by the Order object.
         """
         param_data = self._data[param]
-        value_items = getattr(self, param)
+        value_items = self._get(param, False, **self.state)
         dim_order, value_order = self._resolve_order(param)
         shape = []
         for dim in dim_order:
             shape.append(len(value_order[dim]))
         shape = tuple(shape)
-        arr = np.zeros(shape)
+        arr = np.empty(shape, dtype=self._numpy_type(param))
         # Compare len value items with the expected length if they are full.
         # In the futute, sparse objects should be supported by filling in the
         # unspecified dimensions.
@@ -187,9 +188,19 @@ class Parameters:
         else:
             exp_full_shape = reduce(lambda x, y: x * y, shape)
         if len(value_items) != exp_full_shape:
+            # maintains dimension value order over value objects.
+            exp_mesh = list(itertools.product(*value_order.values()))
+            # preserve dimension value order for each value object by
+            # iterating over dim_order.
+            actual = set(
+                [tuple(vo[d] for d in dim_order) for vo in value_items]
+            )
+            missing = "\n\t".join(
+                [str(d) for d in exp_mesh if d not in actual]
+            )
             raise SparseValueObjectsException(
                 f"The Value objects for {param} do not span the specified "
-                f"parameter space."
+                f"parameter space. Missing combinations:\n\t{missing}"
             )
         list_2_tuple = lambda x: tuple(x) if isinstance(x, list) else x
         for vi in value_items:
@@ -203,7 +214,7 @@ class Parameters:
             arr[ix] = vi["value"]
         return arr
 
-    def from_array(self, param, array):
+    def from_array(self, param, array=None):
         """
         Convert NumPy array to a Value object.
 
@@ -214,6 +225,13 @@ class Parameters:
             InconsistentDimensionsException: Value objects do not have consistent
                 dimensions.
         """
+        if array is None:
+            array = getattr(self, param)
+            if not isinstance(array, np.ndarray):
+                raise TypeError(
+                    "A NumPy Ndarray should be passed to this method "
+                    "or the instance attribute should be an array."
+                )
         param_data = self._data[param]
         dim_order, value_order = self._resolve_order(param)
         dim_values = itertools.product(*value_order.values())
@@ -246,7 +264,7 @@ class Parameters:
             InconsistentDimensionsException: Value objects do not have consistent
                 dimensions.
         """
-        value_items = getattr(self, param)
+        value_items = self._get(param, False, **self.state)
         used = utils.consistent_dims(value_items)
         if used is None:
             raise InconsistentDimensionsException(
@@ -258,6 +276,14 @@ class Parameters:
                 dim_order.append(dim_name)
                 value_order[dim_name] = dim_values
         return dim_order, value_order
+
+    def _numpy_type(self, param):
+        """
+        Get the numpy type for a given parameter.
+        """
+        return (
+            self._validator_schema.fields[param].nested.fields["value"].np_type
+        )
 
     def _get(self, param, exact_match, **dims):
         """
