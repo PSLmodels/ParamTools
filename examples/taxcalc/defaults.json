@@ -119,6 +119,31 @@
         "out_of_range_action": "warn",
         "compatible_data": {"puf": true, "cps": true}
     },
+    "_ID_BenefitSurtax_Switch": {
+        "title": "Deductions subject to the surtax on itemized deduction benefits",
+        "description": "The surtax on itemized deduction benefits applies to the benefits derived from the itemized deductions specified with this parameter.",
+        "section_1": "Itemized Deductions",
+        "section_2": "Surtax On Itemized Deduction Benefits Above An AGI Threshold",
+        "irs_ref": "",
+        "notes": "",
+        "cpi_inflatable": false,
+        "cpi_inflated": false,
+        "type": "bool",
+        "number_dims": 0,
+        "value": [
+            {"year": 2013, "idedtype": "medical", "value": true},
+            {"year": 2013, "idedtype": "statelocal", "value": true},
+            {"year": 2013, "idedtype": "realestate", "value": true},
+            {"year": 2013, "idedtype": "casualty", "value": true},
+            {"year": 2013, "idedtype": "misc", "value": true},
+            {"year": 2013, "idedtype": "interest", "value": true},
+            {"year": 2013, "idedtype": "charity", "value": true}],
+        "validators": {"range": {"min": false, "max": true}},
+        "out_of_range_minmsg": "",
+        "out_of_range_maxmsg": "",
+        "out_of_range_action": "stop",
+        "compatible_data": {"puf": true, "cps": true}
+    },
     "_II_brk1": {
         "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 1",
         "description": "Taxable income below this threshold is taxed at tax rate 1.",
