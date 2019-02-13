@@ -30,45 +30,18 @@ specification <#default-specification>`__ files:
        ...:
        ...:
 
-Parameters are available via instance attributes:
-
-.. code:: python
-
-    In [2]: params.average_precipitation
-    Out[2]:
-    [{'city': 'Washington, D.C.', 'value': 3.1, 'month': 'January'},
-     {'city': 'Washington, D.C.', 'value': 2.6, 'month': 'February'},
-     {'city': 'Washington, D.C.', 'value': 3.5, 'month': 'March'},
-     {'city': 'Washington, D.C.', 'value': 3.3, 'month': 'April'},
-     {'city': 'Washington, D.C.', 'value': 4.3, 'month': 'May'},
-     {'city': 'Washington, D.C.', 'value': 4.3, 'month': 'June'},
-     {'city': 'Washington, D.C.', 'value': 4.6, 'month': 'July'},
-     {'city': 'Washington, D.C.', 'value': 3.8, 'month': 'August'},
-     {'city': 'Washington, D.C.', 'value': 3.9, 'month': 'September'},
-     {'city': 'Washington, D.C.', 'value': 3.7, 'month': 'October'},
-     {'city': 'Washington, D.C.', 'value': 3.0, 'month': 'November'},
-     {'city': 'Washington, D.C.', 'value': 3.5, 'month': 'December'},
-     {'city': 'Atlanta, GA', 'value': 3.6, 'month': 'January'},
-     {'city': 'Atlanta, GA', 'value': 3.7, 'month': 'February'},
-     {'city': 'Atlanta, GA', 'value': 4.3, 'month': 'March'},
-     {'city': 'Atlanta, GA', 'value': 3.5, 'month': 'April'},
-     {'city': 'Atlanta, GA', 'value': 3.8, 'month': 'May'},
-     {'city': 'Atlanta, GA', 'value': 3.6, 'month': 'June'},
-     {'city': 'Atlanta, GA', 'value': 5.0, 'month': 'July'},
-     {'city': 'Atlanta, GA', 'value': 3.8, 'month': 'August'},
-     {'city': 'Atlanta, GA', 'value': 3.7, 'month': 'September'},
-     {'city': 'Atlanta, GA', 'value': 2.8, 'month': 'October'},
-     {'city': 'Atlanta, GA', 'value': 3.6, 'month': 'November'},
-     {'city': 'Atlanta, GA', 'value': 4.1, 'month': 'December'}]
-
 Set state for the parameters:
 
 .. code:: python
 
-    In [3]: params.set_state(month="November")
+    In [2]: params.set_state(month="November")
 
     In [3]: params.state
     Out[3]: {'month': 'November'}
+
+Parameters are available via instance attributes:
+
+.. code:: python
 
     In [4]: params.average_precipitation
     Out[4]:
@@ -128,18 +101,6 @@ Errors on invalid input:
         116         # Update attrs.
 
     ValidationError: {'average_precipitation': ['Not a valid number: rainy.']}
-
-Silence the errors by setting ``raise_errors`` to ``False``:
-
-.. code:: python
-
-    In [7]: adjustment["average_precipitation"][0]["value"] = "rainy"
-       ...: params.adjust(adjustment, raise_errors=False)
-       ...:
-       ...: params.errors
-       ...:
-       ...:
-    Out[7]: {'average_precipitation': ['Not a valid number: rainy.']}
 
 Errors on input that's out of range:
 
