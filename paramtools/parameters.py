@@ -337,11 +337,12 @@ class Parameters:
                     matched_at_least_once = True
                     curr_vals[j]["value"] = new_values[i]["value"]
             if not matched_at_least_once:
-                d = {k: new_values[i][k] for k in dims_to_check}
-                raise ParameterUpdateException(
-                    f"Failed to match along any of the "
-                    f"following dimensions: {d}"
-                )
+                curr_vals.append(new_values[i])
+                # d = {k: new_values[i][k] for k in dims_to_check}
+                # raise ParameterUpdateException(
+                #     f"Failed to match along any of the "
+                #     f"following dimensions: {d}"
+                # )
 
     def _parse_errors(self, ve, params):
         """
