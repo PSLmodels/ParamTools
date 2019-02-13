@@ -47,11 +47,10 @@ def af_params(schema_def_path, array_first_defaults):
     class AFParams(Parameters):
         schema = schema_def_path
         defaults = array_first_defaults
-        array_first = False
 
-    _af_params = AFParams()
-    _af_params.array_first = True
-    _af_params.set_state(dim0="zero", dim1=1)
+    _af_params = AFParams(
+        initial_state={"dim0": "zero", "dim1": 1}, array_first=True
+    )
     return _af_params
 
 

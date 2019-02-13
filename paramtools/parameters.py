@@ -21,10 +21,10 @@ from paramtools.exceptions import (
 class Parameters:
     schema = None
     defaults = None
-    array_first = False
     field_map = {}
+    array_first = False
 
-    def __init__(self):
+    def __init__(self, initial_state=None, array_first=None):
         sb = SchemaBuilder(self.schema, self.defaults, self.field_map)
         defaults, self._validator_schema = sb.build_schemas()
         self.dim_validators = sb.dim_validators
@@ -35,7 +35,11 @@ class Parameters:
         self._data = defaults
         self._validator_schema.context["spec"] = self
         self._errors = {}
-        self.state = {}
+        self.state = initial_state or {}
+        if array_first is not None:
+            self.array_first = array_first
+        else:
+            self.array_first = array_first
         self.set_state()
 
     def set_state(self, **dims):
