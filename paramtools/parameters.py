@@ -87,6 +87,7 @@ class Parameters:
 
         Raises:
             marshmallow.exceptions.ValidationError if data is not valid.
+
             ParameterUpdateException if dimension values do not match at
                 least one existing value item's corresponding dimension values.
         """
