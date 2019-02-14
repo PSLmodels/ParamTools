@@ -112,9 +112,14 @@ Documentation
 ----------------
 Full documentation available at https://paramtools.readthedocs.io/.
 
+Contributing
+-------------------------
+Contributions are welcome! Checkout [CONTRIBUTING.md][3] to get started.
+
 Credits
 ---------
 ParamTools is built on top of the excellent [marshmallow][1] JSON schema and validation framework. I encourage everyone to checkout their repo and documentation. ParamTools was modeled off of [Tax-Calculator's][2] parameter processing and validation engine due to its maturity and sophisticated capabilities.
 
 [1]: https://github.com/marshmallow-code/marshmallow
 [2]: https://github.com/PSLmodels/Tax-Calculator
+[3]: https://github.com/PSLmodels/ParamTools/blob/master/CONTRIBUTING.md
