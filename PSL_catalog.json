@@ -31,7 +31,8 @@
         "start_header": null,
         "end_header": null,
         "source": "https://github.com/PSLmodels/ParamTools/blob/master/LICENSE.txt",
-        "data": "<p>MIT</p>"
+        "data": "<p>MIT</p>",
+        "type": "html"
     },
     "user_changelog": {
         "start_header": null,
