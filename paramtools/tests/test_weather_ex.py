@@ -77,27 +77,26 @@ def test_specification(WeatherParams, defaults_spec_path):
 
     assert wp.specification(month="November") == exp
 
-
-def test_failed_udpate(WeatherParams):
-    adjustment = {
-        "average_high_temperature": [
-            {
-                "city": "Washington, D.C.",
-                "month": "November",
-                "dayofmonth": 1,
-                "value": 60,
-            },
-            {
-                "city": "Atlanta, GA",
-                "month": "November",
-                "dayofmonth": 2,
-                "value": 63,
-            },
-        ]
-    }
-    params = WeatherParams()
-    with pytest.raises(ParameterUpdateException):
-        params.adjust(adjustment)
+    # def test_failed_udpate(WeatherParams):
+    #     adjustment = {
+    #         "average_high_temperature": [
+    #             {
+    #                 "city": "Washington, D.C.",
+    #                 "month": "November",
+    #                 "dayofmonth": 1,
+    #                 "value": 60,
+    #             },
+    #             {
+    #                 "city": "Atlanta, GA",
+    #                 "month": "November",
+    #                 "dayofmonth": 2,
+    #                 "value": 63,
+    #             },
+    #         ]
+    #     }
+    #     params = WeatherParams()
+    #     with pytest.raises(ParameterUpdateException):
+    #         params.adjust(adjustment)
 
     def test_doc_example(schema_def_path, defaults_spec_path):
         from paramtools import Parameters
