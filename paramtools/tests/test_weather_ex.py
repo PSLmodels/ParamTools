@@ -78,50 +78,46 @@ def test_specification(WeatherParams, defaults_spec_path):
     assert wp.specification(month="November") == exp
 
 
-def test_doc_example(schema_def_path, defaults_spec_path):
+def test_doc_example():
     from paramtools import Parameters
     from paramtools import get_example_paths
 
-    # schema, defaults = get_example_paths('weather')
+    schema_, defaults_ = get_example_paths("weather")
 
     class WeatherParams(Parameters):
-        schema = schema_def_path
-        defaults = defaults_spec_path
+        schema = schema_
+        defaults = defaults_
 
-    params = WeatherParams()
-    params.average_precipitation
-    params.set_state(month="November")
-    params.set_state(month="November")
-    params.state
+    params = WeatherParams(
+        initial_state={"month": "November", "dayofmonth": 1}, array_first=True
+    )
 
-    params.average_precipitation
+    params = WeatherParams(
+        initial_state={"month": "November", "dayofmonth": 1}, array_first=True
+    )
+
+    print("#output: ", params.average_precipitation)
+    print("#output: ", params.from_array("average_precipitation"))
+
     adjustment = {
         "average_precipitation": [
             {"city": "Washington, D.C.", "month": "November", "value": 10},
             {"city": "Atlanta, GA", "month": "November", "value": 15},
         ]
     }
-
     params.adjust(adjustment)
-
-    # check to make sure the values were updated:
-    params.average_precipitation
+    print("#output: ", params.from_array("average_precipitation"))
+    print("#output: ", params.average_precipitation)
     adjustment["average_precipitation"][0]["value"] = "rainy"
-    # ==> raises error
-    with pytest.raises(ValidationError):
+    try:
         params.adjust(adjustment)
-    adjustment["average_precipitation"][0]["value"] = "rainy"
-    # ==> raises error
-    params.adjust(adjustment, raise_errors=False)
+    except Exception as e:
+        saved_exc = e
 
-    params.errors
     adjustment["average_precipitation"][0]["value"] = 1000
     adjustment["average_precipitation"][1]["value"] = 2000
 
     params.adjust(adjustment, raise_errors=False)
-
-    params.errors
-    arr = params.to_array("average_precipitation")
-    arr
-    vi_list = params.from_array("average_precipitation", arr)
-    vi_list
+    print("#output: ", params.errors)
+    print("output: ")
+    # raise saved_exc
