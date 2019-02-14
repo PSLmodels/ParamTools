@@ -1,5 +1,6 @@
 import datetime
 
+import numpy as np
 from marshmallow import (
     validate as marshmallow_validate,
     ValidationError,
@@ -12,11 +13,14 @@ from paramtools import utils
 class Range(marshmallow_validate.Range):
     error = ""
 
-    def __init__(self, min=None, max=None, error_min=None, error_max=None):
+    def __init__(
+        self, min=None, max=None, error_min=None, error_max=None, step=None
+    ):
         self.min = min
         self.max = max
         self.error_min = error_min
         self.error_max = error_max
+        self.step = step or 1  # default to 1
 
     def _format_error(self, value, message):
         return message.format(input=value, min=self.min, max=self.max)
@@ -39,7 +43,10 @@ class Range(marshmallow_validate.Range):
         return value
 
     def mesh(self):
-        return list(range(self.min, self.max + 1))
+        # make np.arange inclusive.
+        max_ = self.max + self.step
+        arr = np.arange(self.min, max_, self.step)
+        return arr[arr <= self.max].tolist()
 
 
 class DateRange(Range):
@@ -48,15 +55,38 @@ class DateRange(Range):
     first.
     """
 
-    def __init__(self, min=None, max=None, error_min=None, error_max=None):
+    def __init__(
+        self, min=None, max=None, error_min=None, error_max=None, step=None
+    ):
         if min is not None and not isinstance(min, datetime.date):
             min = marshmallow_fields.Date()._deserialize(min, None, None)
         if max is not None and not isinstance(max, datetime.date):
             max = marshmallow_fields.Date()._deserialize(max, None, None)
+
         super().__init__(min, max, error_min, error_max)
 
+        if step is None:
+            # set to to default step.
+            step = {"days": 1}
+        # check against allowed args:
+        # https://docs.python.org/3/library/datetime.html#datetime.timedelta
+        timedelta_args = {
+            "days",
+            "seconds",
+            "microseconds",
+            "milliseconds",
+            "minutes",
+            "hours",
+            "weeks",
+        }
+        assert len(set(step.keys()) - timedelta_args) == 0
+        self.step = datetime.timedelta(**step)
+
     def mesh(self):
-        return None
+        # make np.arange inclusive.
+        max_ = self.max + self.step
+        arr = np.arange(self.min, max_, self.step, dtype=datetime.date)
+        return arr[arr <= self.max].tolist()
 
 
 class OneOf(marshmallow_validate.OneOf):

@@ -1,3 +1,5 @@
+import datetime
+
 import numpy as np
 from marshmallow import ValidationError as MarshmallowVE
 
@@ -24,7 +26,9 @@ def test_np_value_fields():
 
 def test_contrib_fields():
     range_validator = validate.Range(0, 10)
-    daterange_validator = validate.DateRange("2019-01-01", "2019-02-01")
+    daterange_validator = validate.DateRange(
+        "2019-01-01", "2019-01-05", step={"days": 2}
+    )
     choice_validator = validate.OneOf(choices=["one", "two"])
 
     s = fields.Str(validate=[choice_validator])
@@ -39,4 +43,4 @@ def test_contrib_fields():
 
     # date will need an interval argument.
     s = fields.Date(validate=[daterange_validator])
-    assert s.mesh() is None
+    assert s.mesh() == [datetime.date(2019, 1, i) for i in range(1, 6, 2)]

@@ -1,4 +1,6 @@
 import numpy as np
+import datetime
+
 from marshmallow import fields as marshmallow_fields
 
 
@@ -7,7 +9,7 @@ class Float64(marshmallow_fields.Number):
     Define field to match up with numpy float64 type
     """
 
-    num_type = np.float64
+    num_type = np_type = np.float64
 
 
 class Int64(marshmallow_fields.Number):
@@ -15,7 +17,7 @@ class Int64(marshmallow_fields.Number):
     Define field to match up with numpy int64 type
     """
 
-    num_type = np.int64
+    num_type = np_type = np.int64
 
 
 class Bool_(marshmallow_fields.Boolean):
@@ -23,7 +25,7 @@ class Bool_(marshmallow_fields.Boolean):
     Define field to match up with numpy bool_ type
     """
 
-    num_type = np.bool_
+    num_type = np_type = np.bool_
 
     def _deserialize(self, value, attr, obj, **kwargs):
         return np.bool_(super()._deserialize(value, attr, obj, **kwargs))
@@ -46,20 +48,20 @@ class MeshFieldMixin:
 
 
 class Str(MeshFieldMixin, marshmallow_fields.Str):
-    pass
+    np_type = object
 
 
 class Integer(MeshFieldMixin, marshmallow_fields.Integer):
-    pass
+    np_type = int
 
 
 class Float(MeshFieldMixin, marshmallow_fields.Float):
-    pass
+    np_type = float
 
 
 class Boolean(MeshFieldMixin, marshmallow_fields.Boolean):
-    pass
+    np_type = bool
 
 
 class Date(MeshFieldMixin, marshmallow_fields.Date):
-    pass
+    np_type = datetime.date

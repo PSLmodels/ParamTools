@@ -302,6 +302,9 @@ VALIDATOR_MAP = {
 
 
 def get_type(data):
+    # TODO: Use invalid error messages on next marshmallow release
+    # (post 0.3.0rc4)
+    # error_messages = {"invalid": "Invalid input: {input}"}
     numeric_types = {
         "int": contrib_fields.Int64(),
         "bool": contrib_fields.Bool_(),

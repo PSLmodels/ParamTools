@@ -11,7 +11,6 @@ from marshmallow import ValidationError as MarshmallowValidationError
 from paramtools.build_schema import SchemaBuilder
 from paramtools import utils
 from paramtools.exceptions import (
-    ParameterUpdateException,
     SparseValueObjectsException,
     ValidationError,
     InconsistentDimensionsException,
@@ -22,8 +21,9 @@ class Parameters:
     schema = None
     defaults = None
     field_map = {}
+    array_first = False
 
-    def __init__(self):
+    def __init__(self, initial_state=None, array_first=None):
         sb = SchemaBuilder(self.schema, self.defaults, self.field_map)
         defaults, self._validator_schema = sb.build_schemas()
         self.dim_validators = sb.dim_validators
@@ -34,7 +34,11 @@ class Parameters:
         self._data = defaults
         self._validator_schema.context["spec"] = self
         self._errors = {}
-        self.state = {}
+        self.state = initial_state or {}
+        if array_first is not None:
+            self.array_first = array_first
+        else:
+            self.array_first = array_first
         self.set_state()
 
     def set_state(self, **dims):
@@ -68,7 +72,10 @@ class Parameters:
             self.dim_mesh[dim_name] = dim_value
         spec = self.specification(**self.state)
         for name, value in spec.items():
-            setattr(self, name, value)
+            if self.array_first:
+                setattr(self, name, self.to_array(name))
+            else:
+                setattr(self, name, value)
 
     def clear_state(self):
         """
@@ -170,21 +177,34 @@ class Parameters:
                 entire space specified by the Order object.
         """
         param_data = self._data[param]
-        value_items = getattr(self, param)
+        value_items = self._get(param, False, **self.state)
         dim_order, value_order = self._resolve_order(param)
         shape = []
         for dim in dim_order:
             shape.append(len(value_order[dim]))
         shape = tuple(shape)
-        arr = np.zeros(shape)
+        arr = np.empty(shape, dtype=self._numpy_type(param))
         # Compare len value items with the expected length if they are full.
         # In the futute, sparse objects should be supported by filling in the
         # unspecified dimensions.
-        exp_full_shape = reduce(lambda x, y: x * y, shape)
+        if not shape:
+            exp_full_shape = 1
+        else:
+            exp_full_shape = reduce(lambda x, y: x * y, shape)
         if len(value_items) != exp_full_shape:
+            # maintains dimension value order over value objects.
+            exp_mesh = list(itertools.product(*value_order.values()))
+            # preserve dimension value order for each value object by
+            # iterating over dim_order.
+            actual = set(
+                [tuple(vo[d] for d in dim_order) for vo in value_items]
+            )
+            missing = "\n\t".join(
+                [str(d) for d in exp_mesh if d not in actual]
+            )
             raise SparseValueObjectsException(
                 f"The Value objects for {param} do not span the specified "
-                f"parameter space."
+                f"parameter space. Missing combinations:\n\t{missing}"
             )
         list_2_tuple = lambda x: tuple(x) if isinstance(x, list) else x
         for vi in value_items:
@@ -198,7 +218,7 @@ class Parameters:
             arr[ix] = vi["value"]
         return arr
 
-    def from_array(self, param, array):
+    def from_array(self, param, array=None):
         """
         Convert NumPy array to a Value object.
 
@@ -209,6 +229,13 @@ class Parameters:
             InconsistentDimensionsException: Value objects do not have consistent
                 dimensions.
         """
+        if array is None:
+            array = getattr(self, param)
+            if not isinstance(array, np.ndarray):
+                raise TypeError(
+                    "A NumPy Ndarray should be passed to this method "
+                    "or the instance attribute should be an array."
+                )
         param_data = self._data[param]
         dim_order, value_order = self._resolve_order(param)
         dim_values = itertools.product(*value_order.values())
@@ -241,7 +268,7 @@ class Parameters:
             InconsistentDimensionsException: Value objects do not have consistent
                 dimensions.
         """
-        value_items = getattr(self, param)
+        value_items = self._get(param, False, **self.state)
         used = utils.consistent_dims(value_items)
         if used is None:
             raise InconsistentDimensionsException(
@@ -253,6 +280,14 @@ class Parameters:
                 dim_order.append(dim_name)
                 value_order[dim_name] = dim_values
         return dim_order, value_order
+
+    def _numpy_type(self, param):
+        """
+        Get the numpy type for a given parameter.
+        """
+        return (
+            self._validator_schema.fields[param].nested.fields["value"].np_type
+        )
 
     def _get(self, param, exact_match, **dims):
         """
@@ -286,9 +321,15 @@ class Parameters:
         chosen by finding all value items with dimension values matching
         the dimension values specified in the adjustment.
 
-        Raises:
-            ParameterUpdateException if dimension values do not match at
-                least one existing value item's corresponding dimension values.
+        Note: _update_param used to raise a ParameterUpdateException if one of the new
+            values did not match at least one of the current value objects. However,
+            this was dropped to better support the case where the parameters are being
+            extended along some dimension to fill the parameter space. An exception could
+            be raised if a new value object contains a dimension that is not used in the
+            current value objects for the parameter. However, it seems like it could be
+            expensive to check this case, especially when a project is extending parameters.
+            For now, no exceptions are raised by this method.
+
         """
         curr_vals = self._data[param]["value"]
         for i in range(len(new_values)):
@@ -302,11 +343,7 @@ class Parameters:
                     matched_at_least_once = True
                     curr_vals[j]["value"] = new_values[i]["value"]
             if not matched_at_least_once:
-                d = {k: new_values[i][k] for k in dims_to_check}
-                raise ParameterUpdateException(
-                    f"Failed to match along any of the "
-                    f"following dimensions: {d}"
-                )
+                curr_vals.append(new_values[i])
 
     def _parse_errors(self, ve, params):
         """

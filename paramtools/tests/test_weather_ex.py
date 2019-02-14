@@ -78,70 +78,46 @@ def test_specification(WeatherParams, defaults_spec_path):
     assert wp.specification(month="November") == exp
 
 
-def test_failed_udpate(WeatherParams):
+def test_doc_example():
+    from paramtools import Parameters
+    from paramtools import get_example_paths
+
+    schema_, defaults_ = get_example_paths("weather")
+
+    class WeatherParams(Parameters):
+        schema = schema_
+        defaults = defaults_
+
+    params = WeatherParams(
+        initial_state={"month": "November", "dayofmonth": 1}, array_first=True
+    )
+
+    params = WeatherParams(
+        initial_state={"month": "November", "dayofmonth": 1}, array_first=True
+    )
+
+    print("#output: ", params.average_precipitation)
+    print("#output: ", params.from_array("average_precipitation"))
+
     adjustment = {
-        "average_high_temperature": [
-            {
-                "city": "Washington, D.C.",
-                "month": "November",
-                "dayofmonth": 1,
-                "value": 60,
-            },
-            {
-                "city": "Atlanta, GA",
-                "month": "November",
-                "dayofmonth": 2,
-                "value": 63,
-            },
+        "average_precipitation": [
+            {"city": "Washington, D.C.", "month": "November", "value": 10},
+            {"city": "Atlanta, GA", "month": "November", "value": 15},
         ]
     }
-    params = WeatherParams()
-    with pytest.raises(ParameterUpdateException):
+    params.adjust(adjustment)
+    print("#output: ", params.from_array("average_precipitation"))
+    print("#output: ", params.average_precipitation)
+    adjustment["average_precipitation"][0]["value"] = "rainy"
+    try:
         params.adjust(adjustment)
+    except Exception as e:
+        saved_exc = e
 
-    def test_doc_example(schema_def_path, defaults_spec_path):
-        from paramtools import Parameters
-        from paramtools import get_example_paths
+    adjustment["average_precipitation"][0]["value"] = 1000
+    adjustment["average_precipitation"][1]["value"] = 2000
 
-        # schema, defaults = get_example_paths('weather')
-
-        class WeatherParams(Parameters):
-            schema = schema_def_path
-            defaults = defaults_spec_path
-
-        params = WeatherParams()
-        params.average_precipitation
-        params.set_state(month="November")
-        params.set_state(month="November")
-        params.state
-
-        params.average_precipitation
-        adjustment = {
-            "average_precipitation": [
-                {"city": "Washington, D.C.", "month": "November", "value": 10},
-                {"city": "Atlanta, GA", "month": "November", "value": 15},
-            ]
-        }
-
-        params.adjust(adjustment)
-
-        # check to make sure the values were updated:
-        params.average_precipitation
-        adjustment["average_precipitation"][0]["value"] = "rainy"
-        # ==> raises error
-        params.adjust(adjustment)
-        adjustment["average_precipitation"][0]["value"] = "rainy"
-        # ==> raises error
-        params.adjust(adjustment, raise_errors=False)
-
-        params.errors
-        adjustment["average_precipitation"][0]["value"] = 1000
-        adjustment["average_precipitation"][1]["value"] = 2000
-
-        params.adjust(adjustment, raise_errors=False)
-
-        params.errors
-        arr = params.to_array("average_precipitation")
-        arr
-        vi_list = params.from_array("average_precipitation", arr)
-        vi_list
+    params.adjust(adjustment, raise_errors=False)
+    print("#output: ", params.errors)
+    print("output: ")
+    # raise saved_exc
