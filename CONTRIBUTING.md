@@ -2,7 +2,7 @@
 
 Contributions
 ------------------------------
-Contributions are welcome! Open a PR with your changes (and tests to go along with them!). In this PR describe what your change does and link to any relevant issues.
+Contributions are welcome! Open a [PR][2] with your changes (and tests to go along with them!). In this PR describe what your change does and link to any relevant issues.
 
 Feature Requests
 ----------------------------------
@@ -32,3 +32,4 @@ py.test
 
 
 [1]: https://github.com/PSLmodels/ParamTools/issues
+[2]: https://github.com/PSLmodels/ParamTools/pulls
