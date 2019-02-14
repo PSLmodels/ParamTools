@@ -11,7 +11,6 @@ from marshmallow import ValidationError as MarshmallowValidationError
 from paramtools.build_schema import SchemaBuilder
 from paramtools import utils
 from paramtools.exceptions import (
-    ParameterUpdateException,
     SparseValueObjectsException,
     ValidationError,
     InconsistentDimensionsException,
@@ -322,9 +321,15 @@ class Parameters:
         chosen by finding all value items with dimension values matching
         the dimension values specified in the adjustment.
 
-        Raises:
-            ParameterUpdateException if dimension values do not match at
-                least one existing value item's corresponding dimension values.
+        Note: _update_param used to raise a ParameterUpdateException if one of the new
+            values did not match at least one of the current value objects. However,
+            this was dropped to better support the case where the parameters are being
+            extended along some dimension to fill the parameter space. An exception could
+            be raised if a new value object contains a dimension that is not used in the
+            current value objects for the parameter. However, it seems like it could be
+            expensive to check this case, especially when a project is extending parameters.
+            For now, no exceptions are raised by this method.
+
         """
         curr_vals = self._data[param]["value"]
         for i in range(len(new_values)):
@@ -339,11 +344,6 @@ class Parameters:
                     curr_vals[j]["value"] = new_values[i]["value"]
             if not matched_at_least_once:
                 curr_vals.append(new_values[i])
-                # d = {k: new_values[i][k] for k in dims_to_check}
-                # raise ParameterUpdateException(
-                #     f"Failed to match along any of the "
-                #     f"following dimensions: {d}"
-                # )
 
     def _parse_errors(self, ve, params):
         """
