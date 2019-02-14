@@ -34,6 +34,13 @@
         "data": "<p>MIT</p>",
         "type": "html"
     },
+    "user_documentation": {
+        "start_header": "Documentation",
+        "end_header": "Contributing",
+        "type": "github_file",
+        "source": "README.md",
+        "data": null
+    },
     "user_changelog": {
         "start_header": null,
         "end_header": null,
