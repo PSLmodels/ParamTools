@@ -1,0 +1,148 @@
+{
+    "project_one_line": {
+        "start_header": null,
+        "end_header": null,
+        "source": "https://github.com/PSLmodels/ParamTools",
+        "type": "html",
+        "data": "<p>Library for parameter processing and validation with a focus on computational modeling projects</p>"
+    },
+    "key_features": {
+        "start_header": null,
+        "end_header": null,
+        "source": null,
+        "type": null,
+        "data": null
+    },
+    "project_overview": {
+        "start_header": "ParamTools",
+        "end_header": "How to use ParamTools",
+        "source": "https://github.com/PSLmodels/ParamTools/blob/master/README.md",
+        "type": "github_file",
+        "data": null
+    },
+    "citation": {
+        "start_header": null,
+        "end_header": null,
+        "source": null,
+        "data": null,
+        "type": null
+    },
+    "license": {
+        "start_header": null,
+        "end_header": null,
+        "source": "https://github.com/PSLmodels/ParamTools/blob/master/LICENSE.txt",
+        "data": "<p>MIT</p>"
+    },
+    "user_changelog": {
+        "start_header": null,
+        "end_header": null,
+        "source": "https://github.com/PSLmodels/ParamTools/releases",
+        "type": "html",
+        "data": "<a href=\"https://github.com/PSLmodels/ParamTools/releases\">https://github.com/PSLmodels/ParamTools/releases</a>"
+    },
+    "user_changelog_recent": {
+        "start_header": null,
+        "end_header": null,
+        "source": "https://github.com/PSLmodels/ParamTools/releases/latest",
+        "type": "html",
+        "data": "<a href=\"https://github.com/PSLmodels/ParamTools/releases/latest\">https://github.com/PSLmodels/ParamTools/releases/latest</a>"
+    },
+    "dev_changelog": {
+        "start_header": null,
+        "end_header": null,
+        "source": "https://github.com/PSLmodels/ParamTools/releases",
+        "type": "html",
+        "data": "<a href=\"https://github.com/PSLmodels/ParamTools/releases\">https://github.com/PSLmodels/ParamTools/releases</a>"
+    },
+    "disclaimer": {
+        "start_header": null,
+        "end_header": null,
+        "source": null,
+        "type": null,
+        "data": null
+    },
+    "user_case_studies": {
+        "start_header": null,
+        "end_header": null,
+        "source": null,
+        "type": null,
+        "data": null
+    },
+    "project_roadmap": {
+        "start_header": null,
+        "end_header": null,
+        "source": null,
+        "type": null,
+        "data": null
+    },
+    "contributor_overview": {
+        "start_header": null,
+        "end_header": null,
+        "source": "https://github.com/open-source-economics/OG-USA#usingcontributing-to-og-usa",
+        "type": "html",
+        "data": "<p>If you want to report a <b>bug</b>, create a new issue <a href=\"https://github.com/open-source-economics/OG-USA/issues\">here</a> providing details on what you think is wrong with OG-USA.</p><p>If you want to request <b>an enhancement</b>, create a new issue <a href=\"https://github.com/open-source-economics/OG-USA/issues\">here</a> providing details on what you think should be added to OG-USA. </p>"
+    },
+    "contributor_guide": {
+        "start_header": null,
+        "end_header": null,
+        "source": "https://github.com/PSLmodels/ParamTools/blob/master/CONTRIBUTING.md",
+        "type": "html",
+        "data": "<a href=\"https://github.com/PSLmodels/ParamTools/blob/master/CONTRIBUTING.md\">https://github.com/PSLmodels/ParamTools/blob/master/CONTRIBUTING.md</a>"
+    },
+    "governance_overview": {
+        "start_header": null,
+        "end_header": null,
+        "source": null,
+        "type": null,
+        "data": null
+    },
+    "public_funding": {
+        "start_header": null,
+        "end_header": null,
+        "source": null,
+        "type": null,
+        "data": null
+    },
+    "link_to_webapp": {
+        "data": null,
+        "source": null,
+        "type": null,
+        "start_header": null,
+        "end_header": null
+    },
+    "public_issue_tracker": {
+        "start_header": null,
+        "end_header": null,
+        "data": "<a href=\"https://github.com/PSLmodels/ParamTools/issues\">https://github.com/PSLmodels/ParamTools/issues</a>",
+        "source": null,
+        "type": "html"
+    },
+    "public_qanda": {
+        "start_header": null,
+        "end_header": null,
+        "data": "<a href=\"https://github.com/PSLmodels/ParamTools/issues\">https://github.com/PSLmodels/ParamTools/issues</a>",
+        "source": null,
+        "type": "html"
+    },
+    "core_maintainers": {
+        "start_header": null,
+        "end_header": null,
+        "data": "<ul><li>Hank Doupe</li></ul>",
+        "source": null,
+        "type": "html"
+    },
+    "unit_test": {
+        "start_header": null,
+        "end_header": null,
+        "data": "<a href=\"https://github.com/PSLmodels/ParamTools/tree/master/paramtools/tests\">https://github.com/PSLmodels/ParamTools/tree/master/paramtools/tests</a>",
+        "source": "https://github.com/PSLmodels/ParamTools/tree/master/paramtools/tests",
+        "type": "html"
+    },
+    "integration_test": {
+        "start_header": null,
+        "end_header": null,
+        "data": "<a href=\"https://github.com/PSLmodels/ParamTools/tree/master/paramtools/tests\">https://github.com/PSLmodels/ParamTools/tree/master/paramtools/tests</a>",
+        "source": "https://github.com/PSLmodels/ParamTools/tree/master/paramtools/tests",
+        "type": "html"
+    }
+}
