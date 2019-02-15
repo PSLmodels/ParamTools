@@ -9,7 +9,7 @@ ParamTools defines the parameter input space for computational modeling projects
 How to use ParamTools
 ---------------------------
 
-Subclass the `Parameters` class and set your [specification schema](#specification-schema) and [default specification](#default-specification) files:
+Subclass the `Parameters` class and set your [specification schema](https://paramtools.readthedocs.io/en/latest/spec.html#specification-schema) and [default specification](https://paramtools.readthedocs.io/en/latest/spec.html#default-specification) files:
 
 ```python
 from paramtools import Parameters
@@ -38,13 +38,13 @@ print(params.average_precipitation)
 
 ```
 
-Get the parameter's value object:
+Get the parameter's [value object](https://paramtools.readthedocs.io/en/latest/spec.html#value-object):
 ```python
 print(params.from_array("average_precipitation"))
 # output:  [{'city': 'Atlanta, GA', 'month': 'November', 'value': 3.6}, {'city': 'Washington, D.C.', 'month': 'November', 'value': 3.0}]
 ```
 
-[Adjust](#adjustment-schema) the default specification:
+[Adjust](https://paramtools.readthedocs.io/en/latest/spec.html#adjustment-schema) the default specification:
 
 ```python
 adjustment = {
