@@ -12,8 +12,10 @@ How to use ParamTools
 ---------------------
 
 Subclass the ``Parameters`` class and set your `specification
-schema <#specification-schema>`__ and `default
-specification <#default-specification>`__ files:
+schema <https://paramtools.readthedocs.io/en/latest/spec.html#specification-schema>`__
+and `default
+specification <https://paramtools.readthedocs.io/en/latest/spec.html#default-specification>`__
+files:
 
 .. code:: python
 
@@ -40,14 +42,16 @@ Parameters are available via instance attributes:
    print(params.average_precipitation)
    #output:  [[3.6] [3. ]]
 
-Get the parameter’s value object:
+Get the parameter’s `value
+object <https://paramtools.readthedocs.io/en/latest/spec.html#value-object>`__:
 
 .. code:: python
 
    print(params.from_array("average_precipitation"))
    # output:  [{'city': 'Atlanta, GA', 'month': 'November', 'value': 3.6}, {'city': 'Washington, D.C.', 'month': 'November', 'value': 3.0}]
 
-`Adjust <#adjustment-schema>`__ the default specification:
+`Adjust <https://paramtools.readthedocs.io/en/latest/spec.html#adjustment-schema>`__
+the default specification:
 
 .. code:: python
 
@@ -114,6 +118,13 @@ Documentation
 -------------
 
 Full documentation available at https://paramtools.readthedocs.io/.
+
+Contributing
+------------
+
+Contributions are welcome! Checkout
+`CONTRIBUTING.md <https://github.com/PSLmodels/ParamTools/blob/master/CONTRIBUTING.md>`__
+to get started.
 
 Credits
 -------
