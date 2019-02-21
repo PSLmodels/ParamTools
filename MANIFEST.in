@@ -1,0 +1,3 @@
+include paramtools/examples/baseball/*.json
+include paramtools/examples/weather/*.json
+include paramtools/taxcalc/*.json
