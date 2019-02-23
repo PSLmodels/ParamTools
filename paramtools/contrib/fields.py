@@ -40,7 +40,7 @@ class Bool_(marshmallow_fields.Boolean):
 
 class MeshFieldMixin:
     """
-    Provides method for accessing contrib.validate
+    Provides method for accessing ``contrib.validate``
     validators' mesh methods
     """
 
