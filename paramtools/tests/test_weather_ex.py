@@ -4,7 +4,6 @@ import json
 import pytest
 
 from paramtools import Parameters
-from paramtools import ValidationError, ParameterUpdateException
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -36,6 +35,7 @@ def WeatherParams(schema_def_path, defaults_spec_path):
 
 def test_load_schema(WeatherParams):
     params = WeatherParams()
+    assert params
 
 
 def test_specification(WeatherParams, defaults_spec_path):
@@ -111,8 +111,9 @@ def test_doc_example():
     adjustment["average_precipitation"][0]["value"] = "rainy"
     try:
         params.adjust(adjustment)
-    except Exception as e:
-        saved_exc = e
+    except Exception:  # as e:
+        # saved_exc = e
+        pass
 
     adjustment["average_precipitation"][0]["value"] = 1000
     adjustment["average_precipitation"][1]["value"] = 2000

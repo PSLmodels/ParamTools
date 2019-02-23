@@ -87,10 +87,10 @@ class Parameters:
 
     def adjust(self, params_or_path, raise_errors=True):
         """
-        Method to deserialize and validate parameter adjustments.
-        `params_or_path` can be a file path or a `dict` that has not been
-        fully deserialized. The adjusted values replace the current values
-        stored in the corresponding parameter attributes.
+        Deserialize and validate parameter adjustments. `params_or_path`
+        can be a file path or a `dict` that has not been fully deserialized.
+        The adjusted values replace the current values stored in the
+        corresponding parameter attributes.
 
         Raises:
             marshmallow.exceptions.ValidationError if data is not valid.
@@ -107,7 +107,7 @@ class Parameters:
         else:
             raise ValueError("params_or_path is not dict or file path")
 
-        # do type validation
+        # Validate user adjustments.
         try:
             clean_params = self._validator_schema.load(params)
         except MarshmallowValidationError as ve:
@@ -176,7 +176,6 @@ class Parameters:
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
         """
-        param_data = self._data[param]
         value_items = self._get(param, False, **self.state)
         dim_order, value_order = self._resolve_order(param)
         shape = []
@@ -206,7 +205,10 @@ class Parameters:
                 f"The Value objects for {param} do not span the specified "
                 f"parameter space. Missing combinations:\n\t{missing}"
             )
-        list_2_tuple = lambda x: tuple(x) if isinstance(x, list) else x
+
+        def list_2_tuple(x):
+            return tuple(x) if isinstance(x, list) else x
+
         for vi in value_items:
             # ix stores the indices of `arr` that need to be filled in.
             ix = [[] for i in range(len(dim_order))]
@@ -236,7 +238,6 @@ class Parameters:
                     "A NumPy Ndarray should be passed to this method "
                     "or the instance attribute should be an array."
                 )
-        param_data = self._data[param]
         dim_order, value_order = self._resolve_order(param)
         dim_values = itertools.product(*value_order.values())
         dim_indices = itertools.product(
@@ -291,9 +292,9 @@ class Parameters:
 
     def _get(self, param, exact_match, **dims):
         """
-        Private method for querying a parameter along some dimensions. If
-        exact_match is True, all values in `dims` must be equal to the
-        corresponding dimension in the parameter's "value" dictionary.
+        Query a parameter along some dimensions. If exact_match is True,
+        all values in `dims` must be equal to the corresponding dimension
+        in the parameter's "value" dictionary.
 
         Ignores state.
 
@@ -316,10 +317,10 @@ class Parameters:
 
     def _update_param(self, param, new_values):
         """
-        Private method for updating the current parameter values with those
-        specified by the adjustment. The values that need to be updated are
-        chosen by finding all value items with dimension values matching
-        the dimension values specified in the adjustment.
+        Update the current parameter values with those specified by
+        the adjustment. The values that need to be updated are chosen
+        by finding all value items with dimension values matching the
+        dimension values specified in the adjustment.
 
         Note: _update_param used to raise a ParameterUpdateException if one of the new
             values did not match at least one of the current value objects. However,

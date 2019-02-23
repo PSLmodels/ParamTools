@@ -495,11 +495,11 @@ class TestState:
 
     def test_set_state_errors(self, TestParams):
         params = TestParams()
-        with pytest.raises(ValidationError) as ve:
+        with pytest.raises(ValidationError):
             params.set_state(dim0="notadim")
 
         params = TestParams()
-        with pytest.raises(ValidationError) as ve:
+        with pytest.raises(ValidationError):
             params.set_state(notadim="notadim")
 
     def test_state_with_list(self, TestParams):
