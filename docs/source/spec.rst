@@ -339,7 +339,7 @@ Type property
    -  "int": Integer.
    -  "float": Floating point.
    -  "bool": Boolean. Either True or False.
-   -  "str"\`: String.
+   -  "str": String.
    -  "date": Date. Needs to be of the format "YYYY-MM-DD".
    -  Example:
 
@@ -348,6 +348,7 @@ Type property
           {
               "type": "int"
           }
+
 
 Number-Dimensions property
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

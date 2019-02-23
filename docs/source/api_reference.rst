@@ -14,3 +14,10 @@ Parameters
     :inherited-members:
 
 .. _api_fields:
+
+
+Fields
+======
+
+.. automodule:: paramtools.contrib.fields
+    :members:
