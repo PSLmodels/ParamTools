@@ -275,7 +275,7 @@ Validator object
 -  Used for validating user input.
 -  Available validators:
 
-   -  "range": Define a minimum and maximum value for a given parameter.
+   -  "range": Define a minimum and maximum value for a parameter.
 
       -  Arguments:
 
@@ -303,6 +303,22 @@ Validator object
              {
                  "choice": {"choices": ["allowed choice", "another allowed choice"]}
              }
+
+   -  "date_range": Define a minimum and maximum value for a date type parameter.
+
+      -  Arguments:
+
+         -  "min": Minimum allowed value.
+         -  "max": Maximum allowed value.
+
+      -  Example:
+
+         .. code:: json
+
+             {
+                 "range": {"min": "2019-01-01", "max": "2019-06-01"}
+             }
+
 
 Value object
 ^^^^^^^^^^^^

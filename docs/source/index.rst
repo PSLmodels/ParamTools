@@ -12,6 +12,7 @@ Guide
 
    spec
    fields
+   validate
 
 API Reference
 =============
