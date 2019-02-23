@@ -1,7 +1,6 @@
 import datetime
 
 import numpy as np
-from marshmallow import ValidationError as MarshmallowVE
 
 from paramtools.contrib import fields, validate
 
@@ -19,7 +18,7 @@ def test_np_value_fields():
 
     bool_ = fields.Bool_()
     res = bool_._deserialize("true", None, None)
-    assert res == True
+    assert res is np.bool_(True)
     assert isinstance(res, np.bool_)
     assert bool_._serialize(res, None, None) is True
 

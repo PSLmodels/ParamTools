@@ -205,7 +205,10 @@ class Parameters:
                 f"The Value objects for {param} do not span the specified "
                 f"parameter space. Missing combinations:\n\t{missing}"
             )
-        list_2_tuple = lambda x: tuple(x) if isinstance(x, list) else x
+
+        def list_2_tuple(x):
+            return tuple(x) if isinstance(x, list) else x
+
         for vi in value_items:
             # ix stores the indices of `arr` that need to be filled in.
             ix = [[] for i in range(len(dim_order))]
