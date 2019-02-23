@@ -11,6 +11,10 @@ from paramtools import utils
 
 
 class Range(marshmallow_validate.Range):
+    """
+    Implements "range" :ref:`spec:Validator object`.
+    """
+
     error = ""
 
     def __init__(
@@ -51,8 +55,9 @@ class Range(marshmallow_validate.Range):
 
 class DateRange(Range):
     """
-    Mimic behavior in Range above, but tries to cast min/max values to "Date"
-    first.
+    Implements "date_range" :ref:`spec:Validator object`.
+    Behaves like ``Range``, except values are ensured to be
+    ``datetime.date`` type and ``mesh`` has special logic for dates.
     """
 
     def __init__(
@@ -90,6 +95,10 @@ class DateRange(Range):
 
 
 class OneOf(marshmallow_validate.OneOf):
+    """
+    Implements "choice" :ref:`spec:Validator object`.
+    """
+
     def __call__(self, value):
         if not isinstance(value, list):
             values = [value]

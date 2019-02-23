@@ -233,9 +233,9 @@ Parameter object
          property <#type-property>`__.
       -  "number\_dims": Number of dimensions of the parameter. See
          `Number-Dimensions property <#number-dimensions-property>`__
-      -  "value": A list of (Value objects)[#value-object].
-      -  "validators": A mapping of (Validator
-         objects)[#validator-object]
+      -  "value": A list of `Value objects <#value-object>`__.
+      -  "validators": A mapping of `Validator
+         objects <#validator-object>`__.
       -  "out\_of\_range\_{min/max/other op}\_msg": Extra information to
          be used in the message(s) that will be displayed if the
          parameter value is outside of the specified range. Note that
@@ -275,7 +275,7 @@ Validator object
 -  Used for validating user input.
 -  Available validators:
 
-   -  "range": Define a minimum and maximum value for a given parameter.
+   -  "range": Define a minimum and maximum value for a parameter.
 
       -  Arguments:
 
@@ -303,6 +303,22 @@ Validator object
              {
                  "choice": {"choices": ["allowed choice", "another allowed choice"]}
              }
+
+   -  "date_range": Define a minimum and maximum value for a date type parameter.
+
+      -  Arguments:
+
+         -  "min": Minimum allowed value.
+         -  "max": Maximum allowed value.
+
+      -  Example:
+
+         .. code:: json
+
+             {
+                 "range": {"min": "2019-01-01", "max": "2019-06-01"}
+             }
+
 
 Value object
 ^^^^^^^^^^^^
@@ -339,7 +355,7 @@ Type property
    -  "int": Integer.
    -  "float": Floating point.
    -  "bool": Boolean. Either True or False.
-   -  "str"\`: String.
+   -  "str": String.
    -  "date": Date. Needs to be of the format "YYYY-MM-DD".
    -  Example:
 
@@ -348,6 +364,7 @@ Type property
           {
               "type": "int"
           }
+
 
 Number-Dimensions property
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

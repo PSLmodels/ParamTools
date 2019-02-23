@@ -6,7 +6,9 @@ from marshmallow import fields as marshmallow_fields
 
 class Float64(marshmallow_fields.Number):
     """
-    Define field to match up with numpy float64 type
+    Implements "float" :ref:`spec:Type property` for parameter values.
+    Defined as
+    `numpy.float64 <https://docs.scipy.org/doc/numpy-1.15.0/user/basics.types.html>`__ type
     """
 
     num_type = np_type = np.float64
@@ -14,7 +16,8 @@ class Float64(marshmallow_fields.Number):
 
 class Int64(marshmallow_fields.Number):
     """
-    Define field to match up with numpy int64 type
+    Implements "int" :ref:`spec:Type property` for parameter values.
+    Defined as `numpy.int64 <https://docs.scipy.org/doc/numpy-1.15.0/user/basics.types.html>`__ type
     """
 
     num_type = np_type = np.int64
@@ -22,7 +25,8 @@ class Int64(marshmallow_fields.Number):
 
 class Bool_(marshmallow_fields.Boolean):
     """
-    Define field to match up with numpy bool_ type
+    Implements "bool" :ref:`spec:Type property` for parameter values.
+    Defined as `numpy.bool_ <https://docs.scipy.org/doc/numpy-1.15.0/user/basics.types.html>`__ type
     """
 
     num_type = np_type = np.bool_
@@ -36,7 +40,7 @@ class Bool_(marshmallow_fields.Boolean):
 
 class MeshFieldMixin:
     """
-    Provides method for accessing contrib.validate
+    Provides method for accessing ``contrib.validate``
     validators' mesh methods
     """
 
@@ -48,20 +52,43 @@ class MeshFieldMixin:
 
 
 class Str(MeshFieldMixin, marshmallow_fields.Str):
+    """
+    Implements "str" :ref:`spec:Type property`.
+    """
+
     np_type = object
 
 
 class Integer(MeshFieldMixin, marshmallow_fields.Integer):
+    """
+    Implements "int" :ref:`spec:Type property` for properties
+    except for parameter values.
+    """
+
     np_type = int
 
 
 class Float(MeshFieldMixin, marshmallow_fields.Float):
+    """
+    Implements "float" :ref:`spec:Type property` for properties
+    except for parameter values.
+    """
+
     np_type = float
 
 
 class Boolean(MeshFieldMixin, marshmallow_fields.Boolean):
+    """
+    Implements "bool" :ref:`spec:Type property` for properties
+    except for parameter values.
+    """
+
     np_type = bool
 
 
 class Date(MeshFieldMixin, marshmallow_fields.Date):
+    """
+    Implements "date" :ref:`spec:Type property`.
+    """
+
     np_type = datetime.date

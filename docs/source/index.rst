@@ -11,6 +11,8 @@ Guide
    :maxdepth: 2
 
    spec
+   fields
+   validate
 
 API Reference
 =============
