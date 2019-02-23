@@ -233,9 +233,9 @@ Parameter object
          property <#type-property>`__.
       -  "number\_dims": Number of dimensions of the parameter. See
          `Number-Dimensions property <#number-dimensions-property>`__
-      -  "value": A list of (Value objects)[#value-object].
-      -  "validators": A mapping of (Validator
-         objects)[#validator-object]
+      -  "value": A list of `Value objects <#value-object>`__.
+      -  "validators": A mapping of `Validator
+         objects <#validator-object>`__.
       -  "out\_of\_range\_{min/max/other op}\_msg": Extra information to
          be used in the message(s) that will be displayed if the
          parameter value is outside of the specified range. Note that
