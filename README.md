@@ -15,10 +15,12 @@ Subclass the `Parameters` class and set your [specification schema](https://para
 from paramtools import Parameters
 from paramtools import get_example_paths
 
+# Get paths to weather example files.
 schema_, defaults_ = get_example_paths('weather')
+
 class WeatherParams(Parameters):
-    schema = schema_
-    defaults = defaults_
+    schema = schema_  # "schema.json"
+    defaults = defaults_  # "defaults.json"
 
 params = WeatherParams(
     initial_state={"month": "November", "dayofmonth": 1},
