@@ -1,0 +1,143 @@
+{
+    "standard_deduction": {
+        "title": "Standard deduction amount",
+        "description": "Amount filing unit can use as a standard deduction.",
+        "section_1": "Standard Deduction",
+        "section_2": "Standard Deduction Amount",
+        "irs_ref": "Form 1040, line 8, instructions. ",
+        "notes": "",
+        "start_year": 2024,
+        "cpi_inflatable": true,
+        "cpi_inflated": true,
+        "type": "float",
+        "number_dims": 0,
+        "value": [
+            {"year": 2024, "marital_status": "single", "value": 13673.68},
+            {"year": 2024, "marital_status": "joint", "value": 27347.36},
+            {"year": 2024, "marital_status": "separate", "value": 13673.68},
+            {"year": 2024, "marital_status": "headhousehold", "value": 20510.52},
+            {"year": 2024, "marital_status": "widow", "value": 27347.36},
+            {"year": 2025, "marital_status": "single", "value": 13967.66},
+            {"year": 2025, "marital_status": "joint", "value": 27935.33},
+            {"year": 2025, "marital_status": "separate", "value": 13967.66},
+            {"year": 2025, "marital_status": "headhousehold", "value": 20951.49},
+            {"year": 2025, "marital_status": "widow", "value": 27935.33},
+            {"year": 2026, "marital_status": "single", "value": 7690.0},
+            {"year": 2026, "marital_status": "joint", "value": 15380.0},
+            {"year": 2026, "marital_status": "separate", "value": 7690.0},
+            {"year": 2026, "marital_status": "headhousehold", "value": 11323.0},
+            {"year": 2026, "marital_status": "widow", "value": 15380.0}],
+        "out_of_range_minmsg": "",
+        "out_of_range_maxmsg": "",
+        "out_of_range_action": "stop",
+        "validators": {
+            "range": {
+                "min": 0,
+                "max": 9e+99
+            }
+        }
+    },
+    "social_security_tax_rate": {
+        "description": "Social Security FICA rate, including both employer and employee.",
+        "section_1": "Payroll Taxes",
+        "section_2": "Social Security FICA",
+        "irs_ref": "",
+        "notes": "",
+        "start_year": 2026,
+        "cpi_inflatable": false,
+        "cpi_inflated": false,
+        "value": [
+            {"year": 2024, "value": 0.124},
+            {"year": 2025, "value": 0.124},
+            {"year": 2026, "value": 0.124}
+        ],
+        "out_of_range_minmsg": "",
+        "out_of_range_maxmsg": "",
+        "out_of_range_action": "stop",
+        "number_dims": 0,
+        "title": "Social Security payroll tax rate",
+        "type": "float",
+        "validators": {
+            "range": {
+                "min": 0,
+                "max": 1
+            }
+        }
+    },
+    "ii_bracket_1": {
+        "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 1",
+        "description": "Taxable income below this threshold is taxed at tax rate 1.",
+        "section_1": "Personal Income",
+        "section_2": "Regular: Non-AMT, Non-Pass-Through",
+        "irs_ref": "Form 1040, line 44, instruction (Schedule XYZ).",
+        "notes": "",
+        "start_year": 2013,
+        "cpi_inflatable": true,
+        "cpi_inflated": true,
+        "number_dims": 0,
+        "type": "float",
+        "value": [
+            {"year": 2024, "marital_status": "single", "value": 10853.48},
+            {"year": 2024, "marital_status": "joint", "value": 21706.97},
+            {"year": 2024, "marital_status": "separate", "value": 10853.48},
+            {"year": 2024, "marital_status": "headhousehold", "value": 15496.84},
+            {"year": 2024, "marital_status": "widow", "value": 21706.97},
+            {"year": 2025, "marital_status": "single", "value": 11086.83},
+            {"year": 2025, "marital_status": "joint", "value": 22173.66},
+            {"year": 2025, "marital_status": "separate", "value": 11086.83},
+            {"year": 2025, "marital_status": "headhousehold", "value": 15830.02},
+            {"year": 2025, "marital_status": "widow", "value": 22173.66},
+            {"year": 2026, "marital_status": "single", "value": 11293.0},
+            {"year": 2026, "marital_status": "joint", "value": 22585.0},
+            {"year": 2026, "marital_status": "separate", "value": 11293.0},
+            {"year": 2026, "marital_status": "headhousehold", "value": 16167.0},
+            {"year": 2026, "marital_status": "widow", "value": 22585.0}],
+        "out_of_range_minmsg": "",
+        "out_of_range_maxmsg": "for _II_brk2",
+        "out_of_range_action": "stop",
+        "validators": {
+            "range": {
+                "min": 0,
+                "max": "ii_bracket_2"
+            }
+        }
+    },
+    "ii_bracket_2": {
+        "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 2",
+        "description": "Income below this threshold and above tax bracket 1 is taxed at tax rate 2.",
+        "section_1": "Personal Income",
+        "section_2": "Regular: Non-AMT, Non-Pass-Through",
+        "irs_ref": "Form 1040, line 11, instruction (Schedule XYZ).",
+        "notes": "",
+        "start_year": 2013,
+        "cpi_inflatable": true,
+        "cpi_inflated": true,
+        "number_dims": 0,
+        "type": "float",
+        "value":  [
+            {"year": 2024, "marital_status": "single", "value": 44097.61},
+            {"year": 2024, "marital_status": "joint", "value": 88195.23},
+            {"year": 2024, "marital_status": "separate", "value": 44097.61},
+            {"year": 2024, "marital_status": "headhousehold", "value": 59024.71},
+            {"year": 2024, "marital_status": "widow", "value": 88195.23},
+            {"year": 2025, "marital_status": "single", "value": 45045.71},
+            {"year": 2025, "marital_status": "joint", "value": 90091.43},
+            {"year": 2025, "marital_status": "separate", "value": 45045.71},
+            {"year": 2025, "marital_status": "headhousehold", "value": 60293.74},
+            {"year": 2025, "marital_status": "widow", "value": 90091.43},
+            {"year": 2026, "marital_status": "single", "value": 45957.0},
+            {"year": 2026, "marital_status": "joint", "value": 91915.0},
+            {"year": 2026, "marital_status": "separate", "value": 45957.0},
+            {"year": 2026, "marital_status": "headhousehold", "value": 61519.0},
+            {"year": 2026, "marital_status": "widow", "value": 91915.0}],
+        "out_of_range_minmsg": "",
+        "out_of_range_maxmsg": "",
+        "out_of_range_action": "stop",
+        "validators": {
+            "range": {
+                "min": "ii_bracket_1",
+                "max": 9e+99
+            }
+        }
+    }
+}

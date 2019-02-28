@@ -42,12 +42,12 @@ def adjustment():
 
 @pytest.fixture
 def schema_def_path():
-    return os.path.join(CURRENT_PATH, "../examples/taxcalc/schema.json")
+    return os.path.join(CURRENT_PATH, "../examples/taxparams/schema.json")
 
 
 @pytest.fixture
 def defaults_spec_path():
-    return os.path.join(CURRENT_PATH, "../examples/taxcalc/defaults.json")
+    return os.path.join(CURRENT_PATH, "../examples/taxparams/defaults.json")
 
 
 @pytest.fixture
