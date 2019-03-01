@@ -14,123 +14,197 @@ Define the dimensions of the parameter space.
 
    .. code:: json
 
-       {
-           "schema_name": "weather",
-           "dims": {
-               "city": {
-                   "type": "str",
-                   "validators": {"choice": {"choices": ["Atlanta, GA",
-                                                       "Washington, D.C."]}}
-               },
-               "month": {
-                   "type": "str",
-                   "validators": {"choice": {"choices": ["January", "February",
-                                                       "March", "April", "May",
-                                                       "June", "July", "August",
-                                                       "September", "October",
-                                                       "November", "December"]}}
-               },
-               "dayofmonth": {
-                   "type": "int",
-                   "validators": {"range": {"min": 1, "max": 31}}
-               }
-           },
-           "optional": {
-               "scale": {"type": "str", "number_dims": 0},
-               "source": {"type": "str", "number_dims": 0}
-           }
-       }
+        {
+            "schema_name": "policy",
+            "dims": {
+                "year": {
+                    "type": "int",
+                    "validators": {"range": {"min": 2013, "max": 2027}}
+                },
+                "marital_status": {
+                    "type": "str",
+                    "validators": {"choice": {"choices": ["single", "joint", "separate",
+                                                        "headhousehold", "widow"]}}
+                },
+                "idedtype": {
+                    "type": "str",
+                    "validators": {"choice": {"choices": ["medical", "statelocal",
+                                                        "realestate", "casualty",
+                                                        "misc", "interest", "charity"]}}
+                },
+                "EIC": {
+                    "type": "str",
+                    "validators": {"choice": {"choices": ["0kids", "1kid",
+                                                        "2kids", "3+kids"]}}
+                }
+            },
+            "optional": {
+                "section_1": {"type": "str", "number_dims": 0},
+                "section_2": {"type": "str", "number_dims": 0},
+                "section_3": {"type": "str", "number_dims": 0},
+                "irs_ref": {"type": "str", "number_dims": 0},
+                "start_year": {"type": "int", "number_dims": 0},
+                "cpi_inflatable": {"type": "bool", "number_dims": 0},
+                "cpi_inflated": {"type": "bool", "number_dims": 0},
+                "compatible_data": {"type": "compatible_data", "number_dims": null}
+            }
+        }
+
 
 Default Specification
 ---------------------
 
-Define the default values of the project's parameter space.
+Define the default values of the project"s parameter space.
 
 -  A mapping of `Parameter Objects <#parameter-object>`__.
 -  Example:
 
    .. code:: json
 
-       {
-           "average_high_temperature": {
-               "title": "Average High Temperature",
-               "description": "Average high temperature for each day for a selection of cities",
-               "notes": "Data has only been collected for Atlanta and Washington and for only the first of the month.",
-               "scale": "fahrenheit",
-               "source": "NOAA",
-               "type": "int",
-               "number_dims": 0,
-               "value": [
-                   {"city": "Washington, D.C.", "month": "January", "dayofmonth": 1, "value": 43},
-                   {"city": "Washington, D.C.", "month": "February", "dayofmonth": 1, "value": 47},
-                   {"city": "Washington, D.C.", "month": "March", "dayofmonth": 1, "value": 56},
-                   {"city": "Washington, D.C.", "month": "April", "dayofmonth": 1, "value": 67},
-                   {"city": "Washington, D.C.", "month": "May", "dayofmonth": 1, "value": 76},
-                   {"city": "Washington, D.C.", "month": "June", "dayofmonth": 1, "value": 85},
-                   {"city": "Washington, D.C.", "month": "July", "dayofmonth": 1, "value": 89},
-                   {"city": "Washington, D.C.", "month": "August", "dayofmonth": 1, "value": 87},
-                   {"city": "Washington, D.C.", "month": "September", "dayofmonth": 1, "value": 81},
-                   {"city": "Washington, D.C.", "month": "October", "dayofmonth": 1, "value": 69},
-                   {"city": "Washington, D.C.", "month": "November", "dayofmonth": 1, "value": 59},
-                   {"city": "Washington, D.C.", "month": "December", "dayofmonth": 1, "value": 48},
-                   {"city": "Atlanta, GA", "month": "January", "dayofmonth": 1, "value": 53},
-                   {"city": "Atlanta, GA", "month": "February", "dayofmonth": 1, "value": 58},
-                   {"city": "Atlanta, GA", "month": "March", "dayofmonth": 1, "value": 66},
-                   {"city": "Atlanta, GA", "month": "April", "dayofmonth": 1, "value": 73},
-                   {"city": "Atlanta, GA", "month": "May", "dayofmonth": 1, "value": 80},
-                   {"city": "Atlanta, GA", "month": "June", "dayofmonth": 1, "value": 86},
-                   {"city": "Atlanta, GA", "month": "July", "dayofmonth": 1, "value": 89},
-                   {"city": "Atlanta, GA", "month": "August", "dayofmonth": 1, "value": 88},
-                   {"city": "Atlanta, GA", "month": "September", "dayofmonth": 1, "value": 82},
-                   {"city": "Atlanta, GA", "month": "October", "dayofmonth": 1, "value": 74},
-                   {"city": "Atlanta, GA", "month": "November", "dayofmonth": 1, "value": 64},
-                   {"city": "Atlanta, GA", "month": "December", "dayofmonth": 1, "value": 55}
-               ],
-               "validators": {"range": {"min": -130, "max": 135}},
-               "out_of_range_minmsg": "",
-               "out_of_range_maxmsg": "",
-               "out_of_range_action": "warn"
-           },
-           "average_precipitation": {
-               "title": "Average Precipitation",
-               "description": "Average precipitation for a selection of cities by month",
-               "notes": "Data has only been collected for Atlanta and Washington",
-               "scale": "inches",
-               "source": "NOAA",
-               "type": "float",
-               "number_dims": 0,
-               "value": [
-                   {"city": "Washington, D.C.", "month": "January", "value": 3.1},
-                   {"city": "Washington, D.C.", "month": "February", "value": 2.6},
-                   {"city": "Washington, D.C.", "month": "March", "value": 3.5},
-                   {"city": "Washington, D.C.", "month": "April", "value": 3.3},
-                   {"city": "Washington, D.C.", "month": "May", "value": 4.3},
-                   {"city": "Washington, D.C.", "month": "June", "value": 4.3},
-                   {"city": "Washington, D.C.", "month": "July", "value": 4.6},
-                   {"city": "Washington, D.C.", "month": "August", "value": 3.8},
-                   {"city": "Washington, D.C.", "month": "September", "value": 3.9},
-                   {"city": "Washington, D.C.", "month": "October", "value": 3.7},
-                   {"city": "Washington, D.C.", "month": "November", "value": 3},
-                   {"city": "Washington, D.C.", "month": "December", "value": 3.5},
-                   {"city": "Atlanta, GA", "month": "January", "value": 3.6},
-                   {"city": "Atlanta, GA", "month": "February", "value": 3.7},
-                   {"city": "Atlanta, GA", "month": "March", "value": 4.3},
-                   {"city": "Atlanta, GA", "month": "April", "value": 3.5},
-                   {"city": "Atlanta, GA", "month": "May", "value": 3.8},
-                   {"city": "Atlanta, GA", "month": "June", "value": 3.6},
-                   {"city": "Atlanta, GA", "month": "July", "value": 5},
-                   {"city": "Atlanta, GA", "month": "August", "value": 3.8},
-                   {"city": "Atlanta, GA", "month": "September", "value": 3.7},
-                   {"city": "Atlanta, GA", "month": "October", "value": 2.8},
-                   {"city": "Atlanta, GA", "month": "November", "value": 3.6},
-                   {"city": "Atlanta, GA", "month": "December", "value": 4.1}
-               ],
-               "validators": {"range": {"min": 0, "max": 50}},
-               "out_of_range_minmsg": "str",
-               "out_of_range_maxmsg": "str",
-               "out_of_range_action": "stop"
-           }
-       }
+        {
+            "standard_deduction": {
+                "title": "Standard deduction amount",
+                "description": "Amount filing unit can use as a standard deduction.",
+                "section_1": "Standard Deduction",
+                "section_2": "Standard Deduction Amount",
+                "irs_ref": "Form 1040, line 8, instructions. ",
+                "notes": "",
+                "start_year": 2024,
+                "cpi_inflatable": true,
+                "cpi_inflated": true,
+                "type": "float",
+                "number_dims": 0,
+                "value": [
+                    {"year": 2024, "marital_status": "single", "value": 13673.68},
+                    {"year": 2024, "marital_status": "joint", "value": 27347.36},
+                    {"year": 2024, "marital_status": "separate", "value": 13673.68},
+                    {"year": 2024, "marital_status": "headhousehold", "value": 20510.52},
+                    {"year": 2024, "marital_status": "widow", "value": 27347.36},
+                    {"year": 2025, "marital_status": "single", "value": 13967.66},
+                    {"year": 2025, "marital_status": "joint", "value": 27935.33},
+                    {"year": 2025, "marital_status": "separate", "value": 13967.66},
+                    {"year": 2025, "marital_status": "headhousehold", "value": 20951.49},
+                    {"year": 2025, "marital_status": "widow", "value": 27935.33},
+                    {"year": 2026, "marital_status": "single", "value": 7690.0},
+                    {"year": 2026, "marital_status": "joint", "value": 15380.0},
+                    {"year": 2026, "marital_status": "separate", "value": 7690.0},
+                    {"year": 2026, "marital_status": "headhousehold", "value": 11323.0},
+                    {"year": 2026, "marital_status": "widow", "value": 15380.0}],
+                "out_of_range_minmsg": "",
+                "out_of_range_maxmsg": "",
+                "out_of_range_action": "stop",
+                "validators": {
+                    "range": {
+                        "min": 0,
+                        "max": 9e+99
+                    }
+                }
+            },
+            "social_security_tax_rate": {
+                "description": "Social Security FICA rate, including both employer and employee.",
+                "section_1": "Payroll Taxes",
+                "section_2": "Social Security FICA",
+                "irs_ref": "",
+                "notes": "",
+                "start_year": 2026,
+                "cpi_inflatable": false,
+                "cpi_inflated": false,
+                "value": [
+                    {"year": 2024, "value": 0.124},
+                    {"year": 2025, "value": 0.124},
+                    {"year": 2026, "value": 0.124}
+                ],
+                "out_of_range_minmsg": "",
+                "out_of_range_maxmsg": "",
+                "out_of_range_action": "stop",
+                "number_dims": 0,
+                "title": "Social Security payroll tax rate",
+                "type": "float",
+                "validators": {
+                    "range": {
+                        "min": 0,
+                        "max": 1
+                    }
+                }
+            },
+            "ii_bracket_1": {
+                "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 1",
+                "description": "Taxable income below this threshold is taxed at tax rate 1.",
+                "section_1": "Personal Income",
+                "section_2": "Regular: Non-AMT, Non-Pass-Through",
+                "irs_ref": "Form 1040, line 44, instruction (Schedule XYZ).",
+                "notes": "",
+                "start_year": 2013,
+                "cpi_inflatable": true,
+                "cpi_inflated": true,
+                "number_dims": 0,
+                "type": "float",
+                "value": [
+                    {"year": 2024, "marital_status": "single", "value": 10853.48},
+                    {"year": 2024, "marital_status": "joint", "value": 21706.97},
+                    {"year": 2024, "marital_status": "separate", "value": 10853.48},
+                    {"year": 2024, "marital_status": "headhousehold", "value": 15496.84},
+                    {"year": 2024, "marital_status": "widow", "value": 21706.97},
+                    {"year": 2025, "marital_status": "single", "value": 11086.83},
+                    {"year": 2025, "marital_status": "joint", "value": 22173.66},
+                    {"year": 2025, "marital_status": "separate", "value": 11086.83},
+                    {"year": 2025, "marital_status": "headhousehold", "value": 15830.02},
+                    {"year": 2025, "marital_status": "widow", "value": 22173.66},
+                    {"year": 2026, "marital_status": "single", "value": 11293.0},
+                    {"year": 2026, "marital_status": "joint", "value": 22585.0},
+                    {"year": 2026, "marital_status": "separate", "value": 11293.0},
+                    {"year": 2026, "marital_status": "headhousehold", "value": 16167.0},
+                    {"year": 2026, "marital_status": "widow", "value": 22585.0}],
+                "out_of_range_minmsg": "",
+                "out_of_range_maxmsg": "for _II_brk2",
+                "out_of_range_action": "stop",
+                "validators": {
+                    "range": {
+                        "min": 0,
+                        "max": "ii_bracket_2"
+                    }
+                }
+            },
+            "ii_bracket_2": {
+                "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 2",
+                "description": "Income below this threshold and above tax bracket 1 is taxed at tax rate 2.",
+                "section_1": "Personal Income",
+                "section_2": "Regular: Non-AMT, Non-Pass-Through",
+                "irs_ref": "Form 1040, line 11, instruction (Schedule XYZ).",
+                "notes": "",
+                "start_year": 2013,
+                "cpi_inflatable": true,
+                "cpi_inflated": true,
+                "number_dims": 0,
+                "type": "float",
+                "value":  [
+                    {"year": 2024, "marital_status": "single", "value": 44097.61},
+                    {"year": 2024, "marital_status": "joint", "value": 88195.23},
+                    {"year": 2024, "marital_status": "separate", "value": 44097.61},
+                    {"year": 2024, "marital_status": "headhousehold", "value": 59024.71},
+                    {"year": 2024, "marital_status": "widow", "value": 88195.23},
+                    {"year": 2025, "marital_status": "single", "value": 45045.71},
+                    {"year": 2025, "marital_status": "joint", "value": 90091.43},
+                    {"year": 2025, "marital_status": "separate", "value": 45045.71},
+                    {"year": 2025, "marital_status": "headhousehold", "value": 60293.74},
+                    {"year": 2025, "marital_status": "widow", "value": 90091.43},
+                    {"year": 2026, "marital_status": "single", "value": 45957.0},
+                    {"year": 2026, "marital_status": "joint", "value": 91915.0},
+                    {"year": 2026, "marital_status": "separate", "value": 45957.0},
+                    {"year": 2026, "marital_status": "headhousehold", "value": 61519.0},
+                    {"year": 2026, "marital_status": "widow", "value": 91915.0}],
+                "out_of_range_minmsg": "",
+                "out_of_range_maxmsg": "",
+                "out_of_range_action": "stop",
+                "validators": {
+                    "range": {
+                        "min": "ii_bracket_1",
+                        "max": 9e+99
+                    }
+                }
+            }
+        }
+
 
 Adjustment Schema
 -----------------
@@ -144,22 +218,12 @@ Adjust a given specification.
    .. code:: json
 
        {
-           "average_temperature": [
-               {"city": "Washington, D.C.",
-               "month": "November",
-               "dayofmonth": 1,
-               "value": 60},
-               {"city": "Washington, D.C.",
-               "month": "November",
-               "dayofmonth": 2,
-               "value": 63},
-           ],
-           "average_precipitation": [
-               {"city": "Washington, D.C.",
-               "month": "November",
-               "dayofmonth": 1,
-               "value": 0.2},
-           ]
+            "standard_deduction": [
+                {"year": 2026, "marital_status": "single", "value": 10000.0}
+            ],
+            "social_security_tax_rate": [
+                {"year": 2026, "value": 0.14}
+            ]
        }
 
 JSON Object and Property Definitions
@@ -181,14 +245,11 @@ Dimension object
    .. code:: json
 
        {
-           "month": {
-               "type": "str",
-               "validators": {"choice": {"choices": ["January", "February",
-                                                       "March", "April", "May",
-                                                       "June", "July", "August",
-                                                       "September", "October",
-                                                       "November", "December"]}}
-           },
+            "marital_status": {
+                "type": "str",
+                "validators": {"choice": {"choices": ["single", "joint", "separate",
+                                                    "headhousehold", "widow"]}}
+            }
        }
 
 Optional object
@@ -209,7 +270,7 @@ Optional object
       .. code:: json
 
           {
-              "scale": {"type": "str", "number_dims": 0},
+              "start_year": {"type": "int", "number_dims": 0}
           }
 
    -  Note: `Validator objects <#validator-object>`__ may be defined on
@@ -249,25 +310,50 @@ Parameter object
 
       .. code:: json
 
-          {
-              "title": "Average Precipitation",
-              "description": "Average precipitation for a selection of cities by month",
-              "notes": "Data has only been collected for Atlanta and Washington",
-              "scale": "inches",
-              "source": "NOAA",
-              "type": "float",
-              "number_dims": 0,
-              "value": [
-                  {"city": "Washington, D.C.", "month": "January", "value": 3.1},
-                  {"city": "Washington, D.C.", "month": "February", "value": 2.6},
-                  {"city": "Atlanta, GA", "month": "January", "value": 3.6},
-                  {"city": "Atlanta, GA", "month": "February", "value": 3.7}
-              ],
-              "validators": {"range": {"min": 0, "max": 50}},
-              "out_of_range_minmsg": "str",
-              "out_of_range_maxmsg": "str",
-              "out_of_range_action": "stop"
-          }
+        {
+            "standard_deduction": {
+                "title": "Standard deduction amount",
+                "description": "Amount filing unit can use as a standard deduction.",
+                "section_1": "Standard Deduction",
+                "section_2": "Standard Deduction Amount",
+                "irs_ref": "Form 1040, line 8, instructions. ",
+                "notes": "",
+                "start_year": 2013,
+                "cpi_inflatable": true,
+                "cpi_inflated": true,
+                "type": "float",
+                "number_dims": 0,
+                "value": [
+                    {"year": 2024, "marital_status": "single", "value": 13673.68},
+                    {"year": 2024, "marital_status": "joint", "value": 27347.36},
+                    {"year": 2024, "marital_status": "separate", "value": 13673.68},
+                    {"year": 2024, "marital_status": "headhousehold", "value": 20510.52},
+                    {"year": 2024, "marital_status": "widow", "value": 27347.36},
+                    {"year": 2025, "marital_status": "single", "value": 13967.66},
+                    {"year": 2025, "marital_status": "joint", "value": 27935.33},
+                    {"year": 2025, "marital_status": "separate", "value": 13967.66},
+                    {"year": 2025, "marital_status": "headhousehold", "value": 20951.49},
+                    {"year": 2025, "marital_status": "widow", "value": 27935.33},
+                    {"year": 2026, "marital_status": "single", "value": 7690.0},
+                    {"year": 2026, "marital_status": "joint", "value": 15380.0},
+                    {"year": 2026, "marital_status": "separate", "value": 7690.0},
+                    {"year": 2026, "marital_status": "headhousehold", "value": 11323.0},
+                    {"year": 2026, "marital_status": "widow", "value": 15380.0}],
+                "out_of_range_minmsg": "",
+                "out_of_range_maxmsg": "",
+                "out_of_range_action": "stop",
+                "compatible_data": {
+                    "puf": true,
+                    "cps": true
+                },
+                "validators": {
+                    "range": {
+                        "min": 0,
+                        "max": 9e+99
+                    }
+                }
+            }
+        }
 
 Validator object
 ^^^^^^^^^^^^^^^^
@@ -337,12 +423,12 @@ Value object
 
       .. code:: json
 
-          {
-              "city": "Washington, D.C.",
-              "month": "November",
-              "dayofmonth": 1,
-              "value": 50
-          }
+        {
+            "year": 2026,
+            "marital_status": "single",
+            "value": 7690.0
+        }
+
 
 Properties
 ~~~~~~~~~~
@@ -350,7 +436,7 @@ Properties
 Type property
 ^^^^^^^^^^^^^
 
--  "type": The parameter's data type. Supported types are:
+-  "type": The parameter"s data type. Supported types are:
 
    -  "int": Integer.
    -  "float": Floating point.
@@ -380,7 +466,7 @@ Number-Dimensions property
 
           {
               "number_dims": 0,
-              "value": [{"city": "Washington", "state": "D.C.", "value": 10}]
+              "value": [{"year": 2026, "marital_status": "single", "value": 7690.0}]
           }
 
       Note that "value" is an one-dimensional list.
@@ -389,5 +475,5 @@ Number-Dimensions property
 
           {
               "number_dims": 1,
-              "value": [{"city": "Washington", "state": "D.C.", "value": [38, -77]}]
+              "value": [{"position": "shortstop", "value": ["Derek Jeter", "Andrelton Simmons"]}]
           }
