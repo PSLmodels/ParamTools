@@ -29,12 +29,12 @@ def field_map():
 
 @pytest.fixture
 def schema_def_path():
-    return os.path.join(CURRENT_PATH, "../examples/taxparams/schema.json")
+    return os.path.join(CURRENT_PATH, "../../examples/taxparams/schema.json")
 
 
 @pytest.fixture
 def defaults_spec_path():
-    return os.path.join(CURRENT_PATH, "../examples/taxparams/defaults.json")
+    return os.path.join(CURRENT_PATH, "../../examples/taxparams/defaults.json")
 
 
 @pytest.fixture
@@ -54,13 +54,15 @@ def test_load_schema(TaxcalcParams):
 
 @pytest.fixture
 def demo_schema_def_path():
-    return os.path.join(CURRENT_PATH, "../examples/taxparams-demo/schema.json")
+    return os.path.join(
+        CURRENT_PATH, "../../examples/taxparams-demo/schema.json"
+    )
 
 
 @pytest.fixture
 def demo_defaults_spec_path():
     return os.path.join(
-        CURRENT_PATH, "../examples/taxparams-demo/defaults.json"
+        CURRENT_PATH, "../../examples/taxparams-demo/defaults.json"
     )
 
 

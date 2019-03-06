@@ -15,12 +15,12 @@ def field_map():
 
 @pytest.fixture
 def schema_def_path():
-    return os.path.join(CURRENT_PATH, "../examples/weather/schema.json")
+    return os.path.join(CURRENT_PATH, "../../examples/weather/schema.json")
 
 
 @pytest.fixture
 def defaults_spec_path():
-    return os.path.join(CURRENT_PATH, "../examples/weather/defaults.json")
+    return os.path.join(CURRENT_PATH, "../../examples/weather/defaults.json")
 
 
 @pytest.fixture
