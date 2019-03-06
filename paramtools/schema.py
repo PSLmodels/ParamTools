@@ -183,7 +183,7 @@ class BaseValidatorSchema(Schema):
             range_class = contrib_validate.DateRange
         else:
             raise MarshmallowValidationError(
-                f"{vname} is not an allowed validator"
+                f"{vname} is not an allowed validator."
             )
         min_value = range_dict.get("min", None)
         if min_value is not None:
@@ -195,9 +195,9 @@ class BaseValidatorSchema(Schema):
             max_value = self._resolve_op_value(
                 max_value, param_name, param_spec, raw_data
             )
-        dim_suffix = " for dimensions {dims}" if dims else ""
+        dim_suffix = f" for dimensions {dims}" if dims else ""
         min_error = (
-            "{param_name} {input} must be greater than " "{min}{dim_suffix}"
+            "{param_name} {input} must be greater than " "{min}{dim_suffix}."
         ).format(
             param_name=param_name,
             dims=dims,
@@ -206,7 +206,7 @@ class BaseValidatorSchema(Schema):
             dim_suffix=dim_suffix,
         )
         max_error = (
-            "{param_name} {input} must be less than " "{max}{dim_suffix}"
+            "{param_name} {input} must be less than " "{max}{dim_suffix}."
         ).format(
             param_name=param_name,
             dims=dims,
@@ -220,21 +220,20 @@ class BaseValidatorSchema(Schema):
         self, vname, choice_dict, param_name, dims, param_spec, raw_data
     ):
         choices = choice_dict["choices"]
+        dim_suffix = f" for dimensions {dims}" if dims else ""
         if len(choices) < 20:
             error_template = (
                 '{param_name} "{input}" must be in list of choices '
-                "{choices} for dimensions {dims}."
+                "{choices}{dim_suffix}."
             )
         else:
-            error_template = (
-                '{param_name} "{input}" must be in list of choices '
-                "for dimensions {dims}."
-            )
+            error_template = '{param_name} "{input}" must be in list of choices{dim_suffix}.'
         error = error_template.format(
             param_name=param_name,
             dims=dims,
             input="{input}",
             choices="{choices}",
+            dim_suffix=dim_suffix,
         )
         return contrib_validate.OneOf(choices, error=error)
 
