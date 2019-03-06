@@ -195,17 +195,24 @@ class BaseValidatorSchema(Schema):
             max_value = self._resolve_op_value(
                 max_value, param_name, param_spec, raw_data
             )
+        dim_suffix = " for dimensions {dims}" if dims else ""
         min_error = (
-            "{param_name} {input} must be greater than "
-            "{min} for dimensions {dims}"
+            "{param_name} {input} must be greater than " "{min}{dim_suffix}"
         ).format(
-            param_name=param_name, dims=dims, input="{input}", min="{min}"
+            param_name=param_name,
+            dims=dims,
+            input="{input}",
+            min="{min}",
+            dim_suffix=dim_suffix,
         )
         max_error = (
-            "{param_name} {input} must be less than "
-            "{max} for dimensions {dims}"
+            "{param_name} {input} must be less than " "{max}{dim_suffix}"
         ).format(
-            param_name=param_name, dims=dims, input="{input}", max="{max}"
+            param_name=param_name,
+            dims=dims,
+            input="{input}",
+            max="{max}",
+            dim_suffix=dim_suffix,
         )
         return range_class(min_value, max_value, min_error, max_error)
 
