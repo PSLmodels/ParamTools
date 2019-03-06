@@ -77,8 +77,8 @@ class BaseParamSchema(Schema):
     number_dims = fields.Integer(required=True)
     value = fields.Field(required=True)  # will be specified later
     validators = fields.Nested(ValueValidatorSchema(), required=True)
-    out_of_range_minmsg = fields.Str()
-    out_of_range_maxmsg = fields.Str()
+    out_of_range_minmsg = fields.Str(required=False)
+    out_of_range_maxmsg = fields.Str(required=False)
     out_of_range_action = fields.Str(
         required=False, validate=validate.OneOf(choices=["stop", "warn"])
     )
