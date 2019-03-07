@@ -153,6 +153,17 @@ class TestAdjust:
             {"value": datetime.date(2018, 1, 17), "dim1": 1, "dim0": "zero"}
         ]
 
+    def test_adjust_none(self, TestParams):
+        params = TestParams()
+        adj = {
+            "min_int_param": [{"dim0": "one", "dim1": 2, "value": None}],
+            "str_choice_param": [{"value": None}],
+        }
+        params.adjust(adj)
+
+        assert len(params.min_int_param) == 1
+        assert len(params.str_choice_param) == 0
+
 
 class TestErrors:
     def test_errors_attribute(self, TestParams):

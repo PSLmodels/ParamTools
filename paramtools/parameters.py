@@ -68,7 +68,7 @@ class Parameters:
             if not isinstance(dim_value, list):
                 dim_value = [dim_value]
             self.dim_mesh[dim_name] = dim_value
-        spec = self.specification(**self.state)
+        spec = self.specification(include_empty=True, **self.state)
         for name, value in spec.items():
             if self.array_first:
                 setattr(self, name, self.to_array(name))
@@ -83,6 +83,17 @@ class Parameters:
         self.dim_mesh = copy.deepcopy(self._stateless_dim_mesh)
         self.set_state()
 
+    def read_params(self, params_or_path):
+        if isinstance(params_or_path, str) and os.path.exists(params_or_path):
+            params = utils.read_json(params_or_path)
+        elif isinstance(params_or_path, str):
+            params = json.loads(params_or_path)
+        elif isinstance(params_or_path, dict):
+            params = params_or_path
+        else:
+            raise ValueError("params_or_path is not dict or file path")
+        return params
+
     def adjust(self, params_or_path, raise_errors=True):
         """
         Deserialize and validate parameter adjustments. `params_or_path`
@@ -96,14 +107,7 @@ class Parameters:
             ParameterUpdateException if dimension values do not match at
                 least one existing value item's corresponding dimension values.
         """
-        if isinstance(params_or_path, str) and os.path.exists(params_or_path):
-            params = utils.read_json(params_or_path)
-        elif isinstance(params_or_path, str):
-            params = json.loads(params_or_path)
-        elif isinstance(params_or_path, dict):
-            params = params_or_path
-        else:
-            raise ValueError("params_or_path is not dict or file path")
+        params = self.read_params(params_or_path)
 
         # Validate user adjustments.
         try:
@@ -135,7 +139,9 @@ class Parameters:
     def validation_error(self):
         return ValidationError(self._errors["messages"], self._errors["dims"])
 
-    def specification(self, use_state=True, meta_data=False, **dims):
+    def specification(
+        self, use_state=True, meta_data=False, include_empty=False, **dims
+    ):
         """
         Query value(s) of all parameters along dimensions specified in
         `dims`. If `use_state` is `True`, the current state is updated with
@@ -152,7 +158,7 @@ class Parameters:
         all_params = OrderedDict()
         for param in self._validator_schema.fields:
             result = self._get(param, False, **dims)
-            if result:
+            if result or include_empty:
                 if meta_data:
                     param_data = self._data[param]
                     result = dict(param_data, **{"value": result})
@@ -318,7 +324,8 @@ class Parameters:
         Update the current parameter values with those specified by
         the adjustment. The values that need to be updated are chosen
         by finding all value items with dimension values matching the
-        dimension values specified in the adjustment.
+        dimension values specified in the adjustment. If the value is
+        set to None, then that value object will be removed.
 
         Note: _update_param used to raise a ParameterUpdateException if one of the new
             values did not match at least one of the current value objects. However,
@@ -334,15 +341,21 @@ class Parameters:
         for i in range(len(new_values)):
             matched_at_least_once = False
             dims_to_check = tuple(k for k in new_values[i] if k != "value")
+            to_delete = []
             for j in range(len(curr_vals)):
                 match = all(
                     curr_vals[j][k] == new_values[i][k] for k in dims_to_check
                 )
                 if match:
                     matched_at_least_once = True
-                    curr_vals[j]["value"] = new_values[i]["value"]
+                    if new_values[i]["value"] is None:
+                        to_delete.append(j)
+                    else:
+                        curr_vals[j]["value"] = new_values[i]["value"]
             if not matched_at_least_once:
                 curr_vals.append(new_values[i])
+            for ix in to_delete:
+                del curr_vals[ix]
 
     def _parse_errors(self, ve, params):
         """
