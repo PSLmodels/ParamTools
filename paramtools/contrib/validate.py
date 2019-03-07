@@ -30,6 +30,8 @@ class Range(marshmallow_validate.Range):
         return message.format(input=value, min=self.min, max=self.max)
 
     def __call__(self, value):
+        if value is None:
+            return value
         if not isinstance(value, list):
             value_list = [value]
         else:
@@ -100,6 +102,8 @@ class OneOf(marshmallow_validate.OneOf):
     """
 
     def __call__(self, value):
+        if value is None:
+            return value
         if not isinstance(value, list):
             values = [value]
         else:

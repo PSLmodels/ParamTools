@@ -292,11 +292,11 @@ CLASS_FIELD_MAP = {
 
 # A few fields that have been instantiated
 FIELD_MAP = {
-    "str": contrib_fields.Str(),
-    "int": contrib_fields.Integer(),
-    "float": contrib_fields.Float(),
-    "bool": contrib_fields.Boolean(),
-    "date": contrib_fields.Date(),
+    "str": contrib_fields.Str(allow_none=True),
+    "int": contrib_fields.Integer(allow_none=True),
+    "float": contrib_fields.Float(allow_none=True),
+    "bool": contrib_fields.Boolean(allow_none=True),
+    "date": contrib_fields.Date(allow_none=True),
 }
 
 VALIDATOR_MAP = {
@@ -311,15 +311,15 @@ def get_type(data):
     # (post 0.3.0rc4)
     # error_messages = {"invalid": "Invalid input: {input}"}
     numeric_types = {
-        "int": contrib_fields.Int64(),
-        "bool": contrib_fields.Bool_(),
-        "float": contrib_fields.Float64(),
+        "int": contrib_fields.Int64(allow_none=True),
+        "bool": contrib_fields.Bool_(allow_none=True),
+        "float": contrib_fields.Float64(allow_none=True),
     }
     types = dict(FIELD_MAP, **numeric_types)
     fieldtype = types[data["type"]]
     dim = data["number_dims"]
     while dim > 0:
-        fieldtype = fields.List(fieldtype)
+        fieldtype = fields.List(fieldtype, allow_none=True)
         dim -= 1
     return fieldtype
 
