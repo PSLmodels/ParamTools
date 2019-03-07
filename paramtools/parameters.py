@@ -354,10 +354,14 @@ class Parameters:
                         to_delete.append(j)
                     else:
                         curr_vals[j]["value"] = new_values[i]["value"]
+            if to_delete:
+                # Iterate in reverse so that indices point to the correct
+                # value. If iterating ascending then the values will be shifted
+                # towards the front of the list as items are removed.
+                for ix in sorted(to_delete, reverse=True):
+                    del curr_vals[ix]
             if not matched_at_least_once:
                 curr_vals.append(new_values[i])
-            for ix in to_delete:
-                del curr_vals[ix]
 
     def _parse_errors(self, ve, params):
         """

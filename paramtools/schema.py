@@ -319,7 +319,7 @@ def get_type(data):
     fieldtype = types[data["type"]]
     dim = data["number_dims"]
     while dim > 0:
-        fieldtype = fields.List(fieldtype)
+        fieldtype = fields.List(fieldtype, allow_none=True)
         dim -= 1
     return fieldtype
 

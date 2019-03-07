@@ -157,7 +157,7 @@ class TestAdjust:
             {"value": datetime.date(2018, 1, 17), "dim1": 1, "dim0": "zero"}
         ]
 
-    def test_adjust_none(self, TestParams):
+    def test_adjust_none_basic(self, TestParams):
         params = TestParams()
         adj = {
             "min_int_param": [{"dim0": "one", "dim1": 2, "value": None}],
@@ -167,6 +167,36 @@ class TestAdjust:
 
         assert len(params.min_int_param) == 1
         assert len(params.str_choice_param) == 0
+
+    def test_adjust_none_many_values(self, TestParams):
+        params = TestParams()
+        adj = {"int_dense_array_param": [{"value": None}]}
+        print(params.int_dense_array_param)
+        params.adjust(adj)
+        assert len(params._data["int_dense_array_param"]["value"]) == 0
+        assert len(params.int_dense_array_param) == 0
+
+        params = TestParams()
+        adj = {"int_dense_array_param": [{"dim0": "zero", "value": None}]}
+        params.adjust(adj)
+        assert len(params._data["int_dense_array_param"]["value"]) == 18
+        assert len(params.int_dense_array_param) == 18
+        assert (
+            len(
+                params.specification(
+                    use_state=False, include_empty=True, dim0="zero"
+                )["int_dense_array_param"]
+            )
+            == 0
+        )
+        assert (
+            len(
+                params.specification(
+                    use_state=False, include_empty=True, dim0="one"
+                )["int_dense_array_param"]
+            )
+            == 18
+        )
 
 
 class TestErrors:
