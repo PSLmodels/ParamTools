@@ -183,7 +183,7 @@ class TestErrors:
             params.adjust(adjustment)
         msg = [
             'str_choice_param "not a valid choice" must be in list of choices value0, '
-            "value1 for dimensions ."
+            "value1."
         ]
         assert excinfo.value.messages["str_choice_param"][0] == msg
 
@@ -218,9 +218,7 @@ class TestErrors:
         curr = params.int_default_param[0]["value"]
         adjustment = {"int_default_param": [{"value": curr - 1}]}
         params.adjust(adjustment, raise_errors=False)
-        exp = [
-            f"int_default_param {curr-1} must be greater than 2 for dimensions "
-        ]
+        exp = [f"int_default_param {curr-1} must be greater than 2."]
         assert params.errors["int_default_param"] == exp
 
     def test_errors_int_param(self, TestParams):
@@ -298,7 +296,7 @@ class TestErrors:
         }
         params.adjust(adj, raise_errors=False)
         exp = [
-            "float_list_param [-1.0, 1.0] must be greater than 0 for dimensions dim0=zero , dim1=1"
+            "float_list_param [-1.0, 1.0] must be greater than 0 for dimensions dim0=zero , dim1=1."
         ]
 
         assert params.errors["float_list_param"] == exp

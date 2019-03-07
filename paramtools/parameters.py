@@ -37,8 +37,6 @@ class Parameters:
         self.state = initial_state or {}
         if array_first is not None:
             self.array_first = array_first
-        else:
-            self.array_first = array_first
         self.set_state()
 
     def set_state(self, **dims):

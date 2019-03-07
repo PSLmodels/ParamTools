@@ -1,0 +1,35 @@
+{
+    "BE_sub": {
+        "title": "Substitution elasticity of taxable income",
+        "description": "Defined as proportional change in taxable income divided by proportional change in marginal net-of-tax rate (1-MTR) on taxpayer earnings caused by the reform.  Must be zero or positive.",
+        "notes": "",
+        "type": "float",
+        "number_dims": 0,
+        "value": [{"value": 0.0}],
+        "validators": {
+            "range": {"min": 0.0, "max": 9e99}
+        }
+    },
+    "BE_inc": {
+        "title": "Income elasticity of taxable income",
+        "description": "Defined as dollar change in taxable income divided by dollar change in after-tax income caused by the reform.  Must be zero or negative.",
+        "notes": "",
+        "type": "float",
+        "number_dims": 0,
+        "value": [{"value": 0.0}],
+        "validators": {
+            "range": {"min": -9e99, "max": 0}
+        }
+    },
+    "BE_cg": {
+        "title": "Semi-elasticity of long-term capital gains",
+        "description": "Defined as change in logarithm of long-term capital gains divided by change in marginal tax rate (MTR) on long-term capital gains caused by the reform.  Must be zero or negative.  Read response function documentation (see below) for discussion of appropriate values.",
+        "notes": "",
+        "type": "float",
+        "number_dims": 0,
+        "value": [{"value": 0.0}],
+        "validators": {
+            "range": {"min": -9e99, "max": 0}
+        }
+    }
+}
