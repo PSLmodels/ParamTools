@@ -3,9 +3,9 @@
     "dims": {
         "year": {
             "type": "int",
-            "validators": {"range": {"min": 2013, "max": 2027}}
+            "validators": {"range": {"min": 2013, "max": 2028}}
         },
-        "marital_status": {
+        "MARS": {
             "type": "str",
             "validators": {"choice": {"choices": ["single", "joint", "separate",
                                                  "headhousehold", "widow"]}}
