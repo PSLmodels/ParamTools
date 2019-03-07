@@ -144,9 +144,11 @@ class Parameters:
     ):
         """
         Query value(s) of all parameters along dimensions specified in
-        `dims`. If `use_state` is `True`, the current state is updated with
-        `dims`. If `meta_data` is `True`, then parameter attributes
-        are included, too.
+        ``dims``. If ``use_state`` is ``True``, the current state is updated with
+        ``dims``. If ``meta_data`` is ``True``, then parameter attributes
+        are included, too. If ``include_empty`` is ``True``, then values that
+        do not match the query dimensions set with ``self.state`` or ``dims``
+        will be included and set to an empty list.
 
         Returns: serialized data of shape
             {"param_name": [{"value": val, "dim0": ..., }], ...}

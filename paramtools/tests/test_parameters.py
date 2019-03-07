@@ -96,6 +96,10 @@ class TestAccess:
             if all("dim0" not in val_item for val_item in data):
                 assert spec2[param] == data
 
+        params._data["str_choice_param"]["value"] = []
+        assert "str_choice_param" not in params.specification()
+        assert "str_choice_param" in params.specification(include_empty=True)
+
 
 class TestAdjust:
     def test_adjust_int_param(self, TestParams):
