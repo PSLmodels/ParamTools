@@ -69,6 +69,7 @@ class IndexedParameters(paramtools.Parameters):
                 for year in range(max_year, max_allowed_year + 1):
                     for vo in value_objects:
                         adjustment[param].append(dict(vo, **{"year": year}))
+        self.array_first = True
         self.adjust(adjustment)
 
     def adjust_with_extend(self, params_or_path, raise_errors=False):
@@ -82,7 +83,6 @@ class IndexedParameters(paramtools.Parameters):
         self.array_first = False
         self.adjust(params)
         self.extend(params_to_extend=list(params.keys()))
-        self.array_first = True
 
 
 class CompatibleDataSchema(Schema):
