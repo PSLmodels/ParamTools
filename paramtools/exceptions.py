@@ -34,6 +34,7 @@ collision_list = [
     "_numpy_type",
     "_parse_errors",
     "_resolve_order",
+    "_state",
     "_stateless_dim_mesh",
     "_update_param",
     "_validator_schema",
@@ -50,9 +51,9 @@ collision_list = [
     "schema",
     "set_state",
     "specification",
-    "state_store",
     "to_array",
     "validation_error",
+    "view_state",
 ]
 
 

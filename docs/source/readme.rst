@@ -32,7 +32,7 @@ files:
        array_first=True
    )
 
-   print("# output ", params.state_store)
+   print("# output ", params.view_state())
    # output  {'year': [2024, 2025, 2026]}
 
 Parameters are available via instance attributes:

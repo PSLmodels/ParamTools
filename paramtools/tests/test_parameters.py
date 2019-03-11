@@ -478,19 +478,19 @@ class TestArray:
 class TestState:
     def test_basic_set_state(self, TestParams):
         params = TestParams()
-        assert params.state_store == {}
+        assert params.view_state() == {}
         params.set_state(dim0="zero")
-        assert params.state_store == {"dim0": "zero"}
+        assert params.view_state() == {"dim0": "zero"}
         params.set_state(dim1=0)
-        assert params.state_store == {"dim0": "zero", "dim1": 0}
+        assert params.view_state() == {"dim0": "zero", "dim1": 0}
         params.set_state(dim0="one", dim2=1)
-        assert params.state_store == {"dim0": "one", "dim1": 0, "dim2": 1}
+        assert params.view_state() == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state(**{})
-        assert params.state_store == {"dim0": "one", "dim1": 0, "dim2": 1}
+        assert params.view_state() == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state()
-        assert params.state_store == {"dim0": "one", "dim1": 0, "dim2": 1}
+        assert params.view_state() == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state(dim1=[1, 2, 3])
-        assert params.state_store == {
+        assert params.view_state() == {
             "dim0": "one",
             "dim1": [1, 2, 3],
             "dim2": 1,
@@ -538,7 +538,7 @@ class TestState:
         assert params.str_choice_param == [{"value": "value0"}]
 
         params.clear_state()
-        assert params.state_store == {}
+        assert params.view_state() == {}
         assert params.min_int_param == defaultexp
         assert params.dim_mesh == params._stateless_dim_mesh
 
@@ -607,8 +607,8 @@ class TestCollisions:
 
     def test_collision(self):
         defaults_dict = {
-            "state_store": {
-                "title": "Collides with 'state_store'",
+            "errors": {
+                "title": "Collides with 'errors'",
                 "description": "",
                 "notes": "",
                 "type": "int",
@@ -627,7 +627,7 @@ class TestCollisions:
             CollisionParams()
 
         exp_msg = (
-            "The paramter name, 'state_store', is already used by the "
+            "The paramter name, 'errors', is already used by the "
             "Parameters object."
         )
 
