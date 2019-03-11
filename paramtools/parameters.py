@@ -14,6 +14,8 @@ from paramtools.exceptions import (
     SparseValueObjectsException,
     ValidationError,
     InconsistentDimensionsException,
+    collision_list,
+    ParameterNameCollisionException,
 )
 
 
@@ -70,6 +72,10 @@ class Parameters:
             self.dim_mesh[dim_name] = dim_value
         spec = self.specification(include_empty=True, **self.state_store)
         for name, value in spec.items():
+            if name in collision_list:
+                raise ParameterNameCollisionException(
+                    f"The paramter name, '{name}', is already used by the Parameters object."
+                )
             if self.array_first:
                 setattr(self, name, self.to_array(name))
             else:

@@ -25,3 +25,36 @@ class ValidationError(ParamToolsError):
 
 class InconsistentDimensionsException(ParamToolsError):
     pass
+
+
+collision_list = [
+    "_data",
+    "_errors",
+    "_get",
+    "_numpy_type",
+    "_parse_errors",
+    "_resolve_order",
+    "_stateless_dim_mesh",
+    "_update_param",
+    "_validator_schema",
+    "adjust",
+    "array_first",
+    "clear_state",
+    "defaults",
+    "dim_mesh",
+    "dim_validators",
+    "errors",
+    "field_map",
+    "from_array",
+    "read_params",
+    "schema",
+    "set_state",
+    "specification",
+    "state_store",
+    "to_array",
+    "validation_error",
+]
+
+
+class ParameterNameCollisionException(ParamToolsError):
+    pass

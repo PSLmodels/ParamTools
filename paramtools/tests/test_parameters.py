@@ -8,6 +8,8 @@ from paramtools import (
     ValidationError,
     SparseValueObjectsException,
     InconsistentDimensionsException,
+    collision_list,
+    ParameterNameCollisionException,
 )
 
 from paramtools import Parameters
@@ -587,3 +589,46 @@ class TestArrayFirst:
             )
             == exp
         )
+
+
+class TestCollisions:
+    def test_collision_list(self):
+        class CollisionParams(Parameters):
+            schema = {"dim_name": "test", "dims": {}, "optional": {}}
+            defaults = {}
+
+        params = CollisionParams()
+
+        # check to make sure that the collisionlist does not need to be updated.
+        # Note: dir(obj) lists out all class or instance attributes and methods.
+        assert collision_list == [
+            name for name in dir(params) if not name.startswith("__")
+        ]
+
+    def test_collision(self):
+        defaults_dict = {
+            "state_store": {
+                "title": "Collides with 'state_store'",
+                "description": "",
+                "notes": "",
+                "type": "int",
+                "number_dims": 0,
+                "value": [{"value": 0}],
+                "validators": {"range": {"min": 0, "max": 10}},
+                "out_of_range_action": "stop",
+            }
+        }
+
+        class CollisionParams(Parameters):
+            schema = {"dim_name": "test", "dims": {}, "optional": {}}
+            defaults = defaults_dict
+
+        with pytest.raises(ParameterNameCollisionException) as excinfo:
+            CollisionParams()
+
+        exp_msg = (
+            "The paramter name, 'state_store', is already used by the "
+            "Parameters object."
+        )
+
+        assert excinfo.value.args[0] == exp_msg
