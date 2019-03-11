@@ -131,15 +131,20 @@ How to install ParamTools
 Install from PyPI:
 
 ```
-pip install paramtools
+conda install paramtools -c pslmodels
 ```
 
 Install from source:
 
 ```
-git clone https://github.com/hdoupe/ParamTools
+git clone https://github.com/PSLmodels/ParamTools
 cd ParamTools
+conda env create
+conda activate paramtools-dev
 pip install -e .
+
+# optionally run tests:
+py.test -v
 ```
 
 Documentation

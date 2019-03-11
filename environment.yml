@@ -1,0 +1,12 @@
+name: paramtools-dev
+channels:
+  - conda-forge
+dependencies:
+  - "marshmallow>=3.0.0rc4"
+  - "numpy>=1.13"
+  - "python-dateutil>=2.8.0"
+  - pytest
+  - pip:
+    - pre-commit
+    - black
+    - flake8
