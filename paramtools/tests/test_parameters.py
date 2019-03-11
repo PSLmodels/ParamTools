@@ -476,19 +476,23 @@ class TestArray:
 class TestState:
     def test_basic_set_state(self, TestParams):
         params = TestParams()
-        assert params.state == {}
+        assert params.state_store == {}
         params.set_state(dim0="zero")
-        assert params.state == {"dim0": "zero"}
+        assert params.state_store == {"dim0": "zero"}
         params.set_state(dim1=0)
-        assert params.state == {"dim0": "zero", "dim1": 0}
+        assert params.state_store == {"dim0": "zero", "dim1": 0}
         params.set_state(dim0="one", dim2=1)
-        assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+        assert params.state_store == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state(**{})
-        assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+        assert params.state_store == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state()
-        assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+        assert params.state_store == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state(dim1=[1, 2, 3])
-        assert params.state == {"dim0": "one", "dim1": [1, 2, 3], "dim2": 1}
+        assert params.state_store == {
+            "dim0": "one",
+            "dim1": [1, 2, 3],
+            "dim2": 1,
+        }
 
     def test_dim_mesh(self, TestParams):
         params = TestParams()
@@ -532,7 +536,7 @@ class TestState:
         assert params.str_choice_param == [{"value": "value0"}]
 
         params.clear_state()
-        assert params.state == {}
+        assert params.state_store == {}
         assert params.min_int_param == defaultexp
         assert params.dim_mesh == params._stateless_dim_mesh
 
