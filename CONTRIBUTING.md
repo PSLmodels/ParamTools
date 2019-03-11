@@ -14,20 +14,21 @@ Please open an [issue][1] describing the bug.
 
 Dev Setup
 ------------------------
-In terminal:
+
+Fork the repo and clone it so that you have a copy of the source code. Next, run the following commands in the terminal:
 
 ```
 cd ParamTools
-conda create -n paramtools-dev numpy
+conda env create
+conda activate paramtools-dev
 pip install -e .
-pip install -r requirements-dev.txt
 pre-commit install
 ```
 
 Testing
 -------------------
 ```
-py.test
+py.test -v
 ```
 
 

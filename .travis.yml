@@ -1,13 +1,23 @@
 dist: xenial
+
 language: python
+
 python:
   - "3.6"
   - "3.7"
+
 # command to install dependencies
 install:
-  - pip install -r requirements-dev.txt
+  - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda config --set always_yes yes
+  - conda update -n base -c defaults conda
+  - conda create -n paramtools-dev python=$TRAVIS_PYTHON_VERSION;
+  - source activate paramtools-dev
+  - conda env update -f environment.yml
   - pip install -e .
 
 # command to run tests
 script:
-  - cd paramtools && pytest tests/ -v
+  - pytest -v
