@@ -25,7 +25,7 @@ params = TaxParams(
     array_first=True
 )
 
-print("# output ", params.state)
+print("# output ", params.view_state())
 # output  {'year': [2024, 2025, 2026]}
 
 ```

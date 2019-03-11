@@ -5,6 +5,8 @@ from paramtools.exceptions import (
     SparseValueObjectsException,
     ValidationError,
     InconsistentDimensionsException,
+    collision_list,
+    ParameterNameCollisionException,
 )
 from paramtools.parameters import Parameters
 from paramtools.schema import (
@@ -40,6 +42,8 @@ __all__ = [
     "SparseValueObjectsException",
     "ValidationError",
     "InconsistentDimensionsException",
+    "collision_list",
+    "ParameterNameCollisionException",
     "Parameters",
     "RangeSchema",
     "ChoiceSchema",
