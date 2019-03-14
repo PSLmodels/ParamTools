@@ -14,6 +14,8 @@ from paramtools.exceptions import (
     SparseValueObjectsException,
     ValidationError,
     InconsistentDimensionsException,
+    collision_list,
+    ParameterNameCollisionException,
 )
 
 
@@ -34,7 +36,7 @@ class Parameters:
         self._data = defaults
         self._validator_schema.context["spec"] = self
         self._errors = {}
-        self.state = initial_state or {}
+        self._state = initial_state or {}
         if array_first is not None:
             self.array_first = array_first
         self.set_state()
@@ -63,13 +65,17 @@ class Parameters:
                     messages[name] = str(ve)
         if messages:
             raise ValidationError(messages, dims=None)
-        self.state.update(dims)
-        for dim_name, dim_value in self.state.items():
+        self._state.update(dims)
+        for dim_name, dim_value in self._state.items():
             if not isinstance(dim_value, list):
                 dim_value = [dim_value]
             self.dim_mesh[dim_name] = dim_value
-        spec = self.specification(include_empty=True, **self.state)
+        spec = self.specification(include_empty=True, **self._state)
         for name, value in spec.items():
+            if name in collision_list:
+                raise ParameterNameCollisionException(
+                    f"The paramter name, '{name}', is already used by the Parameters object."
+                )
             if self.array_first:
                 setattr(self, name, self.to_array(name))
             else:
@@ -79,9 +85,15 @@ class Parameters:
         """
         Reset the state of the Parameters instance.
         """
-        self.state = {}
+        self._state = {}
         self.dim_mesh = copy.deepcopy(self._stateless_dim_mesh)
         self.set_state()
+
+    def view_state(self):
+        """
+        Access the dimension state of the ``Parameters`` instance.
+        """
+        return self._state
 
     def read_params(self, params_or_path):
         if isinstance(params_or_path, str) and os.path.exists(params_or_path):
@@ -147,15 +159,14 @@ class Parameters:
         ``dims``. If ``use_state`` is ``True``, the current state is updated with
         ``dims``. If ``meta_data`` is ``True``, then parameter attributes
         are included, too. If ``include_empty`` is ``True``, then values that
-        do not match the query dimensions set with ``self.state`` or ``dims``
-        will be included and set to an empty list.
+        do not match the query dimensions set with ``self._state`` or
+        ``dims`` will be included and set to an empty list.
 
         Returns: serialized data of shape
             {"param_name": [{"value": val, "dim0": ..., }], ...}
         """
         if use_state:
-            # use shallow copy of self.state
-            dims.update(self.state)
+            dims.update(self._state)
 
         all_params = OrderedDict()
         for param in self._validator_schema.fields:
@@ -182,7 +193,7 @@ class Parameters:
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
         """
-        value_items = self._get(param, False, **self.state)
+        value_items = self._get(param, False, **self._state)
         dim_order, value_order = self._resolve_order(param)
         shape = []
         for dim in dim_order:
@@ -275,7 +286,7 @@ class Parameters:
             InconsistentDimensionsException: Value objects do not have consistent
                 dimensions.
         """
-        value_items = self._get(param, False, **self.state)
+        value_items = self._get(param, False, **self._state)
         used = utils.consistent_dims(value_items)
         if used is None:
             raise InconsistentDimensionsException(

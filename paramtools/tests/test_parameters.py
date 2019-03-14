@@ -8,6 +8,8 @@ from paramtools import (
     ValidationError,
     SparseValueObjectsException,
     InconsistentDimensionsException,
+    collision_list,
+    ParameterNameCollisionException,
 )
 
 from paramtools import Parameters
@@ -476,19 +478,23 @@ class TestArray:
 class TestState:
     def test_basic_set_state(self, TestParams):
         params = TestParams()
-        assert params.state == {}
+        assert params.view_state() == {}
         params.set_state(dim0="zero")
-        assert params.state == {"dim0": "zero"}
+        assert params.view_state() == {"dim0": "zero"}
         params.set_state(dim1=0)
-        assert params.state == {"dim0": "zero", "dim1": 0}
+        assert params.view_state() == {"dim0": "zero", "dim1": 0}
         params.set_state(dim0="one", dim2=1)
-        assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+        assert params.view_state() == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state(**{})
-        assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+        assert params.view_state() == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state()
-        assert params.state == {"dim0": "one", "dim1": 0, "dim2": 1}
+        assert params.view_state() == {"dim0": "one", "dim1": 0, "dim2": 1}
         params.set_state(dim1=[1, 2, 3])
-        assert params.state == {"dim0": "one", "dim1": [1, 2, 3], "dim2": 1}
+        assert params.view_state() == {
+            "dim0": "one",
+            "dim1": [1, 2, 3],
+            "dim2": 1,
+        }
 
     def test_dim_mesh(self, TestParams):
         params = TestParams()
@@ -532,7 +538,7 @@ class TestState:
         assert params.str_choice_param == [{"value": "value0"}]
 
         params.clear_state()
-        assert params.state == {}
+        assert params.view_state() == {}
         assert params.min_int_param == defaultexp
         assert params.dim_mesh == params._stateless_dim_mesh
 
@@ -583,3 +589,46 @@ class TestArrayFirst:
             )
             == exp
         )
+
+
+class TestCollisions:
+    def test_collision_list(self):
+        class CollisionParams(Parameters):
+            schema = {"dim_name": "test", "dims": {}, "optional": {}}
+            defaults = {}
+
+        params = CollisionParams()
+
+        # check to make sure that the collisionlist does not need to be updated.
+        # Note: dir(obj) lists out all class or instance attributes and methods.
+        assert collision_list == [
+            name for name in dir(params) if not name.startswith("__")
+        ]
+
+    def test_collision(self):
+        defaults_dict = {
+            "errors": {
+                "title": "Collides with 'errors'",
+                "description": "",
+                "notes": "",
+                "type": "int",
+                "number_dims": 0,
+                "value": [{"value": 0}],
+                "validators": {"range": {"min": 0, "max": 10}},
+                "out_of_range_action": "stop",
+            }
+        }
+
+        class CollisionParams(Parameters):
+            schema = {"dim_name": "test", "dims": {}, "optional": {}}
+            defaults = defaults_dict
+
+        with pytest.raises(ParameterNameCollisionException) as excinfo:
+            CollisionParams()
+
+        exp_msg = (
+            "The paramter name, 'errors', is already used by the "
+            "Parameters object."
+        )
+
+        assert excinfo.value.args[0] == exp_msg
