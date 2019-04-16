@@ -128,10 +128,10 @@ params.errors
 How to install ParamTools
 -----------------------------------------
 
-Install from PyPI:
+Install with conda:
 
 ```
-conda install paramtools -c pslmodels
+conda install -c conda-forge paramtools
 ```
 
 Install from source:
