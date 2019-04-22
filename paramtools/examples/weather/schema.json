@@ -20,7 +20,7 @@
         }
     },
     "optional": {
-        "scale": {"type": "str", "number_dims": 0},
-        "source": {"type": "str", "number_dims": 0}
+        "scale": {"type": "str"},
+        "source": {"type": "str"}
     }
 }

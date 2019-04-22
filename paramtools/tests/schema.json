@@ -16,6 +16,6 @@
         }
     },
     "optional": {
-        "opt0": {"type": "str", "number_dims": 0}
+        "opt0": {"type": "str"}
     }
 }

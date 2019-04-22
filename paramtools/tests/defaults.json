@@ -5,7 +5,6 @@
         "notes": "See max_int_param",
         "opt0": "an option",
         "type": "int",
-        "number_dims": 0,
         "value": [
             {"dim0": "zero", "dim1": 1, "value": 1},
             {"dim0": "one", "dim1": 2, "value": 2}
@@ -21,7 +20,6 @@
         "notes": "See min_int_param",
         "opt0": "an option",
         "type": "int",
-        "number_dims": 0,
         "value": [
             {"dim0": "zero", "dim1": 1, "value": 3},
             {"dim0": "one", "dim1": 2, "value": 4}
@@ -37,7 +35,6 @@
         "notes": "",
         "opt0": "another option",
         "type": "str",
-        "number_dims": 0,
         "value": [
             {"value": "value0"}
         ],
@@ -52,7 +49,6 @@
         "notes": "",
         "opt0": "another option",
         "type": "date",
-        "number_dims": 0,
         "value": [
             {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
         ],
@@ -67,7 +63,6 @@
         "notes": "See date_max_param.",
         "opt0": "an option",
         "type": "date",
-        "number_dims": 0,
         "value": [
             {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
         ],
@@ -82,7 +77,6 @@
         "notes": "See date_min_param.",
         "opt0": "an option",
         "type": "date",
-        "number_dims": 0,
         "value": [
             {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
         ],
@@ -112,7 +106,6 @@
         "notes": "",
         "opt0": "an option",
         "type": "int",
-        "number_dims": 0,
         "value": [
             {"value": 2}
         ],
@@ -127,7 +120,6 @@
         "notes": "Dense means that the full space is explicitly spanned in the list of Value objects.",
         "opt0": "an option",
         "type": "int",
-        "number_dims": 0,
         "value": [
             {"dim0": "zero", "dim1": 0, "dim2": 0, "value": 1},
             {"dim0": "zero", "dim1": 0, "dim2": 1, "value": 2},

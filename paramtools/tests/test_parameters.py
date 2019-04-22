@@ -612,7 +612,6 @@ class TestCollisions:
                 "description": "",
                 "notes": "",
                 "type": "int",
-                "number_dims": 0,
                 "value": [{"value": 0}],
                 "validators": {"range": {"min": 0, "max": 10}},
                 "out_of_range_action": "stop",

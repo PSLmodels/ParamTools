@@ -10,7 +10,6 @@
         "cpi_inflatable": true,
         "cpi_inflated": true,
         "type": "float",
-        "number_dims": 0,
         "value": [
             {"year": 2024, "marital_status": "single", "value": 13673.68},
             {"year": 2024, "marital_status": "joint", "value": 27347.36},
@@ -54,7 +53,6 @@
         "out_of_range_minmsg": "",
         "out_of_range_maxmsg": "",
         "out_of_range_action": "stop",
-        "number_dims": 0,
         "title": "Social Security payroll tax rate",
         "type": "float",
         "validators": {
@@ -74,7 +72,6 @@
         "start_year": 2013,
         "cpi_inflatable": true,
         "cpi_inflated": true,
-        "number_dims": 0,
         "type": "float",
         "value": [
             {"year": 2024, "marital_status": "single", "value": 10853.48},
@@ -112,7 +109,6 @@
         "start_year": 2013,
         "cpi_inflatable": true,
         "cpi_inflated": true,
-        "number_dims": 0,
         "type": "float",
         "value":  [
             {"year": 2024, "marital_status": "single", "value": 44097.61},
