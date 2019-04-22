@@ -98,9 +98,13 @@ class ValueObject(fields.Nested):
     """
 
     def _deserialize(self, value, attr, data, partial=None, **kwargs):
-        if not isinstance(value, list):
+        if not isinstance(value, list) or (
+            isinstance(value, list) and not isinstance(value[0], dict)
+        ):
             value = [{"value": value}]
-        return super()._deserialize(value, attr, data, partial=partial, **kwargs)
+        return super()._deserialize(
+            value, attr, data, partial=partial, **kwargs
+        )
 
 
 class BaseValidatorSchema(Schema):

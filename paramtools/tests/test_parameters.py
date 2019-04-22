@@ -32,6 +32,7 @@ def array_first_defaults(defaults_spec_path):
     with open(defaults_spec_path) as f:
         r = json.loads(f.read())
     r.pop("float_list_param")
+    r.pop("simple_int_list_param")
     return r
 
 
@@ -154,7 +155,9 @@ class TestAdjust:
             {"dim0": "zero", "dim1": 1, "value": 1}
         ]
 
-        assert params.int_default_param == [{"value": adjustment["int_default_param"]}]
+        assert params.int_default_param == [
+            {"value": adjustment["int_default_param"]}
+        ]
         assert params.date_param == [
             {"value": datetime.date(2018, 1, 17), "dim1": 1, "dim0": "zero"}
         ]
