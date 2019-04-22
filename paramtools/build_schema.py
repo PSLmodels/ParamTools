@@ -3,6 +3,7 @@ from marshmallow import fields
 from paramtools.schema import (
     EmptySchema,
     BaseValidatorSchema,
+    ValueObject,
     get_type,
     get_param_schema,
 )
@@ -57,11 +58,16 @@ class SchemaBuilder:
         for k, v in self.defaults.items():
             fieldtype = get_type(v)
             classattrs = {"value": fieldtype, **self.dim_validators}
+
+            # TODO: what about case where number_dims > 0
+            # if not isinstance(v["value"], list):
+            #     v["value"] = [{"value": v["value"]}]
+
             validator_dict[k] = type(
                 "ValidatorItem", (EmptySchema,), classattrs
             )
 
-            classattrs = {"value": fields.Nested(validator_dict[k], many=True)}
+            classattrs = {"value": ValueObject(validator_dict[k], many=True)}
             param_dict[k] = type(
                 "IndividualParamSchema", (self.BaseParamSchema,), classattrs
             )
@@ -72,7 +78,7 @@ class SchemaBuilder:
         cleaned_defaults = param_schema.load(self.defaults)
 
         classattrs = {
-            k: fields.Nested(v(many=True)) for k, v in validator_dict.items()
+            k: ValueObject(v(many=True)) for k, v in validator_dict.items()
         }
         ValidatorSchema = type(
             "ValidatorSchema", (BaseValidatorSchema,), classattrs

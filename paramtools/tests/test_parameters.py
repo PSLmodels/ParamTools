@@ -142,7 +142,7 @@ class TestAdjust:
         params.set_state(dim0="zero", dim1=1)
         adjustment = {
             "min_int_param": [{"dim0": "one", "dim1": 2, "value": 2}],
-            "int_default_param": [{"value": 5}],
+            "int_default_param": 5,
             "date_param": [{"dim0": "zero", "dim1": 1, "value": "2018-01-17"}],
         }
         params.adjust(adjustment)
@@ -154,7 +154,7 @@ class TestAdjust:
             {"dim0": "zero", "dim1": 1, "value": 1}
         ]
 
-        assert params.int_default_param == adjustment["int_default_param"]
+        assert params.int_default_param == [{"value": adjustment["int_default_param"]}]
         assert params.date_param == [
             {"value": datetime.date(2018, 1, 17), "dim1": 1, "dim0": "zero"}
         ]
@@ -173,7 +173,6 @@ class TestAdjust:
     def test_adjust_none_many_values(self, TestParams):
         params = TestParams()
         adj = {"int_dense_array_param": [{"value": None}]}
-        print(params.int_dense_array_param)
         params.adjust(adj)
         assert len(params._data["int_dense_array_param"]["value"]) == 0
         assert len(params.int_dense_array_param) == 0
@@ -446,7 +445,6 @@ class TestArray:
         params = TestParams()
         # Drop values 3 and 4 from dim1
         params.set_state(dim1=[0, 1, 2, 5])
-        print(len(params.int_dense_array_param))
         res = params.to_array("int_dense_array_param")
 
         # Values 3 and 4 were removed from dim1.

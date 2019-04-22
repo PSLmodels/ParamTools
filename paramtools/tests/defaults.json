@@ -35,9 +35,7 @@
         "notes": "",
         "opt0": "another option",
         "type": "str",
-        "value": [
-            {"value": "value0"}
-        ],
+        "value": "value0",
         "validators": {"choice": {"choices": ["value0", "value1"]}},
         "out_of_range_minmsg": "",
         "out_of_range_maxmsg": "",
@@ -106,9 +104,7 @@
         "notes": "",
         "opt0": "an option",
         "type": "int",
-        "value": [
-            {"value": 2}
-        ],
+        "value": 2,
         "validators": {"range": {"min": "default", "max": 10}},
         "out_of_range_minmsg": "",
         "out_of_range_maxmsg": "",
