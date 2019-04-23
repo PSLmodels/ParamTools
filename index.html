@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>ParamTools Docs</title>
+        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href=".">ParamTools Docs</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="active">
+                                <a href=".">Home</a>
+                            </li>
+                            <li >
+                                <a href="parameters/">Parameters</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="disabled">
+                                <a rel="next" >
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li >
+                                <a rel="prev" href="parameters/">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#paramtools">ParamTools</a></li>
+            <li><a href="#how-to-use-paramtools">How to use ParamTools</a></li>
+            <li><a href="#how-to-install-paramtools">How to install ParamTools</a></li>
+            <li><a href="#documentation">Documentation</a></li>
+            <li><a href="#contributing">Contributing</a></li>
+            <li><a href="#credits">Credits</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="paramtools">ParamTools</h1>
+<p>ParamTools defines the parameter input space for computational modeling projects.</p>
+<ul>
+<li>Defines the default parameter space.</li>
+<li>Facilitates adjusting that space.</li>
+<li>Performs validation on the default space and the adjusted space.</li>
+</ul>
+<h2 id="how-to-use-paramtools">How to use ParamTools</h2>
+<p>Subclass the <code>Parameters</code> class and set your <a href="https://paramtools.readthedocs.io/en/latest/spec.html#specification-schema">specification schema</a> and <a href="https://paramtools.readthedocs.io/en/latest/spec.html#default-specification">default specification</a> files:</p>
+<pre><code class="python">from paramtools import Parameters
+from paramtools import get_example_paths
+
+schema_, defaults_ = get_example_paths('taxparams-demo')
+class TaxParams(Parameters):
+    schema = schema_  # schema.json
+    defaults = defaults_  # defaults.json
+
+params = TaxParams(
+    initial_state={&quot;year&quot;: [2024, 2025, 2026]},
+    array_first=True
+)
+
+print(&quot;# output &quot;, params.view_state())
+# output  {'year': [2024, 2025, 2026]}
+
+</code></pre>
+
+<p>Parameters are available via instance attributes:</p>
+<pre><code class="python">params.standard_deduction
+# output:  [[13673.68 27347.36 13673.68 20510.52 27347.36]
+#  [13967.66 27935.33 13967.66 20951.49 27935.33]
+#  [ 7690.   15380.    7690.   11323.   15380.  ]]
+
+
+</code></pre>
+
+<p>Get the parameter's <a href="https://paramtools.readthedocs.io/en/latest/spec.html#value-object">value object</a>:</p>
+<pre><code class="python">params.from_array(&quot;standard_deduction&quot;)
+# output:  [{'year': 2024, 'marital_status': 'single', 'value': 13673.68}, {'year': 2024, 'marital_status': 'joint', 'value': 27347.36}, {'year': 2024, 'marital_status': 'separate', 'value': 13673.68}, {'year': 2024, 'marital_status': 'headhousehold', 'value': 20510.52}, {'year': 2024, 'marital_status': 'widow', 'value': 27347.36}, {'year': 2025, 'marital_status': 'single', 'value': 13967.66}, {'year': 2025, 'marital_status': 'joint', 'value': 27935.33}, {'year': 2025, 'marital_status': 'separate', 'value': 13967.66}, {'year': 2025, 'marital_status': 'headhousehold', 'value': 20951.49}, {'year': 2025, 'marital_status': 'widow', 'value': 27935.33}, {'year': 2026, 'marital_status': 'single', 'value': 7690.0}, {'year': 2026, 'marital_status': 'joint', 'value': 15380.0}, {'year': 2026, 'marital_status': 'separate', 'value': 7690.0}, {'year': 2026, 'marital_status': 'headhousehold', 'value': 11323.0}, {'year': 2026, 'marital_status': 'widow', 'value': 15380.0}]
+</code></pre>
+
+<p><a href="https://paramtools.readthedocs.io/en/latest/spec.html#adjustment-schema">Adjust</a> the default specification:</p>
+<pre><code class="python">adjustment = {
+    &quot;standard_deduction&quot;: [
+        {&quot;year&quot;: 2026, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 10000.0}
+    ],
+    &quot;social_security_tax_rate&quot;: [
+        {&quot;year&quot;: 2026, &quot;value&quot;: 0.14}
+    ]
+}
+params.adjust(adjustment)
+params.standard_deduction
+# output:  [[13673.68 27347.36 13673.68 20510.52 27347.36]
+#  [13967.66 27935.33 13967.66 20951.49 27935.33]
+#  [10000.   15380.    7690.   11323.   15380.  ]]
+
+print(params.social_security_tax_rate)
+# output:  [0.124 0.124 0.14 ]
+</code></pre>
+
+<p>Errors on invalid input:</p>
+<pre><code class="python">adjustment[&quot;standard_deduction&quot;] = [{
+  &quot;year&quot;: 2026,
+  &quot;marital_status&quot;: &quot;single&quot;,
+  &quot;value&quot;: &quot;higher&quot;
+}]
+params.adjust(adjustment)
+
+# output:
+Traceback (most recent call last):
+  File &quot;doc_ex.py&quot;, line 60, in &lt;module&gt;
+    raise saved_exc
+  File &quot;doc_ex.py&quot;, line 33, in &lt;module&gt;
+    params.adjust(adjustment)
+  File &quot;/home/henrydoupe/Documents/ParamTools/paramtools/parameters.py&quot;, line 123, in adjust
+    raise self.validation_error
+paramtools.exceptions.ValidationError: {'standard_deduction': ['Not a valid number: higher.']}
+
+</code></pre>
+
+<p>Errors on input that's out of range:</p>
+<pre><code class="python"># get value of ii_bracket_2 at year 2026, marital status &quot;single&quot;.
+spec = params.specification(year=2026, marital_status=&quot;single&quot;, use_state=False)
+spec
+# output:  OrderedDict([('standard_deduction', [{'year': 2026, 'value': 10000.0, 'marital_status': 'single'}]), ('ii_bracket_1', [{'year': 2026, 'value': 11293.0, 'marital_status': 'single'}]), ('ii_bracket_2', [{'year': 2026, 'value': 45957.0, 'marital_status': 'single'}]), ('social_security_tax_rate', [{'year': 2026, 'value': 0.14}])])
+
+
+ii_bracket_2_val = spec[&quot;ii_bracket_2&quot;][0][&quot;value&quot;]
+ii_bracket_2_val
+# output: 45957.0
+
+adjustment = {
+    &quot;standard_deduction&quot;: [{
+      &quot;year&quot;: 2026,
+      &quot;marital_status&quot;: &quot;single&quot;,
+      &quot;value&quot;: -1
+    }],
+    &quot;ii_bracket_1&quot;: [{
+      &quot;year&quot;: 2026,
+      &quot;marital_status&quot;: &quot;single&quot;,
+      &quot;value&quot;: ii_bracket_2_val + 1}
+    ]
+}
+
+params.adjust(adjustment, raise_errors=False)
+params.errors
+# output:
+# {
+#   'standard_deduction': ['standard_deduction -1.0 must be greater than 0 for dimensions marital_status=single , year=2026'],
+#   'ii_bracket_1': ['ii_bracket_1 45958.0 must be less than 45957.0 for dimensions marital_status=single , year=2026']
+# }
+
+</code></pre>
+
+<h2 id="how-to-install-paramtools">How to install ParamTools</h2>
+<p>Install with conda:</p>
+<pre><code>conda install -c conda-forge paramtools
+</code></pre>
+
+<p>Install from source:</p>
+<pre><code>git clone https://github.com/PSLmodels/ParamTools
+cd ParamTools
+conda env create
+conda activate paramtools-dev
+pip install -e .
+
+# optionally run tests:
+py.test -v
+</code></pre>
+
+<h2 id="documentation">Documentation</h2>
+<p>Full documentation available at https://paramtools.readthedocs.io/.</p>
+<h2 id="contributing">Contributing</h2>
+<p>Contributions are welcome! Checkout <a href="https://github.com/PSLmodels/ParamTools/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a> to get started.</p>
+<h2 id="credits">Credits</h2>
+<p>ParamTools is built on top of the excellent <a href="https://github.com/marshmallow-code/marshmallow">marshmallow</a> JSON schema and validation framework. I encourage everyone to checkout their repo and documentation. ParamTools was modeled off of <a href="https://github.com/PSLmodels/Tax-Calculator">Tax-Calculator's</a> parameter processing and validation engine due to its maturity and sophisticated capabilities.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.0.4
+Build Date UTC : 2019-04-23 17:39:07
+-->
