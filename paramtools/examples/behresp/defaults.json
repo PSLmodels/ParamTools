@@ -1,7 +1,7 @@
 {
     "schema": {
         "labels": {},
-        "optional": {}
+        "additional_members": {}
     },
     "BE_sub": {
         "title": "Substitution elasticity of taxable income",

@@ -3,7 +3,7 @@
         "labels": {
             "use_2018": {"type": "bool", "validators": {}}
         },
-        "optional": {
+        "additional_members": {
             "section_1": {"type": "str"},
             "section_2": {"type": "str"}
         }

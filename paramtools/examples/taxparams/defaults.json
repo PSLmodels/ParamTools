@@ -22,7 +22,7 @@
                                                      "2kids", "3+kids"]}}
             }
         },
-        "optional": {
+        "additional_members": {
             "section_1": {"type": "str"},
             "section_2": {"type": "str"},
             "section_3": {"type": "str"},

@@ -614,7 +614,7 @@ class TestArrayFirst:
 class TestCollisions:
     def test_collision_list(self):
         class CollisionParams(Parameters):
-            defaults = {"schema": {"labels": {}, "optional": {}}}
+            defaults = {"schema": {"labels": {}, "additional_members": {}}}
 
         params = CollisionParams()
 
@@ -626,7 +626,7 @@ class TestCollisions:
 
     def test_collision(self):
         defaults_dict = {
-            "schema": {"labels": {}, "optional": {}},
+            "schema": {"labels": {}, "additional_members": {}},
             "errors": {
                 "title": "Collides with 'errors'",
                 "description": "",
