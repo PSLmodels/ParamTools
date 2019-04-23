@@ -63,7 +63,7 @@ Define the default values of the project"s parameter space.
 
         {
             "standard_deduction": {
-                "title": "Standard deduction amount",
+        "title": "Standard deduction amount",
                 "description": "Amount filing unit can use as a standard deduction.",
                 "section_1": "Standard Deduction",
                 "section_2": "Standard Deduction Amount",

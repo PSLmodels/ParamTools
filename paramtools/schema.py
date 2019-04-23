@@ -53,9 +53,6 @@ class BaseParamSchema(Schema):
         "type": str (limited to 'int', 'float', 'bool', 'str'),
         "value": `BaseValidatorSchema`, "value" type depends on "type" key,
         "range": range schema ({"min": ..., "max": ..., "other ops": ...}),
-        "out_of_range_minmsg": str,
-        "out_of_range_maxmsg": str,
-        "out_of_range_action": str (limited to 'stop' or 'warn')
     }
 
     This class is defined further by a JSON file indicating extra fields that
@@ -64,7 +61,7 @@ class BaseParamSchema(Schema):
 
     title = fields.Str(required=True)
     description = fields.Str(required=True)
-    notes = fields.Str(required=True)
+    notes = fields.Str(required=False)
     _type = fields.Str(
         required=True,
         validate=validate.OneOf(
@@ -76,11 +73,6 @@ class BaseParamSchema(Schema):
     number_dims = fields.Integer(default=0, missing=0)
     value = fields.Field(required=True)  # will be specified later
     validators = fields.Nested(ValueValidatorSchema(), required=True)
-    out_of_range_minmsg = fields.Str(required=False)
-    out_of_range_maxmsg = fields.Str(required=False)
-    out_of_range_action = fields.Str(
-        required=False, validate=validate.OneOf(choices=["stop", "warn"])
-    )
 
 
 class EmptySchema(Schema):
