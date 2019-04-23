@@ -92,6 +92,21 @@ class EmptySchema(Schema):
     pass
 
 
+class ValueObject(fields.Nested):
+    """
+    Schema for value objects
+    """
+
+    def _deserialize(self, value, attr, data, partial=None, **kwargs):
+        if not isinstance(value, list) or (
+            isinstance(value, list) and not isinstance(value[0], dict)
+        ):
+            value = [{"value": value}]
+        return super()._deserialize(
+            value, attr, data, partial=partial, **kwargs
+        )
+
+
 class BaseValidatorSchema(Schema):
     """
     Schema that validates parameter adjustments such as:

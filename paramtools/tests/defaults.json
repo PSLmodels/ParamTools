@@ -35,9 +35,7 @@
         "notes": "",
         "opt0": "another option",
         "type": "str",
-        "value": [
-            {"value": "value0"}
-        ],
+        "value": "value0",
         "validators": {"choice": {"choices": ["value0", "value1"]}},
         "out_of_range_minmsg": "",
         "out_of_range_maxmsg": "",
@@ -100,15 +98,26 @@
         "out_of_range_maxmsg": "",
         "out_of_range_action": "stop"
     },
+    "simple_int_list_param": {
+        "title": "Simple Int List Param",
+        "description": "Test case where param is simple and a list.",
+        "notes": "",
+        "opt0": "an option",
+        "type": "int",
+        "number_dims": 1,
+        "value": [1, 2, 3, 4],
+        "validators": {"range": {"min": 0, "max": 10}},
+        "out_of_range_minmsg": "",
+        "out_of_range_maxmsg": "",
+        "out_of_range_action": "stop"
+    },
     "int_default_param": {
         "title": "Integer Default Reference Param",
         "description": "Example for a int param using a default reference value",
         "notes": "",
         "opt0": "an option",
         "type": "int",
-        "value": [
-            {"value": 2}
-        ],
+        "value": 2,
         "validators": {"range": {"min": "default", "max": 10}},
         "out_of_range_minmsg": "",
         "out_of_range_maxmsg": "",
