@@ -64,7 +64,7 @@ class BaseParamSchema(Schema):
 
     title = fields.Str(required=True)
     description = fields.Str(required=True)
-    notes = fields.Str(required=True)
+    notes = fields.Str(required=False)
     _type = fields.Str(
         required=True,
         validate=validate.OneOf(

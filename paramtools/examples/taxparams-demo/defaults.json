@@ -26,9 +26,6 @@
             {"year": 2026, "marital_status": "separate", "value": 7690.0},
             {"year": 2026, "marital_status": "headhousehold", "value": 11323.0},
             {"year": 2026, "marital_status": "widow", "value": 15380.0}],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "validators": {
             "range": {
                 "min": 0,
@@ -50,9 +47,6 @@
             {"year": 2025, "value": 0.124},
             {"year": 2026, "value": 0.124}
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "title": "Social Security payroll tax rate",
         "type": "float",
         "validators": {
@@ -89,9 +83,6 @@
             {"year": 2026, "marital_status": "separate", "value": 11293.0},
             {"year": 2026, "marital_status": "headhousehold", "value": 16167.0},
             {"year": 2026, "marital_status": "widow", "value": 22585.0}],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "for _II_brk2",
-        "out_of_range_action": "stop",
         "validators": {
             "range": {
                 "min": 0,
@@ -126,9 +117,6 @@
             {"year": 2026, "marital_status": "separate", "value": 45957.0},
             {"year": 2026, "marital_status": "headhousehold", "value": 61519.0},
             {"year": 2026, "marital_status": "widow", "value": 91915.0}],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "validators": {
             "range": {
                 "min": "ii_bracket_1",
