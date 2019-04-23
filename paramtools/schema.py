@@ -296,13 +296,23 @@ CLASS_FIELD_MAP = {
 }
 
 
+INVALID_NUMBER = {"invalid": "Not a valid number: {input}."}
+INVALID_BOOLEAN = {"invalid": "Not a valid boolean: {input}."}
+INVALID_DATE = {"invalid": "Not a valid date: {input}."}
+
 # A few fields that have been instantiated
 FIELD_MAP = {
     "str": contrib_fields.Str(allow_none=True),
-    "int": contrib_fields.Integer(allow_none=True),
-    "float": contrib_fields.Float(allow_none=True),
-    "bool": contrib_fields.Boolean(allow_none=True),
-    "date": contrib_fields.Date(allow_none=True),
+    "int": contrib_fields.Integer(
+        allow_none=True, error_messages=INVALID_NUMBER
+    ),
+    "float": contrib_fields.Float(
+        allow_none=True, error_messages=INVALID_NUMBER
+    ),
+    "bool": contrib_fields.Boolean(
+        allow_none=True, error_messages=INVALID_BOOLEAN
+    ),
+    "date": contrib_fields.Date(allow_none=True, error_messages=INVALID_DATE),
 }
 
 VALIDATOR_MAP = {
@@ -313,13 +323,16 @@ VALIDATOR_MAP = {
 
 
 def get_type(data):
-    # TODO: Use invalid error messages on next marshmallow release
-    # (post 0.3.0rc4)
-    # error_messages = {"invalid": "Invalid input: {input}"}
     numeric_types = {
-        "int": contrib_fields.Int64(allow_none=True),
-        "bool": contrib_fields.Bool_(allow_none=True),
-        "float": contrib_fields.Float64(allow_none=True),
+        "int": contrib_fields.Int64(
+            allow_none=True, error_messages=INVALID_NUMBER
+        ),
+        "bool": contrib_fields.Bool_(
+            allow_none=True, error_messages=INVALID_BOOLEAN
+        ),
+        "float": contrib_fields.Float64(
+            allow_none=True, error_messages=INVALID_NUMBER
+        ),
     }
     types = dict(FIELD_MAP, **numeric_types)
     fieldtype = types[data["type"]]
