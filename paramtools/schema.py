@@ -51,7 +51,6 @@ class BaseParamSchema(Schema):
         "description": str,
         "notes": str,
         "type": str (limited to 'int', 'float', 'bool', 'str'),
-        "number_dims": int,
         "value": `BaseValidatorSchema`, "value" type depends on "type" key,
         "range": range schema ({"min": ..., "max": ..., "other ops": ...}),
         "out_of_range_minmsg": str,
@@ -74,7 +73,7 @@ class BaseParamSchema(Schema):
         attribute="type",
         data_key="type",
     )
-    number_dims = fields.Integer(required=True)
+    number_dims = fields.Integer(default=0, missing=0)
     value = fields.Field(required=True)  # will be specified later
     validators = fields.Nested(ValueValidatorSchema(), required=True)
     out_of_range_minmsg = fields.Str(required=False)
@@ -317,7 +316,7 @@ def get_type(data):
     }
     types = dict(FIELD_MAP, **numeric_types)
     fieldtype = types[data["type"]]
-    dim = data["number_dims"]
+    dim = data.get("number_dims", 0)
     while dim > 0:
         fieldtype = fields.List(fieldtype, allow_none=True)
         dim -= 1
@@ -338,7 +337,7 @@ def get_param_schema(base_spec, field_map=None):
     optional_fields = {}
     for k, v in base_spec["optional"].items():
         fieldtype = field_map[v["type"]]
-        if v["number_dims"] is not None:
+        if v.get("number_dims", 0) > 0:
             d = v["number_dims"]
             while d > 0:
                 fieldtype = fields.List(fieldtype)
