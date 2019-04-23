@@ -30,14 +30,10 @@
                 "value": -0.0025
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Decimal offset ADDED to unchained CPI to get parameter indexing rate",
         "type": "float",
         "validators": {
@@ -62,14 +58,10 @@
                 "value": 0.124
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Social Security payroll tax rate",
         "type": "float",
         "validators": {
@@ -114,14 +106,10 @@
                 "value": 128400.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum taxable earnings (MTE) for Social Security",
         "type": "float",
         "validators": {
@@ -146,14 +134,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Additional Taxable Earnings Threshold for Social Security",
         "type": "float",
         "validators": {
@@ -178,14 +162,10 @@
                 "value": 0.029
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Medicare payroll tax rate",
         "type": "float",
         "validators": {
@@ -231,14 +211,10 @@
                 "value": 200000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Additional Medicare tax earnings exclusion",
         "type": "float",
         "validators": {
@@ -263,14 +239,10 @@
                 "value": 0.009
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Additional Medicare tax rate",
         "type": "float",
         "validators": {
@@ -316,14 +288,10 @@
                 "value": 25000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "for _SS_thd85",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Threshold for Social Security benefit taxability 1",
         "type": "float",
         "validators": {
@@ -348,14 +316,10 @@
                 "value": 0.5
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Social Security taxable income decimal fraction 1",
         "type": "float",
         "validators": {
@@ -401,14 +365,10 @@
                 "value": 34000.0
             }
         ],
-        "out_of_range_minmsg": "for _SS_thd50",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Threshold for Social Security benefit taxability 2",
         "type": "float",
         "validators": {
@@ -433,14 +393,10 @@
                 "value": 0.85
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Social Security taxable income decimal fraction 2",
         "type": "float",
         "validators": {
@@ -465,14 +421,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Adjustment for student loan interest haircut",
         "type": "float",
         "validators": {
@@ -497,14 +449,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Adjustment for self-employment tax haircut",
         "type": "float",
         "validators": {
@@ -529,14 +477,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Adjustment for self employed health insurance haircut",
         "type": "float",
         "validators": {
@@ -561,14 +505,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Adjustment for contributions to either KEOGH or SEP plan haircut",
         "type": "float",
         "validators": {
@@ -593,14 +533,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Adjustment for early withdrawal penalty haircut",
         "type": "float",
         "validators": {
@@ -677,14 +613,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Adjustment for alimony-paid haircut",
         "type": "float",
         "validators": {
@@ -761,14 +693,10 @@
                 "value": 1.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Adjustment for alimony-received haircut",
         "type": "float",
         "validators": {
@@ -793,14 +721,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Deduction for educator expenses haircut",
         "type": "float",
         "validators": {
@@ -825,14 +749,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Deduction for HSA deduction haircut",
         "type": "float",
         "validators": {
@@ -857,14 +777,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Deduction for IRA contributions haircut",
         "type": "float",
         "validators": {
@@ -941,14 +857,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Deduction for domestic production activity haircut",
         "type": "float",
         "validators": {
@@ -973,14 +885,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Deduction for tuition and fees haircut",
         "type": "float",
         "validators": {
@@ -1005,14 +913,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Investment income exclusion rate haircut",
         "type": "float",
         "validators": {
@@ -1037,14 +941,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Deduction for childcare costs haircut",
         "type": "float",
         "validators": {
@@ -1089,14 +989,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "National average childcare costs: ceiling for available childcare deduction.",
         "type": "float",
         "validators": {
@@ -1141,14 +1037,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling for elderly care deduction proposed in Trump's tax plan",
         "type": "float",
         "validators": {
@@ -1194,14 +1086,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum level of income to qualify for the dependent care deduction",
         "type": "float",
         "validators": {
@@ -1572,14 +1460,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum amount of business losses deductible",
         "type": "float",
         "validators": {
@@ -1656,14 +1540,10 @@
                 "value": 4905.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal and dependent exemption amount",
         "type": "float",
         "validators": {
@@ -1834,14 +1714,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal exemption phaseout starting income",
         "type": "float",
         "validators": {
@@ -1866,14 +1742,10 @@
                 "value": 0.02
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal exemption phaseout rate",
         "type": "float",
         "validators": {
@@ -1898,14 +1770,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Repeal personal exemptions for dependents under age 18",
         "type": "bool",
         "validators": {
@@ -2276,14 +2144,10 @@
                 "value": 15380.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Standard deduction amount",
         "type": "float",
         "validators": {
@@ -2328,14 +2192,10 @@
                 "value": 1050.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Standard deduction for dependents",
         "type": "float",
         "validators": {
@@ -2506,14 +2366,10 @@
                 "value": 1300.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Additional standard deduction for blind and aged",
         "type": "float",
         "validators": {
@@ -2538,14 +2394,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Allow standard deduction filers to take the charitable contributions deduction",
         "type": "bool",
         "validators": {
@@ -2716,14 +2568,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal refundable credit maximum amount",
         "type": "float",
         "validators": {
@@ -2894,14 +2742,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal refundable credit phaseout start",
         "type": "float",
         "validators": {
@@ -2926,14 +2770,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal refundable credit phaseout rate",
         "type": "float",
         "validators": {
@@ -3104,14 +2944,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal nonrefundable credit maximum amount",
         "type": "float",
         "validators": {
@@ -3282,14 +3118,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal nonrefundable credit phaseout start",
         "type": "float",
         "validators": {
@@ -3314,14 +3146,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal nonrefundable credit phaseout rate",
         "type": "float",
         "validators": {
@@ -3370,14 +3198,10 @@
                 "value": 0.1
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "warn",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Floor (as a decimal fraction of AGI) for deductible medical expenses.",
         "type": "float",
         "validators": {
@@ -3418,14 +3242,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "warn",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Addon floor (as a decimal fraction of AGI) for deductible medical expenses for elderly filing units.",
         "type": "float",
         "validators": {
@@ -3450,14 +3270,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Medical expense deduction haircut",
         "type": "float",
         "validators": {
@@ -3628,14 +3444,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the amount of medical expense deduction allowed (dollars)",
         "type": "float",
         "validators": {
@@ -3660,14 +3472,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "State and local income and sales taxes deduction haircut.",
         "type": "float",
         "validators": {
@@ -3692,14 +3500,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling (as a decimal fraction of AGI) for the combination of all state and local income and sales tax deductions.",
         "type": "float",
         "validators": {
@@ -3870,14 +3674,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the amount of state and local income and sales taxes deduction allowed (dollars)",
         "type": "float",
         "validators": {
@@ -3902,14 +3702,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "State, local, and foreign real estate taxes deduction haircut.",
         "type": "float",
         "validators": {
@@ -3934,14 +3730,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling (as a decimal fraction of AGI) for the combination of all state, local, and foreign real estate tax deductions.",
         "type": "float",
         "validators": {
@@ -4112,14 +3904,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the amount of state, local, and foreign real estate taxes deduction allowed (dollars)",
         "type": "float",
         "validators": {
@@ -4490,14 +4278,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the amount of state and local income, sales and real estate tax deductions allowed (dollars)",
         "type": "float",
         "validators": {
@@ -4522,14 +4306,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Interest paid deduction haircut",
         "type": "float",
         "validators": {
@@ -4700,14 +4480,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the amount of interest paid deduction allowed (dollars)",
         "type": "float",
         "validators": {
@@ -4784,14 +4560,10 @@
                 "value": 0.5
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "warn",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling (as a decimal fraction of AGI) for all charitable contribution deductions",
         "type": "float",
         "validators": {
@@ -4816,14 +4588,10 @@
                 "value": 0.3
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "warn",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling (as a decimal fraction of AGI) for noncash charitable contribution deductions",
         "type": "float",
         "validators": {
@@ -4848,14 +4616,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Floor (as a decimal fraction of AGI) for deductible charitable contributions.",
         "type": "float",
         "validators": {
@@ -4880,14 +4644,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Charity expense deduction haircut",
         "type": "float",
         "validators": {
@@ -5058,14 +4818,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the amount of charity expense deduction allowed (dollars)",
         "type": "float",
         "validators": {
@@ -5111,14 +4867,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Floor on the amount of charity expense deduction allowed (dollars)",
         "type": "float",
         "validators": {
@@ -5143,14 +4895,10 @@
                 "value": 0.1
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Floor (as a decimal fraction of AGI) for deductible casualty loss.",
         "type": "float",
         "validators": {
@@ -5227,14 +4975,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Casualty expense deduction haircut",
         "type": "float",
         "validators": {
@@ -5405,14 +5149,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Ceiling on the amount of casualty expense deduction allowed (dollars)",
         "type": "float",
         "validators": {
@@ -5437,14 +5177,10 @@
                 "value": 0.02
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "warn",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Floor (as a decimal fraction of AGI) for deductible miscellaneous expenses.",
         "type": "float",
         "validators": {
@@ -5521,14 +5257,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Miscellaneous expense deduction haircut",
         "type": "float",
         "validators": {
@@ -5699,14 +5431,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the amount of miscellaneous expense deduction allowed (dollars)",
         "type": "float",
         "validators": {
@@ -6077,14 +5805,10 @@
                 "value": 380010.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Itemized deduction phaseout AGI start (Pease provision)",
         "type": "float",
         "validators": {
@@ -6161,14 +5885,10 @@
                 "value": 0.03
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Itemized deduction phaseout rate (Pease provision)",
         "type": "float",
         "validators": {
@@ -6245,14 +5965,10 @@
                 "value": 0.8
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Itemized deduction maximum phaseout as a decimal fraction of total itemized deductions (Pease provision)",
         "type": "float",
         "validators": {
@@ -6277,14 +5993,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Surtax rate on the benefits from specified itemized deductions",
         "type": "float",
         "validators": {
@@ -6309,14 +6021,10 @@
                 "value": 1.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Credit on itemized deduction benefit surtax (decimal fraction of AGI)",
         "type": "float",
         "validators": {
@@ -6487,14 +6195,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Exemption for itemized deduction benefit surtax (dollar AGI threshold)",
         "type": "float",
         "validators": {
@@ -6550,14 +6254,10 @@
                 "value": true
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Deductions subject to the surtax on itemized deduction benefits",
         "type": "bool",
         "validators": {
@@ -6582,14 +6282,10 @@
                 "value": 1.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the benefits from itemized deductions; decimal fraction of total deductible expenses",
         "type": "float",
         "validators": {
@@ -6645,14 +6341,10 @@
                 "value": true
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Deductions subject to the cap on itemized deduction benefits",
         "type": "bool",
         "validators": {
@@ -6823,14 +6515,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the amount of itemized deductions allowed (dollars)",
         "type": "float",
         "validators": {
@@ -6855,14 +6543,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Ceiling on the gross amount of itemized deductions allowed; decimal fraction of AGI",
         "type": "float",
         "validators": {
@@ -6918,14 +6602,10 @@
                 "value": true
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Deductions subject to the cap on itemized deduction benefits",
         "type": "bool",
         "validators": {
@@ -6950,14 +6630,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Long term capital gain and qualified dividends (regular/non-AMT) rate 1",
         "type": "float",
         "validators": {
@@ -7128,14 +6804,10 @@
                 "value": 77200.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "for _CG_brk2",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Top of long-term capital gains and qualified dividends (regular/non-AMT) tax bracket 1",
         "type": "float",
         "validators": {
@@ -7160,14 +6832,10 @@
                 "value": 0.15
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Long term capital gain and qualified dividends (regular/non-AMT) rate 2",
         "type": "float",
         "validators": {
@@ -7338,14 +7006,10 @@
                 "value": 479000.0
             }
         ],
-        "out_of_range_minmsg": "for _CG_brk1",
-        "out_of_range_maxmsg": "for _CG_brk3",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Top of long-term capital gains and qualified dividends (regular/non-AMT) tax bracket 2",
         "type": "float",
         "validators": {
@@ -7370,14 +7034,10 @@
                 "value": 0.2
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Long term capital gain and qualified dividends (regular/non-AMT) rate 3",
         "type": "float",
         "validators": {
@@ -7548,14 +7208,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "for _CG_brk2",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Top of long-term capital gains and qualified dividend tax (regular/non-AMT) bracket 3",
         "type": "float",
         "validators": {
@@ -7580,14 +7236,10 @@
                 "value": 1.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Long term capital gain and qualified dividends (regular/non-AMT) rate 4",
         "type": "float",
         "validators": {
@@ -7612,14 +7264,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Long term capital gain and qualified dividends (AMT) rate 1",
         "type": "float",
         "validators": {
@@ -7790,14 +7438,10 @@
                 "value": 77200.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "for _AMT_CG_brk2",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Top of long-term capital gains and qualified dividends (AMT) tax bracket 1",
         "type": "float",
         "validators": {
@@ -7822,14 +7466,10 @@
                 "value": 0.15
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Long term capital gain and qualified dividends (AMT) rate 2",
         "type": "float",
         "validators": {
@@ -8000,14 +7640,10 @@
                 "value": 479000.0
             }
         ],
-        "out_of_range_minmsg": "for _AMT_CG_brk1",
-        "out_of_range_maxmsg": "for _AMT_CG_brk3",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Top of long-term capital gains and qualified dividends (AMT) tax bracket 2",
         "type": "float",
         "validators": {
@@ -8032,14 +7668,10 @@
                 "value": 0.2
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Long term capital gain and qualified dividends (AMT) rate 3",
         "type": "float",
         "validators": {
@@ -8210,14 +7842,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "for _AMT_CG_brk2",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Long term capital gain and qualified dividends (AMT) threshold 3",
         "type": "float",
         "validators": {
@@ -8242,14 +7870,10 @@
                 "value": 1.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Long term capital gain and qualified dividends (AMT) rate 4",
         "type": "float",
         "validators": {
@@ -8274,14 +7898,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Long term capital gains and qualified dividends taxed no differently than regular taxable income",
         "type": "bool",
         "validators": {
@@ -8326,14 +7946,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Dollar amount of all capital gains and qualified dividends that are excluded from AGI.",
         "type": "float",
         "validators": {
@@ -8358,14 +7974,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Fraction of all capital gains and qualified dividends in excess of the dollar exclusion that are excluded from AGI.",
         "type": "float",
         "validators": {
@@ -8442,14 +8054,10 @@
                 "value": 0.1
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax rate 1",
         "type": "float",
         "validators": {
@@ -8820,14 +8428,10 @@
                 "value": 22585.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "for _II_brk2",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 1",
         "type": "float",
         "validators": {
@@ -8904,14 +8508,10 @@
                 "value": 0.15
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax rate 2",
         "type": "float",
         "validators": {
@@ -9282,14 +8882,10 @@
                 "value": 91915.0
             }
         ],
-        "out_of_range_minmsg": "for _II_brk1",
-        "out_of_range_maxmsg": "for _II_brk3",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 2",
         "type": "float",
         "validators": {
@@ -9366,14 +8962,10 @@
                 "value": 0.25
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax rate 3",
         "type": "float",
         "validators": {
@@ -9744,14 +9336,10 @@
                 "value": 185403.0
             }
         ],
-        "out_of_range_minmsg": "for _II_brk2",
-        "out_of_range_maxmsg": "for _II_brk4",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 3",
         "type": "float",
         "validators": {
@@ -9828,14 +9416,10 @@
                 "value": 0.28
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax rate 4",
         "type": "float",
         "validators": {
@@ -10206,14 +9790,10 @@
                 "value": 282586.0
             }
         ],
-        "out_of_range_minmsg": "for _II_brk3",
-        "out_of_range_maxmsg": "for _II_brk5",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 4",
         "type": "float",
         "validators": {
@@ -10290,14 +9870,10 @@
                 "value": 0.33
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax rate 5",
         "type": "float",
         "validators": {
@@ -10668,14 +10244,10 @@
                 "value": 504622.0
             }
         ],
-        "out_of_range_minmsg": "for _II_brk4",
-        "out_of_range_maxmsg": "for _II_brk6",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket (upper threshold) 5",
         "type": "float",
         "validators": {
@@ -10752,14 +10324,10 @@
                 "value": 0.35
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax rate 6",
         "type": "float",
         "validators": {
@@ -11130,14 +10698,10 @@
                 "value": 570015.0
             }
         ],
-        "out_of_range_minmsg": "for _II_brk5",
-        "out_of_range_maxmsg": "for _II_brk7",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket 6",
         "type": "float",
         "validators": {
@@ -11214,14 +10778,10 @@
                 "value": 0.396
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax rate 7",
         "type": "float",
         "validators": {
@@ -11592,14 +11152,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "for _II_brk6",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax bracket 7",
         "type": "float",
         "validators": {
@@ -11624,14 +11180,10 @@
                 "value": 1.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Personal income (regular/non-AMT/non-pass-through) tax rate 8",
         "type": "float",
         "validators": {
@@ -11708,14 +11260,10 @@
                 "value": 0.1
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax rate 1",
         "type": "float",
         "validators": {
@@ -12086,14 +11634,10 @@
                 "value": 22585.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "for _PT_brk2",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax bracket (upper threshold) 1",
         "type": "float",
         "validators": {
@@ -12170,14 +11714,10 @@
                 "value": 0.15
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax rate 2",
         "type": "float",
         "validators": {
@@ -12548,14 +12088,10 @@
                 "value": 91915.0
             }
         ],
-        "out_of_range_minmsg": "for _PT_brk1",
-        "out_of_range_maxmsg": "for _PT_brk3",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax bracket (upper threshold) 2",
         "type": "float",
         "validators": {
@@ -12632,14 +12168,10 @@
                 "value": 0.25
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax rate 3",
         "type": "float",
         "validators": {
@@ -13010,14 +12542,10 @@
                 "value": 185403.0
             }
         ],
-        "out_of_range_minmsg": "for _PT_brk2",
-        "out_of_range_maxmsg": "for _PT_brk4",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax bracket (upper threshold) 3",
         "type": "float",
         "validators": {
@@ -13094,14 +12622,10 @@
                 "value": 0.28
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax rate 4",
         "type": "float",
         "validators": {
@@ -13472,14 +12996,10 @@
                 "value": 282586.0
             }
         ],
-        "out_of_range_minmsg": "for _PT_brk3",
-        "out_of_range_maxmsg": "for _PT_brk5",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax bracket (upper threshold) 4",
         "type": "float",
         "validators": {
@@ -13556,14 +13076,10 @@
                 "value": 0.33
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax rate 5",
         "type": "float",
         "validators": {
@@ -13934,14 +13450,10 @@
                 "value": 504622.0
             }
         ],
-        "out_of_range_minmsg": "for _PT_brk4",
-        "out_of_range_maxmsg": "for _PT_brk6",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax bracket (upper threshold) 5",
         "type": "float",
         "validators": {
@@ -14018,14 +13530,10 @@
                 "value": 0.35
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax rate 6",
         "type": "float",
         "validators": {
@@ -14396,14 +13904,10 @@
                 "value": 570015.0
             }
         ],
-        "out_of_range_minmsg": "for _PT_brk5",
-        "out_of_range_maxmsg": "for _PT_brk7",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax bracket (upper threshold) 6",
         "type": "float",
         "validators": {
@@ -14480,14 +13984,10 @@
                 "value": 0.396
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income tax rate 7",
         "type": "float",
         "validators": {
@@ -14858,14 +14358,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "for _PT_brk6",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Extra pass-through income tax bracket",
         "type": "float",
         "validators": {
@@ -14890,14 +14386,10 @@
                 "value": 1.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Extra pass-through income tax rate",
         "type": "float",
         "validators": {
@@ -14922,14 +14414,10 @@
                 "value": 1.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Share of active business income eligible for PT rate schedule",
         "type": "float",
         "validators": {
@@ -14954,14 +14442,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Share of passive business income eligible for PT rate schedule",
         "type": "float",
         "validators": {
@@ -14986,14 +14470,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Wages included in (positive) active business income eligible for PT rates",
         "type": "bool",
         "validators": {
@@ -15018,14 +14498,10 @@
                 "value": true
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "PT taxable income stacked on top of regular taxable income",
         "type": "bool",
         "validators": {
@@ -15102,14 +14578,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Pass-through income exclusion rate",
         "type": "float",
         "validators": {
@@ -15186,14 +14658,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Wage limit rate on pass-through income exclusion",
         "type": "float",
         "validators": {
@@ -15564,14 +15032,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Phase-in threshold of wage limit on pass-through income exclusion",
         "type": "float",
         "validators": {
@@ -15942,14 +15406,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Phase-in rate of wage limit on pass-through income exclusion",
         "type": "float",
         "validators": {
@@ -16321,14 +15781,10 @@
                 "value": 102329.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "AMT exemption amount",
         "type": "float",
         "validators": {
@@ -16354,14 +15810,10 @@
                 "value": 0.25
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "AMT exemption phaseout rate",
         "type": "float",
         "validators": {
@@ -16733,14 +16185,10 @@
                 "value": 194849.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "AMT exemption phaseout start",
         "type": "float",
         "validators": {
@@ -16785,14 +16233,10 @@
                 "value": 7600.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Child AMT exemption additional income base",
         "type": "float",
         "validators": {
@@ -16817,14 +16261,10 @@
                 "value": 18
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Age ceiling for special AMT exemption",
         "type": "int",
         "validators": {
@@ -16850,14 +16290,10 @@
                 "value": 0.26
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "AMT rate 1",
         "type": "float",
         "validators": {
@@ -16903,14 +16339,10 @@
                 "value": 191100.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "AMT bracket 1 (upper threshold)",
         "type": "float",
         "validators": {
@@ -16936,14 +16368,10 @@
                 "value": 0.02
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Additional AMT rate for AMT taxable income above AMT bracket 1",
         "type": "float",
         "validators": {
@@ -17020,14 +16448,10 @@
                 "value": 302083.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "AMT exemption phaseout ending AMT taxable income for Married filling Separately",
         "type": "float",
         "validators": {
@@ -17052,14 +16476,10 @@
                 "value": 3000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum child & dependent care credit per dependent",
         "type": "float",
         "validators": {
@@ -17083,14 +16503,10 @@
                 "value": 15000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Child & dependent care credit phaseout start",
         "type": "float",
         "validators": {
@@ -17115,14 +16531,10 @@
                 "value": 35.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Child & dependent care credit phaseout percentage rate ceiling",
         "type": "float",
         "validators": {
@@ -17199,14 +16611,10 @@
                 "value": 1000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum nonrefundable child tax credit per child",
         "type": "float",
         "validators": {
@@ -17231,14 +16639,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Bonus child tax credit maximum for qualifying children under five",
         "type": "float",
         "validators": {
@@ -17609,14 +17013,10 @@
                 "value": 75000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Child tax credit phaseout MAGI start",
         "type": "float",
         "validators": {
@@ -17641,14 +17041,10 @@
                 "value": 0.05
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Child and dependent tax credit phaseout rate",
         "type": "float",
         "validators": {
@@ -17725,14 +17121,10 @@
                 "value": 1000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "for _CTC_c",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum refundable additional child tax credit",
         "type": "float",
         "validators": {
@@ -17809,14 +17201,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum nonrefundable other-dependent credit",
         "type": "float",
         "validators": {
@@ -17862,14 +17250,10 @@
                 "value": 250000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Net Investment Income Tax modified AGI threshold",
         "type": "float",
         "validators": {
@@ -17894,14 +17278,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Whether or not partnership and S-corp income is in NIIT base",
         "type": "bool",
         "validators": {
@@ -17926,14 +17306,10 @@
                 "value": 0.038
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Net Investment Income Tax rate",
         "type": "float",
         "validators": {
@@ -18074,14 +17450,10 @@
                 "value": 6431.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum earned income credit",
         "type": "float",
         "validators": {
@@ -18122,14 +17494,10 @@
                 "value": 0.45
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Earned income credit phasein rate",
         "type": "float",
         "validators": {
@@ -18174,14 +17542,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Fraction of maximum earned income credit paid at zero earnings",
         "type": "float",
         "validators": {
@@ -18222,14 +17586,10 @@
                 "value": 0.2106
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Earned income credit phaseout rate",
         "type": "float",
         "validators": {
@@ -18370,14 +17730,10 @@
                 "value": 18660.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Earned income credit phaseout start AGI",
         "type": "float",
         "validators": {
@@ -18518,14 +17874,10 @@
                 "value": 5690.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Extra earned income credit phaseout start AGI for married filling jointly",
         "type": "float",
         "validators": {
@@ -18550,14 +17902,10 @@
                 "value": 25
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Minimum Age for Childless EITC Eligibility",
         "type": "int",
         "validators": {
@@ -18582,14 +17930,10 @@
                 "value": 64
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum Age for Childless EITC Eligibility",
         "type": "int",
         "validators": {
@@ -18634,14 +17978,10 @@
                 "value": 3500.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Maximum investment income before EITC reduction",
         "type": "float",
         "validators": {
@@ -18666,14 +18006,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Rate of EITC reduction when investment income exceeds ceiling",
         "type": "float",
         "validators": {
@@ -18698,14 +18034,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "EITC is individual-based rather than filing-unit based",
         "type": "bool",
         "validators": {
@@ -18730,14 +18062,10 @@
                 "value": 10000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Lifetime learning credit expense limit",
         "type": "float",
         "validators": {
@@ -18782,14 +18110,10 @@
                 "value": 67.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Education tax credit phaseout ends (Single)",
         "type": "float",
         "validators": {
@@ -18834,14 +18158,10 @@
                 "value": 134.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Education tax credit phaseout ends (Married)",
         "type": "float",
         "validators": {
@@ -18866,14 +18186,10 @@
                 "value": 0.15
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Additional Child Tax Credit rate",
         "type": "float",
         "validators": {
@@ -18898,14 +18214,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Bonus additional child tax credit rate for families with qualifying children under 5",
         "type": "float",
         "validators": {
@@ -18982,14 +18294,10 @@
                 "value": 3000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Additional Child Tax Credit income threshold",
         "type": "float",
         "validators": {
@@ -19014,14 +18322,10 @@
                 "value": 3
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Additional Child Tax Credit minimum number of qualified children for different formula",
         "type": "int",
         "validators": {
@@ -19046,14 +18350,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "New refundable child tax credit maximum amount per child",
         "type": "float",
         "validators": {
@@ -19078,14 +18378,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Bonus new refundable child tax credit maximum for qualifying children under five",
         "type": "float",
         "validators": {
@@ -19110,14 +18406,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Whether or not maximum amount of the new refundable child tax credit is available to all",
         "type": "bool",
         "validators": {
@@ -19142,14 +18434,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "New refundable child tax credit amount phasein rate",
         "type": "float",
         "validators": {
@@ -19320,14 +18608,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "New refundable child tax credit phaseout starting AGI",
         "type": "float",
         "validators": {
@@ -19352,14 +18636,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "New refundable child tax credit amount phaseout rate",
         "type": "float",
         "validators": {
@@ -19384,14 +18664,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "New child tax credit refund limited to a decimal fraction of payroll taxes",
         "type": "bool",
         "validators": {
@@ -19416,14 +18692,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "New child tax credit refund limit rate (decimal fraction of payroll taxes)",
         "type": "float",
         "validators": {
@@ -19448,14 +18720,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "New child tax credit refund limit applies to all FICA taxes, not just OASDI",
         "type": "bool",
         "validators": {
@@ -19480,14 +18748,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "New minimum tax; rate as a decimal fraction of AGI",
         "type": "float",
         "validators": {
@@ -19658,14 +18922,10 @@
                 "value": 1000000.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "for _FST_AGI_thd_hi",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Minimum AGI needed to be subject to the new minimum tax",
         "type": "float",
         "validators": {
@@ -19836,14 +19096,10 @@
                 "value": 2000000.0
             }
         ],
-        "out_of_range_minmsg": "for _FST_AGI_thd_lo",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "AGI level at which the New Minimum Tax is fully phased in",
         "type": "float",
         "validators": {
@@ -19868,14 +19124,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "New AGI surtax rate",
         "type": "float",
         "validators": {
@@ -20046,14 +19298,10 @@
                 "value": 9e+99
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Threshold for the new AGI surtax",
         "type": "float",
         "validators": {
@@ -20078,14 +19326,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Dollar amount of lump-sum tax",
         "type": "float",
         "validators": {
@@ -20130,14 +19374,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "UBI benefit for those under 18",
         "type": "float",
         "validators": {
@@ -20182,14 +19422,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "UBI benefit for those 18 through 20",
         "type": "float",
         "validators": {
@@ -20234,14 +19470,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "UBI benefit for those 21 and over",
         "type": "float",
         "validators": {
@@ -20266,14 +19498,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Fraction of UBI benefits excluded from AGI",
         "type": "float",
         "validators": {
@@ -20298,14 +19526,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Credit for retirement savings haircut",
         "type": "float",
         "validators": {
@@ -20330,14 +19554,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Credit for foreign tax haircut",
         "type": "float",
         "validators": {
@@ -20362,14 +19582,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Credit for residential energy haircut",
         "type": "float",
         "validators": {
@@ -20394,14 +19610,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Credit for general business haircut",
         "type": "float",
         "validators": {
@@ -20426,14 +19638,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Credit for previous year minimum tax credit haircut",
         "type": "float",
         "validators": {
@@ -20458,14 +19666,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Refundable portion of the American Opportunity Credit haircut",
         "type": "float",
         "validators": {
@@ -20490,14 +19694,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Nonrefundable portion of the American Opportunity Credit haircut",
         "type": "float",
         "validators": {
@@ -20522,14 +19722,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Schedule R Credit haircut",
         "type": "float",
         "validators": {
@@ -20554,14 +19750,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Other Credits haircut",
         "type": "float",
         "validators": {
@@ -20586,14 +19778,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": false
         },
-        "number_dims": 0,
         "title": "Education Credits haircut",
         "type": "float",
         "validators": {
@@ -20618,14 +19806,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Charity Credit rate",
         "type": "float",
         "validators": {
@@ -20671,14 +19855,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Charity Credit Floor",
         "type": "float",
         "validators": {
@@ -20703,14 +19883,10 @@
                 "value": 0.0
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Charity Credit Floor Rate",
         "type": "float",
         "validators": {
@@ -20735,14 +19911,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": true
         },
-        "number_dims": 0,
         "title": "SSI benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -20767,14 +19939,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Housing benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -20799,14 +19967,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": true
         },
-        "number_dims": 0,
         "title": "SNAP benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -20831,14 +19995,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": true
         },
-        "number_dims": 0,
         "title": "TANF benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -20863,14 +20023,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Veterans benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -20895,14 +20051,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": true
         },
-        "number_dims": 0,
         "title": "WIC benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -20927,14 +20079,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Medicare benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -20959,14 +20107,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Medicaid benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -20991,14 +20135,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Social Security benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -21023,14 +20163,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": true,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Unemployment insurance benefit repeal switch",
         "type": "bool",
         "validators": {
@@ -21055,14 +20191,10 @@
                 "value": false
             }
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "compatible_data": {
             "puf": false,
             "cps": true
         },
-        "number_dims": 0,
         "title": "Other benefit repeal switch",
         "type": "bool",
         "validators": {
