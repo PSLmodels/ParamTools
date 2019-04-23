@@ -172,7 +172,7 @@ class Parameters:
 
         all_params = OrderedDict()
         for param in self._validator_schema.fields:
-            result = self._get(param, False, **labels)
+            result = self._select(param, False, **labels)
             if result or include_empty:
                 if meta_data:
                     param_data = self._data[param]
@@ -195,7 +195,7 @@ class Parameters:
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
         """
-        value_items = self._get(param, False, **self._state)
+        value_items = self._select(param, False, **self._state)
         label_order, value_order = self._resolve_order(param)
         shape = []
         for label in label_order:
@@ -290,7 +290,7 @@ class Parameters:
             InconsistentLabelsException: Value objects do not have consistent
                 labels.
         """
-        value_items = self._get(param, False, **self._state)
+        value_items = self._select(param, False, **self._state)
         used = utils.consistent_labels(value_items)
         if used is None:
             raise InconsistentLabelsException(
@@ -311,7 +311,7 @@ class Parameters:
             self._validator_schema.fields[param].nested.fields["value"].np_type
         )
 
-    def _get(self, param, exact_match, **labels):
+    def _select(self, param, exact_match, **labels):
         """
         Query a parameter along some labels. If exact_match is True,
         all values in `labels` must be equal to the corresponding label
