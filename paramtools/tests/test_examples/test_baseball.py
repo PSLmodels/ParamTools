@@ -14,19 +14,13 @@ def field_map():
 
 
 @pytest.fixture
-def schema_def_path():
-    return os.path.join(CURRENT_PATH, "../../examples/baseball/schema.json")
-
-
-@pytest.fixture
 def defaults_spec_path():
     return os.path.join(CURRENT_PATH, "../../examples/baseball/defaults.json")
 
 
 @pytest.fixture
-def BaseballParams(schema_def_path, defaults_spec_path):
+def BaseballParams(defaults_spec_path):
     class _BaseballParams(parameters.Parameters):
-        schema = schema_def_path
         defaults = defaults_spec_path
 
     return _BaseballParams

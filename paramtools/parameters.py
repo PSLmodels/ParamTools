@@ -20,13 +20,12 @@ from paramtools.exceptions import (
 
 
 class Parameters:
-    schema = None
     defaults = None
     field_map = {}
     array_first = False
 
     def __init__(self, initial_state=None, array_first=None):
-        sb = SchemaBuilder(self.schema, self.defaults, self.field_map)
+        sb = SchemaBuilder(self.defaults, self.field_map)
         defaults, self._validator_schema = sb.build_schemas()
         self.label_validators = sb.label_validators
         self._stateless_label_grid = OrderedDict(

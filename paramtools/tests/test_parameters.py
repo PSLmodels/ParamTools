@@ -18,11 +18,6 @@ CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 @pytest.fixture
-def schema_def_path():
-    return os.path.join(CURRENT_PATH, "schema.json")
-
-
-@pytest.fixture
 def defaults_spec_path():
     return os.path.join(CURRENT_PATH, "defaults.json")
 
@@ -37,18 +32,16 @@ def array_first_defaults(defaults_spec_path):
 
 
 @pytest.fixture
-def TestParams(schema_def_path, defaults_spec_path):
+def TestParams(defaults_spec_path):
     class _TestParams(Parameters):
-        schema = schema_def_path
         defaults = defaults_spec_path
 
     return _TestParams
 
 
 @pytest.fixture(scope="function")
-def af_params(schema_def_path, array_first_defaults):
+def af_params(array_first_defaults):
     class AFParams(Parameters):
-        schema = schema_def_path
         defaults = array_first_defaults
 
     _af_params = AFParams(
@@ -74,6 +67,7 @@ class TestAccess:
 
         with open(defaults_spec_path) as f:
             exp = json.loads(f.read())
+        exp.pop("schema")
 
         assert set(spec1.keys()) == set(exp.keys())
 
@@ -620,8 +614,7 @@ class TestArrayFirst:
 class TestCollisions:
     def test_collision_list(self):
         class CollisionParams(Parameters):
-            schema = {"label_name": "test", "labels": {}, "optional": {}}
-            defaults = {}
+            defaults = {"schema": {"labels": {}, "optional": {}}}
 
         params = CollisionParams()
 
@@ -633,6 +626,7 @@ class TestCollisions:
 
     def test_collision(self):
         defaults_dict = {
+            "schema": {"labels": {}, "optional": {}},
             "errors": {
                 "title": "Collides with 'errors'",
                 "description": "",
@@ -640,11 +634,10 @@ class TestCollisions:
                 "type": "int",
                 "value": [{"value": 0}],
                 "validators": {"range": {"min": 0, "max": 10}},
-            }
+            },
         }
 
         class CollisionParams(Parameters):
-            schema = {"label_name": "test", "labels": {}, "optional": {}}
             defaults = defaults_dict
 
         with pytest.raises(ParameterNameCollisionException) as excinfo:
