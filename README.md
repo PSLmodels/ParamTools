@@ -9,7 +9,7 @@ ParamTools defines the parameter input space for computational modeling projects
 How to use ParamTools
 ---------------------------
 
-Subclass the `Parameters` class and set your [specification schema](https://paramtools.readthedocs.io/en/latest/spec.html#specification-schema) and [default specification](https://paramtools.readthedocs.io/en/latest/spec.html#default-specification) files:
+Subclass the `Parameters` class and set up your [parameters](https://pslmodels.github.io/ParamTools/parameters):
 
 ```python
 from paramtools import Parameters
@@ -149,7 +149,7 @@ py.test -v
 
 Documentation
 ----------------
-Full documentation available at https://paramtools.readthedocs.io/.
+Full documentation available at https://pslmodels.github.io/ParamTools/.
 
 Contributing
 -------------------------
