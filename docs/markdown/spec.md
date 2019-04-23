@@ -295,7 +295,7 @@ JSON Object and Property Definitions
 
 #### Number-Labels property
 
-- "number_dims": The number of labels for the specified value. A scalar (e.g. 10) has zero labels, a list (e.g. [1, 2]) has one label, a nested list (e.g. [[1, 2], [3, 4]]) has two labels, etc.
+- "number_dims": The number of dimensions for the specified value. A scalar (e.g. 10) has zero labels, a list (e.g. [1, 2]) has one label, a nested list (e.g. [[1, 2], [3, 4]]) has two labels, etc.
     - Example:
         Note that "value" is a scalar.
         ```json

@@ -323,10 +323,10 @@ def get_type(data):
     }
     types = dict(FIELD_MAP, **numeric_types)
     fieldtype = types[data["type"]]
-    label = data.get("number_dims", 0)
-    while label > 0:
+    dim = data.get("number_dims", 0)
+    while dim > 0:
         fieldtype = fields.List(fieldtype, allow_none=True)
-        label -= 1
+        dim -= 1
     return fieldtype
 
 

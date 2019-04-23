@@ -455,7 +455,7 @@ Type property
 Number-Labels property
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--  "number\_labels": The number of labels for the specified value. A
+-  "number\_labels": The number of dimensions for the specified value. A
    scalar (e.g. 10) has zero labels, a list (e.g. [1, 2]) has one
    label, a nested list (e.g. [[1, 2], [3, 4]]) has two labels,
    etc.
