@@ -60,12 +60,12 @@ def get_leaves(item):
     return gl.leaves
 
 
-def ravel(ndim_list):
+def ravel(nlabel_list):
     """ only up to 2D for now. """
-    if not isinstance(ndim_list, list):
-        return ndim_list
+    if not isinstance(nlabel_list, list):
+        return nlabel_list
     raveled = []
-    for maybe_list in ndim_list:
+    for maybe_list in nlabel_list:
         if isinstance(maybe_list, list):
             for item in maybe_list:
                 raveled.append(item)
@@ -74,10 +74,10 @@ def ravel(ndim_list):
     return raveled
 
 
-def consistent_dims(value_items):
+def consistent_labels(value_items):
     """
-    Get dimensions used consistently across all value objects.
-    Returns None if dimensions are omitted or added for
+    Get labels used consistently across all value objects.
+    Returns None if labels are omitted or added for
     some value object(s).
     """
     used = set(k for k in value_items[0] if k != "value")

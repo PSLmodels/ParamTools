@@ -1,6 +1,6 @@
 {
     "schema_name": "weather",
-    "dims": {
+    "labels": {
         "city": {
             "type": "str",
             "validators": {"choice": {"choices": ["Atlanta, GA",

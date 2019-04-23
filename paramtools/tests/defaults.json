@@ -6,8 +6,8 @@
         "opt0": "an option",
         "type": "int",
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": 1},
-            {"dim0": "one", "dim1": 2, "value": 2}
+            {"label0": "zero", "label1": 1, "value": 1},
+            {"label0": "one", "label1": 2, "value": 2}
         ],
         "validators": {"range": {"min": 0, "max": "max_int_param"}}
     },
@@ -18,8 +18,8 @@
         "opt0": "an option",
         "type": "int",
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": 3},
-            {"dim0": "one", "dim1": 2, "value": 4}
+            {"label0": "zero", "label1": 1, "value": 3},
+            {"label0": "one", "label1": 2, "value": 4}
         ],
         "validators": {"range": {"min": "min_int_param", "max": 10}}
     },
@@ -37,7 +37,7 @@
         "opt0": "another option",
         "type": "date",
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
+            {"label0": "zero", "label1": 1, "value": "2018-01-15"}
         ],
         "validators": {"date_range": {"min": "2018-01-01", "max": "2018-12-31"}}
     },
@@ -48,7 +48,7 @@
         "opt0": "an option",
         "type": "date",
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
+            {"label0": "zero", "label1": 1, "value": "2018-01-15"}
         ],
         "validators": {"date_range": {"min": "2018-01-01", "max": "date_max_param"}}
     },
@@ -59,7 +59,7 @@
         "opt0": "an option",
         "type": "date",
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
+            {"label0": "zero", "label1": 1, "value": "2018-01-15"}
         ],
         "validators": {"date_range": {"min": "date_min_param", "max": "2018-12-31"}}
     },
@@ -70,7 +70,7 @@
         "type": "float",
         "number_dims": 1,
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": [1, 2.0, 3.5, 4.6]}
+            {"label0": "zero", "label1": 1, "value": [1, 2.0, 3.5, 4.6]}
         ],
         "validators": {"range": {"min": 0, "max": 10}}
     },
@@ -97,43 +97,43 @@
         "opt0": "an option",
         "type": "int",
         "value": [
-            {"dim0": "zero", "dim1": 0, "dim2": 0, "value": 1},
-            {"dim0": "zero", "dim1": 0, "dim2": 1, "value": 2},
-            {"dim0": "zero", "dim1": 0, "dim2": 2, "value": 3},
-            {"dim0": "zero", "dim1": 1, "dim2": 0, "value": 4},
-            {"dim0": "zero", "dim1": 1, "dim2": 1, "value": 5},
-            {"dim0": "zero", "dim1": 1, "dim2": 2, "value": 6},
-            {"dim0": "zero", "dim1": 2, "dim2": 0, "value": 7},
-            {"dim0": "zero", "dim1": 2, "dim2": 1, "value": 8},
-            {"dim0": "zero", "dim1": 2, "dim2": 2, "value": 9},
-            {"dim0": "zero", "dim1": 3, "dim2": 0, "value": 10},
-            {"dim0": "zero", "dim1": 3, "dim2": 1, "value": 11},
-            {"dim0": "zero", "dim1": 3, "dim2": 2, "value": 12},
-            {"dim0": "zero", "dim1": 4, "dim2": 0, "value": 13},
-            {"dim0": "zero", "dim1": 4, "dim2": 1, "value": 14},
-            {"dim0": "zero", "dim1": 4, "dim2": 2, "value": 15},
-            {"dim0": "zero", "dim1": 5, "dim2": 0, "value": 16},
-            {"dim0": "zero", "dim1": 5, "dim2": 1, "value": 17},
-            {"dim0": "zero", "dim1": 5, "dim2": 2, "value": 18},
+            {"label0": "zero", "label1": 0, "label2": 0, "value": 1},
+            {"label0": "zero", "label1": 0, "label2": 1, "value": 2},
+            {"label0": "zero", "label1": 0, "label2": 2, "value": 3},
+            {"label0": "zero", "label1": 1, "label2": 0, "value": 4},
+            {"label0": "zero", "label1": 1, "label2": 1, "value": 5},
+            {"label0": "zero", "label1": 1, "label2": 2, "value": 6},
+            {"label0": "zero", "label1": 2, "label2": 0, "value": 7},
+            {"label0": "zero", "label1": 2, "label2": 1, "value": 8},
+            {"label0": "zero", "label1": 2, "label2": 2, "value": 9},
+            {"label0": "zero", "label1": 3, "label2": 0, "value": 10},
+            {"label0": "zero", "label1": 3, "label2": 1, "value": 11},
+            {"label0": "zero", "label1": 3, "label2": 2, "value": 12},
+            {"label0": "zero", "label1": 4, "label2": 0, "value": 13},
+            {"label0": "zero", "label1": 4, "label2": 1, "value": 14},
+            {"label0": "zero", "label1": 4, "label2": 2, "value": 15},
+            {"label0": "zero", "label1": 5, "label2": 0, "value": 16},
+            {"label0": "zero", "label1": 5, "label2": 1, "value": 17},
+            {"label0": "zero", "label1": 5, "label2": 2, "value": 18},
 
-            {"dim0": "one", "dim1": 0, "dim2": 0, "value": 19},
-            {"dim0": "one", "dim1": 0, "dim2": 1, "value": 20},
-            {"dim0": "one", "dim1": 0, "dim2": 2, "value": 21},
-            {"dim0": "one", "dim1": 1, "dim2": 0, "value": 22},
-            {"dim0": "one", "dim1": 1, "dim2": 1, "value": 23},
-            {"dim0": "one", "dim1": 1, "dim2": 2, "value": 24},
-            {"dim0": "one", "dim1": 2, "dim2": 0, "value": 25},
-            {"dim0": "one", "dim1": 2, "dim2": 1, "value": 26},
-            {"dim0": "one", "dim1": 2, "dim2": 2, "value": 27},
-            {"dim0": "one", "dim1": 3, "dim2": 0, "value": 28},
-            {"dim0": "one", "dim1": 3, "dim2": 1, "value": 29},
-            {"dim0": "one", "dim1": 3, "dim2": 2, "value": 30},
-            {"dim0": "one", "dim1": 4, "dim2": 0, "value": 31},
-            {"dim0": "one", "dim1": 4, "dim2": 1, "value": 32},
-            {"dim0": "one", "dim1": 4, "dim2": 2, "value": 33},
-            {"dim0": "one", "dim1": 5, "dim2": 0, "value": 34},
-            {"dim0": "one", "dim1": 5, "dim2": 1, "value": 35},
-            {"dim0": "one", "dim1": 5, "dim2": 2, "value": 36}
+            {"label0": "one", "label1": 0, "label2": 0, "value": 19},
+            {"label0": "one", "label1": 0, "label2": 1, "value": 20},
+            {"label0": "one", "label1": 0, "label2": 2, "value": 21},
+            {"label0": "one", "label1": 1, "label2": 0, "value": 22},
+            {"label0": "one", "label1": 1, "label2": 1, "value": 23},
+            {"label0": "one", "label1": 1, "label2": 2, "value": 24},
+            {"label0": "one", "label1": 2, "label2": 0, "value": 25},
+            {"label0": "one", "label1": 2, "label2": 1, "value": 26},
+            {"label0": "one", "label1": 2, "label2": 2, "value": 27},
+            {"label0": "one", "label1": 3, "label2": 0, "value": 28},
+            {"label0": "one", "label1": 3, "label2": 1, "value": 29},
+            {"label0": "one", "label1": 3, "label2": 2, "value": 30},
+            {"label0": "one", "label1": 4, "label2": 0, "value": 31},
+            {"label0": "one", "label1": 4, "label2": 1, "value": 32},
+            {"label0": "one", "label1": 4, "label2": 2, "value": 33},
+            {"label0": "one", "label1": 5, "label2": 0, "value": 34},
+            {"label0": "one", "label1": 5, "label2": 1, "value": 35},
+            {"label0": "one", "label1": 5, "label2": 2, "value": 36}
 
         ],
         "validators": {"range": {"min": 1, "max": 9}}
