@@ -27,7 +27,6 @@ The ParamTools JSON file is split into two components: a component that defines 
     "personal_exemption": {
         "title": "Personal Exemption",
         "description": "A simple version of the personal exemption.",
-        "notes": "",
         "cpi_inflatable": true,
         "cpi_inflated": true,
         "type": "float",
