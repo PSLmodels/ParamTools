@@ -434,16 +434,6 @@ class Parameters:
             "labels": defaultdict(dict),
         }
 
-        def to_list(value, messages, formatted_errors):
-            for message in messages:
-                is_type_error = message.startswith(
-                    "Invalid"
-                ) or message.startswith("Not a valid")
-                if is_type_error:
-                    formatted_errors_ix.append(f"{message[:-1]}: {value}.")
-                else:
-                    formatted_errors_ix.append(message)
-
         for pname, data in ve.messages.items():
             error_labels = []
             formatted_errors = []
@@ -456,15 +446,13 @@ class Parameters:
                     }
                 )
                 formatted_errors_ix = []
-                for attribute, messages in marshmessages.items():
-                    value = params[pname][ix][attribute]
-                    if isinstance(messages, list):
-                        to_list(value, messages, formatted_errors)
-                    else:
-                        for val_ix, messagelist in messages.items():
-                            to_list(
-                                value[val_ix], messagelist, formatted_errors_ix
-                            )
+                for _, messages in marshmessages.items():
+                    if messages:
+                        if isinstance(messages, list):
+                            formatted_errors_ix += messages
+                        else:
+                            for _, messagelist in messages.items():
+                                formatted_errors_ix += messagelist
                 formatted_errors.append(formatted_errors_ix)
             error_info["messages"][pname] = formatted_errors
             error_info["labels"][pname] = error_labels

@@ -247,24 +247,23 @@ class TestErrors:
         params = TestParams()
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
-        msg = ["Not a valid string: 4."]
+        msg = ["Not a valid string."]
         assert excinfo.value.args[0]["str_choice_param"] == msg
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
-        msg = ["Not a valid string: 4."]
+        msg = ["Not a valid string."]
         assert params.errors["str_choice_param"] == msg
 
         params = TestParams()
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
-        msg = ["Not a valid string: 4."]
+        msg = ["Not a valid string."]
         assert excinfo.value.args[0]["str_choice_param"] == msg
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
-        params.errors["str_choice_param"] == ["Not a valid string: 4"]
-        # params.errors["str_choice_param"] == ["Not a valid string: 4"]
+        params.errors["str_choice_param"] == ["Not a valid string."]
 
     def test_errors_default_reference_param(self, TestParams):
         params = TestParams()
