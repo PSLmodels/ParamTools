@@ -79,17 +79,18 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#parameters">Parameters</a></li>
-            <li><a href="#input-structure">Input Structure</a></li>
+            <li><a href="#parameters-schema">Parameters Schema</a></li>
             <li><a href="#default-parameters">Default Parameters</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
 <h1 id="parameters">Parameters</h1>
-<p>Define your default parameters as a JSON file and let ParamTools handle the rest. The ParamTools JSON file is split into two components: a component that defines the structure of your default inputs and a component that defines the variables that are used in your model. The first is a top level member named <code>schema</code>. The latter are top-level members named as your model refers to them.</p>
+<p>Define your default parameters and let ParamTools handle the rest.</p>
+<p>The ParamTools JSON file is split into two components: a component that defines the structure of your default inputs and a component that defines the variables that are used in your model. The first component is a top level member named <code>schema</code>. The second component consists of key-value pairs where the key is the parameter's name and the value is its data.</p>
 <pre><code class="json">{
     &quot;schema&quot;: {
-        &quot;selectors&quot;: {
+        &quot;labels&quot;: {
             &quot;year&quot;: {
                 &quot;type&quot;: &quot;int&quot;,
                 &quot;validators&quot;: {&quot;range&quot;: {&quot;min&quot;: 2013, &quot;max&quot;: 2027}}
@@ -146,18 +147,26 @@
 }
 </code></pre>
 
-<h2 id="input-structure">Input Structure</h2>
+<h2 id="parameters-schema">Parameters Schema</h2>
 <pre><code class="json">{
     &quot;schema&quot;: {
-        &quot;selectors&quot;: &quot;mapping of selector objects&quot;
-    },
-    &quot;additional_members&quot;: &quot;mapping of additional member objects&quot;
+        &quot;labels&quot;: {
+            &quot;year&quot;: {
+                &quot;type&quot;: &quot;int&quot;,
+                &quot;validators&quot;: {&quot;range&quot;: {&quot;min&quot;: 2013, &quot;max&quot;: 2027}}
+            }
+        },
+        &quot;additional_members&quot;: {
+            &quot;cpi_inflatable&quot;: {&quot;type&quot;: &quot;bool&quot;},
+            &quot;cpi_inflated&quot;: {&quot;type&quot;: &quot;bool&quot;}
+        }
+    }
 }
 </code></pre>
 
 <ul>
-<li>Selector Objects are used to define the ways in which a parameter's values are defined, accessed, and updated.</li>
-<li>Additional Members are top level members that are used by your model and not required by ParamTools.</li>
+<li><code>labels</code>: Labels are used for defining, accessing, and updating a parameter's values.</li>
+<li><code>additional_members</code>: Additional Members are parameter level members that are specific to your model. For example, "title" is a parameter level member that is required by ParamTools, but "cpi_inflated" is not. Therefore, "cpi_inflated" needs to be defined in <code>additional_members</code>.</li>
 </ul>
 <h2 id="default-parameters">Default Parameters</h2>
 <pre><code class="json">{
@@ -200,44 +209,31 @@
 <li><code>notes</code>: (<em>optional</em>) Additional advice or information.</li>
 <li><code>type</code>: Data type of the parameter. Allowed types are <code>int</code>, <code>float</code>, <code>bool</code>, <code>str</code> and <code>date</code> (YYYY-MM-DD).</li>
 <li>
-<p><code>number_dims</code>: (<em>optional, default is 0</em>) Number of dimensions for the value, as defined by <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.ndim.html"><code>np.ndim</code></a></p>
+<p><code>number_dims</code>: (<em>optional, default is 0</em>) Number of dimensions for the value, as defined by <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.ndim.html"><code>np.ndim</code></a>.</p>
 </li>
 <li>
-<p><code>value</code>: Value of the parameter and optionally, the corresponding selectors. It can be written in two ways:</p>
+<p><code>value</code>: Value of the parameter and optionally, the corresponding labels. It can be written in two ways:</p>
+<ul>
+<li>
+<p>if labels are used: <code>{"value": [{"value": "my value", **labels}]}</code></p>
 </li>
 <li>
-<p>if selectors are used:</p>
-<pre><code>```json
-{
-    "value": [{"value": "my value", **selectors}]
-}
-```
-</code></pre>
+<p>if labels are not used: <code>{"value": "my value"}</code></p>
+</li>
+</ul>
 </li>
 <li>
-<p>if selectors are not used:</p>
-<pre><code>```json
-{
-    "value": "my value"
-}
-```
-</code></pre>
+<p><code>validators</code>: Key-value pairs of the validator objects (<em>the ranges are inclusive</em>):</p>
 </li>
-<li>
-<p><code>validators</code>: Key-value pairs of the validator objects:</p>
-<pre><code>```json
-{
-    "validators": {
-        "range": {"min": "min value", "max": "max value"},
-        "choice": {"choices": ["list", "of", "allowed", "values"]},
-        "date_range": {"min": "2018-01-01", "max": "2018-06-01"}
+</ul>
+<pre><code class="json">{
+    &quot;validators&quot;: {
+        &quot;range&quot;: {&quot;min&quot;: &quot;min value&quot;, &quot;max&quot;: &quot;max value&quot;},
+        &quot;choice&quot;: {&quot;choices&quot;: [&quot;list&quot;, &quot;of&quot;, &quot;allowed&quot;, &quot;values&quot;]},
+        &quot;date_range&quot;: {&quot;min&quot;: &quot;2018-01-01&quot;, &quot;max&quot;: &quot;2018-06-01&quot;}
     }
 }
-```
-</code></pre>
-<p><em>Note that the ranges are inclusive.</em></p>
-</li>
-</ul></div>
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">
