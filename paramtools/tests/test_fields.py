@@ -31,15 +31,15 @@ def test_contrib_fields():
     choice_validator = validate.OneOf(choices=["one", "two"])
 
     s = fields.Str(validate=[choice_validator])
-    assert s.mesh() == ["one", "two"]
+    assert s.grid() == ["one", "two"]
     s = fields.Str()
-    assert s.mesh() == []
+    assert s.grid() == []
 
     s = fields.Integer(validate=[range_validator])
-    assert s.mesh() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    assert s.grid() == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     s = fields.Str()
-    assert s.mesh() == []
+    assert s.grid() == []
 
     # date will need an interval argument.
     s = fields.Date(validate=[daterange_validator])
-    assert s.mesh() == [datetime.date(2019, 1, i) for i in range(1, 6, 2)]
+    assert s.grid() == [datetime.date(2019, 1, i) for i in range(1, 6, 2)]

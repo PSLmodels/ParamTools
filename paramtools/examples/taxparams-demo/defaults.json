@@ -1,4 +1,37 @@
 {
+    "schema": {
+        "labels": {
+            "year": {
+                "type": "int",
+                "validators": {"range": {"min": 2013, "max": 2027}}
+            },
+            "marital_status": {
+                "type": "str",
+                "validators": {"choice": {"choices": ["single", "joint", "separate",
+                                                     "headhousehold", "widow"]}}
+            },
+            "idedtype": {
+                "type": "str",
+                "validators": {"choice": {"choices": ["medical", "statelocal",
+                                                     "realestate", "casualty",
+                                                     "misc", "interest", "charity"]}}
+            },
+            "EIC": {
+                "type": "str",
+                "validators": {"choice": {"choices": ["0kids", "1kid",
+                                                     "2kids", "3+kids"]}}
+            }
+        },
+        "additional_members": {
+            "section_1": {"type": "str", "number_dims": 0},
+            "section_2": {"type": "str", "number_dims": 0},
+            "section_3": {"type": "str", "number_dims": 0},
+            "irs_ref": {"type": "str", "number_dims": 0},
+            "start_year": {"type": "int", "number_dims": 0},
+            "cpi_inflatable": {"type": "bool", "number_dims": 0},
+            "cpi_inflated": {"type": "bool", "number_dims": 0}
+        }
+    },
     "standard_deduction": {
         "title": "Standard deduction amount",
         "description": "Amount filing unit can use as a standard deduction.",
@@ -10,7 +43,6 @@
         "cpi_inflatable": true,
         "cpi_inflated": true,
         "type": "float",
-        "number_dims": 0,
         "value": [
             {"year": 2024, "marital_status": "single", "value": 13673.68},
             {"year": 2024, "marital_status": "joint", "value": 27347.36},
@@ -27,9 +59,6 @@
             {"year": 2026, "marital_status": "separate", "value": 7690.0},
             {"year": 2026, "marital_status": "headhousehold", "value": 11323.0},
             {"year": 2026, "marital_status": "widow", "value": 15380.0}],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "validators": {
             "range": {
                 "min": 0,
@@ -51,10 +80,6 @@
             {"year": 2025, "value": 0.124},
             {"year": 2026, "value": 0.124}
         ],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
-        "number_dims": 0,
         "title": "Social Security payroll tax rate",
         "type": "float",
         "validators": {
@@ -74,7 +99,6 @@
         "start_year": 2013,
         "cpi_inflatable": true,
         "cpi_inflated": true,
-        "number_dims": 0,
         "type": "float",
         "value": [
             {"year": 2024, "marital_status": "single", "value": 10853.48},
@@ -92,9 +116,6 @@
             {"year": 2026, "marital_status": "separate", "value": 11293.0},
             {"year": 2026, "marital_status": "headhousehold", "value": 16167.0},
             {"year": 2026, "marital_status": "widow", "value": 22585.0}],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "for _II_brk2",
-        "out_of_range_action": "stop",
         "validators": {
             "range": {
                 "min": 0,
@@ -112,7 +133,6 @@
         "start_year": 2013,
         "cpi_inflatable": true,
         "cpi_inflated": true,
-        "number_dims": 0,
         "type": "float",
         "value":  [
             {"year": 2024, "marital_status": "single", "value": 44097.61},
@@ -130,9 +150,6 @@
             {"year": 2026, "marital_status": "separate", "value": 45957.0},
             {"year": 2026, "marital_status": "headhousehold", "value": 61519.0},
             {"year": 2026, "marital_status": "widow", "value": 91915.0}],
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop",
         "validators": {
             "range": {
                 "min": "ii_bracket_1",

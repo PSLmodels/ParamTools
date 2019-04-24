@@ -1,4 +1,13 @@
 {
+    "schema": {
+        "labels": {
+            "use_2018": {"type": "bool", "validators": {}}
+        },
+        "additional_members": {
+            "section_1": {"type": "str"},
+            "section_2": {"type": "str"}
+        }
+    },
     "pitcher": {
         "title": "Pitcher Name",
         "description": "Name of pitcher to pull data on",
@@ -6,7 +15,6 @@
         "section_2": "Pitcher",
         "notes": "Make sure the name of the pitcher is correct. A good place to reference this is baseball-reference.com",
         "type": "str",
-        "number_dims": 0,
         "value": [{"value": "Clayton Kershaw"}],
         "validators": {"choice": {"choices": ["Clayton Kershaw", "Julio Teheran", "Max Scherzer"]}}
     },
@@ -17,7 +25,6 @@
         "section_2": "Batter",
         "notes": "Make sure the name of the batter is correct. A good place to reference this is baseball-reference.com",
         "type": "str",
-        "number_dims": 0,
         "value": [{"value": "Freddie Freeman"}],
         "validators": {"choice": {"choices": ["Freddie Freeman", "Bryce Harper", "Mookie Betts"]}}
     },
@@ -28,7 +35,6 @@
         "section_2": "Date",
         "notes": "If using the 2018 dataset, only use dates in 2018.",
         "type": "date",
-        "number_dims": 0,
         "value": [{"value": "2018-01-01"}],
         "validators": {"date_range": {"min": "2008-01-01", "max": "end_date"}}
     },
@@ -39,7 +45,6 @@
         "section_2": "Date",
         "notes": "If using the 2018 dataset, only use dates in 2018.",
         "type": "date",
-        "number_dims": 0,
         "value": [{"value": "2018-11-10"}],
         "validators": {"date_range": {"min": "2008-01-01", "max": "2018-11-10"}}
     }

@@ -3,6 +3,7 @@ from marshmallow import fields
 from paramtools.schema import (
     EmptySchema,
     BaseValidatorSchema,
+    ValueObject,
     get_type,
     get_param_schema,
 )
@@ -23,12 +24,12 @@ class SchemaBuilder:
     deserialize and validate parameter data.
     """
 
-    def __init__(self, schema, defaults, field_map={}):
-        schema = utils.read_json(schema)
-        (self.BaseParamSchema, self.dim_validators) = get_param_schema(
+    def __init__(self, defaults, field_map={}):
+        self.defaults = utils.read_json(defaults)
+        schema = self.defaults.pop("schema")
+        (self.BaseParamSchema, self.label_validators) = get_param_schema(
             schema, field_map=field_map
         )
-        self.defaults = utils.read_json(defaults)
 
     def build_schemas(self):
         """
@@ -56,12 +57,17 @@ class SchemaBuilder:
         validator_dict = {}
         for k, v in self.defaults.items():
             fieldtype = get_type(v)
-            classattrs = {"value": fieldtype, **self.dim_validators}
+            classattrs = {"value": fieldtype, **self.label_validators}
+
+            # TODO: what about case where number_dims > 0
+            # if not isinstance(v["value"], list):
+            #     v["value"] = [{"value": v["value"]}]
+
             validator_dict[k] = type(
                 "ValidatorItem", (EmptySchema,), classattrs
             )
 
-            classattrs = {"value": fields.Nested(validator_dict[k], many=True)}
+            classattrs = {"value": ValueObject(validator_dict[k], many=True)}
             param_dict[k] = type(
                 "IndividualParamSchema", (self.BaseParamSchema,), classattrs
             )
@@ -72,7 +78,7 @@ class SchemaBuilder:
         cleaned_defaults = param_schema.load(self.defaults)
 
         classattrs = {
-            k: fields.Nested(v(many=True)) for k, v in validator_dict.items()
+            k: ValueObject(v(many=True)) for k, v in validator_dict.items()
         }
         ValidatorSchema = type(
             "ValidatorSchema", (BaseValidatorSchema,), classattrs

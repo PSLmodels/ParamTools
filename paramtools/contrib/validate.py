@@ -48,7 +48,7 @@ class Range(marshmallow_validate.Range):
 
         return value
 
-    def mesh(self):
+    def grid(self):
         # make np.arange inclusive.
         max_ = self.max + self.step
         arr = np.arange(self.min, max_, self.step)
@@ -59,7 +59,7 @@ class DateRange(Range):
     """
     Implements "date_range" :ref:`spec:Validator object`.
     Behaves like ``Range``, except values are ensured to be
-    ``datetime.date`` type and ``mesh`` has special logic for dates.
+    ``datetime.date`` type and ``grid`` has special logic for dates.
     """
 
     def __init__(
@@ -89,7 +89,7 @@ class DateRange(Range):
         assert len(set(step.keys()) - timedelta_args) == 0
         self.step = datetime.timedelta(**step)
 
-    def mesh(self):
+    def grid(self):
         # make np.arange inclusive.
         max_ = self.max + self.step
         arr = np.arange(self.min, max_, self.step, dtype=datetime.date)
@@ -116,5 +116,5 @@ class OneOf(marshmallow_validate.OneOf):
                 raise ValidationError(self._format_error(val))
         return value
 
-    def mesh(self):
+    def grid(self):
         return self.choices

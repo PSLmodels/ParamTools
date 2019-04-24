@@ -51,12 +51,8 @@ class BaseParamSchema(Schema):
         "description": str,
         "notes": str,
         "type": str (limited to 'int', 'float', 'bool', 'str'),
-        "number_dims": int,
         "value": `BaseValidatorSchema`, "value" type depends on "type" key,
         "range": range schema ({"min": ..., "max": ..., "other ops": ...}),
-        "out_of_range_minmsg": str,
-        "out_of_range_maxmsg": str,
-        "out_of_range_action": str (limited to 'stop' or 'warn')
     }
 
     This class is defined further by a JSON file indicating extra fields that
@@ -65,7 +61,7 @@ class BaseParamSchema(Schema):
 
     title = fields.Str(required=True)
     description = fields.Str(required=True)
-    notes = fields.Str(required=True)
+    notes = fields.Str(required=False)
     _type = fields.Str(
         required=True,
         validate=validate.OneOf(
@@ -74,14 +70,9 @@ class BaseParamSchema(Schema):
         attribute="type",
         data_key="type",
     )
-    number_dims = fields.Integer(required=True)
+    number_dims = fields.Integer(default=0, missing=0)
     value = fields.Field(required=True)  # will be specified later
     validators = fields.Nested(ValueValidatorSchema(), required=True)
-    out_of_range_minmsg = fields.Str(required=False)
-    out_of_range_maxmsg = fields.Str(required=False)
-    out_of_range_action = fields.Str(
-        required=False, validate=validate.OneOf(choices=["stop", "warn"])
-    )
 
 
 class EmptySchema(Schema):
@@ -91,6 +82,21 @@ class EmptySchema(Schema):
     """
 
     pass
+
+
+class ValueObject(fields.Nested):
+    """
+    Schema for value objects
+    """
+
+    def _deserialize(self, value, attr, data, partial=None, **kwargs):
+        if not isinstance(value, list) or (
+            isinstance(value, list) and not isinstance(value[0], dict)
+        ):
+            value = [{"value": value}]
+        return super()._deserialize(
+            value, attr, data, partial=partial, **kwargs
+        )
 
 
 class BaseValidatorSchema(Schema):
@@ -143,7 +149,7 @@ class BaseValidatorSchema(Schema):
         """
         param_info = self.context["spec"]._data[param_name]
         # sort keys to guarantee order.
-        dims = " , ".join(
+        labels = " , ".join(
             [
                 f"{k}={param_spec[k]}"
                 for k in sorted(param_spec)
@@ -158,7 +164,7 @@ class BaseValidatorSchema(Schema):
                     validator_name,
                     validator_spec[validator_name],
                     param_name,
-                    dims,
+                    labels,
                     param_spec,
                     raw_data,
                 )
@@ -175,7 +181,7 @@ class BaseValidatorSchema(Schema):
         return errors
 
     def _get_range_validator(
-        self, vname, range_dict, param_name, dims, param_spec, raw_data
+        self, vname, range_dict, param_name, labels, param_spec, raw_data
     ):
         if vname == "range":
             range_class = contrib_validate.Range
@@ -195,45 +201,45 @@ class BaseValidatorSchema(Schema):
             max_value = self._resolve_op_value(
                 max_value, param_name, param_spec, raw_data
             )
-        dim_suffix = f" for dimensions {dims}" if dims else ""
+        label_suffix = f" for labels {labels}" if labels else ""
         min_error = (
-            "{param_name} {input} must be greater than " "{min}{dim_suffix}."
+            "{param_name} {input} must be greater than " "{min}{label_suffix}."
         ).format(
             param_name=param_name,
-            dims=dims,
+            labels=labels,
             input="{input}",
             min="{min}",
-            dim_suffix=dim_suffix,
+            label_suffix=label_suffix,
         )
         max_error = (
-            "{param_name} {input} must be less than " "{max}{dim_suffix}."
+            "{param_name} {input} must be less than " "{max}{label_suffix}."
         ).format(
             param_name=param_name,
-            dims=dims,
+            labels=labels,
             input="{input}",
             max="{max}",
-            dim_suffix=dim_suffix,
+            label_suffix=label_suffix,
         )
         return range_class(min_value, max_value, min_error, max_error)
 
     def _get_choice_validator(
-        self, vname, choice_dict, param_name, dims, param_spec, raw_data
+        self, vname, choice_dict, param_name, labels, param_spec, raw_data
     ):
         choices = choice_dict["choices"]
-        dim_suffix = f" for dimensions {dims}" if dims else ""
+        label_suffix = f" for labels {labels}" if labels else ""
         if len(choices) < 20:
             error_template = (
                 '{param_name} "{input}" must be in list of choices '
-                "{choices}{dim_suffix}."
+                "{choices}{label_suffix}."
             )
         else:
-            error_template = '{param_name} "{input}" must be in list of choices{dim_suffix}.'
+            error_template = '{param_name} "{input}" must be in list of choices{label_suffix}.'
         error = error_template.format(
             param_name=param_name,
-            dims=dims,
+            labels=labels,
             input="{input}",
             choices="{choices}",
-            dim_suffix=dim_suffix,
+            label_suffix=label_suffix,
         )
         return contrib_validate.OneOf(choices, error=error)
 
@@ -270,11 +276,11 @@ class BaseValidatorSchema(Schema):
                 oth_param_name = param_name
             oth_param = self.context["spec"]._data[oth_param_name]
             vals = oth_param["value"]
-        dims_to_check = tuple(k for k in param_spec if k != "value")
+        labels_to_check = tuple(k for k in param_spec if k != "value")
         res = [
             val
             for val in vals
-            if all(val[k] == param_spec[k] for k in dims_to_check)
+            if all(val[k] == param_spec[k] for k in labels_to_check)
         ]
         assert len(res) == 1
         return res[0]["value"]
@@ -290,13 +296,23 @@ CLASS_FIELD_MAP = {
 }
 
 
+INVALID_NUMBER = {"invalid": "Not a valid number: {input}."}
+INVALID_BOOLEAN = {"invalid": "Not a valid boolean: {input}."}
+INVALID_DATE = {"invalid": "Not a valid date: {input}."}
+
 # A few fields that have been instantiated
 FIELD_MAP = {
     "str": contrib_fields.Str(allow_none=True),
-    "int": contrib_fields.Integer(allow_none=True),
-    "float": contrib_fields.Float(allow_none=True),
-    "bool": contrib_fields.Boolean(allow_none=True),
-    "date": contrib_fields.Date(allow_none=True),
+    "int": contrib_fields.Integer(
+        allow_none=True, error_messages=INVALID_NUMBER
+    ),
+    "float": contrib_fields.Float(
+        allow_none=True, error_messages=INVALID_NUMBER
+    ),
+    "bool": contrib_fields.Boolean(
+        allow_none=True, error_messages=INVALID_BOOLEAN
+    ),
+    "date": contrib_fields.Date(allow_none=True, error_messages=INVALID_DATE),
 }
 
 VALIDATOR_MAP = {
@@ -307,17 +323,20 @@ VALIDATOR_MAP = {
 
 
 def get_type(data):
-    # TODO: Use invalid error messages on next marshmallow release
-    # (post 0.3.0rc4)
-    # error_messages = {"invalid": "Invalid input: {input}"}
     numeric_types = {
-        "int": contrib_fields.Int64(allow_none=True),
-        "bool": contrib_fields.Bool_(allow_none=True),
-        "float": contrib_fields.Float64(allow_none=True),
+        "int": contrib_fields.Int64(
+            allow_none=True, error_messages=INVALID_NUMBER
+        ),
+        "bool": contrib_fields.Bool_(
+            allow_none=True, error_messages=INVALID_BOOLEAN
+        ),
+        "float": contrib_fields.Float64(
+            allow_none=True, error_messages=INVALID_NUMBER
+        ),
     }
     types = dict(FIELD_MAP, **numeric_types)
     fieldtype = types[data["type"]]
-    dim = data["number_dims"]
+    dim = data.get("number_dims", 0)
     while dim > 0:
         fieldtype = fields.List(fieldtype, allow_none=True)
         dim -= 1
@@ -336,9 +355,9 @@ def get_param_schema(base_spec, field_map=None):
     else:
         field_map = FIELD_MAP.copy()
     optional_fields = {}
-    for k, v in base_spec["optional"].items():
+    for k, v in base_spec["additional_members"].items():
         fieldtype = field_map[v["type"]]
-        if v["number_dims"] is not None:
+        if v.get("number_dims", 0) > 0:
             d = v["number_dims"]
             while d > 0:
                 fieldtype = fields.List(fieldtype)
@@ -350,12 +369,12 @@ def get_param_schema(base_spec, field_map=None):
         (BaseParamSchema,),
         {k: v for k, v in optional_fields.items()},
     )
-    dim_validators = {}
-    for name, dim in base_spec["dims"].items():
+    label_validators = {}
+    for name, label in base_spec["labels"].items():
         validators = []
-        for vname, kwargs in dim["validators"].items():
+        for vname, kwargs in label["validators"].items():
             validator_class = VALIDATOR_MAP[vname]
             validators.append(validator_class(**kwargs))
-        fieldtype = CLASS_FIELD_MAP[dim["type"]]
-        dim_validators[name] = fieldtype(validate=validators)
-    return ParamSchema, dim_validators
+        fieldtype = CLASS_FIELD_MAP[label["type"]]
+        label_validators[name] = fieldtype(validate=validators)
+    return ParamSchema, label_validators

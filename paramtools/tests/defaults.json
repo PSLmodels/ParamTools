@@ -1,19 +1,35 @@
 {
+    "schema": {
+        "labels": {
+            "label0": {
+                "type": "str",
+                "validators": {"choice": {"choices": ["zero",
+                                                        "one"]}}
+            },
+            "label1": {
+                "type": "int",
+                "validators": {"range": {"min": 0, "max": 5}}
+            },
+            "label2": {
+                "type": "int",
+                "validators": {"range": {"min": 0, "max": 2}}
+            }
+        },
+        "additional_members": {
+            "opt0": {"type": "str"}
+        }
+    },
     "min_int_param": {
         "title": "min integer parameter",
         "description": "Serves as minimum reference variable.",
         "notes": "See max_int_param",
         "opt0": "an option",
         "type": "int",
-        "number_dims": 0,
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": 1},
-            {"dim0": "one", "dim1": 2, "value": 2}
+            {"label0": "zero", "label1": 1, "value": 1},
+            {"label0": "one", "label1": 2, "value": 2}
         ],
-        "validators": {"range": {"min": 0, "max": "max_int_param"}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
+        "validators": {"range": {"min": 0, "max": "max_int_param"}}
     },
     "max_int_param": {
         "title": "max integer parameter",
@@ -21,45 +37,29 @@
         "notes": "See min_int_param",
         "opt0": "an option",
         "type": "int",
-        "number_dims": 0,
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": 3},
-            {"dim0": "one", "dim1": 2, "value": 4}
+            {"label0": "zero", "label1": 1, "value": 3},
+            {"label0": "one", "label1": 2, "value": 4}
         ],
-        "validators": {"range": {"min": "min_int_param", "max": 10}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
+        "validators": {"range": {"min": "min_int_param", "max": 10}}
     },
     "str_choice_param": {
         "title": "String Choice Param",
         "description": "Example for string type params using a choice validator",
-        "notes": "",
         "opt0": "another option",
         "type": "str",
-        "number_dims": 0,
-        "value": [
-            {"value": "value0"}
-        ],
-        "validators": {"choice": {"choices": ["value0", "value1"]}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
+        "value": "value0",
+        "validators": {"choice": {"choices": ["value0", "value1"]}}
     },
     "date_param": {
         "title": "Date parameter",
         "description": "Example for a date parameter",
-        "notes": "",
         "opt0": "another option",
         "type": "date",
-        "number_dims": 0,
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
+            {"label0": "zero", "label1": 1, "value": "2018-01-15"}
         ],
-        "validators": {"date_range": {"min": "2018-01-01", "max": "2018-12-31"}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
+        "validators": {"date_range": {"min": "2018-01-01", "max": "2018-12-31"}}
     },
     "date_min_param": {
         "title": "Date Min Param",
@@ -67,14 +67,10 @@
         "notes": "See date_max_param.",
         "opt0": "an option",
         "type": "date",
-        "number_dims": 0,
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
+            {"label0": "zero", "label1": 1, "value": "2018-01-15"}
         ],
-        "validators": {"date_range": {"min": "2018-01-01", "max": "date_max_param"}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
+        "validators": {"date_range": {"min": "2018-01-01", "max": "date_max_param"}}
     },
     "date_max_param": {
         "title": "Date max parameter",
@@ -82,95 +78,84 @@
         "notes": "See date_min_param.",
         "opt0": "an option",
         "type": "date",
-        "number_dims": 0,
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": "2018-01-15"}
+            {"label0": "zero", "label1": 1, "value": "2018-01-15"}
         ],
-        "validators": {"date_range": {"min": "date_min_param", "max": "2018-12-31"}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
+        "validators": {"date_range": {"min": "date_min_param", "max": "2018-12-31"}}
     },
     "float_list_param": {
         "title": "Float List Param",
         "description": "Example for a float, list param.",
-        "notes": "",
         "opt0": "an option",
         "type": "float",
         "number_dims": 1,
         "value": [
-            {"dim0": "zero", "dim1": 1, "value": [1, 2.0, 3.5, 4.6]}
+            {"label0": "zero", "label1": 1, "value": [1, 2.0, 3.5, 4.6]}
         ],
-        "validators": {"range": {"min": 0, "max": 10}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
+        "validators": {"range": {"min": 0, "max": 10}}
+    },
+    "simple_int_list_param": {
+        "title": "Simple Int List Param",
+        "description": "Test case where param is simple and a list.",
+        "opt0": "an option",
+        "type": "int",
+        "number_dims": 1,
+        "value": [1, 2, 3, 4],
+        "validators": {"range": {"min": 0, "max": 10}}
     },
     "int_default_param": {
         "title": "Integer Default Reference Param",
         "description": "Example for a int param using a default reference value",
-        "notes": "",
         "opt0": "an option",
         "type": "int",
-        "number_dims": 0,
-        "value": [
-            {"value": 2}
-        ],
-        "validators": {"range": {"min": "default", "max": 10}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
+        "value": 2,
+        "validators": {"range": {"min": "default", "max": 10}}
     },
     "int_dense_array_param": {
         "title": "Integer Dense Array Param",
         "description": "Example of using an int type param that supports to/from_array.",
-        "notes": "Dense means that the full space is explicitly spanned in the list of Value objects.",
         "opt0": "an option",
         "type": "int",
-        "number_dims": 0,
         "value": [
-            {"dim0": "zero", "dim1": 0, "dim2": 0, "value": 1},
-            {"dim0": "zero", "dim1": 0, "dim2": 1, "value": 2},
-            {"dim0": "zero", "dim1": 0, "dim2": 2, "value": 3},
-            {"dim0": "zero", "dim1": 1, "dim2": 0, "value": 4},
-            {"dim0": "zero", "dim1": 1, "dim2": 1, "value": 5},
-            {"dim0": "zero", "dim1": 1, "dim2": 2, "value": 6},
-            {"dim0": "zero", "dim1": 2, "dim2": 0, "value": 7},
-            {"dim0": "zero", "dim1": 2, "dim2": 1, "value": 8},
-            {"dim0": "zero", "dim1": 2, "dim2": 2, "value": 9},
-            {"dim0": "zero", "dim1": 3, "dim2": 0, "value": 10},
-            {"dim0": "zero", "dim1": 3, "dim2": 1, "value": 11},
-            {"dim0": "zero", "dim1": 3, "dim2": 2, "value": 12},
-            {"dim0": "zero", "dim1": 4, "dim2": 0, "value": 13},
-            {"dim0": "zero", "dim1": 4, "dim2": 1, "value": 14},
-            {"dim0": "zero", "dim1": 4, "dim2": 2, "value": 15},
-            {"dim0": "zero", "dim1": 5, "dim2": 0, "value": 16},
-            {"dim0": "zero", "dim1": 5, "dim2": 1, "value": 17},
-            {"dim0": "zero", "dim1": 5, "dim2": 2, "value": 18},
+            {"label0": "zero", "label1": 0, "label2": 0, "value": 1},
+            {"label0": "zero", "label1": 0, "label2": 1, "value": 2},
+            {"label0": "zero", "label1": 0, "label2": 2, "value": 3},
+            {"label0": "zero", "label1": 1, "label2": 0, "value": 4},
+            {"label0": "zero", "label1": 1, "label2": 1, "value": 5},
+            {"label0": "zero", "label1": 1, "label2": 2, "value": 6},
+            {"label0": "zero", "label1": 2, "label2": 0, "value": 7},
+            {"label0": "zero", "label1": 2, "label2": 1, "value": 8},
+            {"label0": "zero", "label1": 2, "label2": 2, "value": 9},
+            {"label0": "zero", "label1": 3, "label2": 0, "value": 10},
+            {"label0": "zero", "label1": 3, "label2": 1, "value": 11},
+            {"label0": "zero", "label1": 3, "label2": 2, "value": 12},
+            {"label0": "zero", "label1": 4, "label2": 0, "value": 13},
+            {"label0": "zero", "label1": 4, "label2": 1, "value": 14},
+            {"label0": "zero", "label1": 4, "label2": 2, "value": 15},
+            {"label0": "zero", "label1": 5, "label2": 0, "value": 16},
+            {"label0": "zero", "label1": 5, "label2": 1, "value": 17},
+            {"label0": "zero", "label1": 5, "label2": 2, "value": 18},
 
-            {"dim0": "one", "dim1": 0, "dim2": 0, "value": 19},
-            {"dim0": "one", "dim1": 0, "dim2": 1, "value": 20},
-            {"dim0": "one", "dim1": 0, "dim2": 2, "value": 21},
-            {"dim0": "one", "dim1": 1, "dim2": 0, "value": 22},
-            {"dim0": "one", "dim1": 1, "dim2": 1, "value": 23},
-            {"dim0": "one", "dim1": 1, "dim2": 2, "value": 24},
-            {"dim0": "one", "dim1": 2, "dim2": 0, "value": 25},
-            {"dim0": "one", "dim1": 2, "dim2": 1, "value": 26},
-            {"dim0": "one", "dim1": 2, "dim2": 2, "value": 27},
-            {"dim0": "one", "dim1": 3, "dim2": 0, "value": 28},
-            {"dim0": "one", "dim1": 3, "dim2": 1, "value": 29},
-            {"dim0": "one", "dim1": 3, "dim2": 2, "value": 30},
-            {"dim0": "one", "dim1": 4, "dim2": 0, "value": 31},
-            {"dim0": "one", "dim1": 4, "dim2": 1, "value": 32},
-            {"dim0": "one", "dim1": 4, "dim2": 2, "value": 33},
-            {"dim0": "one", "dim1": 5, "dim2": 0, "value": 34},
-            {"dim0": "one", "dim1": 5, "dim2": 1, "value": 35},
-            {"dim0": "one", "dim1": 5, "dim2": 2, "value": 36}
+            {"label0": "one", "label1": 0, "label2": 0, "value": 19},
+            {"label0": "one", "label1": 0, "label2": 1, "value": 20},
+            {"label0": "one", "label1": 0, "label2": 2, "value": 21},
+            {"label0": "one", "label1": 1, "label2": 0, "value": 22},
+            {"label0": "one", "label1": 1, "label2": 1, "value": 23},
+            {"label0": "one", "label1": 1, "label2": 2, "value": 24},
+            {"label0": "one", "label1": 2, "label2": 0, "value": 25},
+            {"label0": "one", "label1": 2, "label2": 1, "value": 26},
+            {"label0": "one", "label1": 2, "label2": 2, "value": 27},
+            {"label0": "one", "label1": 3, "label2": 0, "value": 28},
+            {"label0": "one", "label1": 3, "label2": 1, "value": 29},
+            {"label0": "one", "label1": 3, "label2": 2, "value": 30},
+            {"label0": "one", "label1": 4, "label2": 0, "value": 31},
+            {"label0": "one", "label1": 4, "label2": 1, "value": 32},
+            {"label0": "one", "label1": 4, "label2": 2, "value": 33},
+            {"label0": "one", "label1": 5, "label2": 0, "value": 34},
+            {"label0": "one", "label1": 5, "label2": 1, "value": 35},
+            {"label0": "one", "label1": 5, "label2": 2, "value": 36}
 
         ],
-        "validators": {"range": {"min": 1, "max": 9}},
-        "out_of_range_minmsg": "",
-        "out_of_range_maxmsg": "",
-        "out_of_range_action": "stop"
+        "validators": {"range": {"min": 1, "max": 9}}
     }
 }

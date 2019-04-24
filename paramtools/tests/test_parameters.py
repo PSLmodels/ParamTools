@@ -7,7 +7,7 @@ import pytest
 from paramtools import (
     ValidationError,
     SparseValueObjectsException,
-    InconsistentDimensionsException,
+    InconsistentLabelsException,
     collision_list,
     ParameterNameCollisionException,
 )
@@ -15,11 +15,6 @@ from paramtools import (
 from paramtools import Parameters
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
-
-
-@pytest.fixture
-def schema_def_path():
-    return os.path.join(CURRENT_PATH, "schema.json")
 
 
 @pytest.fixture
@@ -32,26 +27,25 @@ def array_first_defaults(defaults_spec_path):
     with open(defaults_spec_path) as f:
         r = json.loads(f.read())
     r.pop("float_list_param")
+    r.pop("simple_int_list_param")
     return r
 
 
 @pytest.fixture
-def TestParams(schema_def_path, defaults_spec_path):
+def TestParams(defaults_spec_path):
     class _TestParams(Parameters):
-        schema = schema_def_path
         defaults = defaults_spec_path
 
     return _TestParams
 
 
 @pytest.fixture(scope="function")
-def af_params(schema_def_path, array_first_defaults):
+def af_params(array_first_defaults):
     class AFParams(Parameters):
-        schema = schema_def_path
         defaults = array_first_defaults
 
     _af_params = AFParams(
-        initial_state={"dim0": "zero", "dim1": 1}, array_first=True
+        initial_state={"label0": "zero", "label1": 1}, array_first=True
     )
     return _af_params
 
@@ -62,8 +56,8 @@ def test_init(TestParams):
     assert params._data
     for param in params._data:
         assert getattr(params, param)
-    assert params.dim_mesh
-    assert params.dim_mesh == params._stateless_dim_mesh
+    assert params.label_grid
+    assert params.label_grid == params._stateless_label_grid
 
 
 class TestAccess:
@@ -73,29 +67,30 @@ class TestAccess:
 
         with open(defaults_spec_path) as f:
             exp = json.loads(f.read())
+        exp.pop("schema")
 
         assert set(spec1.keys()) == set(exp.keys())
 
         assert spec1["min_int_param"] == exp["min_int_param"]["value"]
 
         exp = {
-            "min_int_param": [{"dim0": "one", "dim1": 2, "value": 2}],
-            "max_int_param": [{"dim0": "one", "dim1": 2, "value": 4}],
+            "min_int_param": [{"label0": "one", "label1": 2, "value": 2}],
+            "max_int_param": [{"label0": "one", "label1": 2, "value": 4}],
         }
-        spec2 = params.specification(dim0="one")
-        # check that specification method got only the value item with dim0="one"
+        spec2 = params.specification(label0="one")
+        # check that specification method got only the value item with label0="one"
         assert spec2["min_int_param"] == exp["min_int_param"]
         assert spec2["max_int_param"] == exp["max_int_param"]
 
-        # check that get method got only value item with dim0="one"
-        params.set_state(dim0="one")
+        # check that get method got only value item with label0="one"
+        params.set_state(label0="one")
         assert params.min_int_param == exp["min_int_param"]
         assert params.max_int_param == exp["max_int_param"]
 
-        # check that specification method gets other data, not containing a dim0
-        # dimension.
+        # check that specification method gets other data, not containing a label0
+        # label.
         for param, data in spec1.items():
-            if all("dim0" not in val_item for val_item in data):
+            if all("label0" not in val_item for val_item in data):
                 assert spec2[param] == data
 
         params._data["str_choice_param"]["value"] = []
@@ -106,10 +101,10 @@ class TestAccess:
 class TestAdjust:
     def test_adjust_int_param(self, TestParams):
         params = TestParams()
-        params.set_state(dim0="one", dim1=2)
+        params.set_state(label0="one", label1=2)
 
         adjustment = {
-            "min_int_param": [{"dim0": "one", "dim1": 2, "value": 3}]
+            "min_int_param": [{"label0": "one", "label1": 2, "value": 3}]
         }
         params.adjust(adjustment)
         assert params.min_int_param == adjustment["min_int_param"]
@@ -122,16 +117,16 @@ class TestAdjust:
         specified.
         """
         params = TestParams()
-        params.set_state(dim0="zero", dim1=1)
+        params.set_state(label0="zero", label1=1)
         adjustment = {
-            "min_int_param": [{"dim0": "zero", "dim1": 1, "value": 4}],
-            "max_int_param": [{"dim0": "zero", "dim1": 1, "value": 5}],
+            "min_int_param": [{"label0": "zero", "label1": 1, "value": 4}],
+            "max_int_param": [{"label0": "zero", "label1": 1, "value": 5}],
         }
         params.adjust(adjustment)
         assert params.min_int_param == adjustment["min_int_param"]
         assert params.max_int_param == adjustment["max_int_param"]
 
-    def test_adjust_many_dimensions(self, TestParams):
+    def test_adjust_many_labels(self, TestParams):
         """
         Adjust min_int_param above original max_int_param value at same time as
         max_int_param value is adjusted up. This tests that the new param is
@@ -139,30 +134,38 @@ class TestAdjust:
         specified.
         """
         params = TestParams()
-        params.set_state(dim0="zero", dim1=1)
+        params.set_state(label0="zero", label1=1)
         adjustment = {
-            "min_int_param": [{"dim0": "one", "dim1": 2, "value": 2}],
-            "int_default_param": [{"value": 5}],
-            "date_param": [{"dim0": "zero", "dim1": 1, "value": "2018-01-17"}],
+            "min_int_param": [{"label0": "one", "label1": 2, "value": 2}],
+            "int_default_param": 5,
+            "date_param": [
+                {"label0": "zero", "label1": 1, "value": "2018-01-17"}
+            ],
         }
         params.adjust(adjustment)
         # min_int_param is adjusted in the _data attribute but the instance
         # attribute min_int_param is not.
-        spec = params.specification(use_state=False, dim0="one", dim1=2)
+        spec = params.specification(use_state=False, label0="one", label1=2)
         assert spec["min_int_param"] == adjustment["min_int_param"]
         assert params.min_int_param == [
-            {"dim0": "zero", "dim1": 1, "value": 1}
+            {"label0": "zero", "label1": 1, "value": 1}
         ]
 
-        assert params.int_default_param == adjustment["int_default_param"]
+        assert params.int_default_param == [
+            {"value": adjustment["int_default_param"]}
+        ]
         assert params.date_param == [
-            {"value": datetime.date(2018, 1, 17), "dim1": 1, "dim0": "zero"}
+            {
+                "value": datetime.date(2018, 1, 17),
+                "label1": 1,
+                "label0": "zero",
+            }
         ]
 
     def test_adjust_none_basic(self, TestParams):
         params = TestParams()
         adj = {
-            "min_int_param": [{"dim0": "one", "dim1": 2, "value": None}],
+            "min_int_param": [{"label0": "one", "label1": 2, "value": None}],
             "str_choice_param": [{"value": None}],
         }
         params.adjust(adj)
@@ -173,20 +176,19 @@ class TestAdjust:
     def test_adjust_none_many_values(self, TestParams):
         params = TestParams()
         adj = {"int_dense_array_param": [{"value": None}]}
-        print(params.int_dense_array_param)
         params.adjust(adj)
         assert len(params._data["int_dense_array_param"]["value"]) == 0
         assert len(params.int_dense_array_param) == 0
 
         params = TestParams()
-        adj = {"int_dense_array_param": [{"dim0": "zero", "value": None}]}
+        adj = {"int_dense_array_param": [{"label0": "zero", "value": None}]}
         params.adjust(adj)
         assert len(params._data["int_dense_array_param"]["value"]) == 18
         assert len(params.int_dense_array_param) == 18
         assert (
             len(
                 params.specification(
-                    use_state=False, include_empty=True, dim0="zero"
+                    use_state=False, include_empty=True, label0="zero"
                 )["int_dense_array_param"]
             )
             == 0
@@ -194,7 +196,7 @@ class TestAdjust:
         assert (
             len(
                 params.specification(
-                    use_state=False, include_empty=True, dim0="one"
+                    use_state=False, include_empty=True, label0="one"
                 )["int_dense_array_param"]
             )
             == 18
@@ -220,8 +222,8 @@ class TestErrors:
         }
         assert excinfo.value.messages == exp_internal_message
 
-        exp_dims = {"min_int_param": [{}]}
-        assert excinfo.value.dims == exp_dims
+        exp_labels = {"min_int_param": [{}]}
+        assert excinfo.value.labels == exp_labels
 
     def test_errors_choice_param(self, TestParams):
         params = TestParams()
@@ -239,28 +241,27 @@ class TestErrors:
         params = TestParams()
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
-        msg = ["Not a valid string: 4."]
+        msg = ["Not a valid string."]
         assert excinfo.value.args[0]["str_choice_param"] == msg
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
-        msg = ["Not a valid string: 4."]
+        msg = ["Not a valid string."]
         assert params.errors["str_choice_param"] == msg
 
         params = TestParams()
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
-        msg = ["Not a valid string: 4."]
+        msg = ["Not a valid string."]
         assert excinfo.value.args[0]["str_choice_param"] == msg
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
-        params.errors["str_choice_param"] == ["Not a valid string: 4"]
-        # params.errors["str_choice_param"] == ["Not a valid string: 4"]
+        params.errors["str_choice_param"] == ["Not a valid string."]
 
     def test_errors_default_reference_param(self, TestParams):
         params = TestParams()
-        params.set_state(dim0="zero", dim1=1)
+        params.set_state(label0="zero", label1=1)
         # value under the default.
         curr = params.int_default_param[0]["value"]
         adjustment = {"int_default_param": [{"value": curr - 1}]}
@@ -272,7 +273,7 @@ class TestErrors:
         params = TestParams()
         adjustment = {
             "min_int_param": [
-                {"dim0": "zero", "dim1": 1, "value": "not a number"}
+                {"label0": "zero", "label1": 1, "value": "not a number"}
             ]
         }
 
@@ -284,10 +285,12 @@ class TestErrors:
         params = TestParams()
         adjustment = {
             "min_int_param": [
-                {"dim0": "zero", "dim1": 1, "value": "not a number"},
-                {"dim0": "one", "dim1": 2, "value": "still not a number"},
+                {"label0": "zero", "label1": 1, "value": "not a number"},
+                {"label0": "one", "label1": 2, "value": "still not a number"},
             ],
-            "date_param": [{"dim0": "zero", "dim1": 1, "value": "not a date"}],
+            "date_param": [
+                {"label0": "zero", "label1": 1, "value": "not a date"}
+            ],
         }
 
         params.adjust(adjustment, raise_errors=False)
@@ -305,8 +308,8 @@ class TestErrors:
 
         adj = {
             "float_list_param": [
-                {"value": ["abc", 0, "def", 1], "dim0": "zero", "dim1": 1},
-                {"value": [-1, "ijk"], "dim0": "one", "dim1": 2},
+                {"value": ["abc", 0, "def", 1], "label0": "zero", "label1": 1},
+                {"value": [-1, "ijk"], "label0": "one", "label1": 2},
             ]
         }
         with pytest.raises(ValidationError) as excinfo:
@@ -328,22 +331,24 @@ class TestErrors:
         }
         assert excinfo.value.messages == exp_internal_message
 
-        exp_dims = {
+        exp_labels = {
             "float_list_param": [
-                {"dim0": "zero", "dim1": 1},
-                {"dim0": "one", "dim1": 2},
+                {"label0": "zero", "label1": 1},
+                {"label0": "one", "label1": 2},
             ]
         }
-        assert excinfo.value.dims == exp_dims
+        assert excinfo.value.labels == exp_labels
 
     def test_range_validation_on_list_param(self, TestParams):
         params = TestParams()
         adj = {
-            "float_list_param": [{"value": [-1, 1], "dim0": "zero", "dim1": 1}]
+            "float_list_param": [
+                {"value": [-1, 1], "label0": "zero", "label1": 1}
+            ]
         }
         params.adjust(adj, raise_errors=False)
         exp = [
-            "float_list_param [-1.0, 1.0] must be greater than 0 for dimensions dim0=zero , dim1=1."
+            "float_list_param [-1.0, 1.0] must be greater than 0 for labels label0=zero , label1=1."
         ]
 
         assert params.errors["float_list_param"] == exp
@@ -389,15 +394,15 @@ class TestArray:
             params.from_array("min_int_param")
 
     def test_resolve_order(self, TestParams):
-        exp_dim_order = ["dim0", "dim2"]
-        exp_value_order = {"dim0": ["zero", "one"], "dim2": [0, 1, 2]}
+        exp_label_order = ["label0", "label2"]
+        exp_value_order = {"label0": ["zero", "one"], "label2": [0, 1, 2]}
         vi = [
-            {"dim0": "zero", "dim2": 0, "value": None},
-            {"dim0": "zero", "dim2": 1, "value": None},
-            {"dim0": "zero", "dim2": 2, "value": None},
-            {"dim0": "one", "dim2": 0, "value": None},
-            {"dim0": "one", "dim2": 1, "value": None},
-            {"dim0": "one", "dim2": 2, "value": None},
+            {"label0": "zero", "label2": 0, "value": None},
+            {"label0": "zero", "label2": 1, "value": None},
+            {"label0": "zero", "label2": 2, "value": None},
+            {"label0": "one", "label2": 0, "value": None},
+            {"label0": "one", "label2": 1, "value": None},
+            {"label0": "one", "label2": 2, "value": None},
         ]
 
         params = TestParams()
@@ -405,25 +410,25 @@ class TestArray:
         params._data["madeup"] = {"value": vi}
 
         assert params._resolve_order("madeup") == (
-            exp_dim_order,
+            exp_label_order,
             exp_value_order,
         )
 
         # test with specified state.
-        exp_value_order = {"dim0": ["zero", "one"], "dim2": [0, 1]}
-        params.set_state(dim2=[0, 1])
+        exp_value_order = {"label0": ["zero", "one"], "label2": [0, 1]}
+        params.set_state(label2=[0, 1])
         assert params._resolve_order("madeup") == (
-            exp_dim_order,
+            exp_label_order,
             exp_value_order,
         )
 
-        params.madeup[0]["dim1"] = 0
-        with pytest.raises(InconsistentDimensionsException):
+        params.madeup[0]["label1"] = 0
+        with pytest.raises(InconsistentLabelsException):
             params._resolve_order("madeup")
 
     def test_to_array_with_state1(self, TestParams):
         params = TestParams()
-        params.set_state(dim0="zero")
+        params.set_state(label0="zero")
         res = params.to_array("int_dense_array_param")
 
         exp = [
@@ -444,12 +449,11 @@ class TestArray:
 
     def test_to_array_with_state2(self, TestParams):
         params = TestParams()
-        # Drop values 3 and 4 from dim1
-        params.set_state(dim1=[0, 1, 2, 5])
-        print(len(params.int_dense_array_param))
+        # Drop values 3 and 4 from label1
+        params.set_state(label1=[0, 1, 2, 5])
         res = params.to_array("int_dense_array_param")
 
-        # Values 3 and 4 were removed from dim1.
+        # Values 3 and 4 were removed from label1.
         exp = [
             [
                 [1, 2, 3],
@@ -479,88 +483,104 @@ class TestState:
     def test_basic_set_state(self, TestParams):
         params = TestParams()
         assert params.view_state() == {}
-        params.set_state(dim0="zero")
-        assert params.view_state() == {"dim0": "zero"}
-        params.set_state(dim1=0)
-        assert params.view_state() == {"dim0": "zero", "dim1": 0}
-        params.set_state(dim0="one", dim2=1)
-        assert params.view_state() == {"dim0": "one", "dim1": 0, "dim2": 1}
-        params.set_state(**{})
-        assert params.view_state() == {"dim0": "one", "dim1": 0, "dim2": 1}
-        params.set_state()
-        assert params.view_state() == {"dim0": "one", "dim1": 0, "dim2": 1}
-        params.set_state(dim1=[1, 2, 3])
+        params.set_state(label0="zero")
+        assert params.view_state() == {"label0": "zero"}
+        params.set_state(label1=0)
+        assert params.view_state() == {"label0": "zero", "label1": 0}
+        params.set_state(label0="one", label2=1)
         assert params.view_state() == {
-            "dim0": "one",
-            "dim1": [1, 2, 3],
-            "dim2": 1,
+            "label0": "one",
+            "label1": 0,
+            "label2": 1,
+        }
+        params.set_state(**{})
+        assert params.view_state() == {
+            "label0": "one",
+            "label1": 0,
+            "label2": 1,
+        }
+        params.set_state()
+        assert params.view_state() == {
+            "label0": "one",
+            "label1": 0,
+            "label2": 1,
+        }
+        params.set_state(label1=[1, 2, 3])
+        assert params.view_state() == {
+            "label0": "one",
+            "label1": [1, 2, 3],
+            "label2": 1,
         }
 
-    def test_dim_mesh(self, TestParams):
+    def test_label_grid(self, TestParams):
         params = TestParams()
         exp = {
-            "dim0": ["zero", "one"],
-            "dim1": [0, 1, 2, 3, 4, 5],
-            "dim2": [0, 1, 2],
+            "label0": ["zero", "one"],
+            "label1": [0, 1, 2, 3, 4, 5],
+            "label2": [0, 1, 2],
         }
-        assert params.dim_mesh == exp
+        assert params.label_grid == exp
 
-        params.set_state(dim0="one")
-        exp = {"dim0": ["one"], "dim1": [0, 1, 2, 3, 4, 5], "dim2": [0, 1, 2]}
-        assert params.dim_mesh == exp
+        params.set_state(label0="one")
+        exp = {
+            "label0": ["one"],
+            "label1": [0, 1, 2, 3, 4, 5],
+            "label2": [0, 1, 2],
+        }
+        assert params.label_grid == exp
 
-        params.set_state(dim0="one", dim2=1)
-        exp = {"dim0": ["one"], "dim1": [0, 1, 2, 3, 4, 5], "dim2": [1]}
-        assert params.dim_mesh == exp
+        params.set_state(label0="one", label2=1)
+        exp = {"label0": ["one"], "label1": [0, 1, 2, 3, 4, 5], "label2": [1]}
+        assert params.label_grid == exp
 
-        params.set_state(dim1=[0, 1, 2, 5])
-        exp = {"dim0": ["one"], "dim1": [0, 1, 2, 5], "dim2": [1]}
-        assert params.dim_mesh == {
-            "dim0": ["one"],
-            "dim1": [0, 1, 2, 5],
-            "dim2": [1],
+        params.set_state(label1=[0, 1, 2, 5])
+        exp = {"label0": ["one"], "label1": [0, 1, 2, 5], "label2": [1]}
+        assert params.label_grid == {
+            "label0": ["one"],
+            "label1": [0, 1, 2, 5],
+            "label2": [1],
         }
 
     def test_set_state_updates_values(self, TestParams):
         params = TestParams()
         defaultexp = [
-            {"dim0": "zero", "dim1": 1, "value": 1},
-            {"dim0": "one", "dim1": 2, "value": 2},
+            {"label0": "zero", "label1": 1, "value": 1},
+            {"label0": "one", "label1": 2, "value": 2},
         ]
         assert params.min_int_param == defaultexp
 
-        params.set_state(dim0="zero")
+        params.set_state(label0="zero")
         assert params.min_int_param == [
-            {"dim0": "zero", "dim1": 1, "value": 1}
+            {"label0": "zero", "label1": 1, "value": 1}
         ]
 
-        # makes sure parameter that doesn't use dim0 is unaffected
+        # makes sure parameter that doesn't use label0 is unaffected
         assert params.str_choice_param == [{"value": "value0"}]
 
         params.clear_state()
         assert params.view_state() == {}
         assert params.min_int_param == defaultexp
-        assert params.dim_mesh == params._stateless_dim_mesh
+        assert params.label_grid == params._stateless_label_grid
 
     def test_set_state_errors(self, TestParams):
         params = TestParams()
         with pytest.raises(ValidationError):
-            params.set_state(dim0="notadim")
+            params.set_state(label0="notalabel")
 
         params = TestParams()
         with pytest.raises(ValidationError):
-            params.set_state(notadim="notadim")
+            params.set_state(notalabel="notalabel")
 
     def test_state_with_list(self, TestParams):
         params = TestParams()
-        params.set_state(dim0="zero", dim1=[0, 1])
+        params.set_state(label0="zero", label1=[0, 1])
         exp = [
-            {"dim0": "zero", "dim1": 0, "dim2": 0, "value": 1},
-            {"dim0": "zero", "dim1": 0, "dim2": 1, "value": 2},
-            {"dim0": "zero", "dim1": 0, "dim2": 2, "value": 3},
-            {"dim0": "zero", "dim1": 1, "dim2": 0, "value": 4},
-            {"dim0": "zero", "dim1": 1, "dim2": 1, "value": 5},
-            {"dim0": "zero", "dim1": 1, "dim2": 2, "value": 6},
+            {"label0": "zero", "label1": 0, "label2": 0, "value": 1},
+            {"label0": "zero", "label1": 0, "label2": 1, "value": 2},
+            {"label0": "zero", "label1": 0, "label2": 2, "value": 3},
+            {"label0": "zero", "label1": 1, "label2": 0, "value": 4},
+            {"label0": "zero", "label1": 1, "label2": 1, "value": 5},
+            {"label0": "zero", "label1": 1, "label2": 2, "value": 6},
         ]
         assert params.int_dense_array_param == exp
 
@@ -577,9 +597,9 @@ class TestArrayFirst:
 
     def test_from_array(self, af_params):
         exp = [
-            {"dim0": "zero", "dim1": 1, "dim2": 0, "value": 4},
-            {"dim0": "zero", "dim1": 1, "dim2": 1, "value": 5},
-            {"dim0": "zero", "dim1": 1, "dim2": 2, "value": 6},
+            {"label0": "zero", "label1": 1, "label2": 0, "value": 4},
+            {"label0": "zero", "label1": 1, "label2": 1, "value": 5},
+            {"label0": "zero", "label1": 1, "label2": 2, "value": 6},
         ]
         assert af_params.from_array("int_dense_array_param") == exp
 
@@ -594,33 +614,30 @@ class TestArrayFirst:
 class TestCollisions:
     def test_collision_list(self):
         class CollisionParams(Parameters):
-            schema = {"dim_name": "test", "dims": {}, "optional": {}}
-            defaults = {}
+            defaults = {"schema": {"labels": {}, "additional_members": {}}}
 
         params = CollisionParams()
 
         # check to make sure that the collisionlist does not need to be updated.
         # Note: dir(obj) lists out all class or instance attributes and methods.
-        assert collision_list == [
+        assert set(collision_list) == {
             name for name in dir(params) if not name.startswith("__")
-        ]
+        }
 
     def test_collision(self):
         defaults_dict = {
+            "schema": {"labels": {}, "additional_members": {}},
             "errors": {
                 "title": "Collides with 'errors'",
                 "description": "",
                 "notes": "",
                 "type": "int",
-                "number_dims": 0,
                 "value": [{"value": 0}],
                 "validators": {"range": {"min": 0, "max": 10}},
-                "out_of_range_action": "stop",
-            }
+            },
         }
 
         class CollisionParams(Parameters):
-            schema = {"dim_name": "test", "dims": {}, "optional": {}}
             defaults = defaults_dict
 
         with pytest.raises(ParameterNameCollisionException) as excinfo:

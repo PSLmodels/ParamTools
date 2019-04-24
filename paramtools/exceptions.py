@@ -14,41 +14,40 @@ class SparseValueObjectsException(ParamToolsError):
 
 
 class ValidationError(ParamToolsError):
-    def __init__(self, messages, dims):
+    def __init__(self, messages, labels):
         self.messages = messages
-        self.dims = dims
+        self.labels = labels
         raveled_messages = {
             param: utils.ravel(msgs) for param, msgs in self.messages.items()
         }
         super().__init__(raveled_messages)
 
 
-class InconsistentDimensionsException(ParamToolsError):
+class InconsistentLabelsException(ParamToolsError):
     pass
 
 
 collision_list = [
     "_data",
     "_errors",
-    "_get",
+    "_select",
     "_numpy_type",
     "_parse_errors",
     "_resolve_order",
     "_state",
-    "_stateless_dim_mesh",
+    "_stateless_label_grid",
     "_update_param",
     "_validator_schema",
     "adjust",
     "array_first",
     "clear_state",
     "defaults",
-    "dim_mesh",
-    "dim_validators",
+    "label_grid",
+    "label_validators",
     "errors",
     "field_map",
     "from_array",
     "read_params",
-    "schema",
     "set_state",
     "specification",
     "to_array",

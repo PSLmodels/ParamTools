@@ -41,14 +41,14 @@ class Bool_(marshmallow_fields.Boolean):
 class MeshFieldMixin:
     """
     Provides method for accessing ``contrib.validate``
-    validators' mesh methods
+    validators' grid methods
     """
 
-    def mesh(self):
+    def grid(self):
         if not self.validators:
             return []
         assert len(self.validators) == 1
-        return self.validators[0].mesh()
+        return self.validators[0].grid()
 
 
 class Str(MeshFieldMixin, marshmallow_fields.Str):
