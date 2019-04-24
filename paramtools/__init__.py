@@ -29,6 +29,7 @@ from paramtools.utils import (
     get_leaves,
     ravel,
     consistent_labels,
+    ensure_value_object,
 )
 
 
@@ -62,4 +63,5 @@ __all__ = [
     "get_leaves",
     "ravel",
     "consistent_labels",
+    "ensure_value_object",
 ]
