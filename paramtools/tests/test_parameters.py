@@ -225,6 +225,11 @@ class TestErrors:
         exp_labels = {"min_int_param": [{}]}
         assert excinfo.value.labels == exp_labels
 
+        params = TestParams()
+        adj = {"min_int_param": "abc"}
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust(adj)
+
     def test_errors_choice_param(self, TestParams):
         params = TestParams()
         adjustment = {"str_choice_param": [{"value": "not a valid choice"}]}
