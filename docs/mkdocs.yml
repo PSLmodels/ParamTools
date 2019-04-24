@@ -1,0 +1,5 @@
+site_name: ParamTools Docs
+nav:
+    - Home: index.md
+    - Parameters: parameters.md
+theme: mkdocs
