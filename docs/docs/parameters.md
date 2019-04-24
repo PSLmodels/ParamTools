@@ -7,7 +7,7 @@ Define your default parameters as a JSON file and let ParamTools handle the rest
 ```json
 {
     "schema": {
-        "selectors": {
+        "labels": {
             "year": {
                 "type": "int",
                 "validators": {"range": {"min": 2013, "max": 2027}}
@@ -73,13 +73,13 @@ Define your default parameters as a JSON file and let ParamTools handle the rest
 ```json
 {
     "schema": {
-        "selectors": "mapping of selector objects"
+        "labels": "mapping of label objects"
     },
     "additional_members": "mapping of additional member objects"
 }
 ```
 
-- Selector Objects are used to define the ways in which a parameter's values are defined, accessed, and updated.
+- Label Objects are used to define the ways in which a parameter's values are defined, accessed, and updated.
 - Additional Members are top level members that are used by your model and not required by ParamTools.
 
 
@@ -125,19 +125,19 @@ Define your default parameters as a JSON file and let ParamTools handle the rest
 - `type`: Data type of the parameter. Allowed types are `int`, `float`, `bool`, `str` and `date` (YYYY-MM-DD).
 - `number_dims`: (*optional, default is 0*) Number of dimensions for the value, as defined by [`np.ndim`][1]
 
-- `value`: Value of the parameter and optionally, the corresponding selectors. It can be written in two ways:
+- `value`: Value of the parameter and optionally, the corresponding labels. It can be written in two ways:
 
-  - if selectors are used:
+  - if labels are used:
 
         ```json
         {
-            "value": [{"value": "my value", **selectors}]
+            "value": [{"value": "my value", **labels}]
         }
         ```
 
 
 
-  - if selectors are not used:
+  - if labels are not used:
 
         ```json
         {

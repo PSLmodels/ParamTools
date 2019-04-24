@@ -1,32 +1,69 @@
 # ParamTools
 
-ParamTools defines the parameter input space for computational modeling projects.
-
-- Defines the default parameter space.
-- Facilitates adjusting that space.
-- Performs validation on the default space and the adjusted space.
+ParamTools facilitates defining, updating, and validating your model's parameters.
 
 How to use ParamTools
 ---------------------------
 
-Subclass the `Parameters` class and set up your [parameters](https://pslmodels.github.io/ParamTools/parameters):
+Subclass the `Parameters` class and define the [parameters](https://paramtools.org/parameters):
 
 ```python
 from paramtools import Parameters
-from paramtools import get_example_paths
 
-schema_, defaults_ = get_example_paths('taxparams-demo')
 class TaxParams(Parameters):
-    schema = schema_  # schema.json
-    defaults = defaults_  # defaults.json
+    defaults = {
+        "schema": {
+            "labels": {
+                "year": {
+                    "type": "int",
+                    "validators": {"range": {"min": 2013, "max": 2027}}
+                },
+                "marital_status": {
+                    "type": "str",
+                    "validators": {"choice": {"choices": ["single", "joint"]}}
+                },
+            },
+            "additional_members": {
+                "cpi_inflatable": {"type": "bool", "number_dims": 0},
+                "cpi_inflated": {"type": "bool", "number_dims": 0}
+            }
+        },
+        "standard_deduction": {
+            "title": "Standard deduction amount",
+            "description": "Amount filing unit can use as a standard deduction.",
+            "cpi_inflatable": True,
+            "cpi_inflated": True,
+            "type": "float",
+            "value": [
+                {"year": 2024, "marital_status": "single", "value": 13673.68},
+                {"year": 2024, "marital_status": "joint", "value": 27347.36},
+                {"year": 2025, "marital_status": "single", "value": 13967.66},
+                {"year": 2025, "marital_status": "joint", "value": 27935.33},
+                {"year": 2026, "marital_status": "single", "value": 7690.0},
+                {"year": 2026, "marital_status": "joint", "value": 15380.0}],
+            "validators": {
+                "range": {
+                    "min": 0,
+                    "max": 9e+99
+                }
+            }
+        },
+    }
 
 params = TaxParams(
     initial_state={"year": [2024, 2025, 2026]},
     array_first=True
 )
 
-print("# output ", params.view_state())
-# output  {'year': [2024, 2025, 2026]}
+
+```
+
+Check out the state:
+
+```python
+params.view_state()
+
+# {'year': [2024, 2025, 2026]}
 
 ```
 
@@ -34,94 +71,106 @@ Parameters are available via instance attributes:
 
 ```python
 params.standard_deduction
-# output:  [[13673.68 27347.36 13673.68 20510.52 27347.36]
-#  [13967.66 27935.33 13967.66 20951.49 27935.33]
-#  [ 7690.   15380.    7690.   11323.   15380.  ]]
 
-
+# array([[13673.68, 27347.36],
+#        [13967.66, 27935.33],
+#        [ 7690.  , 15380.  ]])
 ```
 
-Get the parameter's [value object](https://paramtools.readthedocs.io/en/latest/spec.html#value-object):
+Take a look at the labels of the Standard Deduction's values:
 ```python
 params.from_array("standard_deduction")
-# output:  [{'year': 2024, 'marital_status': 'single', 'value': 13673.68}, {'year': 2024, 'marital_status': 'joint', 'value': 27347.36}, {'year': 2024, 'marital_status': 'separate', 'value': 13673.68}, {'year': 2024, 'marital_status': 'headhousehold', 'value': 20510.52}, {'year': 2024, 'marital_status': 'widow', 'value': 27347.36}, {'year': 2025, 'marital_status': 'single', 'value': 13967.66}, {'year': 2025, 'marital_status': 'joint', 'value': 27935.33}, {'year': 2025, 'marital_status': 'separate', 'value': 13967.66}, {'year': 2025, 'marital_status': 'headhousehold', 'value': 20951.49}, {'year': 2025, 'marital_status': 'widow', 'value': 27935.33}, {'year': 2026, 'marital_status': 'single', 'value': 7690.0}, {'year': 2026, 'marital_status': 'joint', 'value': 15380.0}, {'year': 2026, 'marital_status': 'separate', 'value': 7690.0}, {'year': 2026, 'marital_status': 'headhousehold', 'value': 11323.0}, {'year': 2026, 'marital_status': 'widow', 'value': 15380.0}]
+
+# [{'year': 2024, 'marital_status': 'single', 'value': 13673.68},
+#  {'year': 2024, 'marital_status': 'joint', 'value': 27347.36},
+#  {'year': 2025, 'marital_status': 'single', 'value': 13967.66},
+#  {'year': 2025, 'marital_status': 'joint', 'value': 27935.33},
+#  {'year': 2026, 'marital_status': 'single', 'value': 7690.0},
+#  {'year': 2026, 'marital_status': 'joint', 'value': 15380.0}]
 ```
 
-[Adjust](https://paramtools.readthedocs.io/en/latest/spec.html#adjustment-schema) the default specification:
+Query the parameters:
+```python
+params.specification(year=2026, marital_status="single", use_state=False)
+
+# OrderedDict([('standard_deduction',
+#               [{'value': 0.0, 'year': 2026, 'marital_status': 'single'}])])
+```
+
+Adjust the default values:
 
 ```python
 adjustment = {
     "standard_deduction": [
         {"year": 2026, "marital_status": "single", "value": 10000.0}
     ],
-    "social_security_tax_rate": [
-        {"year": 2026, "value": 0.14}
-    ]
 }
 params.adjust(adjustment)
 params.standard_deduction
-# output:  [[13673.68 27347.36 13673.68 20510.52 27347.36]
-#  [13967.66 27935.33 13967.66 20951.49 27935.33]
-#  [10000.   15380.    7690.   11323.   15380.  ]]
 
-print(params.social_security_tax_rate)
-# output:  [0.124 0.124 0.14 ]
+# array([[13673.68, 27347.36],
+#        [13967.66, 27935.33],
+#        [10000.  , 15380.  ]])
+
+```
+
+Set all values of the standard deduction parameter to 0:
+
+```python
+adjustment = {
+    "standard_deduction": 0,
+}
+params.adjust(adjustment)
+params.standard_deduction
+
+# array([[0., 0.],
+#        [0., 0.],
+#        [0., 0.]])
+
 ```
 
 
 Errors on invalid input:
 ```python
-adjustment["standard_deduction"] = [{
-  "year": 2026,
-  "marital_status": "single",
-  "value": "higher"
-}]
+adjustment["standard_deduction"] = "higher"
 params.adjust(adjustment)
 
-# output:
-Traceback (most recent call last):
-  File "doc_ex.py", line 60, in <module>
-    raise saved_exc
-  File "doc_ex.py", line 33, in <module>
-    params.adjust(adjustment)
-  File "/home/henrydoupe/Documents/ParamTools/paramtools/parameters.py", line 123, in adjust
-    raise self.validation_error
-paramtools.exceptions.ValidationError: {'standard_deduction': ['Not a valid number: higher.']}
+# ---------------------------------------------------------------------------
+# ValidationError                           Traceback (most recent call last)
+# <ipython-input-7-d9ad03cf54d8> in <module>
+#       1 adjustment["standard_deduction"] = "higher"
+# ----> 2 params.adjust(adjustment)
 
+# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors)
+#     134
+#     135         if raise_errors and self._errors:
+# --> 136             raise self.validation_error
+#     137
+#     138         # Update attrs.
+
+# ValidationError: {'standard_deduction': ['Not a valid number: higher.']}
 ```
 
 Errors on input that's out of range:
 ```python
-# get value of ii_bracket_2 at year 2026, marital status "single".
-spec = params.specification(year=2026, marital_status="single", use_state=False)
-spec
-# output:  OrderedDict([('standard_deduction', [{'year': 2026, 'value': 10000.0, 'marital_status': 'single'}]), ('ii_bracket_1', [{'year': 2026, 'value': 11293.0, 'marital_status': 'single'}]), ('ii_bracket_2', [{'year': 2026, 'value': 45957.0, 'marital_status': 'single'}]), ('social_security_tax_rate', [{'year': 2026, 'value': 0.14}])])
+adjustment["standard_deduction"] = -1
+params.adjust(adjustment)
+params.adjust(adjustment)
 
+# ---------------------------------------------------------------------------
+# ValidationError                           Traceback (most recent call last)
+# <ipython-input-8-8ea95339bb9b> in <module>
+#       1 adjustment["standard_deduction"] = -1
+# ----> 2 params.adjust(adjustment)
 
-ii_bracket_2_val = spec["ii_bracket_2"][0]["value"]
-ii_bracket_2_val
-# output: 45957.0
+# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors)
+#     134
+#     135         if raise_errors and self._errors:
+# --> 136             raise self.validation_error
+#     137
+#     138         # Update attrs.
 
-adjustment = {
-    "standard_deduction": [{
-      "year": 2026,
-      "marital_status": "single",
-      "value": -1
-    }],
-    "ii_bracket_1": [{
-      "year": 2026,
-      "marital_status": "single",
-      "value": ii_bracket_2_val + 1}
-    ]
-}
-
-params.adjust(adjustment, raise_errors=False)
-params.errors
-# output:
-# {
-#   'standard_deduction': ['standard_deduction -1.0 must be greater than 0 for labels marital_status=single , year=2026'],
-#   'ii_bracket_1': ['ii_bracket_1 45958.0 must be less than 45957.0 for labels marital_status=single , year=2026']
-# }
+# ValidationError: {'standard_deduction': ['standard_deduction -1.0 must be greater than 0.']}
 
 ```
 
