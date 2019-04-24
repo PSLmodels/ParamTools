@@ -1,16 +1,17 @@
 # ParamTools
 
-ParamTools facilitates defining, updating, and validating your model's parameters.
+Define, update, and validate your model's parameters.
 
 How to use ParamTools
 ---------------------------
 
-Subclass the `Parameters` class and define the [parameters](https://paramtools.org/parameters):
+Subclass `paramtools.Parameters` and define your model's [parameters](https://paramtools.org/parameters):
 
 ```python
-from paramtools import Parameters
+import paramtools
 
-class TaxParams(Parameters):
+
+class TaxParams(paramtools.Parameters):
     defaults = {
         "schema": {
             "labels": {
@@ -77,7 +78,7 @@ params.standard_deduction
 #        [ 7690.  , 15380.  ]])
 ```
 
-Take a look at the labels of the Standard Deduction's values:
+Take a look at the standard deduction parameter's labels:
 ```python
 params.from_array("standard_deduction")
 
@@ -198,7 +199,7 @@ py.test -v
 
 Documentation
 ----------------
-Full documentation available at https://pslmodels.github.io/ParamTools/.
+Full documentation available at [paramtools.org](https://paramtools.org).
 
 Contributing
 -------------------------
@@ -206,7 +207,7 @@ Contributions are welcome! Checkout [CONTRIBUTING.md][3] to get started.
 
 Credits
 ---------
-ParamTools is built on top of the excellent [marshmallow][1] JSON schema and validation framework. I encourage everyone to checkout their repo and documentation. ParamTools was modeled off of [Tax-Calculator's][2] parameter processing and validation engine due to its maturity and sophisticated capabilities.
+ParamTools is built on top of the excellent [marshmallow][1] JSON schema and validation framework. I encourage everyone to check out their repo and documentation. ParamTools was modeled off of [Tax-Calculator's][2] parameter processing and validation engine due to its maturity and sophisticated capabilities.
 
 [1]: https://github.com/marshmallow-code/marshmallow
 [2]: https://github.com/PSLmodels/Tax-Calculator

@@ -1,7 +1,8 @@
 # Parameters
 
-Define your default parameters as a JSON file and let ParamTools handle the rest. The ParamTools JSON file is split into two components: a component that defines the structure of your default inputs and a component that defines the variables that are used in your model. The first is a top level member named `schema`. The latter are top-level members named as your model refers to them.
+Define your default parameters and let ParamTools handle the rest.
 
+The ParamTools JSON file is split into two components: a component that defines the structure of your default inputs and a component that defines the variables that are used in your model. The first component is a top level member named `schema`. The second component consists of key-value pairs where the key is the parameter's name and the value is its data.
 
 
 ```json
@@ -68,19 +69,27 @@ Define your default parameters as a JSON file and let ParamTools handle the rest
 
 
 
-## Input Structure
+## Parameters Schema
 
 ```json
 {
     "schema": {
-        "labels": "mapping of label objects"
-    },
-    "additional_members": "mapping of additional member objects"
+        "labels": {
+            "year": {
+                "type": "int",
+                "validators": {"range": {"min": 2013, "max": 2027}}
+            }
+        },
+        "additional_members": {
+            "cpi_inflatable": {"type": "bool"},
+            "cpi_inflated": {"type": "bool"}
+        }
+    }
 }
 ```
 
-- Label Objects are used to define the ways in which a parameter's values are defined, accessed, and updated.
-- Additional Members are top level members that are used by your model and not required by ParamTools.
+- `labels`: Labels are used for defining, accessing, and updating a parameter's values.
+- `additional_members`: Additional Members are parameter level members that are specific to your model. For example, "title" is a parameter level member that is required by ParamTools, but "cpi_inflated" is not. Therefore, "cpi_inflated" needs to be defined in `additional_members`.
 
 
 
@@ -123,41 +132,25 @@ Define your default parameters as a JSON file and let ParamTools handle the rest
 - `description`: Describe the parameter.
 - `notes`: (*optional*) Additional advice or information.
 - `type`: Data type of the parameter. Allowed types are `int`, `float`, `bool`, `str` and `date` (YYYY-MM-DD).
-- `number_dims`: (*optional, default is 0*) Number of dimensions for the value, as defined by [`np.ndim`][1]
+- `number_dims`: (*optional, default is 0*) Number of dimensions for the value, as defined by [`np.ndim`][1].
 
 - `value`: Value of the parameter and optionally, the corresponding labels. It can be written in two ways:
 
-  - if labels are used:
+    - if labels are used: `{"value": [{"value": "my value", **labels}]}`
 
-        ```json
-        {
-            "value": [{"value": "my value", **labels}]
-        }
-        ```
+    - if labels are not used: `{"value": "my value"}`
 
+- `validators`: Key-value pairs of the validator objects (*the ranges are inclusive*):
 
-
-  - if labels are not used:
-
-        ```json
-        {
-            "value": "my value"
-        }
-        ```
-
-- `validators`: Key-value pairs of the validator objects:
-
-        ```json
-        {
-            "validators": {
-                "range": {"min": "min value", "max": "max value"},
-                "choice": {"choices": ["list", "of", "allowed", "values"]},
-                "date_range": {"min": "2018-01-01", "max": "2018-06-01"}
-            }
-        }
-        ```
-
-    *Note that the ranges are inclusive.*
+```json
+{
+    "validators": {
+        "range": {"min": "min value", "max": "max value"},
+        "choice": {"choices": ["list", "of", "allowed", "values"]},
+        "date_range": {"min": "2018-01-01", "max": "2018-06-01"}
+    }
+}
+```
 
 
 
