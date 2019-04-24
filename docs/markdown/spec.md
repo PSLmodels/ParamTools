@@ -31,7 +31,7 @@ Define the labels of the parameter space.
                 "validators": {"range": {"min": 1, "max": 31}}
             }
         },
-        "optional": {
+        "additional_members": {
             "scale": {"type": "str", "number_dims": 0},
             "source": {"type": "str", "number_dims": 0}
         }

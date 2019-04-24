@@ -48,7 +48,6 @@ collision_list = [
     "field_map",
     "from_array",
     "read_params",
-    "schema",
     "set_state",
     "specification",
     "to_array",

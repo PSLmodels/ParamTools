@@ -1,4 +1,37 @@
 {
+    "schema": {
+        "labels": {
+            "year": {
+                "type": "int",
+                "validators": {"range": {"min": 2013, "max": 2027}}
+            },
+            "marital_status": {
+                "type": "str",
+                "validators": {"choice": {"choices": ["single", "joint", "separate",
+                                                     "headhousehold", "widow"]}}
+            },
+            "idedtype": {
+                "type": "str",
+                "validators": {"choice": {"choices": ["medical", "statelocal",
+                                                     "realestate", "casualty",
+                                                     "misc", "interest", "charity"]}}
+            },
+            "EIC": {
+                "type": "str",
+                "validators": {"choice": {"choices": ["0kids", "1kid",
+                                                     "2kids", "3+kids"]}}
+            }
+        },
+        "additional_members": {
+            "section_1": {"type": "str", "number_dims": 0},
+            "section_2": {"type": "str", "number_dims": 0},
+            "section_3": {"type": "str", "number_dims": 0},
+            "irs_ref": {"type": "str", "number_dims": 0},
+            "start_year": {"type": "int", "number_dims": 0},
+            "cpi_inflatable": {"type": "bool", "number_dims": 0},
+            "cpi_inflated": {"type": "bool", "number_dims": 0}
+        }
+    },
     "standard_deduction": {
         "title": "Standard deduction amount",
         "description": "Amount filing unit can use as a standard deduction.",

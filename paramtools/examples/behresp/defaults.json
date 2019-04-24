@@ -1,4 +1,8 @@
 {
+    "schema": {
+        "labels": {},
+        "additional_members": {}
+    },
     "BE_sub": {
         "title": "Substitution elasticity of taxable income",
         "description": "Defined as proportional change in taxable income divided by proportional change in marginal net-of-tax rate (1-MTR) on taxpayer earnings caused by the reform.  Must be zero or positive.",

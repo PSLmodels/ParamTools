@@ -38,7 +38,7 @@ Define the labels of the parameter space.
                                                         "2kids", "3+kids"]}}
                 }
             },
-            "optional": {
+            "additional_members": {
                 "section_1": {"type": "str", "number_dims": 0},
                 "section_2": {"type": "str", "number_dims": 0},
                 "section_3": {"type": "str", "number_dims": 0},

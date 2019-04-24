@@ -24,12 +24,12 @@ class SchemaBuilder:
     deserialize and validate parameter data.
     """
 
-    def __init__(self, schema, defaults, field_map={}):
-        schema = utils.read_json(schema)
+    def __init__(self, defaults, field_map={}):
+        self.defaults = utils.read_json(defaults)
+        schema = self.defaults.pop("schema")
         (self.BaseParamSchema, self.label_validators) = get_param_schema(
             schema, field_map=field_map
         )
-        self.defaults = utils.read_json(defaults)
 
     def build_schemas(self):
         """

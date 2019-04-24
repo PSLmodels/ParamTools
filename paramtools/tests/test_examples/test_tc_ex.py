@@ -28,19 +28,13 @@ def field_map():
 
 
 @pytest.fixture
-def schema_def_path():
-    return os.path.join(CURRENT_PATH, "../../examples/taxparams/schema.json")
-
-
-@pytest.fixture
 def defaults_spec_path():
     return os.path.join(CURRENT_PATH, "../../examples/taxparams/defaults.json")
 
 
 @pytest.fixture
-def TaxcalcParams(schema_def_path, defaults_spec_path, field_map):
+def TaxcalcParams(defaults_spec_path, field_map):
     class _TaxcalcParams(Parameters):
-        schema = schema_def_path
         defaults = defaults_spec_path
         field_map = {"compatible_data": fields.Nested(CompatibleDataSchema())}
 
@@ -53,13 +47,6 @@ def test_load_schema(TaxcalcParams):
 
 
 @pytest.fixture
-def demo_schema_def_path():
-    return os.path.join(
-        CURRENT_PATH, "../../examples/taxparams-demo/schema.json"
-    )
-
-
-@pytest.fixture
 def demo_defaults_spec_path():
     return os.path.join(
         CURRENT_PATH, "../../examples/taxparams-demo/defaults.json"
@@ -67,9 +54,8 @@ def demo_defaults_spec_path():
 
 
 @pytest.fixture
-def TaxDemoParams(demo_schema_def_path, demo_defaults_spec_path):
+def TaxDemoParams(demo_defaults_spec_path):
     class _TaxDemoParams(Parameters):
-        schema = demo_schema_def_path
         defaults = demo_defaults_spec_path
 
     return _TaxDemoParams

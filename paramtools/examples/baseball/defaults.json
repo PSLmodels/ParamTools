@@ -1,4 +1,13 @@
 {
+    "schema": {
+        "labels": {
+            "use_2018": {"type": "bool", "validators": {}}
+        },
+        "additional_members": {
+            "section_1": {"type": "str"},
+            "section_2": {"type": "str"}
+        }
+    },
     "pitcher": {
         "title": "Pitcher Name",
         "description": "Name of pitcher to pull data on",

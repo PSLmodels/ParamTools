@@ -355,7 +355,7 @@ def get_param_schema(base_spec, field_map=None):
     else:
         field_map = FIELD_MAP.copy()
     optional_fields = {}
-    for k, v in base_spec["optional"].items():
+    for k, v in base_spec["additional_members"].items():
         fieldtype = field_map[v["type"]]
         if v.get("number_dims", 0) > 0:
             d = v["number_dims"]

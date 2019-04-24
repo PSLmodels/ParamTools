@@ -1,4 +1,24 @@
 {
+    "schema": {
+        "labels": {
+            "label0": {
+                "type": "str",
+                "validators": {"choice": {"choices": ["zero",
+                                                        "one"]}}
+            },
+            "label1": {
+                "type": "int",
+                "validators": {"range": {"min": 0, "max": 5}}
+            },
+            "label2": {
+                "type": "int",
+                "validators": {"range": {"min": 0, "max": 2}}
+            }
+        },
+        "additional_members": {
+            "opt0": {"type": "str"}
+        }
+    },
     "min_int_param": {
         "title": "min integer parameter",
         "description": "Serves as minimum reference variable.",
