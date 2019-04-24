@@ -1,5 +1,1 @@
-include paramtools/examples/baseball/*.json
-include paramtools/examples/weather/*.json
-include paramtools/examples/taxparams/*.json
 include paramtools/examples/taxparams-demo/*.json
-include paramtools/examples/behresp/*.json
