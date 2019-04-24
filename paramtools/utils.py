@@ -85,3 +85,11 @@ def consistent_labels(value_items):
         if used != set(k for k in vo if k != "value"):
             return None
     return used
+
+
+def ensure_value_object(vo):
+    if not isinstance(vo, list) or (
+        isinstance(vo, list) and not isinstance(vo[0], dict)
+    ):
+        vo = [{"value": vo}]
+    return vo
