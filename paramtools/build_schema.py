@@ -26,7 +26,7 @@ class SchemaBuilder:
 
     def __init__(self, schema, defaults, field_map={}):
         schema = utils.read_json(schema)
-        (self.BaseParamSchema, self.dim_validators) = get_param_schema(
+        (self.BaseParamSchema, self.label_validators) = get_param_schema(
             schema, field_map=field_map
         )
         self.defaults = utils.read_json(defaults)
@@ -57,7 +57,7 @@ class SchemaBuilder:
         validator_dict = {}
         for k, v in self.defaults.items():
             fieldtype = get_type(v)
-            classattrs = {"value": fieldtype, **self.dim_validators}
+            classattrs = {"value": fieldtype, **self.label_validators}
 
             # TODO: what about case where number_dims > 0
             # if not isinstance(v["value"], list):

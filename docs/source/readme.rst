@@ -126,8 +126,8 @@ Errors on input that’s out of range:
    params.errors
    # output:
    # {
-   #   'standard_deduction': ['standard_deduction -1.0 must be greater than 0 for dimensions marital_status=single , year=2026'],
-   #   'ii_bracket_1': ['ii_bracket_1 45958.0 must be less than 45957.0 for dimensions marital_status=single , year=2026']
+   #   'standard_deduction': ['standard_deduction -1.0 must be greater than 0 for labels marital_status=single , year=2026'],
+   #   'ii_bracket_1': ['ii_bracket_1 45958.0 must be less than 45957.0 for labels marital_status=single , year=2026']
    # }
 
 How to install ParamTools

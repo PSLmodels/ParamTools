@@ -3,16 +3,16 @@
 Specification Schema
 --------------------------------------
 
-Define the dimensions of the parameter space.
+Define the labels of the parameter space.
 
 - "schema_name": Name of the schema.
-- "dims": Mapping of [Dimension objects](#dimension-object).
+- "labels": Mapping of [Label objects](#label-object).
 - "optional_params": Mapping of [Optional objects](#optional-object).
 - Example:
     ```json
     {
         "schema_name": "weather",
-        "dims": {
+        "labels": {
             "city": {
                 "type": "str",
                 "validators": {"choice": {"choices": ["Atlanta, GA",
@@ -162,10 +162,10 @@ JSON Object and Property Definitions
 
 ### Objects
 
-#### Dimension object
+#### Label object
 
-- Used for defining the dimensions of the parameter space.
-    - "type": Define the datatype of the dimension values. See the [Type property](#type-property).
+- Used for defining the labels of the parameter space.
+    - "type": Define the datatype of the label values. See the [Type property](#type-property).
     - "validators": A mapping of [Validator objects](#validator-object)
 
     ```json
@@ -188,7 +188,7 @@ JSON Object and Property Definitions
   not essential for ParamTools to perform validation.
     - Arguments:
         - "type": See [Type property](#type-property).
-        - "number_dims": See [Number-Dimensions Property](#number-dimensions-property).
+        - "number_dims": See [Number-Labels Property](#number-labels-property).
     - Example:
         ```json
         {
@@ -207,7 +207,7 @@ JSON Object and Property Definitions
         - "description": Describes the parameter.
         - "notes": Additional advice or information.
         - "type": Data type of the parameter. See [Type property](#type-property).
-        - "number_dims": Number of dimensions of the parameter. See [Number-Dimensions property](#number-dimensions-property)
+        - "number_dims": Number of labels of the parameter. See [Number-Labels property](#number-labels-property)
         - "value": A list of (Value objects)[#value-object].
         - "validators": A mapping of (Validator objects)[#validator-object]
         - "out_of_range_{min/max/other op}_msg": Extra information to be used in the message(s) that will be displayed if the parameter value is outside of the specified range. Note that this is in the spec but not currently implemented.
@@ -263,7 +263,7 @@ JSON Object and Property Definitions
 
 - Used to describe the value of a parameter for one or more points in the parameter space.
     - "value": The value of the parameter at this point in space.
-    - Zero or more dimension properties that define which parts of the parameter space this value should be applied to. These dimension properties are defined by [Dimension objects](#dimension-object) in the [Specification Schema](#specification-schema).
+    - Zero or more label properties that define which parts of the parameter space this value should be applied to. These label properties are defined by [Label objects](#label-object) in the [Specification Schema](#specification-schema).
 
     - Example:
         ```json
@@ -293,9 +293,9 @@ JSON Object and Property Definitions
         }
         ```
 
-#### Number-Dimensions property
+#### Number-Labels property
 
-- "number_dims": The number of dimensions for the specified value. A scalar (e.g. 10) has zero dimensions, a list (e.g. [1, 2]) has one dimension, a nested list (e.g. [[1, 2], [3, 4]]) has two dimensions, etc.
+- "number_dims": The number of dimensions for the specified value. A scalar (e.g. 10) has zero labels, a list (e.g. [1, 2]) has one label, a nested list (e.g. [[1, 2], [3, 4]]) has two labels, etc.
     - Example:
         Note that "value" is a scalar.
         ```json
@@ -305,7 +305,7 @@ JSON Object and Property Definitions
         }
         ```
 
-        Note that "value" is an one-dimensional list.
+        Note that "value" is an one-labelal list.
         ```json
         {
             "number_dims": 1,
@@ -314,6 +314,6 @@ JSON Object and Property Definitions
         ```
 
 
-[`numpy.ndim`]: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.ndim.html
+[`numpy.nlabel`]: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.nlabel.html
 [marshmallow]: https://marshmallow.readthedocs.io/en/3.0/
 [Tax-Calculator's]: https://github.com/open-source-economics/Tax-Calculator

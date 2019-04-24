@@ -1,4 +1,4 @@
-from paramtools import get_leaves, ravel, consistent_dims
+from paramtools import get_leaves, ravel, consistent_labels
 
 
 def test_get_leaves():
@@ -43,15 +43,15 @@ def test_ravel():
     assert ravel(e) == [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
 
-def test_consistent_dims():
+def test_consistent_labels():
     v = [
-        {"dim0": 1, "dim1": 2, "value": 3},
-        {"dim0": 4, "dim1": 5, "value": 6},
+        {"label0": 1, "label1": 2, "value": 3},
+        {"label0": 4, "label1": 5, "value": 6},
     ]
-    assert consistent_dims(v) == set(["dim0", "dim1"])
+    assert consistent_labels(v) == set(["label0", "label1"])
 
-    v = [{"dim0": 1, "value": 3}, {"dim0": 4, "dim1": 5, "value": 6}]
-    assert consistent_dims(v) is None
+    v = [{"label0": 1, "value": 3}, {"label0": 4, "label1": 5, "value": 6}]
+    assert consistent_labels(v) is None
 
-    v = [{"dim0": 1, "dim1": 2, "value": 3}, {"dim0": 4, "value": 6}]
-    assert consistent_dims(v) is None
+    v = [{"label0": 1, "label1": 2, "value": 3}, {"label0": 4, "value": 6}]
+    assert consistent_labels(v) is None

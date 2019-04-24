@@ -1,16 +1,16 @@
 {
     "schema_name": "test",
-    "dims": {
-        "dim0": {
+    "labels": {
+        "label0": {
             "type": "str",
             "validators": {"choice": {"choices": ["zero",
                                                   "one"]}}
         },
-        "dim1": {
+        "label1": {
             "type": "int",
             "validators": {"range": {"min": 0, "max": 5}}
         },
-        "dim2": {
+        "label2": {
             "type": "int",
             "validators": {"range": {"min": 0, "max": 2}}
         }

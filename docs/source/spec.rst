@@ -4,10 +4,10 @@ JSON Spec
 Specification Schema
 --------------------
 
-Define the dimensions of the parameter space.
+Define the labels of the parameter space.
 
 -  "schema\_name": Name of the schema.
--  "dims": Mapping of `Dimension objects <#dimension-object>`__.
+-  "labels": Mapping of `Label objects <#label-object>`__.
 -  "optional\_params": Mapping of `Optional
    objects <#optional-object>`__.
 -  Example:
@@ -16,7 +16,7 @@ Define the dimensions of the parameter space.
 
         {
             "schema_name": "policy",
-            "dims": {
+            "labels": {
                 "year": {
                     "type": "int",
                     "validators": {"range": {"min": 2013, "max": 2027}}
@@ -232,12 +232,12 @@ JSON Object and Property Definitions
 Objects
 ~~~~~~~
 
-Dimension object
+Label object
 ^^^^^^^^^^^^^^^^
 
--  Used for defining the dimensions of the parameter space.
+-  Used for defining the labels of the parameter space.
 
-   -  "type": Define the datatype of the dimension values. See the `Type
+   -  "type": Define the datatype of the label values. See the `Type
       property <#type-property>`__.
    -  "validators": A mapping of `Validator
       objects <#validator-object>`__
@@ -262,8 +262,8 @@ Optional object
    -  Arguments:
 
       -  "type": See `Type property <#type-property>`__.
-      -  "number\_dims": See `Number-Dimensions
-         Property <#number-dimensions-property>`__.
+      -  "number\_labels": See `Number-Labels
+         Property <#number-labels-property>`__.
 
    -  Example:
 
@@ -292,8 +292,8 @@ Parameter object
       -  "notes": Additional advice or information.
       -  "type": Data type of the parameter. See `Type
          property <#type-property>`__.
-      -  "number\_dims": Number of dimensions of the parameter. See
-         `Number-Dimensions property <#number-dimensions-property>`__
+      -  "number\_labels": Number of labels of the parameter. See
+         `Number-Labels property <#number-labels-property>`__
       -  "value": A list of `Value objects <#value-object>`__.
       -  "validators": A mapping of `Validator
          objects <#validator-object>`__.
@@ -413,10 +413,10 @@ Value object
    the parameter space.
 
    -  "value": The value of the parameter at this point in space.
-   -  Zero or more dimension properties that define which parts of the
-      parameter space this value should be applied to. These dimension
-      properties are defined by `Dimension
-      objects <#dimension-object>`__ in the `Specification
+   -  Zero or more label properties that define which parts of the
+      parameter space this value should be applied to. These label
+      properties are defined by `Label
+      objects <#label-object>`__ in the `Specification
       Schema <#specification-schema>`__.
 
    -  Example:
@@ -452,12 +452,12 @@ Type property
           }
 
 
-Number-Dimensions property
+Number-Labels property
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--  "number\_dims": The number of dimensions for the specified value. A
-   scalar (e.g. 10) has zero dimensions, a list (e.g. [1, 2]) has one
-   dimension, a nested list (e.g. [[1, 2], [3, 4]]) has two dimensions,
+-  "number\_labels": The number of dimensions for the specified value. A
+   scalar (e.g. 10) has zero labels, a list (e.g. [1, 2]) has one
+   label, a nested list (e.g. [[1, 2], [3, 4]]) has two labels,
    etc.
 
    -  Example: Note that "value" is a scalar.
@@ -469,7 +469,7 @@ Number-Dimensions property
               "value": [{"year": 2026, "marital_status": "single", "value": 7690.0}]
           }
 
-      Note that "value" is an one-dimensional list.
+      Note that "value" is an one-labelal list.
 
       .. code:: json
 

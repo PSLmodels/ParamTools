@@ -1,6 +1,6 @@
 {
     "schema_name": "policy",
-    "dims": {
+    "labels": {
         "year": {
             "type": "int",
             "validators": {"range": {"min": 2013, "max": 2027}}

@@ -4,7 +4,7 @@ from paramtools.exceptions import (
     ParameterUpdateException,
     SparseValueObjectsException,
     ValidationError,
-    InconsistentDimensionsException,
+    InconsistentLabelsException,
     collision_list,
     ParameterNameCollisionException,
 )
@@ -28,7 +28,7 @@ from paramtools.utils import (
     LeafGetter,
     get_leaves,
     ravel,
-    consistent_dims,
+    consistent_labels,
 )
 
 
@@ -41,7 +41,7 @@ __all__ = [
     "ParameterUpdateException",
     "SparseValueObjectsException",
     "ValidationError",
-    "InconsistentDimensionsException",
+    "InconsistentLabelsException",
     "collision_list",
     "ParameterNameCollisionException",
     "Parameters",
@@ -61,5 +61,5 @@ __all__ = [
     "LeafGetter",
     "get_leaves",
     "ravel",
-    "consistent_dims",
+    "consistent_labels",
 ]
