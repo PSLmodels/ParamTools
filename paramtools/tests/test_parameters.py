@@ -60,6 +60,68 @@ def test_init(TestParams):
     assert params.label_grid == params._stateless_label_grid
 
 
+class TestEmptySchema:
+    def test_empty_schema(self):
+        class Params(Parameters):
+            array_first = True
+            defaults = {
+                "hello_world": {
+                    "title": "Hello, World!",
+                    "description": "Simplest config possible.",
+                    "type": "str",
+                    "value": "hello world",
+                }
+            }
+
+        params = Params()
+        assert params.hello_world == "hello world"
+        assert params.label_grid == {}
+
+    def test_schema_just_labels(self):
+        class Params(Parameters):
+            array_first = True
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "somelabel": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 2}},
+                        }
+                    }
+                },
+                "hello_world": {
+                    "title": "Hello, World!",
+                    "description": "Simplest config possible.",
+                    "type": "str",
+                    "value": "hello world",
+                },
+            }
+
+        params = Params()
+        assert params.hello_world == "hello world"
+        assert params.label_grid == {"somelabel": [0, 1, 2]}
+
+    def test_schema_just_additional_members(self):
+        class Params(Parameters):
+            array_first = True
+            defaults = {
+                "schema": {
+                    "additional_members": {"additional": {"type": "str"}}
+                },
+                "hello_world": {
+                    "title": "Hello, World!",
+                    "description": "Simplest config possible.",
+                    "additional": "I'm extra",
+                    "type": "str",
+                    "value": "hello world",
+                },
+            }
+
+        params = Params()
+        assert params.hello_world == "hello world"
+        assert params.label_grid == {}
+
+
 class TestAccess:
     def test_specification(self, TestParams, defaults_spec_path):
         params = TestParams()

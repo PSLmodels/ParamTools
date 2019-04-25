@@ -72,7 +72,7 @@ class BaseParamSchema(Schema):
     )
     number_dims = fields.Integer(default=0, missing=0)
     value = fields.Field(required=True)  # will be specified later
-    validators = fields.Nested(ValueValidatorSchema(), required=True)
+    validators = fields.Nested(ValueValidatorSchema(), default={}, missing={})
 
 
 class EmptySchema(Schema):
@@ -355,7 +355,7 @@ def get_param_schema(base_spec, field_map=None):
     else:
         field_map = FIELD_MAP.copy()
     optional_fields = {}
-    for k, v in base_spec["additional_members"].items():
+    for k, v in base_spec.get("additional_members", {}).items():
         fieldtype = field_map[v["type"]]
         if v.get("number_dims", 0) > 0:
             d = v["number_dims"]
@@ -370,7 +370,7 @@ def get_param_schema(base_spec, field_map=None):
         {k: v for k, v in optional_fields.items()},
     )
     label_validators = {}
-    for name, label in base_spec["labels"].items():
+    for name, label in base_spec.get("labels", {}).items():
         validators = []
         for vname, kwargs in label["validators"].items():
             validator_class = VALIDATOR_MAP[vname]
