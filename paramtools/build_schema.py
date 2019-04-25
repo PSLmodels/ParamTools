@@ -26,7 +26,7 @@ class SchemaBuilder:
 
     def __init__(self, defaults, field_map={}):
         self.defaults = utils.read_json(defaults)
-        schema = self.defaults.pop("schema")
+        schema = self.defaults.pop("schema", {})
         (self.BaseParamSchema, self.label_validators) = get_param_schema(
             schema, field_map=field_map
         )
