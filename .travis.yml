@@ -16,7 +16,6 @@ install:
   - conda create -n paramtools-dev python=$TRAVIS_PYTHON_VERSION;
   - source activate paramtools-dev
   - conda env update -f environment.yml
-  - pip install -e .
 
 # command to run tests
 script:

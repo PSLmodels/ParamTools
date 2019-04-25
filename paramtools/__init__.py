@@ -29,11 +29,12 @@ from paramtools.utils import (
     get_leaves,
     ravel,
     consistent_labels,
+    ensure_value_object,
 )
 
 
 name = "paramtools"
-__version__ = "0.0.0"
+__version__ = "0.5.0"
 
 __all__ = [
     "SchemaBuilder",
@@ -62,4 +63,5 @@ __all__ = [
     "get_leaves",
     "ravel",
     "consistent_labels",
+    "ensure_value_object",
 ]

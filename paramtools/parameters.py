@@ -434,15 +434,12 @@ class Parameters:
         }
 
         for pname, data in ve.messages.items():
+            param_data = utils.ensure_value_object(params[pname])
             error_labels = []
             formatted_errors = []
             for ix, marshmessages in data.items():
                 error_labels.append(
-                    {
-                        k: v
-                        for k, v in params[pname][ix].items()
-                        if k != "value"
-                    }
+                    {k: v for k, v in param_data[ix].items() if k != "value"}
                 )
                 formatted_errors_ix = []
                 for _, messages in marshmessages.items():

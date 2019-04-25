@@ -1,4 +1,9 @@
-from paramtools import get_leaves, ravel, consistent_labels
+from paramtools import (
+    get_leaves,
+    ravel,
+    consistent_labels,
+    ensure_value_object,
+)
 
 
 def test_get_leaves():
@@ -55,3 +60,13 @@ def test_consistent_labels():
 
     v = [{"label0": 1, "label1": 2, "value": 3}, {"label0": 4, "value": 6}]
     assert consistent_labels(v) is None
+
+
+def test_ensure_value_object():
+    assert ensure_value_object("hello") == [{"value": "hello"}]
+    assert ensure_value_object([{"value": "hello"}]) == [{"value": "hello"}]
+    assert ensure_value_object([1, 2, 3]) == [{"value": [1, 2, 3]}]
+    assert ensure_value_object([[1, 2, 3]]) == [{"value": [[1, 2, 3]]}]
+    assert ensure_value_object({"hello": "world"}) == [
+        {"value": {"hello": "world"}}
+    ]

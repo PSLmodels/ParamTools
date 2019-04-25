@@ -18,15 +18,12 @@ def read_json(path):
 
 
 def get_example_paths(name):
-    assert name in ("taxparams", "weather", "taxparams-demo", "behresp")
+    assert name in ("taxparams-demo",)
     current_path = os.path.abspath(os.path.dirname(__file__))
-    schema_def_path = os.path.join(
-        current_path, f"examples/{name}/schema.json"
-    )
     default_spec_path = os.path.join(
         current_path, f"examples/{name}/defaults.json"
     )
-    return (schema_def_path, default_spec_path)
+    return default_spec_path
 
 
 class LeafGetter:
@@ -85,3 +82,11 @@ def consistent_labels(value_items):
         if used != set(k for k in vo if k != "value"):
             return None
     return used
+
+
+def ensure_value_object(vo):
+    if not isinstance(vo, list) or (
+        isinstance(vo, list) and not isinstance(vo[0], dict)
+    ):
+        vo = [{"value": vo}]
+    return vo
