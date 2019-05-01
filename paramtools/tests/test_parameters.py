@@ -60,7 +60,7 @@ def test_init(TestParams):
     assert params.label_grid == params._stateless_label_grid
 
 
-class TestEmptySchema:
+class TestSchema:
     def test_empty_schema(self):
         class Params(Parameters):
             array_first = True
@@ -120,6 +120,16 @@ class TestEmptySchema:
         params = Params()
         assert params.hello_world == "hello world"
         assert params.label_grid == {}
+
+    def test_schema_not_dropped(self, defaults_spec_path):
+        with open(defaults_spec_path, "r") as f:
+            defaults_ = json.loads(f.read())
+
+        class TestParams(Parameters):
+            defaults = defaults_
+
+        TestParams()
+        assert defaults_["schema"]
 
 
 class TestAccess:
