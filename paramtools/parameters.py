@@ -26,13 +26,16 @@ class Parameters:
 
     def __init__(self, initial_state=None, array_first=None):
         sb = SchemaBuilder(self.defaults, self.field_map)
-        defaults, self._validator_schema = sb.build_schemas()
+        (
+            self._defaults_schema,
+            self._validator_schema,
+            self._data,
+        ) = sb.build_schemas()
         self.label_validators = sb.label_validators
         self._stateless_label_grid = OrderedDict(
             [(name, v.grid()) for name, v in self.label_validators.items()]
         )
         self.label_grid = copy.deepcopy(self._stateless_label_grid)
-        self._data = defaults
         self._validator_schema.context["spec"] = self
         self._errors = {}
         self._state = initial_state or {}
@@ -153,15 +156,23 @@ class Parameters:
         )
 
     def specification(
-        self, use_state=True, meta_data=False, include_empty=False, **labels
+        self,
+        use_state=True,
+        meta_data=False,
+        include_empty=False,
+        serializable=False,
+        **labels,
     ):
         """
         Query value(s) of all parameters along labels specified in
-        ``labels``. If ``use_state`` is ``True``, the current state is updated with
-        ``labels``. If ``meta_data`` is ``True``, then parameter attributes
-        are included, too. If ``include_empty`` is ``True``, then values that
-        do not match the query labels set with ``self._state`` or
-        ``labels`` will be included and set to an empty list.
+        `labels`.
+
+        Parameters:
+            - use_state: If true, use the instance's state for the select operation.
+            - meta_data: If true, include information like the parameter
+                description and title.
+            - include_empty: If true, include parameters that do not meet the label query.
+            - serializable: If true, return data that is compatible with `json.dumps`.
 
         Returns: serialized data of shape
             {"param_name": [{"value": val, "label0": ..., }], ...}
@@ -176,8 +187,18 @@ class Parameters:
                 if meta_data:
                     param_data = self._data[param]
                     result = dict(param_data, **{"value": result})
+                # Add "value" key to match marshmallow schema format.
+                elif serializable:
+                    result = {"value": result}
                 all_params[param] = result
-        return all_params
+        if serializable:
+            ser = self._defaults_schema.dump(all_params)
+            # Unpack the values after serialization if meta_data not specified.
+            if not meta_data:
+                ser = {param: value["value"] for param, value in ser.items()}
+            return ser
+        else:
+            return all_params
 
     def to_array(self, param):
         """

@@ -145,6 +145,9 @@ class TestAccess:
 
         assert spec1["min_int_param"] == exp["min_int_param"]["value"]
 
+    def test_specification_query(self, TestParams):
+        params = TestParams()
+        spec1 = params.specification()
         exp = {
             "min_int_param": [{"label0": "one", "label1": 2, "value": 2}],
             "max_int_param": [{"label0": "one", "label1": 2, "value": 4}],
@@ -168,6 +171,28 @@ class TestAccess:
         params._data["str_choice_param"]["value"] = []
         assert "str_choice_param" not in params.specification()
         assert "str_choice_param" in params.specification(include_empty=True)
+
+    def test_serializable(self, TestParams, defaults_spec_path):
+        params = TestParams()
+
+        assert json.dumps(params.specification(serializable=True))
+        assert json.dumps(
+            params.specification(serializable=True, meta_data=True)
+        )
+
+        spec = params.specification(serializable=True)
+        # Make sure "value" is removed when meta_data is False
+        for value in spec.values():
+            assert "value" not in value
+
+        with open(defaults_spec_path) as f:
+            exp = json.loads(f.read())
+        exp.pop("schema")
+
+        spec = params.specification(serializable=True, meta_data=True)
+        assert spec == params._defaults_schema.dump(
+            params._defaults_schema.load(exp)
+        )
 
 
 class TestAdjust:

@@ -4,7 +4,12 @@ import datetime
 from marshmallow import fields as marshmallow_fields
 
 
-class Float64(marshmallow_fields.Number):
+class NumPySerializeMixin:
+    def _serialize(self, value, attr, obj, **kwargs):
+        return value.tolist()
+
+
+class Float64(NumPySerializeMixin, marshmallow_fields.Number):
     """
     Implements "float" :ref:`spec:Type property` for parameter values.
     Defined as
@@ -14,7 +19,7 @@ class Float64(marshmallow_fields.Number):
     num_type = np_type = np.float64
 
 
-class Int64(marshmallow_fields.Number):
+class Int64(NumPySerializeMixin, marshmallow_fields.Number):
     """
     Implements "int" :ref:`spec:Type property` for parameter values.
     Defined as `numpy.int64 <https://docs.scipy.org/doc/numpy-1.15.0/user/basics.types.html>`__ type
@@ -23,7 +28,7 @@ class Int64(marshmallow_fields.Number):
     num_type = np_type = np.int64
 
 
-class Bool_(marshmallow_fields.Boolean):
+class Bool_(NumPySerializeMixin, marshmallow_fields.Boolean):
     """
     Implements "bool" :ref:`spec:Type property` for parameter values.
     Defined as `numpy.bool_ <https://docs.scipy.org/doc/numpy-1.15.0/user/basics.types.html>`__ type
@@ -33,9 +38,6 @@ class Bool_(marshmallow_fields.Boolean):
 
     def _deserialize(self, value, attr, obj, **kwargs):
         return np.bool_(super()._deserialize(value, attr, obj, **kwargs))
-
-    def _serialize(self, value, attr, obj, **kwargs):
-        return super()._serialize(bool(value), attr, obj, **kwargs)
 
 
 class MeshFieldMixin:
