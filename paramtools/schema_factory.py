@@ -10,7 +10,7 @@ from paramtools.schema import (
 from paramtools import utils
 
 
-class SchemaBuilder:
+class SchemaFactory:
     """
     Uses data from:
     - a schema definition file
@@ -32,7 +32,7 @@ class SchemaBuilder:
             schema, field_map=field_map
         )
 
-    def build_schemas(self):
+    def schemas(self):
         """
         For each parameter defined in the baseline specification file:
         - define a parameter schema for that specific parameter
