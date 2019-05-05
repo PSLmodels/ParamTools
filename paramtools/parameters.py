@@ -8,7 +8,7 @@ from functools import reduce
 import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
 
-from paramtools.build_schema import SchemaBuilder
+from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
 from paramtools.exceptions import (
     SparseValueObjectsException,
@@ -25,13 +25,13 @@ class Parameters:
     array_first = False
 
     def __init__(self, initial_state=None, array_first=None):
-        sb = SchemaBuilder(self.defaults, self.field_map)
+        schemafactory = SchemaFactory(self.defaults, self.field_map)
         (
             self._defaults_schema,
             self._validator_schema,
             self._data,
-        ) = sb.build_schemas()
-        self.label_validators = sb.label_validators
+        ) = schemafactory.schemas()
+        self.label_validators = schemafactory.label_validators
         self._stateless_label_grid = OrderedDict(
             [(name, v.grid()) for name, v in self.label_validators.items()]
         )

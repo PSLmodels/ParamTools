@@ -1,4 +1,4 @@
-from paramtools.build_schema import SchemaBuilder
+from paramtools.schema_factory import SchemaFactory
 from paramtools.exceptions import (
     ParamToolsError,
     ParameterUpdateException,
@@ -37,7 +37,7 @@ name = "paramtools"
 __version__ = "0.5.2"
 
 __all__ = [
-    "SchemaBuilder",
+    "SchemaFactory",
     "ParamToolsError",
     "ParameterUpdateException",
     "SparseValueObjectsException",
