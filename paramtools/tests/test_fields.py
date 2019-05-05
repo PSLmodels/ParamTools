@@ -10,11 +10,13 @@ def test_np_value_fields():
     res = float64._deserialize("2", None, None)
     assert res == 2.0
     assert isinstance(res, np.float64)
+    assert type(float64._serialize(res, None, None)) == float
 
     int64 = fields.Int64()
     res = int64._deserialize("2", None, None)
     assert res == 2
     assert isinstance(res, np.int64)
+    assert type(int64._serialize(res, None, None)) == int
 
     bool_ = fields.Bool_()
     res = bool_._deserialize("true", None, None)

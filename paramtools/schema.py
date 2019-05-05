@@ -70,9 +70,11 @@ class BaseParamSchema(Schema):
         attribute="type",
         data_key="type",
     )
-    number_dims = fields.Integer(default=0, missing=0)
+    number_dims = fields.Integer(required=False, missing=0)
     value = fields.Field(required=True)  # will be specified later
-    validators = fields.Nested(ValueValidatorSchema(), default={}, missing={})
+    validators = fields.Nested(
+        ValueValidatorSchema(), required=False, missing={}
+    )
 
 
 class EmptySchema(Schema):

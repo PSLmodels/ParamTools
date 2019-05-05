@@ -38,6 +38,7 @@ collision_list = [
     "_stateless_label_grid",
     "_update_param",
     "_validator_schema",
+    "_defaults_schema",
     "adjust",
     "array_first",
     "clear_state",

@@ -74,9 +74,8 @@ class SchemaBuilder:
             )
 
         classattrs = {k: fields.Nested(v) for k, v in param_dict.items()}
-        ParamSchema = type("ParamSchema", (EmptySchema,), classattrs)
-        param_schema = ParamSchema()
-        cleaned_defaults = param_schema.load(self.defaults)
+        DefaultsSchema = type("DefaultsSchema", (EmptySchema,), classattrs)
+        defaults_schema = DefaultsSchema()
 
         classattrs = {
             k: ValueObject(v(many=True)) for k, v in validator_dict.items()
@@ -86,4 +85,8 @@ class SchemaBuilder:
         )
         validator_schema = ValidatorSchema()
 
-        return cleaned_defaults, validator_schema
+        return (
+            defaults_schema,
+            validator_schema,
+            defaults_schema.load(self.defaults),
+        )
