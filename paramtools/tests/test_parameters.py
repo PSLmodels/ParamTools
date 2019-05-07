@@ -1,6 +1,7 @@
 import os
 import json
 import datetime
+from collections import OrderedDict
 
 import pytest
 
@@ -144,6 +145,14 @@ class TestAccess:
         assert set(spec1.keys()) == set(exp.keys())
 
         assert spec1["min_int_param"] == exp["min_int_param"]["value"]
+
+    def test_is_ordered(self, TestParams):
+        params = TestParams()
+        spec1 = params.specification()
+        assert isinstance(spec1, OrderedDict)
+
+        spec2 = params.specification(meta_data=True, serializable=True)
+        assert isinstance(spec2, OrderedDict)
 
     def test_specification_query(self, TestParams):
         params = TestParams()

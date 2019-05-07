@@ -2,6 +2,7 @@ from marshmallow import fields
 
 from paramtools.schema import (
     EmptySchema,
+    OrderedSchema,
     BaseValidatorSchema,
     ValueObject,
     get_type,
@@ -74,7 +75,7 @@ class SchemaFactory:
             )
 
         classattrs = {k: fields.Nested(v) for k, v in param_dict.items()}
-        DefaultsSchema = type("DefaultsSchema", (EmptySchema,), classattrs)
+        DefaultsSchema = type("DefaultsSchema", (OrderedSchema,), classattrs)
         defaults_schema = DefaultsSchema()
 
         classattrs = {

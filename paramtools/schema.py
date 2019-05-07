@@ -86,6 +86,15 @@ class EmptySchema(Schema):
     pass
 
 
+class OrderedSchema(Schema):
+    """
+    Same as `EmptySchema`, but preserves the order of its fields.
+    """
+
+    class Meta:
+        ordered = True
+
+
 class ValueObject(fields.Nested):
     """
     Schema for value objects
