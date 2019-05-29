@@ -54,6 +54,8 @@ collision_list = [
     "to_array",
     "validation_error",
     "view_state",
+    "extend",
+    "label_to_extend",
 ]
 
 
