@@ -94,3 +94,8 @@ class Date(MeshFieldMixin, marshmallow_fields.Date):
     """
 
     np_type = datetime.date
+
+    def _deserialize(self, value, attr, data):
+        if isinstance(value, (datetime.datetime, datetime.date)):
+            return value
+        return super()._deserialize(value, attr, data)

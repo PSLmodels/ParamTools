@@ -45,3 +45,6 @@ def test_contrib_fields():
     # date will need an interval argument.
     s = fields.Date(validate=[daterange_validator])
     assert s.grid() == [datetime.date(2019, 1, i) for i in range(1, 6, 2)]
+
+    s = fields.Date()
+    assert s._deserialize(datetime.date(2015, 1, 1), None, None)
