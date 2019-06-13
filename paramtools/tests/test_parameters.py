@@ -907,3 +907,56 @@ class TestExtend:
 
         with pytest.raises(InconsistentLabelsException):
             AFParams()
+
+    def test_extend_w_array(self):
+        class ExtParams(Parameters):
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "d0": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 10}},
+                        },
+                        "d1": {
+                            "type": "str",
+                            "validators": {
+                                "choice": {"choices": ["c1", "c2"]}
+                            },
+                        },
+                    }
+                },
+                "extend_param": {
+                    "title": "extend param",
+                    "description": ".",
+                    "type": "int",
+                    "value": [
+                        {"d0": 2, "d1": "c1", "value": 1},
+                        {"d0": 2, "d1": "c2", "value": 2},
+                        {"d0": 3, "d1": "c1", "value": 3},
+                        {"d0": 3, "d1": "c2", "value": 4},
+                        {"d0": 5, "d1": "c1", "value": 5},
+                        {"d0": 5, "d1": "c2", "value": 6},
+                        {"d0": 7, "d1": "c1", "value": 7},
+                        {"d0": 7, "d1": "c2", "value": 8},
+                    ],
+                },
+            }
+
+            label_to_extend = "d0"
+            array_first = True
+
+        params = ExtParams()
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [3, 4],
+            [3, 4],
+            [5, 6],
+            [5, 6],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+        ]

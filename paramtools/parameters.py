@@ -43,7 +43,6 @@ class Parameters:
 
         if array_first is not None:
             self.array_first = array_first
-
         if self.label_to_extend:
             prev_array_first = self.array_first
             self.array_first = False
@@ -323,7 +322,10 @@ class Parameters:
             }
             if not defined_vals:
                 continue
-            missing_vals = sorted(set(extend_grid) - defined_vals)
+            missing_vals = sorted(
+                set(extend_grid) - defined_vals,
+                key=lambda val: extend_grid.index(val),
+            )
             if not missing_vals:
                 continue
             extended = defaultdict(list)
@@ -340,13 +342,19 @@ class Parameters:
                 )
             for val in missing_vals:
                 eg_ix = extend_grid.index(val)
-                if extend_grid[eg_ix - 1] in extended:
+                if eg_ix == 0:
+                    first_defined_value = min(
+                        defined_vals, key=lambda val: extend_grid.index(val)
+                    )
+                    value_objects = self._select(
+                        param, True, **{label_to_extend: first_defined_value}
+                    )
+                elif extend_grid[eg_ix - 1] in extended:
                     value_objects = extended.pop(extend_grid[eg_ix - 1])
                 else:
+                    prev_defined_value = extend_grid[eg_ix - 1]
                     value_objects = self._select(
-                        param,
-                        True,
-                        **{label_to_extend: extend_grid[eg_ix - 1]},
+                        param, True, **{label_to_extend: prev_defined_value}
                     )
                 for value_object in value_objects:
                     ext = dict(value_object, **{label_to_extend: val})
