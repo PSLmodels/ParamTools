@@ -1,7 +1,19 @@
 # Guide
 
-This guide will walk you through the ParamTools API in detail, demonstrating how to use its array manipulation, value querying, and parameter extension functionalities. This guide will also discuss how one can extend `paramtools.Parameters` to meet the custom needs of your modeling project.
+**Just getting started?**
+Check out the [home page](/) for a quick start guide.
 
-Check out the [home page](/) for a quick start guide to get you up and running with ParamTools.
+**Want to learn more about the JSON spec?**
+Check out the [parameters spec](/parameters/) to learn more about what types of parameters and validators are supported by ParamTools.
 
-Check out the [parameters spec](/parameters/) to get familiar with the ParamTools JSON schema.
+API
+----------
+
+
+[**Extend:**](/api/extend/) Write more concise JSON schemas with the extend capability.
+
+*Documentation on these parts of the API coming soon:*
+
+**Array access:** Access parameter values as NumPy arrays.
+
+**Query:** Powerful query language for selecting parameter values based on their associated labels.
