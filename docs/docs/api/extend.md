@@ -1,12 +1,12 @@
 # Extend
 
-The value of a parameter can be extended along a specified label. This is helpful when a parameters' value is the same for different values of a label and there is some inherent order in that label. The extend feature allows you to simply write down the minimum amount of information needed to fill in a parameter's values and ParamTools will fill in the gaps.
+The values of a parameter can be extended along a specified label. This is helpful when a parameter's values are the same for different values of a label and there is some inherent order in that label. The extend feature allows you to simply write down the minimum amount of information needed to fill in a parameter's values and ParamTools will fill in the gaps.
 
 To use the extend feature, set the `label_to_extend` class attribute to the label that should be extended.
 
 ## Example
 
-The standard deduction parameter's values only need to be set when there is a change in the tax law. For the other years, it does not change (unless its indexed to inflation). It would be annoying to have to manually write out each of its values. Instead, we can more concisely write its values in 2017, its new values in 2018 after the TCJA tax reform was passed, and its values after provisions of the TCJA are phased out in 2026.
+The standard deduction parameter's values only need to be specified when there is a change in the tax law. For the other years, it does not change (unless its indexed to inflation). It would be annoying to have to manually write out each of its values. Instead, we can more concisely write its values in 2017, its new values in 2018 after the TCJA tax reform was passed, and its values after provisions of the TCJA are phased out in 2026.
 
 ```python
 import paramtools
@@ -73,9 +73,9 @@ params.standard_deduction
 
 ## Extend behavior by validator
 
-ParamTools uses the label's validator to determine how values should be extended by assuming that there is some order among the range of possible values for the label.
+ParamTools uses the validator associated with `label_to_extend` to determine how values should be extended by assuming that there is some order among the range of possible values for the label.
 
-View the grid of values for any label by inspecting the `label_grid` attribute of a `Parameters` instance.
+Note: You can view the grid of values for any label by inspecting the `label_grid` attribute of a `paramtools.Parameters` derived instance.
 
 ### Range
 
@@ -87,7 +87,7 @@ View the grid of values for any label by inspecting the `label_grid` attribute o
 }
 ```
 
-Extend values:
+*Extend values:*
 
 ```python
 [0, 1, 2, 3, 4, 5]
@@ -101,7 +101,7 @@ Extend values:
 }
 ```
 
-Extend values:
+*Extend values:*
 
 ```python
 [0, 0.5, 1.0, 1.5, 2.0]
@@ -115,7 +115,7 @@ Extend values:
 }
 ```
 
-Extend values:
+*Extend values:*
 
 ```python
 [datetime.date(2019, 1, 1),
@@ -133,7 +133,7 @@ Extend values:
 }
 ```
 
-Extend values:
+*Extend values:*
 
 ```python
 [-1, -2, -3]
@@ -147,7 +147,7 @@ Extend values:
 }
 ```
 
-Extend values:
+*Extend values:*
 
 ```python
 ["january", "february", "march"]
