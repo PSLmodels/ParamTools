@@ -78,18 +78,8 @@ params.standard_deduction
 #        [ 7685., 15369.]])
 ```
 
- Consider thais range validator for an integer type parameter:
 
-{
-    "range": {"min": 0, "max": 5}
-}
-
-This label will take on 6 values, 0, 1, 2, 3, 4, 5, 6 and its direction is positive (increasing with the value of the number).
-
-ParamTools can also do extensions for choice validators, using the list of possible choices and its order to determine how it should be extended.
-
-
-# Extension behavior for each validator:
+## Extend behavior for each validator
 
 ParamTools uses the label's validator to determine how values should be extended by assuming that there is some order among the range of possible values for the label.
 
@@ -139,7 +129,7 @@ Extend values:
 [datetime.date(2019, 1, 1),
  datetime.date(2019, 1, 3),
  datetime.date(2019, 1, 5)]
- ```
+```
 
 ### Choice
 
