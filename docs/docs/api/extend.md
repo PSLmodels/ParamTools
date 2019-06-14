@@ -1,14 +1,16 @@
 # Extend
 
-Parameters can be extended along a single label. This is helpful when a parameter has redundant information stored in its "value" attribute. Paramtools's extend capability allows you to just write down the minimum amount of information needed to fill in parameter's values.
+The value of a parameter can be extended along a specified label. This is helpful when a parameters' value is the same for different values of a label and there is some inherent order in that label. The extend feature allows you to simply write down the minimum amount of information needed to fill in a parameter's values and ParamTools will fill in the gaps.
 
-To use the extend capability, set the `label_to_extend` class attribute to the label that should be extended.
+To use the extend feature, set the `label_to_extend` class attribute to the label that should be extended.
 
 ## Example
 
-The standard deduction parameter's values only need to be set when there is a change in the tax law. For the other years, it does not change. It would be annoying to have to manually write out each of its values. Instead, we write its values in 2017, its new values in 2018 after the TCJA tax reform was passed, and its values after provisions of the TCJA are phased out in 2026.
+The standard deduction parameter's values only need to be set when there is a change in the tax law. For the other years, it does not change (unless its indexed to inflation). It would be annoying to have to manually write out each of its values. Instead, we can more concisely write its values in 2017, its new values in 2018 after the TCJA tax reform was passed, and its values after provisions of the TCJA are phased out in 2026.
 
 ```python
+import paramtools
+
 
 class TaxParams(paramtools.Parameters):
     defaults = {
@@ -22,26 +24,17 @@ class TaxParams(paramtools.Parameters):
                     "type": "str",
                     "validators": {"choice": {"choices": ["single", "joint"]}}
                 },
-            },
-            "additional_members": {
-                "cpi_inflatable": {"type": "bool", "number_dims": 0},
-                "cpi_inflated": {"type": "bool", "number_dims": 0}
             }
         },
         "standard_deduction": {
             "title": "Standard deduction amount",
             "description": "Amount filing unit can use as a standard deduction.",
-            "cpi_inflatable": True,
-            "cpi_inflated": True,
             "type": "float",
             "value": [
-                # Standard deduction values before TCJA is passed.
                 {"year": 2017, "marital_status": "single", "value": 6350},
                 {"year": 2017, "marital_status": "joint", "value": 12700},
-                # Standard deduction values after TCJA is passed.
                 {"year": 2018, "marital_status": "single", "value": 12000},
                 {"year": 2018, "marital_status": "joint", "value": 24000},
-                # Standard deduction values after TCJA is phased out.
                 {"year": 2026, "marital_status": "single", "value": 7685},
                 {"year": 2026, "marital_status": "joint", "value": 15369}],
             "validators": {
@@ -57,7 +50,6 @@ class TaxParams(paramtools.Parameters):
     array_first = True
 
 params = TaxParams()
-
 params.standard_deduction
 
 # output:
@@ -79,11 +71,11 @@ params.standard_deduction
 ```
 
 
-## Extend behavior for each validator
+## Extend behavior by validator
 
 ParamTools uses the label's validator to determine how values should be extended by assuming that there is some order among the range of possible values for the label.
 
-You can view the grid of values for any label by inspecting the `label_grid` attribute of a `Parameters` instance.
+View the grid of values for any label by inspecting the `label_grid` attribute of a `Parameters` instance.
 
 ### Range
 
