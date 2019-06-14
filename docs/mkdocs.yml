@@ -2,4 +2,8 @@ site_name: ParamTools Docs
 nav:
     - Home: index.md
     - Parameters: parameters.md
+    - API:
+        - Guide: 'api/guide.md'
+        - Extend: 'api/extend.md'
+
 theme: mkdocs
