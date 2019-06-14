@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Extend - ParamTools Docs</title>
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <!-- Expander button -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../..">ParamTools Docs</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li >
+                                <a href="../..">Home</a>
+                            </li>
+                            <li >
+                                <a href="../../parameters/">Parameters</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">API <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li >
+    <a href="../guide/">Guide</a>
+</li>
+                                    
+<li class="active">
+    <a href="./">Extend</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li >
+                                <a rel="next" href="../guide/">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="disabled">
+                                <a rel="prev" >
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#extend">Extend</a></li>
+            <li><a href="#example">Example</a></li>
+            <li><a href="#extend-behavior-by-validator">Extend behavior by validator</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="extend">Extend</h1>
+<p>The values of a parameter can be extended along a specified label. This is helpful when a parameter's values are the same for different values of a label and there is some inherent order in that label. The extend feature allows you to simply write down the minimum amount of information needed to fill in a parameter's values and ParamTools will fill in the gaps.</p>
+<p>To use the extend feature, set the <code>label_to_extend</code> class attribute to the label that should be extended.</p>
+<h2 id="example">Example</h2>
+<p>The standard deduction parameter's values only need to be specified when there is a change in the tax law. For the other years, it does not change (unless its indexed to inflation). It would be annoying to have to manually write out each of its values. Instead, we can more concisely write its values in 2017, its new values in 2018 after the TCJA tax reform was passed, and its values after provisions of the TCJA are phased out in 2026.</p>
+<pre><code class="python">import paramtools
+
+
+class TaxParams(paramtools.Parameters):
+    defaults = {
+        &quot;schema&quot;: {
+            &quot;labels&quot;: {
+                &quot;year&quot;: {
+                    &quot;type&quot;: &quot;int&quot;,
+                    &quot;validators&quot;: {&quot;range&quot;: {&quot;min&quot;: 2013, &quot;max&quot;: 2027}}
+                },
+                &quot;marital_status&quot;: {
+                    &quot;type&quot;: &quot;str&quot;,
+                    &quot;validators&quot;: {&quot;choice&quot;: {&quot;choices&quot;: [&quot;single&quot;, &quot;joint&quot;]}}
+                },
+            }
+        },
+        &quot;standard_deduction&quot;: {
+            &quot;title&quot;: &quot;Standard deduction amount&quot;,
+            &quot;description&quot;: &quot;Amount filing unit can use as a standard deduction.&quot;,
+            &quot;type&quot;: &quot;float&quot;,
+            &quot;value&quot;: [
+                {&quot;year&quot;: 2017, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 6350},
+                {&quot;year&quot;: 2017, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 12700},
+                {&quot;year&quot;: 2018, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 12000},
+                {&quot;year&quot;: 2018, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 24000},
+                {&quot;year&quot;: 2026, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 7685},
+                {&quot;year&quot;: 2026, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 15369}],
+            &quot;validators&quot;: {
+                &quot;range&quot;: {
+                    &quot;min&quot;: 0,
+                    &quot;max&quot;: 9e+99
+                }
+            }
+        },
+    }
+
+    label_to_extend = &quot;year&quot;
+    array_first = True
+
+params = TaxParams()
+params.standard_deduction
+
+# output:
+# array([[ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [12000., 24000.],
+#        [12000., 24000.],
+#        [12000., 24000.],
+#        [12000., 24000.],
+#        [12000., 24000.],
+#        [12000., 24000.],
+#        [12000., 24000.],
+#        [12000., 24000.],
+#        [ 7685., 15369.],
+#        [ 7685., 15369.]])
+</code></pre>
+
+<h2 id="extend-behavior-by-validator">Extend behavior by validator</h2>
+<p>ParamTools uses the validator associated with <code>label_to_extend</code> to determine how values should be extended by assuming that there is some order among the range of possible values for the label.</p>
+<p>Note: You can view the grid of values for any label by inspecting the <code>label_grid</code> attribute of a <code>paramtools.Parameters</code> derived instance.</p>
+<h3 id="range">Range</h3>
+<p><strong>Type:</strong> <code>int</code></p>
+<pre><code class="json">{
+    &quot;range&quot;: {&quot;min&quot;: 0, &quot;max&quot;: 5}
+}
+</code></pre>
+
+<p><em>Extend values:</em></p>
+<pre><code class="python">[0, 1, 2, 3, 4, 5]
+</code></pre>
+
+<p><strong>Type:</strong> <code>float</code></p>
+<pre><code class="json">{
+    &quot;range&quot;: {&quot;min&quot;: 0, &quot;max&quot;: 2, &quot;step&quot;: 0.5}
+}
+</code></pre>
+
+<p><em>Extend values:</em></p>
+<pre><code class="python">[0, 0.5, 1.0, 1.5, 2.0]
+</code></pre>
+
+<p><strong>Type:</strong> <code>date</code></p>
+<pre><code class="json">{
+    &quot;range&quot;: {&quot;min&quot;: &quot;2019-01-01&quot;, &quot;max&quot;: &quot;2019-01-05&quot;, &quot;step&quot;: {&quot;days&quot;: 2}}
+}
+</code></pre>
+
+<p><em>Extend values:</em></p>
+<pre><code class="python">[datetime.date(2019, 1, 1),
+ datetime.date(2019, 1, 3),
+ datetime.date(2019, 1, 5)]
+</code></pre>
+
+<h3 id="choice">Choice</h3>
+<p><strong>Type:</strong> <code>int</code></p>
+<pre><code class="json">{
+    &quot;choice&quot;: {&quot;choices&quot;: [-1, -2, -3]}
+}
+</code></pre>
+
+<p><em>Extend values:</em></p>
+<pre><code class="python">[-1, -2, -3]
+</code></pre>
+
+<p><strong>Type:</strong> <code>str</code></p>
+<pre><code class="json">{
+    &quot;choice&quot;: {&quot;choices&quot;: [&quot;january&quot;, &quot;february&quot;, &quot;march&quot;]}
+}
+</code></pre>
+
+<p><em>Extend values:</em></p>
+<pre><code class="python">[&quot;january&quot;, &quot;february&quot;, &quot;march&quot;]
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
