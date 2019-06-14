@@ -4,7 +4,7 @@
             "label0": {
                 "type": "str",
                 "validators": {"choice": {"choices": ["zero",
-                                                        "one"]}}
+                                                      "one"]}}
             },
             "label1": {
                 "type": "int",
@@ -156,6 +156,6 @@
             {"label0": "one", "label1": 5, "label2": 2, "value": 36}
 
         ],
-        "validators": {"range": {"min": 1, "max": 9}}
+        "validators": {"range": {"min": 1, "max": 36}}
     }
 }

@@ -23,6 +23,7 @@ class Parameters:
     defaults = None
     field_map = {}
     array_first = False
+    label_to_extend = None
 
     def __init__(self, initial_state=None, array_first=None):
         schemafactory = SchemaFactory(self.defaults, self.field_map)
@@ -39,9 +40,19 @@ class Parameters:
         self._validator_schema.context["spec"] = self
         self._errors = {}
         self._state = initial_state or {}
+
         if array_first is not None:
             self.array_first = array_first
-        self.set_state()
+        if self.label_to_extend:
+            prev_array_first = self.array_first
+            self.array_first = False
+            self.set_state()
+            self.extend()
+            if prev_array_first:
+                self.array_first = True
+                self.set_state()
+        else:
+            self.set_state()
 
     def set_state(self, **labels):
         """
@@ -291,6 +302,66 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
+    def extend(self, label_to_extend=None):
+        """
+        Extend parameters along label_to_extend.
+
+        Raises:
+            InconsistentLabelsException: Value objects do not have consistent
+                labels.
+        """
+        if label_to_extend is None:
+            label_to_extend = self.label_to_extend
+        extend_grid = self.label_grid[self.label_to_extend]
+        adjustment = defaultdict(list)
+        for param, data in self.specification(meta_data=True).items():
+            defined_vals = {
+                vo[self.label_to_extend]
+                for vo in data["value"]
+                if label_to_extend in vo
+            }
+            if not defined_vals:
+                continue
+            missing_vals = sorted(
+                set(extend_grid) - defined_vals,
+                key=lambda val: extend_grid.index(val),
+            )
+            if not missing_vals:
+                continue
+            extended = defaultdict(list)
+            cl = utils.consistent_labels(
+                [
+                    {k: v for k, v in vo.items() if k != label_to_extend}
+                    for vo in getattr(self, param)
+                ]
+            )
+            if cl is None:
+                raise InconsistentLabelsException(
+                    f"It is likely that {param} has some labels that "
+                    f"were added or omitted for some value object(s)."
+                )
+            for val in missing_vals:
+                eg_ix = extend_grid.index(val)
+                if eg_ix == 0:
+                    first_defined_value = min(
+                        defined_vals, key=lambda val: extend_grid.index(val)
+                    )
+                    value_objects = self._select(
+                        param, True, **{label_to_extend: first_defined_value}
+                    )
+                elif extend_grid[eg_ix - 1] in extended:
+                    value_objects = extended.pop(extend_grid[eg_ix - 1])
+                else:
+                    prev_defined_value = extend_grid[eg_ix - 1]
+                    value_objects = self._select(
+                        param, True, **{label_to_extend: prev_defined_value}
+                    )
+                for value_object in value_objects:
+                    ext = dict(value_object, **{label_to_extend: val})
+                    extended[val].append(ext)
+                    adjustment[param].append(ext)
+        self.adjust(adjustment)
+
     def _resolve_order(self, param):
         """
         Resolve the order of the labels and their values by
@@ -314,7 +385,8 @@ class Parameters:
         used = utils.consistent_labels(value_items)
         if used is None:
             raise InconsistentLabelsException(
-                f"Some labels in {value_items} were added or omitted for some value object(s)."
+                f"It is likely that {param} has some labels that "
+                f"were added or omitted for some value object(s)."
             )
         label_order, value_order = [], {}
         for label_name, label_values in self.label_grid.items():

@@ -129,6 +129,9 @@ class BaseValidatorSchema(Schema):
     class.
     """
 
+    class Meta:
+        ordered = True
+
     WRAPPER_MAP = {
         "range": "_get_range_validator",
         "date_range": "_get_range_validator",

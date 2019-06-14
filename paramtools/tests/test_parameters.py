@@ -4,6 +4,7 @@ import datetime
 from collections import OrderedDict
 
 import pytest
+import numpy as np
 
 from paramtools import (
     ValidationError,
@@ -760,3 +761,202 @@ class TestCollisions:
         )
 
         assert excinfo.value.args[0] == exp_msg
+
+
+class TestExtend:
+    def test_extend_num(self, array_first_defaults):
+        array_first_defaults = {
+            "schema": array_first_defaults["schema"],
+            "int_dense_array_param": array_first_defaults[
+                "int_dense_array_param"
+            ],
+        }
+        new_vos = []
+        for vo in array_first_defaults["int_dense_array_param"]["value"]:
+            if vo["label1"] not in (2, 4, 5):
+                new_vos.append(vo)
+
+        array_first_defaults["int_dense_array_param"]["value"] = new_vos
+
+        # Where label 1 is 2, 4, and 5, the value is set to the last
+        # known value, given the value object's label values.
+        exp = [
+            {"label0": "zero", "label1": 0, "label2": 0, "value": 1},
+            {"label0": "zero", "label1": 0, "label2": 1, "value": 2},
+            {"label0": "zero", "label1": 0, "label2": 2, "value": 3},
+            {"label0": "zero", "label1": 1, "label2": 0, "value": 4},
+            {"label0": "zero", "label1": 1, "label2": 1, "value": 5},
+            {"label0": "zero", "label1": 1, "label2": 2, "value": 6},
+            {"label0": "zero", "label1": 2, "label2": 0, "value": 4},
+            {"label0": "zero", "label1": 2, "label2": 1, "value": 5},
+            {"label0": "zero", "label1": 2, "label2": 2, "value": 6},
+            {"label0": "zero", "label1": 3, "label2": 0, "value": 10},
+            {"label0": "zero", "label1": 3, "label2": 1, "value": 11},
+            {"label0": "zero", "label1": 3, "label2": 2, "value": 12},
+            {"label0": "zero", "label1": 4, "label2": 0, "value": 10},
+            {"label0": "zero", "label1": 4, "label2": 1, "value": 11},
+            {"label0": "zero", "label1": 4, "label2": 2, "value": 12},
+            {"label0": "zero", "label1": 5, "label2": 0, "value": 10},
+            {"label0": "zero", "label1": 5, "label2": 1, "value": 11},
+            {"label0": "zero", "label1": 5, "label2": 2, "value": 12},
+            {"label0": "one", "label1": 0, "label2": 0, "value": 19},
+            {"label0": "one", "label1": 0, "label2": 1, "value": 20},
+            {"label0": "one", "label1": 0, "label2": 2, "value": 21},
+            {"label0": "one", "label1": 1, "label2": 0, "value": 22},
+            {"label0": "one", "label1": 1, "label2": 1, "value": 23},
+            {"label0": "one", "label1": 1, "label2": 2, "value": 24},
+            {"label0": "one", "label1": 2, "label2": 0, "value": 22},
+            {"label0": "one", "label1": 2, "label2": 1, "value": 23},
+            {"label0": "one", "label1": 2, "label2": 2, "value": 24},
+            {"label0": "one", "label1": 3, "label2": 0, "value": 28},
+            {"label0": "one", "label1": 3, "label2": 1, "value": 29},
+            {"label0": "one", "label1": 3, "label2": 2, "value": 30},
+            {"label0": "one", "label1": 4, "label2": 0, "value": 28},
+            {"label0": "one", "label1": 4, "label2": 1, "value": 29},
+            {"label0": "one", "label1": 4, "label2": 2, "value": 30},
+            {"label0": "one", "label1": 5, "label2": 0, "value": 28},
+            {"label0": "one", "label1": 5, "label2": 1, "value": 29},
+            {"label0": "one", "label1": 5, "label2": 2, "value": 30},
+        ]
+
+        class AFParams(Parameters):
+            defaults = array_first_defaults
+            label_to_extend = "label1"
+            array_first = True
+
+        params = AFParams()
+        assert isinstance(params.int_dense_array_param, np.ndarray)
+        assert params.from_array("int_dense_array_param") == exp
+
+        class AFParams(Parameters):
+            defaults = array_first_defaults
+            label_to_extend = "label1"
+            array_first = False
+
+        params = AFParams()
+        assert isinstance(params.int_dense_array_param, list)
+
+    def test_extend_categorical(self, array_first_defaults):
+        array_first_defaults = {
+            "schema": array_first_defaults["schema"],
+            "int_dense_array_param": array_first_defaults[
+                "int_dense_array_param"
+            ],
+        }
+        new_vos = []
+        for vo in array_first_defaults["int_dense_array_param"]["value"]:
+            if vo["label0"] == "one":
+                vo.update({"value": vo["value"] - 18})
+                new_vos.append(vo)
+
+        array_first_defaults["int_dense_array_param"]["value"] = new_vos
+
+        class AFParams(Parameters):
+            defaults = array_first_defaults
+            label_to_extend = "label0"
+            array_first = True
+
+        params = AFParams()
+        assert params.int_dense_array_param.tolist()
+        params.set_state(label0="one")
+        exp = [
+            {"label0": "one", "label1": 0, "label2": 0, "value": 1},
+            {"label0": "one", "label1": 0, "label2": 1, "value": 2},
+            {"label0": "one", "label1": 0, "label2": 2, "value": 3},
+            {"label0": "one", "label1": 1, "label2": 0, "value": 4},
+            {"label0": "one", "label1": 1, "label2": 1, "value": 5},
+            {"label0": "one", "label1": 1, "label2": 2, "value": 6},
+            {"label0": "one", "label1": 2, "label2": 0, "value": 7},
+            {"label0": "one", "label1": 2, "label2": 1, "value": 8},
+            {"label0": "one", "label1": 2, "label2": 2, "value": 9},
+            {"label0": "one", "label1": 3, "label2": 0, "value": 10},
+            {"label0": "one", "label1": 3, "label2": 1, "value": 11},
+            {"label0": "one", "label1": 3, "label2": 2, "value": 12},
+            {"label0": "one", "label1": 4, "label2": 0, "value": 13},
+            {"label0": "one", "label1": 4, "label2": 1, "value": 14},
+            {"label0": "one", "label1": 4, "label2": 2, "value": 15},
+            {"label0": "one", "label1": 5, "label2": 0, "value": 16},
+            {"label0": "one", "label1": 5, "label2": 1, "value": 17},
+            {"label0": "one", "label1": 5, "label2": 2, "value": 18},
+        ]
+        assert params.from_array("int_dense_array_param") == exp
+
+    def test_inconsistent_labels(self, array_first_defaults):
+        array_first_defaults = {
+            "schema": array_first_defaults["schema"],
+            "int_dense_array_param": array_first_defaults[
+                "int_dense_array_param"
+            ],
+        }
+        new_vos = []
+        for vo in array_first_defaults["int_dense_array_param"]["value"]:
+            if vo["label0"] == "one":
+                vo.update({"value": vo["value"] - 18})
+                # make labels inconsistent by removing the label2 values
+                # for some value objects.
+                if vo["label2"] == 1:
+                    vo.pop("label2")
+                new_vos.append(vo)
+
+        array_first_defaults["int_dense_array_param"]["value"] = new_vos
+
+        class AFParams(Parameters):
+            defaults = array_first_defaults
+            label_to_extend = "label0"
+            array_first = True
+
+        with pytest.raises(InconsistentLabelsException):
+            AFParams()
+
+    def test_extend_w_array(self):
+        class ExtParams(Parameters):
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "d0": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 10}},
+                        },
+                        "d1": {
+                            "type": "str",
+                            "validators": {
+                                "choice": {"choices": ["c1", "c2"]}
+                            },
+                        },
+                    }
+                },
+                "extend_param": {
+                    "title": "extend param",
+                    "description": ".",
+                    "type": "int",
+                    "value": [
+                        {"d0": 2, "d1": "c1", "value": 1},
+                        {"d0": 2, "d1": "c2", "value": 2},
+                        {"d0": 3, "d1": "c1", "value": 3},
+                        {"d0": 3, "d1": "c2", "value": 4},
+                        {"d0": 5, "d1": "c1", "value": 5},
+                        {"d0": 5, "d1": "c2", "value": 6},
+                        {"d0": 7, "d1": "c1", "value": 7},
+                        {"d0": 7, "d1": "c2", "value": 8},
+                    ],
+                },
+            }
+
+            label_to_extend = "d0"
+            array_first = True
+
+        params = ExtParams()
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [3, 4],
+            [3, 4],
+            [5, 6],
+            [5, 6],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+        ]
