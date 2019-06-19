@@ -119,12 +119,14 @@ class Parameters:
             raise ValueError("params_or_path is not dict or file path")
         return params
 
-    def adjust(self, params_or_path, raise_errors=True):
+    def adjust(self, params_or_path, raise_errors=True, extend_adj=True):
         """
         Deserialize and validate parameter adjustments. `params_or_path`
         can be a file path or a `dict` that has not been fully deserialized.
         The adjusted values replace the current values stored in the
         corresponding parameter attributes.
+
+        Returns: parsed, validated parameters.
 
         Raises:
             marshmallow.exceptions.ValidationError if data is not valid.
@@ -135,22 +137,46 @@ class Parameters:
         params = self.read_params(params_or_path)
 
         # Validate user adjustments.
+        parsed_params = {}
         try:
-            clean_params = self._validator_schema.load(params)
+            parsed_params = self._validator_schema.load(params)
         except MarshmallowValidationError as ve:
             self._parse_errors(ve, params)
 
         if not self._errors:
-            for param, value in clean_params.items():
-                self._update_param(param, value)
+            if self.label_to_extend is not None and extend_adj:
+                extend_grid = self._stateless_label_grid[self.label_to_extend]
+                for param, vos in parsed_params.items():
+                    min_vo = min(
+                        vos,
+                        key=lambda vo: extend_grid.index(
+                            vo[self.label_to_extend]
+                        ),
+                    )
+                    min_ix = extend_grid.index(min_vo[self.label_to_extend])
+                    to_delete = [
+                        {self.label_to_extend: higher_val, "value": None}
+                        for higher_val in extend_grid[min_ix + 1 :]
+                    ]
+                    self._update_param(param, to_delete)
+                    self._update_param(param, vos)
+                    self.extend(params=[param])
+            else:
+                for param, value in parsed_params.items():
+                    self._update_param(param, value)
 
         self._validator_schema.context["spec"] = self
 
         if raise_errors and self._errors:
             raise self.validation_error
 
+        if self.label_to_extend is not None and extend_adj:
+            self.extend()
+
         # Update attrs.
         self.set_state()
+
+        return parsed_params
 
     @property
     def errors(self):
@@ -302,7 +328,7 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def extend(self, label_to_extend=None):
+    def extend(self, label_to_extend=None, params=None):
         """
         Extend parameters along label_to_extend.
 
@@ -312,9 +338,13 @@ class Parameters:
         """
         if label_to_extend is None:
             label_to_extend = self.label_to_extend
+        if params is not None:
+            spec = {param: self._data[param] for param in params}
+        else:
+            spec = self.specification(meta_data=True)
         extend_grid = self.label_grid[self.label_to_extend]
         adjustment = defaultdict(list)
-        for param, data in self.specification(meta_data=True).items():
+        for param, data in spec.items():
             defined_vals = {
                 vo[self.label_to_extend]
                 for vo in data["value"]
@@ -332,7 +362,7 @@ class Parameters:
             cl = utils.consistent_labels(
                 [
                     {k: v for k, v in vo.items() if k != label_to_extend}
-                    for vo in getattr(self, param)
+                    for vo in self._data[param]["value"]
                 ]
             )
             if cl is None:
@@ -360,7 +390,9 @@ class Parameters:
                     ext = dict(value_object, **{label_to_extend: val})
                     extended[val].append(ext)
                     adjustment[param].append(ext)
-        self.adjust(adjustment)
+        # Ensure that the adjust method of paramtools.Parameter is used
+        # in case the child class also implements adjust.
+        Parameters.adjust(self, adjustment, extend_adj=False)
 
     def _resolve_order(self, param):
         """

@@ -25,6 +25,11 @@ def defaults_spec_path():
 
 
 @pytest.fixture
+def extend_ex_path():
+    return os.path.join(CURRENT_PATH, "extend_ex.json")
+
+
+@pytest.fixture
 def array_first_defaults(defaults_spec_path):
     with open(defaults_spec_path) as f:
         r = json.loads(f.read())
@@ -908,40 +913,9 @@ class TestExtend:
         with pytest.raises(InconsistentLabelsException):
             AFParams()
 
-    def test_extend_w_array(self):
+    def test_extend_w_array(self, extend_ex_path):
         class ExtParams(Parameters):
-            defaults = {
-                "schema": {
-                    "labels": {
-                        "d0": {
-                            "type": "int",
-                            "validators": {"range": {"min": 0, "max": 10}},
-                        },
-                        "d1": {
-                            "type": "str",
-                            "validators": {
-                                "choice": {"choices": ["c1", "c2"]}
-                            },
-                        },
-                    }
-                },
-                "extend_param": {
-                    "title": "extend param",
-                    "description": ".",
-                    "type": "int",
-                    "value": [
-                        {"d0": 2, "d1": "c1", "value": 1},
-                        {"d0": 2, "d1": "c2", "value": 2},
-                        {"d0": 3, "d1": "c1", "value": 3},
-                        {"d0": 3, "d1": "c2", "value": 4},
-                        {"d0": 5, "d1": "c1", "value": 5},
-                        {"d0": 5, "d1": "c2", "value": 6},
-                        {"d0": 7, "d1": "c1", "value": 7},
-                        {"d0": 7, "d1": "c2", "value": 8},
-                    ],
-                },
-            }
-
+            defaults = extend_ex_path
             label_to_extend = "d0"
             array_first = True
 
@@ -960,3 +934,98 @@ class TestExtend:
             [7, 8],
             [7, 8],
         ]
+
+    def test_extend_adj(self, extend_ex_path):
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        params = ExtParams()
+        params.adjust({"extend_param": [{"d0": 3, "value": -1}]})
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "d1": "c1", "value": -1},
+                    {"d0": 3, "d1": "c2", "value": 1},
+                ]
+            }
+        )
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "d1": "c1", "value": -1},
+                    {"d0": 3, "d1": "c2", "value": 1},
+                ]
+            }
+        )
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+        ]
+
+        # params = ExtParams()
+        # params.adjust(
+        #     {
+        #         "extend_param": [
+        #             {"d0": 3, "value": -1},
+        #             {"d0": 5, "d1": "c1", "value": 0},
+        #             {"d0": 6, "d1": "c2", "value": 1},
+        #         ]
+        #     }
+        # )
+        # assert params.extend_param.tolist() == [
+        #     [1, 2],
+        #     [1, 2],
+        #     [1, 2],
+        #     [-1, -1],
+        #     [-1, -1],
+        #     [-1, -1],
+        #     [-1,-1],
+        #     [0, -1],
+        #     [0, 1],
+        #     [0, 1],
+        #     [0, 1],
+        # ]
