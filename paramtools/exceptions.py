@@ -30,7 +30,8 @@ class InconsistentLabelsException(ParamToolsError):
 collision_list = [
     "_data",
     "_errors",
-    "_select",
+    "select_eq",
+    "select_ne",
     "_numpy_type",
     "_parse_errors",
     "_resolve_order",

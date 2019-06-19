@@ -10,6 +10,7 @@ from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
+from paramtools import select
 from paramtools.exceptions import (
     SparseValueObjectsException,
     ValidationError,
@@ -219,7 +220,7 @@ class Parameters:
 
         all_params = OrderedDict()
         for param in self._validator_schema.fields:
-            result = self._select(param, False, **labels)
+            result = self.select_eq(param, False, **labels)
             if result or include_empty:
                 if meta_data:
                     param_data = self._data[param]
@@ -252,7 +253,7 @@ class Parameters:
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
         """
-        value_items = self._select(param, False, **self._state)
+        value_items = self.select_eq(param, False, **self._state)
         label_order, value_order = self._resolve_order(param)
         shape = []
         for label in label_order:
@@ -376,14 +377,14 @@ class Parameters:
                     first_defined_value = min(
                         defined_vals, key=lambda val: extend_grid.index(val)
                     )
-                    value_objects = self._select(
+                    value_objects = self.select_eq(
                         param, True, **{label_to_extend: first_defined_value}
                     )
                 elif extend_grid[eg_ix - 1] in extended:
                     value_objects = extended.pop(extend_grid[eg_ix - 1])
                 else:
                     prev_defined_value = extend_grid[eg_ix - 1]
-                    value_objects = self._select(
+                    value_objects = self.select_eq(
                         param, True, **{label_to_extend: prev_defined_value}
                     )
                 for value_object in value_objects:
@@ -413,11 +414,10 @@ class Parameters:
             InconsistentLabelsException: Value objects do not have consistent
                 labels.
         """
-        value_items = self._select(param, False, **self._state)
+        value_items = self.select_eq(param, False, **self._state)
         used = utils.consistent_labels(value_items)
         if used is None:
             raise InconsistentLabelsException(
-                f"It is likely that {param} has some labels that "
                 f"were added or omitted for some value object(s)."
             )
         label_order, value_order = [], {}
@@ -435,30 +435,15 @@ class Parameters:
             self._validator_schema.fields[param].nested.fields["value"].np_type
         )
 
-    def _select(self, param, exact_match, **labels):
-        """
-        Query a parameter along some labels. If exact_match is True,
-        all values in `labels` must be equal to the corresponding label
-        in the parameter's "value" dictionary.
+    def select_eq(self, param, exact_match, **labels):
+        return select.select_eq(
+            self._data[param]["value"], exact_match, labels
+        )
 
-        Ignores state.
-
-        Returns: [{"value": val, "label0": ..., }]
-        """
-        value_objects = self._data[param]["value"]
-        ret = []
-        for value_object in value_objects:
-            matches = []
-            for label_name, label_value in labels.items():
-                if label_name in value_object or exact_match:
-                    if isinstance(label_value, list):
-                        match = value_object[label_name] in label_value
-                    else:
-                        match = value_object[label_name] == label_value
-                    matches.append(match)
-            if all(matches):
-                ret.append(value_object)
-        return ret
+    def select_ne(self, param, exact_match, **labels):
+        return select.select_ne(
+            self._data[param]["value"], exact_match, labels
+        )
 
     def _update_param(self, param, new_values):
         """
