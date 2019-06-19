@@ -2,6 +2,7 @@ import copy
 import os
 import json
 import itertools
+from pprint import pprint
 from collections import OrderedDict, defaultdict
 from functools import reduce
 
@@ -148,19 +149,49 @@ class Parameters:
             if self.label_to_extend is not None and extend_adj:
                 extend_grid = self._stateless_label_grid[self.label_to_extend]
                 for param, vos in parsed_params.items():
-                    min_vo = min(
+                    # do gte = select_gte extend_grid[min_ix]
+                    # do select_ne(gte, spec'ed lables)
+                    # set value to none and delete
+                    to_delete = []
+                    for vo in sorted(
                         vos,
-                        key=lambda vo: extend_grid.index(
-                            vo[self.label_to_extend]
+                        key=lambda v: extend_grid.index(
+                            v[self.label_to_extend]
                         ),
-                    )
-                    min_ix = extend_grid.index(min_vo[self.label_to_extend])
+                    ):
+                        gt = select.select(
+                            self._data[param]["value"],
+                            True,
+                            lambda x, y: all(
+                                extend_grid.index(x) > extend_grid.index(item)
+                                for item in y
+                            ),
+                            all,
+                            {self.label_to_extend: vo[self.label_to_extend]},
+                        )
+                        eq = select.select_eq(
+                            gt,
+                            True,
+                            {
+                                l: lv
+                                for l, lv in vo.items()
+                                if l not in (self.label_to_extend, "value")
+                            },
+                        )
+                        to_delete += eq
                     to_delete = [
-                        {self.label_to_extend: higher_val, "value": None}
-                        for higher_val in extend_grid[min_ix + 1 :]
+                        dict(td, **{"value": None}) for td in to_delete
                     ]
+                    # print('bef adj')
+                    # pprint(self._data[param]["value"])
                     self._update_param(param, to_delete)
                     self._update_param(param, vos)
+                    print("aft adj")
+                    pprint(
+                        sorted(
+                            self._data[param]["value"], key=lambda x: x["d0"]
+                        )
+                    )
                     self.extend(params=[param])
             else:
                 for param, value in parsed_params.items():
@@ -339,10 +370,13 @@ class Parameters:
         """
         if label_to_extend is None:
             label_to_extend = self.label_to_extend
+        spec = self.specification(meta_data=True)
         if params is not None:
-            spec = {param: self._data[param] for param in params}
-        else:
-            spec = self.specification(meta_data=True)
+            spec = {
+                param: self._data[param]
+                for param, data in spec.items()
+                if param in params
+            }
         extend_grid = self.label_grid[self.label_to_extend]
         adjustment = defaultdict(list)
         for param, data in spec.items():
@@ -387,10 +421,14 @@ class Parameters:
                     value_objects = self.select_eq(
                         param, True, **{label_to_extend: prev_defined_value}
                     )
+                print("val", param, val)
+                pprint(value_objects)
                 for value_object in value_objects:
                     ext = dict(value_object, **{label_to_extend: val})
                     extended[val].append(ext)
                     adjustment[param].append(ext)
+        print("aft ext")
+        # pprint(sorted(adjustment["extend_param"], key=lambda x: x["d0"]))
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
         Parameters.adjust(self, adjustment, extend_adj=False)
@@ -445,6 +483,11 @@ class Parameters:
             self._data[param]["value"], exact_match, labels
         )
 
+    def select_gt(self, param, exact_match, **labels):
+        return select.select_gt(
+            self._data[param]["value"], exact_match, labels
+        )
+
     def _update_param(self, param, new_values):
         """
         Update the current parameter values with those specified by
@@ -463,8 +506,10 @@ class Parameters:
             For now, no exceptions are raised by this method.
 
         """
-        curr_vals = self._data[param]["value"]
+        print("new_values")
+        pprint(new_values)
         for i in range(len(new_values)):
+            curr_vals = self._data[param]["value"]
             matched_at_least_once = False
             labels_to_check = tuple(k for k in new_values[i] if k != "value")
             to_delete = []
@@ -485,8 +530,13 @@ class Parameters:
                 # towards the front of the list as items are removed.
                 for ix in sorted(to_delete, reverse=True):
                     del curr_vals[ix]
-            if not matched_at_least_once:
+            if (
+                not matched_at_least_once
+                and new_values[i]["value"] is not None
+            ):
                 curr_vals.append(new_values[i])
+        print("done adj")
+        # pprint(sorted(self._data["extend_param"]["value"], key=lambda x: x["d0"]))
 
     def _parse_errors(self, ve, params):
         """

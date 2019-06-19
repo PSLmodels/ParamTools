@@ -102,7 +102,9 @@ class ValueObject(fields.Nested):
 
     def _deserialize(self, value, attr, data, partial=None, **kwargs):
         if not isinstance(value, list) or (
-            isinstance(value, list) and not isinstance(value[0], dict)
+            isinstance(value, list)
+            and value
+            and not isinstance(value[0], dict)
         ):
             value = [{"value": value}]
         return super()._deserialize(

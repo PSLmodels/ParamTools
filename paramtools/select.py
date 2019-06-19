@@ -31,9 +31,17 @@ def ne_func(x, y):
     return x not in y
 
 
+def gt_func(x, y):
+    return all(x > item for item in y)
+
+
 def select_eq(value_objects, exact_match, labels):
     return select(value_objects, exact_match, eq_func, all, labels)
 
 
 def select_ne(value_objects, exact_match, labels):
     return select(value_objects, exact_match, ne_func, any, labels)
+
+
+def select_gt(value_objects, exact_match, labels):
+    return select(value_objects, exact_match, gt_func, all, labels)

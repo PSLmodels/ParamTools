@@ -1006,26 +1006,53 @@ class TestExtend:
             [-1, 1],
         ]
 
-        # params = ExtParams()
-        # params.adjust(
-        #     {
-        #         "extend_param": [
-        #             {"d0": 3, "value": -1},
-        #             {"d0": 5, "d1": "c1", "value": 0},
-        #             {"d0": 6, "d1": "c2", "value": 1},
-        #         ]
-        #     }
-        # )
-        # assert params.extend_param.tolist() == [
-        #     [1, 2],
-        #     [1, 2],
-        #     [1, 2],
-        #     [-1, -1],
-        #     [-1, -1],
-        #     [-1, -1],
-        #     [-1,-1],
-        #     [0, -1],
-        #     [0, 1],
-        #     [0, 1],
-        #     [0, 1],
-        # ]
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "value": -1},
+                    {"d0": 5, "d1": "c1", "value": 0},
+                    {"d0": 6, "d1": "c2", "value": 1},
+                ]
+            }
+        )
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [0, -1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "value": -1},
+                    {"d0": 5, "d1": "c1", "value": 0},
+                    {"d0": 5, "d1": "c2", "value": 1},
+                    {"d0": 8, "d1": "c1", "value": 22},
+                    {"d0": 8, "d1": "c2", "value": 23},
+                ]
+            }
+        )
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+            [22, 23],
+            [22, 23],
+            [22, 23],
+        ]
