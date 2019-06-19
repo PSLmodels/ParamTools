@@ -2,7 +2,6 @@ import copy
 import os
 import json
 import itertools
-from pprint import pprint
 from collections import OrderedDict, defaultdict
 from functools import reduce
 
@@ -149,9 +148,6 @@ class Parameters:
             if self.label_to_extend is not None and extend_adj:
                 extend_grid = self._stateless_label_grid[self.label_to_extend]
                 for param, vos in parsed_params.items():
-                    # do gte = select_gte extend_grid[min_ix]
-                    # do select_ne(gte, spec'ed lables)
-                    # set value to none and delete
                     to_delete = []
                     for vo in sorted(
                         vos,
@@ -159,39 +155,25 @@ class Parameters:
                             v[self.label_to_extend]
                         ),
                     ):
-                        gt = select.select(
+                        gt = select.select_gt_ix(
                             self._data[param]["value"],
                             True,
-                            lambda x, y: all(
-                                extend_grid.index(x) > extend_grid.index(item)
-                                for item in y
-                            ),
-                            all,
                             {self.label_to_extend: vo[self.label_to_extend]},
+                            extend_grid,
                         )
                         eq = select.select_eq(
                             gt,
                             True,
-                            {
-                                l: lv
-                                for l, lv in vo.items()
-                                if l not in (self.label_to_extend, "value")
-                            },
+                            utils.filter_out_labels(
+                                vo, labels=[self.label_to_extend, "value"]
+                            ),
                         )
                         to_delete += eq
                     to_delete = [
                         dict(td, **{"value": None}) for td in to_delete
                     ]
-                    # print('bef adj')
-                    # pprint(self._data[param]["value"])
                     self._update_param(param, to_delete)
                     self._update_param(param, vos)
-                    print("aft adj")
-                    pprint(
-                        sorted(
-                            self._data[param]["value"], key=lambda x: x["d0"]
-                        )
-                    )
                     self.extend(params=[param])
             else:
                 for param, value in parsed_params.items():
@@ -370,6 +352,7 @@ class Parameters:
         """
         if label_to_extend is None:
             label_to_extend = self.label_to_extend
+
         spec = self.specification(meta_data=True)
         if params is not None:
             spec = {
@@ -377,58 +360,77 @@ class Parameters:
                 for param, data in spec.items()
                 if param in params
             }
-        extend_grid = self.label_grid[self.label_to_extend]
+        extend_grid = self.label_grid[label_to_extend]
         adjustment = defaultdict(list)
         for param, data in spec.items():
-            defined_vals = {
-                vo[self.label_to_extend]
-                for vo in data["value"]
-                if label_to_extend in vo
-            }
-            if not defined_vals:
+            if not any(label_to_extend in vo for vo in data["value"]):
                 continue
-            missing_vals = sorted(
-                set(extend_grid) - defined_vals,
-                key=lambda val: extend_grid.index(val),
-            )
-            if not missing_vals:
-                continue
-            extended = defaultdict(list)
-            cl = utils.consistent_labels(
-                [
-                    {k: v for k, v in vo.items() if k != label_to_extend}
-                    for vo in self._data[param]["value"]
-                ]
-            )
-            if cl is None:
-                raise InconsistentLabelsException(
-                    f"It is likely that {param} has some labels that "
-                    f"were added or omitted for some value object(s)."
-                )
-            for val in missing_vals:
-                eg_ix = extend_grid.index(val)
-                if eg_ix == 0:
-                    first_defined_value = min(
-                        defined_vals, key=lambda val: extend_grid.index(val)
-                    )
-                    value_objects = self.select_eq(
-                        param, True, **{label_to_extend: first_defined_value}
-                    )
-                elif extend_grid[eg_ix - 1] in extended:
-                    value_objects = extended.pop(extend_grid[eg_ix - 1])
+            extended_vos = set()
+            for vo in sorted(
+                data["value"],
+                key=lambda val: extend_grid.index(val[label_to_extend]),
+            ):
+                hashable_vo = utils.hashable_value_object(vo)
+                if hashable_vo in extended_vos:
+                    continue
                 else:
-                    prev_defined_value = extend_grid[eg_ix - 1]
-                    value_objects = self.select_eq(
-                        param, True, **{label_to_extend: prev_defined_value}
-                    )
-                print("val", param, val)
-                pprint(value_objects)
-                for value_object in value_objects:
-                    ext = dict(value_object, **{label_to_extend: val})
-                    extended[val].append(ext)
-                    adjustment[param].append(ext)
-        print("aft ext")
-        # pprint(sorted(adjustment["extend_param"], key=lambda x: x["d0"]))
+                    extended_vos.add(hashable_vo)
+                gt = select.select_gt_ix(
+                    self._data[param]["value"],
+                    True,
+                    {label_to_extend: vo[label_to_extend]},
+                    extend_grid,
+                )
+                eq = select.select_eq(
+                    gt,
+                    True,
+                    utils.filter_out_labels(
+                        vo, labels=["value", label_to_extend]
+                    ),
+                )
+                extended_vos.update(map(utils.hashable_value_object, eq))
+                eq += [vo]
+
+                defined_vals = {eq_vo[label_to_extend] for eq_vo in eq}
+
+                missing_vals = sorted(
+                    set(extend_grid) - defined_vals,
+                    key=lambda val: extend_grid.index(val),
+                )
+
+                if not missing_vals:
+                    continue
+
+                extended = defaultdict(list)
+
+                for val in missing_vals:
+                    eg_ix = extend_grid.index(val)
+                    if eg_ix == 0:
+                        first_defined_value = min(
+                            defined_vals,
+                            key=lambda val: extend_grid.index(val),
+                        )
+                        value_objects = select.select_eq(
+                            eq, True, {label_to_extend: first_defined_value}
+                        )
+                    elif extend_grid[eg_ix - 1] in extended:
+                        value_objects = extended.pop(extend_grid[eg_ix - 1])
+                    else:
+                        prev_defined_value = extend_grid[eg_ix - 1]
+                        value_objects = select.select_eq(
+                            eq, True, {label_to_extend: prev_defined_value}
+                        )
+                    # In practice, value_objects has length one.
+                    # Theoretically, there could be multiple if the inital value
+                    # object had less labels than later value objects and thus
+                    # matched multiple value objects.
+                    for value_object in value_objects:
+                        ext = dict(value_object, **{label_to_extend: val})
+                        extended_vos.add(
+                            utils.hashable_value_object(value_object)
+                        )
+                        extended[val].append(ext)
+                        adjustment[param].append(ext)
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
         Parameters.adjust(self, adjustment, extend_adj=False)
@@ -506,8 +508,6 @@ class Parameters:
             For now, no exceptions are raised by this method.
 
         """
-        print("new_values")
-        pprint(new_values)
         for i in range(len(new_values)):
             curr_vals = self._data[param]["value"]
             matched_at_least_once = False
@@ -535,8 +535,6 @@ class Parameters:
                 and new_values[i]["value"] is not None
             ):
                 curr_vals.append(new_values[i])
-        print("done adj")
-        # pprint(sorted(self._data["extend_param"]["value"], key=lambda x: x["d0"]))
 
     def _parse_errors(self, ve, params):
         """

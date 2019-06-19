@@ -90,3 +90,11 @@ def ensure_value_object(vo):
     ):
         vo = [{"value": vo}]
     return vo
+
+
+def hashable_value_object(vo):
+    return tuple(sorted(vo.items()))
+
+
+def filter_out_labels(vo, labels):
+    return {l: lv for l, lv in vo.items() if l not in labels}

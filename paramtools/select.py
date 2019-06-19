@@ -35,6 +35,11 @@ def gt_func(x, y):
     return all(x > item for item in y)
 
 
+def gt_ix_func(cmp_list, x, y):
+    x_val = cmp_list.index(x)
+    return all(x_val > cmp_list.index(item) for item in y)
+
+
 def select_eq(value_objects, exact_match, labels):
     return select(value_objects, exact_match, eq_func, all, labels)
 
@@ -45,3 +50,13 @@ def select_ne(value_objects, exact_match, labels):
 
 def select_gt(value_objects, exact_match, labels):
     return select(value_objects, exact_match, gt_func, all, labels)
+
+
+def select_gt_ix(value_objects, exact_match, labels, cmp_list):
+    return select(
+        value_objects,
+        exact_match,
+        lambda x, y: gt_ix_func(cmp_list, x, y),
+        all,
+        labels,
+    )

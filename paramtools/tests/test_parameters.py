@@ -886,33 +886,6 @@ class TestExtend:
         ]
         assert params.from_array("int_dense_array_param") == exp
 
-    def test_inconsistent_labels(self, array_first_defaults):
-        array_first_defaults = {
-            "schema": array_first_defaults["schema"],
-            "int_dense_array_param": array_first_defaults[
-                "int_dense_array_param"
-            ],
-        }
-        new_vos = []
-        for vo in array_first_defaults["int_dense_array_param"]["value"]:
-            if vo["label0"] == "one":
-                vo.update({"value": vo["value"] - 18})
-                # make labels inconsistent by removing the label2 values
-                # for some value objects.
-                if vo["label2"] == 1:
-                    vo.pop("label2")
-                new_vos.append(vo)
-
-        array_first_defaults["int_dense_array_param"]["value"] = new_vos
-
-        class AFParams(Parameters):
-            defaults = array_first_defaults
-            label_to_extend = "label0"
-            array_first = True
-
-        with pytest.raises(InconsistentLabelsException):
-            AFParams()
-
     def test_extend_w_array(self, extend_ex_path):
         class ExtParams(Parameters):
             defaults = extend_ex_path
@@ -1012,30 +985,6 @@ class TestExtend:
                 "extend_param": [
                     {"d0": 3, "value": -1},
                     {"d0": 5, "d1": "c1", "value": 0},
-                    {"d0": 6, "d1": "c2", "value": 1},
-                ]
-            }
-        )
-        assert params.extend_param.tolist() == [
-            [1, 2],
-            [1, 2],
-            [1, 2],
-            [-1, -1],
-            [-1, -1],
-            [-1, -1],
-            [-1, -1],
-            [0, -1],
-            [0, 1],
-            [0, 1],
-            [0, 1],
-        ]
-
-        params = ExtParams()
-        params.adjust(
-            {
-                "extend_param": [
-                    {"d0": 3, "value": -1},
-                    {"d0": 5, "d1": "c1", "value": 0},
                     {"d0": 5, "d1": "c2", "value": 1},
                     {"d0": 8, "d1": "c1", "value": 22},
                     {"d0": 8, "d1": "c2", "value": 23},
@@ -1056,3 +1005,32 @@ class TestExtend:
             [22, 23],
             [22, 23],
         ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "value": -1},
+                    {"d0": 5, "d1": "c1", "value": 0},
+                    {"d0": 6, "d1": "c2", "value": 1},
+                ]
+            }
+        )
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [0, -1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+        ]
+
+        params = ExtParams()
+        params.adjust({"extend_param": [{"d0": 0, "value": 1}]})
+
+        assert params.extend_param.tolist() == [[1, 1]] * 11
