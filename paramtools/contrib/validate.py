@@ -20,8 +20,8 @@ class Range(marshmallow_validate.Range):
     def __init__(
         self, min=None, max=None, error_min=None, error_max=None, step=None
     ):
-        self.min = min
-        self.max = max
+        self.min = np.array(min) if isinstance(min, list) else min
+        self.max = np.array(max) if isinstance(max, list) else max
         self.error_min = error_min
         self.error_max = error_max
         self.step = step or 1  # default to 1
@@ -33,16 +33,16 @@ class Range(marshmallow_validate.Range):
         if value is None:
             return value
         if not isinstance(value, list):
-            value_list = [value]
+            value_list = np.array([value])
         else:
-            value_list = utils.ravel(value)
+            value_list = np.array(value).ravel()
 
         for val in value_list:
-            if self.min is not None and val < self.min:
+            if self.min is not None and np.all(val < self.min):
                 message = self.error_min or self.message_min
                 raise ValidationError(self._format_error(value, message))
 
-            if self.max is not None and val > self.max:
+            if self.max is not None and np.all(val > self.max):
                 message = self.error_max or self.message_max
                 raise ValidationError(self._format_error(value, message))
 

@@ -174,17 +174,16 @@ class BaseValidatorSchema(Schema):
         )
         validator_spec = param_info["validators"]
         validators = []
-        for validator_name, method_name in self.WRAPPER_MAP.items():
-            if validator_name in validator_spec:
-                validator = getattr(self, method_name)(
-                    validator_name,
-                    validator_spec[validator_name],
-                    param_name,
-                    labels,
-                    param_spec,
-                    raw_data,
-                )
-                validators.append(validator)
+        for validator_name in validator_spec:
+            validator = getattr(self, self.WRAPPER_MAP[validator_name])(
+                validator_name,
+                validator_spec[validator_name],
+                param_name,
+                labels,
+                param_spec,
+                raw_data,
+            )
+            validators.append(validator)
 
         value = param_spec["value"]
         errors = []
@@ -298,7 +297,8 @@ class BaseValidatorSchema(Schema):
             for val in vals
             if all(val[k] == param_spec[k] for k in labels_to_check)
         ]
-        assert len(res) == 1
+        # breakpoint()
+        # assert len(res) == 1
         return res[0]["value"]
 
 
