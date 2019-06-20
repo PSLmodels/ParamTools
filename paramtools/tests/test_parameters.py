@@ -1034,3 +1034,13 @@ class TestExtend:
         params.adjust({"extend_param": [{"d0": 0, "value": 1}]})
 
         assert params.extend_param.tolist() == [[1, 1]] * 11
+
+    def test_extend_adj_w_errors(self, extend_ex_path):
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        params = ExtParams()
+        with pytest.raises(ValidationError):
+            params.adjust({"extend_param": 102})
