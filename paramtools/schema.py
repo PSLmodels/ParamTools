@@ -12,6 +12,7 @@ from paramtools.contrib import (
     validate as contrib_validate,
     fields as contrib_fields,
 )
+from paramtools import utils
 
 
 class RangeSchema(Schema):
@@ -165,13 +166,6 @@ class BaseValidatorSchema(Schema):
         """
         param_info = self.context["spec"]._data[param_name]
         # sort keys to guarantee order.
-        labels = " , ".join(
-            [
-                f"{k}={param_spec[k]}"
-                for k in sorted(param_spec)
-                if k != "value"
-            ]
-        )
         validator_spec = param_info["validators"]
         validators = []
         for validator_name in validator_spec:
@@ -179,24 +173,22 @@ class BaseValidatorSchema(Schema):
                 validator_name,
                 validator_spec[validator_name],
                 param_name,
-                labels,
                 param_spec,
                 raw_data,
             )
             validators.append(validator)
 
-        value = param_spec["value"]
         errors = []
         for validator in validators:
             try:
-                validator(value)
+                validator(param_spec, custom=True)
             except MarshmallowValidationError as ve:
-                errors.append(str(ve))
+                errors += ve.messages
 
         return errors
 
     def _get_range_validator(
-        self, vname, range_dict, param_name, labels, param_spec, raw_data
+        self, vname, range_dict, param_name, param_spec, raw_data
     ):
         if vname == "range":
             range_class = contrib_validate.Range
@@ -208,39 +200,47 @@ class BaseValidatorSchema(Schema):
             )
         min_value = range_dict.get("min", None)
         if min_value is not None:
-            min_value = self._resolve_op_value(
+            min_oth_param, min_vos = self._resolve_op_value(
                 min_value, param_name, param_spec, raw_data
             )
         max_value = range_dict.get("max", None)
         if max_value is not None:
-            max_value = self._resolve_op_value(
+            max_oth_param, max_vos = self._resolve_op_value(
                 max_value, param_name, param_spec, raw_data
             )
-        label_suffix = f" for labels {labels}" if labels else ""
-        min_error = (
-            "{param_name} {input} must be greater than " "{min}{label_suffix}."
-        ).format(
-            param_name=param_name,
-            labels=labels,
-            input="{input}",
-            min="{min}",
-            label_suffix=label_suffix,
+        min_vos = self._sort_by_label_to_extend(min_vos)
+        max_vos = self._sort_by_label_to_extend(max_vos)
+        error_min = f"{param_name}{{labels}} {{input}} < min {{min}} {min_oth_param}{{oth_labels}}"
+        error_max = f"{param_name}{{labels}} {{input}} > max {{max}} {max_oth_param}{{oth_labels}}"
+        return range_class(
+            min_vo=min_vos,
+            max_vo=max_vos,
+            error_min=error_min,
+            error_max=error_max,
         )
-        max_error = (
-            "{param_name} {input} must be less than " "{max}{label_suffix}."
-        ).format(
-            param_name=param_name,
-            labels=labels,
-            input="{input}",
-            max="{max}",
-            label_suffix=label_suffix,
-        )
-        return range_class(min_value, max_value, min_error, max_error)
+
+    def _sort_by_label_to_extend(self, vos):
+        label_to_extend = self.context["spec"].label_to_extend
+        if label_to_extend is not None:
+            label_grid = self.context["spec"]._stateless_label_grid
+            extend_vals = label_grid[label_to_extend]
+            return sorted(
+                vos,
+                key=lambda vo: (
+                    extend_vals.index(vo[label_to_extend])
+                    if label_to_extend in vo
+                    and vo[label_to_extend] in extend_vals
+                    else 9e99
+                ),
+            )
+        else:
+            return vos
 
     def _get_choice_validator(
-        self, vname, choice_dict, param_name, labels, param_spec, raw_data
+        self, vname, choice_dict, param_name, param_spec, raw_data
     ):
         choices = choice_dict["choices"]
+        labels = utils.make_label_str(param_spec)
         label_suffix = f" for labels {labels}" if labels else ""
         if len(choices) < 20:
             error_template = (
@@ -269,7 +269,7 @@ class BaseValidatorSchema(Schema):
             return self._get_comparable_value(
                 op_value, param_name, param_spec, raw_data
             )
-        return op_value
+        return "", [{"value": op_value}]
 
     def _get_comparable_value(
         self, oth_param_name, param_name, param_spec, raw_data
@@ -288,18 +288,16 @@ class BaseValidatorSchema(Schema):
             # If comparing against the "default" value then get the current
             # value of the parameter being updated.
             if oth_param_name == "default":
-                oth_param_name = param_name
-            oth_param = self.context["spec"]._data[oth_param_name]
+                oth_param = self.context["spec"]._data[param_name]
+            else:
+                oth_param = self.context["spec"]._data[oth_param_name]
             vals = oth_param["value"]
-        labels_to_check = tuple(k for k in param_spec if k != "value")
         res = [
             val
             for val in vals
-            if all(val[k] == param_spec[k] for k in labels_to_check)
+            if all(val[k] == param_spec[k] for k in param_spec if k != "value")
         ]
-        # breakpoint()
-        # assert len(res) == 1
-        return res[0]["value"]
+        return oth_param_name, res
 
 
 # A few fields that have not been instantiated yet

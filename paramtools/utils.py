@@ -98,3 +98,11 @@ def hashable_value_object(vo):
 
 def filter_out_labels(vo, labels):
     return {l: lv for l, lv in vo.items() if l not in labels}
+
+
+def make_label_str(vo):
+    lab_str = ", ".join([f"{lab}={vo[lab]}" for lab in vo if lab != "value"])
+    if lab_str:
+        return f"[{lab_str}]"
+    else:
+        return ""

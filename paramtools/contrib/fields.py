@@ -94,6 +94,10 @@ class Date(MeshFieldMixin, marshmallow_fields.Date):
     """
 
     np_type = datetime.date
+    default_error_messages = {
+        "invalid": "Not a valid {obj_type}: {input}",
+        "format": '"{input}" cannot be formatted as a {obj_type}.',
+    }
 
     def _deserialize(self, value, attr, data):
         if isinstance(value, (datetime.datetime, datetime.date)):

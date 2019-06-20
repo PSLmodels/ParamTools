@@ -592,6 +592,14 @@ class Parameters:
         }
 
         for pname, data in ve.messages.items():
+            if pname == "_schema":
+                error_info["messages"]["schema"] = [
+                    f"Data format error: {data}"
+                ]
+                continue
+            if data == ["Unknown field."]:
+                error_info["messages"]["schema"] = [f"Unknown field: {pname}"]
+                continue
             param_data = utils.ensure_value_object(params[pname])
             error_labels = []
             formatted_errors = []

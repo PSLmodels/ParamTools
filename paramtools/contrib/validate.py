@@ -18,41 +18,74 @@ class Range(marshmallow_validate.Range):
     error = ""
 
     def __init__(
-        self, min=None, max=None, error_min=None, error_max=None, step=None
+        self,
+        min=None,
+        max=None,
+        min_vo=None,
+        max_vo=None,
+        error_min=None,
+        error_max=None,
+        step=None,
     ):
-        self.min = np.array(min) if isinstance(min, list) else min
-        self.max = np.array(max) if isinstance(max, list) else max
+        if min is not None:
+            self.min = [{"value": min}]
+        else:
+            self.min = min_vo
+        if max is not None:
+            self.max = [{"value": max}]
+        else:
+            self.max = max_vo
+
         self.error_min = error_min
         self.error_max = error_max
         self.step = step or 1  # default to 1
 
-    def _format_error(self, value, message):
-        return message.format(input=value, min=self.min, max=self.max)
-
-    def __call__(self, value):
+    def __call__(self, value, custom=False):
+        """
+        This is the method that marshmallow calls by default. Custom
+        validation goes straight to validate_value_objects.
+        """
         if value is None:
             return value
-        if not isinstance(value, list):
-            value_list = np.array([value])
-        else:
-            value_list = np.array(value).ravel()
+        if not custom:
+            value = {"value": value}
+        return self.validate_value_objects(value)
 
-        for val in value_list:
-            if self.min is not None and np.all(val < self.min):
-                message = self.error_min or self.message_min
-                raise ValidationError(self._format_error(value, message))
-
-            if self.max is not None and np.all(val > self.max):
-                message = self.error_max or self.message_max
-                raise ValidationError(self._format_error(value, message))
-
+    def validate_value_objects(self, value):
+        if value["value"] is None:
+            return None
+        msgs = []
+        if self.min is not None:
+            for min_vo in self.min:
+                if np.any(np.array(value["value"]) < min_vo["value"]):
+                    msgs.append(
+                        (self.error_min or self.message_min).format(
+                            input=value["value"],
+                            min=min_vo["value"],
+                            labels=utils.make_label_str(value),
+                            oth_labels=utils.make_label_str(min_vo),
+                        )
+                    )
+        if self.max is not None:
+            for max_vo in self.max:
+                if np.any(np.array(value["value"]) > max_vo["value"]):
+                    msgs.append(
+                        (self.error_max or self.message_max).format(
+                            input=value["value"],
+                            max=max_vo["value"],
+                            labels=utils.make_label_str(value),
+                            oth_labels=utils.make_label_str(max_vo),
+                        )
+                    )
+        if msgs:
+            raise ValidationError(msgs if len(msgs) > 1 else msgs[0])
         return value
 
     def grid(self):
         # make np.arange inclusive.
-        max_ = self.max + self.step
-        arr = np.arange(self.min, max_, self.step)
-        return arr[arr <= self.max].tolist()
+        max_ = self.max[0]["value"] + self.step
+        arr = np.arange(self.min[0]["value"], max_, self.step)
+        return arr[arr <= self.max[0]["value"]].tolist()
 
 
 class DateRange(Range):
@@ -63,14 +96,37 @@ class DateRange(Range):
     """
 
     def __init__(
-        self, min=None, max=None, error_min=None, error_max=None, step=None
+        self,
+        min=None,
+        max=None,
+        min_vo=None,
+        max_vo=None,
+        error_min=None,
+        error_max=None,
+        step=None,
     ):
-        if min is not None and not isinstance(min, datetime.date):
-            min = marshmallow_fields.Date()._deserialize(min, None, None)
-        if max is not None and not isinstance(max, datetime.date):
-            max = marshmallow_fields.Date()._deserialize(max, None, None)
+        if min is not None:
+            self.min = [{"value": self.safe_deserialize(min)}]
+        elif min_vo is not None:
+            self.min = [
+                dict(vo, **{"value": self.safe_deserialize(vo["value"])})
+                for vo in min_vo
+            ]
+        else:
+            self.min = None
 
-        super().__init__(min, max, error_min, error_max)
+        if max is not None:
+            self.max = [{"value": self.safe_deserialize(max)}]
+        elif max_vo is not None:
+            self.max = [
+                dict(vo, **{"value": self.safe_deserialize(vo["value"])})
+                for vo in max_vo
+            ]
+        else:
+            self.max = None
+
+        self.error_min = error_min
+        self.error_max = error_max
 
         if step is None:
             # set to to default step.
@@ -89,11 +145,19 @@ class DateRange(Range):
         assert len(set(step.keys()) - timedelta_args) == 0
         self.step = datetime.timedelta(**step)
 
+    def safe_deserialize(self, date):
+        if isinstance(date, datetime.date):
+            return date
+        else:
+            return marshmallow_fields.Date()._deserialize(date, None, None)
+
     def grid(self):
         # make np.arange inclusive.
-        max_ = self.max + self.step
-        arr = np.arange(self.min, max_, self.step, dtype=datetime.date)
-        return arr[arr <= self.max].tolist()
+        max_ = self.max[0]["value"] + self.step
+        arr = np.arange(
+            self.min[0]["value"], max_, self.step, dtype=datetime.date
+        )
+        return arr[arr <= self.max[0]["value"]].tolist()
 
 
 class OneOf(marshmallow_validate.OneOf):
@@ -101,19 +165,27 @@ class OneOf(marshmallow_validate.OneOf):
     Implements "choice" :ref:`spec:Validator object`.
     """
 
-    def __call__(self, value):
+    default_message = "Input {input} must be one of {choices}"
+
+    def __call__(self, value, custom=False):
         if value is None:
             return value
-        if not isinstance(value, list):
-            values = [value]
+        if not custom:
+            vo = {"value": value}
         else:
-            values = utils.ravel(value)
-        for val in values:
+            vo = value
+        if vo["value"] is None:
+            return None
+        if not isinstance(vo["value"], list):
+            vos = {"value": [vo["value"]]}
+        else:
+            vos = {"value": utils.ravel(vo["value"])}
+        for vo in vos["value"]:
             try:
-                if val not in self.choices:
-                    raise ValidationError(self._format_error(val))
+                if vo not in self.choices:
+                    raise ValidationError(self._format_error(vo))
             except TypeError:
-                raise ValidationError(self._format_error(val))
+                raise ValidationError(self._format_error(vo))
         return value
 
     def grid(self):

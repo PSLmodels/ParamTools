@@ -327,7 +327,7 @@ class TestErrors:
             params.adjust(adj)
 
         exp_user_message = {"min_int_param": ["Not a valid number: abc."]}
-        assert excinfo.value.args[0] == exp_user_message
+        assert json.loads(excinfo.value.args[0]) == exp_user_message
 
         exp_internal_message = {
             "min_int_param": [["Not a valid number: abc."]]
@@ -351,7 +351,7 @@ class TestErrors:
             'str_choice_param "not a valid choice" must be in list of choices value0, '
             "value1."
         ]
-        assert excinfo.value.messages["str_choice_param"][0] == msg
+        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
 
         params = TestParams()
         adjustment = {"str_choice_param": [{"value": 4}]}
@@ -359,7 +359,7 @@ class TestErrors:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
         msg = ["Not a valid string."]
-        assert excinfo.value.args[0]["str_choice_param"] == msg
+        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
@@ -370,7 +370,7 @@ class TestErrors:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
         msg = ["Not a valid string."]
-        assert excinfo.value.args[0]["str_choice_param"] == msg
+        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
@@ -383,7 +383,7 @@ class TestErrors:
         curr = params.int_default_param[0]["value"]
         adjustment = {"int_default_param": [{"value": curr - 1}]}
         params.adjust(adjustment, raise_errors=False)
-        exp = [f"int_default_param {curr-1} must be greater than 2."]
+        exp = [f"int_default_param {curr-1} < min 2 default"]
         assert params.errors["int_default_param"] == exp
 
     def test_errors_int_param(self, TestParams):
@@ -438,7 +438,7 @@ class TestErrors:
                 "Not a valid number: ijk.",
             ]
         }
-        assert excinfo.value.args[0] == exp_user_message
+        assert json.loads(excinfo.value.args[0]) == exp_user_message
 
         exp_internal_message = {
             "float_list_param": [
@@ -464,9 +464,7 @@ class TestErrors:
             ]
         }
         params.adjust(adj, raise_errors=False)
-        exp = [
-            "float_list_param [-1.0, 1.0] must be greater than 0 for labels label0=zero , label1=1."
-        ]
+        exp = ["float_list_param[label1=1, label0=zero] [-1.0, 1.0] < min 0 "]
 
         assert params.errors["float_list_param"] == exp
 
@@ -1044,3 +1042,7 @@ class TestExtend:
         params = ExtParams()
         with pytest.raises(ValidationError):
             params.adjust({"extend_param": 102})
+
+        params = ExtParams()
+        with pytest.raises(ValidationError):
+            params.adjust({"extend_param": [{"value": 70, "d0": 5}]})
