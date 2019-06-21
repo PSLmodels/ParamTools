@@ -22,6 +22,13 @@ from paramtools.schema import (
     get_type,
     get_param_schema,
 )
+from paramtools.select import (
+    select,
+    select_eq,
+    select_gt,
+    select_gt_ix,
+    select_ne,
+)
 from paramtools.typing import ValueObject
 from paramtools.utils import (
     read_json,
@@ -61,6 +68,11 @@ __all__ = [
     "VALIDATOR_MAP",
     "get_type",
     "get_param_schema",
+    "select",
+    "select_eq",
+    "select_gt",
+    "select_gt_ix",
+    "select_ne",
     "read_json",
     "get_example_paths",
     "LeafGetter",
