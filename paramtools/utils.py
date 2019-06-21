@@ -101,7 +101,9 @@ def filter_out_labels(vo, labels):
 
 
 def make_label_str(vo):
-    lab_str = ", ".join([f"{lab}={vo[lab]}" for lab in vo if lab != "value"])
+    lab_str = ", ".join(
+        [f"{lab}={vo[lab]}" for lab in sorted(vo) if lab != "value"]
+    )
     if lab_str:
         return f"[{lab_str}]"
     else:

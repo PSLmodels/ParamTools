@@ -464,7 +464,7 @@ class TestErrors:
             ]
         }
         params.adjust(adj, raise_errors=False)
-        exp = ["float_list_param[label1=1, label0=zero] [-1.0, 1.0] < min 0 "]
+        exp = ["float_list_param[label0=zero, label1=1] [-1.0, 1.0] < min 0 "]
 
         assert params.errors["float_list_param"] == exp
 
