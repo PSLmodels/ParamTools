@@ -40,14 +40,14 @@ class Range(marshmallow_validate.Range):
         self.error_max = error_max
         self.step = step or 1  # default to 1
 
-    def __call__(self, value, custom=False):
+    def __call__(self, value, is_value_object=False):
         """
-        This is the method that marshmallow calls by default. Custom
+        This is the method that marshmallow calls by default. is_value_object
         validation goes straight to validate_value_objects.
         """
         if value is None:
             return value
-        if not custom:
+        if not is_value_object:
             value = {"value": value}
         return self.validate_value_objects(value)
 
@@ -167,10 +167,10 @@ class OneOf(marshmallow_validate.OneOf):
 
     default_message = "Input {input} must be one of {choices}"
 
-    def __call__(self, value, custom=False):
+    def __call__(self, value, is_value_object=False):
         if value is None:
             return value
-        if not custom:
+        if not is_value_object:
             vo = {"value": value}
         else:
             vo = value

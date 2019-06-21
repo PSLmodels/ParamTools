@@ -181,7 +181,7 @@ class BaseValidatorSchema(Schema):
         errors = []
         for validator in validators:
             try:
-                validator(param_spec, custom=True)
+                validator(param_spec, is_value_object=True)
             except MarshmallowValidationError as ve:
                 errors += ve.messages
 

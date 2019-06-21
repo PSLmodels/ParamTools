@@ -1044,5 +1044,10 @@ class TestExtend:
             params.adjust({"extend_param": 102})
 
         params = ExtParams()
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError) as excinfo:
             params.adjust({"extend_param": [{"value": 70, "d0": 5}]})
+
+        emsg = json.loads(excinfo.value.args[0])
+        # do=7 is when the 'releated_value' is set to 50, which is
+        # less than 70 ==> causes range error
+        assert "d0=7" in emsg["extend_param"][0]
