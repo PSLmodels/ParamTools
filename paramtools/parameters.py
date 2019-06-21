@@ -164,8 +164,8 @@ class Parameters:
                         eq = select.select_eq(
                             gt,
                             True,
-                            utils.filter_out_labels(
-                                vo, labels=[self.label_to_extend, "value"]
+                            utils.filter_labels(
+                                vo, drop=[self.label_to_extend, "value"]
                             ),
                         )
                         to_delete += eq
@@ -384,9 +384,7 @@ class Parameters:
                 eq = select.select_eq(
                     gt,
                     True,
-                    utils.filter_out_labels(
-                        vo, labels=["value", label_to_extend]
-                    ),
+                    utils.filter_labels(vo, drop=["value", label_to_extend]),
                 )
                 extended_vos.update(map(utils.hashable_value_object, eq))
                 eq += [vo]
@@ -605,7 +603,7 @@ class Parameters:
             formatted_errors = []
             for ix, marshmessages in data.items():
                 error_labels.append(
-                    {k: v for k, v in param_data[ix].items() if k != "value"}
+                    utils.filter_labels(param_data[ix], drop=["value"])
                 )
                 formatted_errors_ix = []
                 for _, messages in marshmessages.items():

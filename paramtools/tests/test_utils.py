@@ -3,6 +3,9 @@ from paramtools import (
     ravel,
     consistent_labels,
     ensure_value_object,
+    hashable_value_object,
+    filter_labels,
+    make_label_str,
 )
 
 
@@ -70,3 +73,25 @@ def test_ensure_value_object():
     assert ensure_value_object({"hello": "world"}) == [
         {"value": {"hello": "world"}}
     ]
+
+
+def test_hashable_value_object():
+    assert hash(hashable_value_object({"value": "hello", "world": "!"}))
+
+
+def test_filter_labels():
+    assert filter_labels({"hello": "world"}, drop=["hello"]) == {}
+    assert filter_labels({"hello": "world"}, keep=["hello"]) == {
+        "hello": "world"
+    }
+    assert filter_labels({"hello": "world"}) == {"hello": "world"}
+    assert filter_labels(
+        {"hello": "world", "world": "hello"}, drop=["world"]
+    ) == {"hello": "world"}
+
+
+def test_make_label_str():
+    assert make_label_str({"hello": "world", "value": 0}) == "[hello=world]"
+    assert make_label_str({"value": 0}) == ""
+    assert make_label_str({}) == ""
+    assert make_label_str({"b": 0, "c": 1, "a": 2}) == "[a=2, b=0, c=1]"

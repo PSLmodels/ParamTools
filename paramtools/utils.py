@@ -1,6 +1,9 @@
 import json
 import os
 from collections import OrderedDict
+from typing import List
+
+from paramtools.typing import ValueObject
 
 
 def read_json(path):
@@ -71,7 +74,7 @@ def ravel(nlabel_list):
     return raveled
 
 
-def consistent_labels(value_items):
+def consistent_labels(value_items: List[ValueObject]):
     """
     Get labels used consistently across all value objects.
     Returns None if labels are omitted or added for
@@ -84,7 +87,7 @@ def consistent_labels(value_items):
     return used
 
 
-def ensure_value_object(vo):
+def ensure_value_object(vo) -> ValueObject:
     if not isinstance(vo, list) or (
         isinstance(vo, list) and not isinstance(vo[0], dict)
     ):
@@ -92,15 +95,32 @@ def ensure_value_object(vo):
     return vo
 
 
-def hashable_value_object(vo):
+def hashable_value_object(vo: ValueObject) -> tuple:
+    """
+    Helper function convertinga value object into a format
+    that can be stored in a set.
+    """
     return tuple(sorted(vo.items()))
 
 
-def filter_out_labels(vo, labels):
-    return {l: lv for l, lv in vo.items() if l not in labels}
+def filter_labels(vo: ValueObject, drop=None, keep=None) -> ValueObject:
+    """
+    Filter a value objects labels by keeping labels
+    in keep if specified and dropping labels that are in drop.
+    """
+    drop = drop or ()
+    keep = keep or ()
+    return {
+        l: lv
+        for l, lv in vo.items()
+        if (l not in drop) and (not keep or l in keep)
+    }
 
 
-def make_label_str(vo):
+def make_label_str(vo: ValueObject) -> str:
+    """
+    Create string from labels. This is used to create error messages.
+    """
     lab_str = ", ".join(
         [f"{lab}={vo[lab]}" for lab in sorted(vo) if lab != "value"]
     )
