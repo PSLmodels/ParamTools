@@ -153,25 +153,32 @@ params.adjust(adjustment)
 ```
 
 Errors on input that's out of range:
+
 ```python
-adjustment["standard_deduction"] = -1
-params.adjust(adjustment)
+adjustment["standard_deduction"] = [
+    {"marital_status": "single", "year": 2025, "value": -1}
+]
 params.adjust(adjustment)
 
+# output:
 # ---------------------------------------------------------------------------
 # ValidationError                           Traceback (most recent call last)
-# <ipython-input-8-8ea95339bb9b> in <module>
-#       1 adjustment["standard_deduction"] = -1
+# <ipython-input-14-208948dfbd1d> in <module>
+#       1 adjustment["standard_deduction"] = [{"marital_status": "single", "year": 2025, "value": -1}]
 # ----> 2 params.adjust(adjustment)
 
-# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors)
-#     134
-#     135         if raise_errors and self._errors:
-# --> 136             raise self.validation_error
-#     137
-#     138         # Update attrs.
+# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors, extend_adj)
+#     183
+#     184         if raise_errors and self._errors:
+# --> 185             raise self.validation_error
+#     186
+#     187         if self.label_to_extend is not None and extend_adj:
 
-# ValidationError: {'standard_deduction': ['standard_deduction -1.0 must be greater than 0.']}
+# ValidationError: {
+#     "standard_deduction": [
+#         "standard_deduction[marital_status=single, year=2025] -1.0 < min 0 "
+#     ]
+# }
 
 ```
 

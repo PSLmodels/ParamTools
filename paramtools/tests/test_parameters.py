@@ -25,6 +25,11 @@ def defaults_spec_path():
 
 
 @pytest.fixture
+def extend_ex_path():
+    return os.path.join(CURRENT_PATH, "extend_ex.json")
+
+
+@pytest.fixture
 def array_first_defaults(defaults_spec_path):
     with open(defaults_spec_path) as f:
         r = json.loads(f.read())
@@ -322,7 +327,7 @@ class TestErrors:
             params.adjust(adj)
 
         exp_user_message = {"min_int_param": ["Not a valid number: abc."]}
-        assert excinfo.value.args[0] == exp_user_message
+        assert json.loads(excinfo.value.args[0]) == exp_user_message
 
         exp_internal_message = {
             "min_int_param": [["Not a valid number: abc."]]
@@ -346,7 +351,7 @@ class TestErrors:
             'str_choice_param "not a valid choice" must be in list of choices value0, '
             "value1."
         ]
-        assert excinfo.value.messages["str_choice_param"][0] == msg
+        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
 
         params = TestParams()
         adjustment = {"str_choice_param": [{"value": 4}]}
@@ -354,7 +359,7 @@ class TestErrors:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
         msg = ["Not a valid string."]
-        assert excinfo.value.args[0]["str_choice_param"] == msg
+        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
@@ -365,7 +370,7 @@ class TestErrors:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
         msg = ["Not a valid string."]
-        assert excinfo.value.args[0]["str_choice_param"] == msg
+        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
@@ -378,7 +383,7 @@ class TestErrors:
         curr = params.int_default_param[0]["value"]
         adjustment = {"int_default_param": [{"value": curr - 1}]}
         params.adjust(adjustment, raise_errors=False)
-        exp = [f"int_default_param {curr-1} must be greater than 2."]
+        exp = [f"int_default_param {curr-1} < min 2 default"]
         assert params.errors["int_default_param"] == exp
 
     def test_errors_int_param(self, TestParams):
@@ -433,7 +438,7 @@ class TestErrors:
                 "Not a valid number: ijk.",
             ]
         }
-        assert excinfo.value.args[0] == exp_user_message
+        assert json.loads(excinfo.value.args[0]) == exp_user_message
 
         exp_internal_message = {
             "float_list_param": [
@@ -459,9 +464,7 @@ class TestErrors:
             ]
         }
         params.adjust(adj, raise_errors=False)
-        exp = [
-            "float_list_param [-1.0, 1.0] must be greater than 0 for labels label0=zero , label1=1."
-        ]
+        exp = ["float_list_param[label0=zero, label1=1] [-1.0, 1.0] < min 0 "]
 
         assert params.errors["float_list_param"] == exp
 
@@ -881,67 +884,9 @@ class TestExtend:
         ]
         assert params.from_array("int_dense_array_param") == exp
 
-    def test_inconsistent_labels(self, array_first_defaults):
-        array_first_defaults = {
-            "schema": array_first_defaults["schema"],
-            "int_dense_array_param": array_first_defaults[
-                "int_dense_array_param"
-            ],
-        }
-        new_vos = []
-        for vo in array_first_defaults["int_dense_array_param"]["value"]:
-            if vo["label0"] == "one":
-                vo.update({"value": vo["value"] - 18})
-                # make labels inconsistent by removing the label2 values
-                # for some value objects.
-                if vo["label2"] == 1:
-                    vo.pop("label2")
-                new_vos.append(vo)
-
-        array_first_defaults["int_dense_array_param"]["value"] = new_vos
-
-        class AFParams(Parameters):
-            defaults = array_first_defaults
-            label_to_extend = "label0"
-            array_first = True
-
-        with pytest.raises(InconsistentLabelsException):
-            AFParams()
-
-    def test_extend_w_array(self):
+    def test_extend_w_array(self, extend_ex_path):
         class ExtParams(Parameters):
-            defaults = {
-                "schema": {
-                    "labels": {
-                        "d0": {
-                            "type": "int",
-                            "validators": {"range": {"min": 0, "max": 10}},
-                        },
-                        "d1": {
-                            "type": "str",
-                            "validators": {
-                                "choice": {"choices": ["c1", "c2"]}
-                            },
-                        },
-                    }
-                },
-                "extend_param": {
-                    "title": "extend param",
-                    "description": ".",
-                    "type": "int",
-                    "value": [
-                        {"d0": 2, "d1": "c1", "value": 1},
-                        {"d0": 2, "d1": "c2", "value": 2},
-                        {"d0": 3, "d1": "c1", "value": 3},
-                        {"d0": 3, "d1": "c2", "value": 4},
-                        {"d0": 5, "d1": "c1", "value": 5},
-                        {"d0": 5, "d1": "c2", "value": 6},
-                        {"d0": 7, "d1": "c1", "value": 7},
-                        {"d0": 7, "d1": "c2", "value": 8},
-                    ],
-                },
-            }
-
+            defaults = extend_ex_path
             label_to_extend = "d0"
             array_first = True
 
@@ -960,3 +905,149 @@ class TestExtend:
             [7, 8],
             [7, 8],
         ]
+
+    def test_extend_adj(self, extend_ex_path):
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        params = ExtParams()
+        params.adjust({"extend_param": [{"d0": 3, "value": -1}]})
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "d1": "c1", "value": -1},
+                    {"d0": 3, "d1": "c2", "value": 1},
+                ]
+            }
+        )
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "d1": "c1", "value": -1},
+                    {"d0": 3, "d1": "c2", "value": 1},
+                ]
+            }
+        )
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+            [-1, 1],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "value": -1},
+                    {"d0": 5, "d1": "c1", "value": 0},
+                    {"d0": 5, "d1": "c2", "value": 1},
+                    {"d0": 8, "d1": "c1", "value": 22},
+                    {"d0": 8, "d1": "c2", "value": 23},
+                ]
+            }
+        )
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+            [22, 23],
+            [22, 23],
+            [22, 23],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "value": -1},
+                    {"d0": 5, "d1": "c1", "value": 0},
+                    {"d0": 6, "d1": "c2", "value": 1},
+                ]
+            }
+        )
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [0, -1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+            [0, 1],
+        ]
+
+        params = ExtParams()
+        params.adjust({"extend_param": [{"d0": 0, "value": 1}]})
+
+        assert params.extend_param.tolist() == [[1, 1]] * 11
+
+    def test_extend_adj_w_errors(self, extend_ex_path):
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        params = ExtParams()
+        with pytest.raises(ValidationError):
+            params.adjust({"extend_param": 102})
+
+        params = ExtParams()
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"extend_param": [{"value": 70, "d0": 5}]})
+
+        emsg = json.loads(excinfo.value.args[0])
+        # do=7 is when the 'releated_value' is set to 50, which is
+        # less than 70 ==> causes range error
+        assert "d0=7" in emsg["extend_param"][0]

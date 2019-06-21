@@ -1,3 +1,5 @@
+import json
+
 from paramtools import utils
 
 
@@ -20,7 +22,7 @@ class ValidationError(ParamToolsError):
         raveled_messages = {
             param: utils.ravel(msgs) for param, msgs in self.messages.items()
         }
-        super().__init__(raveled_messages)
+        super().__init__(json.dumps(raveled_messages, indent=4))
 
 
 class InconsistentLabelsException(ParamToolsError):
@@ -30,7 +32,9 @@ class InconsistentLabelsException(ParamToolsError):
 collision_list = [
     "_data",
     "_errors",
-    "_select",
+    "select_eq",
+    "select_ne",
+    "select_gt",
     "_numpy_type",
     "_parse_errors",
     "_resolve_order",

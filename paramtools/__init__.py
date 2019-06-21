@@ -22,6 +22,14 @@ from paramtools.schema import (
     get_type,
     get_param_schema,
 )
+from paramtools.select import (
+    select,
+    select_eq,
+    select_gt,
+    select_gt_ix,
+    select_ne,
+)
+from paramtools.typing import ValueObject
 from paramtools.utils import (
     read_json,
     get_example_paths,
@@ -30,6 +38,9 @@ from paramtools.utils import (
     ravel,
     consistent_labels,
     ensure_value_object,
+    hashable_value_object,
+    filter_labels,
+    make_label_str,
 )
 
 
@@ -57,6 +68,11 @@ __all__ = [
     "VALIDATOR_MAP",
     "get_type",
     "get_param_schema",
+    "select",
+    "select_eq",
+    "select_gt",
+    "select_gt_ix",
+    "select_ne",
     "read_json",
     "get_example_paths",
     "LeafGetter",
@@ -64,4 +80,8 @@ __all__ = [
     "ravel",
     "consistent_labels",
     "ensure_value_object",
+    "hashable_value_object",
+    "filter_labels",
+    "make_label_str",
+    "ValueObject",
 ]

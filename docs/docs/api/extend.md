@@ -70,6 +70,40 @@ params.standard_deduction
 #        [ 7685., 15369.]])
 ```
 
+Adjustments are also extended along `label_to_extend`. In the example below, `standard_deduction` is set to 10,000 in 2017, increased to 15,000 for single tax units in 2020, and increased to 20,000 for joint tax units in 2021:
+
+```python
+params.adjust(
+    {
+        "standard_deduction": [
+            {"year": 2017, "value": 10000},
+            {"year": 2020, "marital_status": "single", "value": 15000},
+            {"year": 2021, "marital_status": "joint", "value": 20000}
+        ]
+    }
+)
+
+params.standard_deduction
+
+# output
+# array([[ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [10000., 10000.],
+#        [10000., 10000.],
+#        [10000., 10000.],
+#        [15000., 10000.],
+#        [15000., 20000.],
+#        [15000., 20000.],
+#        [15000., 20000.],
+#        [15000., 20000.],
+#        [15000., 20000.],
+#        [15000., 20000.],
+#        [15000., 20000.]])
+
+```
+
 
 ## Extend behavior by validator
 
