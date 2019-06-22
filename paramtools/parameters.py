@@ -10,7 +10,7 @@ from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
-from paramtools import select
+from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
 from paramtools.exceptions import (
     SparseValueObjectsException,
     ValidationError,
@@ -65,35 +65,8 @@ class Parameters:
                 specified in schema.json or if the label values fail the
                 validator set for the corresponding label in schema.json.
         """
-        messages = {}
-        for name, values in labels.items():
-            if name not in self.label_validators:
-                messages[name] = f"{name} is not a valid label."
-                continue
-            if not isinstance(values, list):
-                values = [values]
-            for value in values:
-                try:
-                    self.label_validators[name].deserialize(value)
-                except MarshmallowValidationError as ve:
-                    messages[name] = str(ve)
-        if messages:
-            raise ValidationError(messages, labels=None)
-        self._state.update(labels)
-        for label_name, label_value in self._state.items():
-            if not isinstance(label_value, list):
-                label_value = [label_value]
-            self.label_grid[label_name] = label_value
-        spec = self.specification(include_empty=True, **self._state)
-        for name, value in spec.items():
-            if name in collision_list:
-                raise ParameterNameCollisionException(
-                    f"The paramter name, '{name}', is already used by the Parameters object."
-                )
-            if self.array_first:
-                setattr(self, name, self.to_array(name))
-            else:
-                setattr(self, name, value)
+
+        self._set_state(**labels)
 
     def clear_state(self):
         """
@@ -155,13 +128,13 @@ class Parameters:
                             v[self.label_to_extend]
                         ),
                     ):
-                        gt = select.select_gt_ix(
+                        gt = select_gt_ix(
                             self._data[param]["value"],
                             True,
                             {self.label_to_extend: vo[self.label_to_extend]},
                             extend_grid,
                         )
-                        eq = select.select_eq(
+                        eq = select_eq(
                             gt,
                             True,
                             utils.filter_labels(
@@ -172,9 +145,27 @@ class Parameters:
                     to_delete = [
                         dict(td, **{"value": None}) for td in to_delete
                     ]
-                    self._update_param(param, to_delete)
-                    self._update_param(param, vos)
-                    self.extend(params=[param])
+                    # make copy of value objects since they
+                    # are about to be modified
+                    backup = copy.deepcopy(self._data[param]["value"])
+                    try:
+                        array_first = self.array_first
+                        self.array_first = False
+                        # delete params that will be overwritten out by extend.
+                        self.adjust(
+                            {param: to_delete},
+                            extend_adj=False,
+                            raise_errors=True,
+                        )
+                        # set user adjustments.
+                        self.adjust(
+                            {param: vos}, extend_adj=False, raise_errors=True
+                        )
+                        self.array_first = array_first
+                        # extend user adjustments.
+                        self.extend(params=[param], raise_errors=True)
+                    except ValidationError:
+                        self._data[param]["value"] = backup
             else:
                 for param, value in parsed_params.items():
                     self._update_param(param, value)
@@ -184,11 +175,8 @@ class Parameters:
         if raise_errors and self._errors:
             raise self.validation_error
 
-        if self.label_to_extend is not None and extend_adj:
-            self.extend()
-
-        # Update attrs.
-        self.set_state()
+        # Update attrs for params that were adjusted.
+        self._set_state(params=parsed_params.keys())
 
         return parsed_params
 
@@ -342,7 +330,7 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def extend(self, label_to_extend=None, params=None):
+    def extend(self, label_to_extend=None, params=None, raise_errors=True):
         """
         Extend parameters along label_to_extend.
 
@@ -375,13 +363,13 @@ class Parameters:
                     continue
                 else:
                     extended_vos.add(hashable_vo)
-                gt = select.select_gt_ix(
+                gt = select_gt_ix(
                     self._data[param]["value"],
                     True,
                     {label_to_extend: vo[label_to_extend]},
                     extend_grid,
                 )
-                eq = select.select_eq(
+                eq = select_eq(
                     gt,
                     True,
                     utils.filter_labels(vo, drop=["value", label_to_extend]),
@@ -408,14 +396,14 @@ class Parameters:
                             defined_vals,
                             key=lambda val: extend_grid.index(val),
                         )
-                        value_objects = select.select_eq(
+                        value_objects = select_eq(
                             eq, True, {label_to_extend: first_defined_value}
                         )
                     elif extend_grid[eg_ix - 1] in extended:
                         value_objects = extended.pop(extend_grid[eg_ix - 1])
                     else:
                         prev_defined_value = extend_grid[eg_ix - 1]
-                        value_objects = select.select_eq(
+                        value_objects = select_eq(
                             eq, True, {label_to_extend: prev_defined_value}
                         )
                     # In practice, value_objects has length one.
@@ -431,7 +419,48 @@ class Parameters:
                         adjustment[param].append(ext)
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
-        Parameters.adjust(self, adjustment, extend_adj=False)
+        Parameters.adjust(
+            self, adjustment, extend_adj=False, raise_errors=raise_errors
+        )
+
+    def _set_state(self, params=None, **labels):
+        """
+        Private method for setting the state on a Parameters instance. Internal
+        methods can set which params will be updated. This is helpful when a set
+        of parameters are adjusted and only their attributes need to be updated.
+
+        """
+        messages = {}
+        for name, values in labels.items():
+            if name not in self.label_validators:
+                messages[name] = f"{name} is not a valid label."
+                continue
+            if not isinstance(values, list):
+                values = [values]
+            for value in values:
+                try:
+                    self.label_validators[name].deserialize(value)
+                except MarshmallowValidationError as ve:
+                    messages[name] = str(ve)
+        if messages:
+            raise ValidationError(messages, labels=None)
+        self._state.update(labels)
+        for label_name, label_value in self._state.items():
+            if not isinstance(label_value, list):
+                label_value = [label_value]
+            self.label_grid[label_name] = label_value
+        spec = self.specification(include_empty=True, **self._state)
+        if params is not None:
+            spec = {param: spec[param] for param in params}
+        for name, value in spec.items():
+            if name in collision_list:
+                raise ParameterNameCollisionException(
+                    f"The paramter name, '{name}', is already used by the Parameters object."
+                )
+            if self.array_first:
+                setattr(self, name, self.to_array(name))
+            else:
+                setattr(self, name, value)
 
     def _resolve_order(self, param):
         """
@@ -474,19 +503,13 @@ class Parameters:
         )
 
     def select_eq(self, param, exact_match, **labels):
-        return select.select_eq(
-            self._data[param]["value"], exact_match, labels
-        )
+        return select_eq(self._data[param]["value"], exact_match, labels)
 
     def select_ne(self, param, exact_match, **labels):
-        return select.select_ne(
-            self._data[param]["value"], exact_match, labels
-        )
+        return select_ne(self._data[param]["value"], exact_match, labels)
 
     def select_gt(self, param, exact_match, **labels):
-        return select.select_gt(
-            self._data[param]["value"], exact_match, labels
-        )
+        return select_gt(self._data[param]["value"], exact_match, labels)
 
     def _update_param(self, param, new_values):
         """
