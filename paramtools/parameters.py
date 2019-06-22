@@ -65,35 +65,8 @@ class Parameters:
                 specified in schema.json or if the label values fail the
                 validator set for the corresponding label in schema.json.
         """
-        messages = {}
-        for name, values in labels.items():
-            if name not in self.label_validators:
-                messages[name] = f"{name} is not a valid label."
-                continue
-            if not isinstance(values, list):
-                values = [values]
-            for value in values:
-                try:
-                    self.label_validators[name].deserialize(value)
-                except MarshmallowValidationError as ve:
-                    messages[name] = str(ve)
-        if messages:
-            raise ValidationError(messages, labels=None)
-        self._state.update(labels)
-        for label_name, label_value in self._state.items():
-            if not isinstance(label_value, list):
-                label_value = [label_value]
-            self.label_grid[label_name] = label_value
-        spec = self.specification(include_empty=True, **self._state)
-        for name, value in spec.items():
-            if name in collision_list:
-                raise ParameterNameCollisionException(
-                    f"The paramter name, '{name}', is already used by the Parameters object."
-                )
-            if self.array_first:
-                setattr(self, name, self.to_array(name))
-            else:
-                setattr(self, name, value)
+
+        self._set_state(**labels)
 
     def clear_state(self):
         """
@@ -203,7 +176,7 @@ class Parameters:
             raise self.validation_error
 
         # Update attrs for params that were adjusted.
-        self.set_state()
+        self._set_state(params=parsed_params.keys())
 
         return parsed_params
 
@@ -449,6 +422,45 @@ class Parameters:
         Parameters.adjust(
             self, adjustment, extend_adj=False, raise_errors=raise_errors
         )
+
+    def _set_state(self, params=None, **labels):
+        """
+        Private method for setting the state on a Parameters instance. Internal
+        methods can set which params will be updated. This is helpful when a set
+        of parameters are adjusted and only their attributes need to be updated.
+
+        """
+        messages = {}
+        for name, values in labels.items():
+            if name not in self.label_validators:
+                messages[name] = f"{name} is not a valid label."
+                continue
+            if not isinstance(values, list):
+                values = [values]
+            for value in values:
+                try:
+                    self.label_validators[name].deserialize(value)
+                except MarshmallowValidationError as ve:
+                    messages[name] = str(ve)
+        if messages:
+            raise ValidationError(messages, labels=None)
+        self._state.update(labels)
+        for label_name, label_value in self._state.items():
+            if not isinstance(label_value, list):
+                label_value = [label_value]
+            self.label_grid[label_name] = label_value
+        spec = self.specification(include_empty=True, **self._state)
+        if params is not None:
+            spec = {param: spec[param] for param in params}
+        for name, value in spec.items():
+            if name in collision_list:
+                raise ParameterNameCollisionException(
+                    f"The paramter name, '{name}', is already used by the Parameters object."
+                )
+            if self.array_first:
+                setattr(self, name, self.to_array(name))
+            else:
+                setattr(self, name, value)
 
     def _resolve_order(self, param):
         """
