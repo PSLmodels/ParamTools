@@ -175,16 +175,24 @@ class Parameters:
                     # make copy of value objects since they
                     # are about to be modified
                     backup = copy.deepcopy(self._data[param]["value"])
-                    self._update_param(param, to_delete)
-                    self._update_param(param, vos)
                     try:
-                        self.extend(params=[param], raise_errors=raise_errors)
-                    except SparseValueObjectsException as sve:
-                        if not raise_errors and self._errors:
-                            # restore values to before adjustment.
-                            self._data[param]["value"] = backup
-                        else:
-                            raise sve
+                        array_first = self.array_first
+                        self.array_first = False
+                        # delete params that will be overwritten out by extend.
+                        self.adjust(
+                            {param: to_delete},
+                            extend_adj=False,
+                            raise_errors=True,
+                        )
+                        # set user adjustments.
+                        self.adjust(
+                            {param: vos}, extend_adj=False, raise_errors=True
+                        )
+                        self.array_first = array_first
+                        # extend user adjustments.
+                        self.extend(params=[param], raise_errors=True)
+                    except ValidationError:
+                        self._data[param]["value"] = backup
             else:
                 for param, value in parsed_params.items():
                     self._update_param(param, value)
@@ -194,7 +202,7 @@ class Parameters:
         if raise_errors and self._errors:
             raise self.validation_error
 
-        # Update attrs.
+        # Update attrs for params that were adjusted.
         self.set_state()
 
         return parsed_params
