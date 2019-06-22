@@ -10,7 +10,7 @@ from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
-from paramtools import select
+from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
 from paramtools.exceptions import (
     SparseValueObjectsException,
     ValidationError,
@@ -155,13 +155,13 @@ class Parameters:
                             v[self.label_to_extend]
                         ),
                     ):
-                        gt = select.select_gt_ix(
+                        gt = select_gt_ix(
                             self._data[param]["value"],
                             True,
                             {self.label_to_extend: vo[self.label_to_extend]},
                             extend_grid,
                         )
-                        eq = select.select_eq(
+                        eq = select_eq(
                             gt,
                             True,
                             utils.filter_labels(
@@ -172,9 +172,19 @@ class Parameters:
                     to_delete = [
                         dict(td, **{"value": None}) for td in to_delete
                     ]
+                    # make copy of value objects since they
+                    # are about to be modified
+                    backup = copy.deepcopy(self._data[param]["value"])
                     self._update_param(param, to_delete)
                     self._update_param(param, vos)
-                    self.extend(params=[param])
+                    try:
+                        self.extend(params=[param], raise_errors=raise_errors)
+                    except SparseValueObjectsException as sve:
+                        if not raise_errors and self._errors:
+                            # restore values to before adjustment.
+                            self._data[param]["value"] = backup
+                        else:
+                            raise sve
             else:
                 for param, value in parsed_params.items():
                     self._update_param(param, value)
@@ -183,9 +193,6 @@ class Parameters:
 
         if raise_errors and self._errors:
             raise self.validation_error
-
-        if self.label_to_extend is not None and extend_adj:
-            self.extend()
 
         # Update attrs.
         self.set_state()
@@ -342,7 +349,7 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def extend(self, label_to_extend=None, params=None):
+    def extend(self, label_to_extend=None, params=None, raise_errors=True):
         """
         Extend parameters along label_to_extend.
 
@@ -375,13 +382,13 @@ class Parameters:
                     continue
                 else:
                     extended_vos.add(hashable_vo)
-                gt = select.select_gt_ix(
+                gt = select_gt_ix(
                     self._data[param]["value"],
                     True,
                     {label_to_extend: vo[label_to_extend]},
                     extend_grid,
                 )
-                eq = select.select_eq(
+                eq = select_eq(
                     gt,
                     True,
                     utils.filter_labels(vo, drop=["value", label_to_extend]),
@@ -408,14 +415,14 @@ class Parameters:
                             defined_vals,
                             key=lambda val: extend_grid.index(val),
                         )
-                        value_objects = select.select_eq(
+                        value_objects = select_eq(
                             eq, True, {label_to_extend: first_defined_value}
                         )
                     elif extend_grid[eg_ix - 1] in extended:
                         value_objects = extended.pop(extend_grid[eg_ix - 1])
                     else:
                         prev_defined_value = extend_grid[eg_ix - 1]
-                        value_objects = select.select_eq(
+                        value_objects = select_eq(
                             eq, True, {label_to_extend: prev_defined_value}
                         )
                     # In practice, value_objects has length one.
@@ -431,7 +438,9 @@ class Parameters:
                         adjustment[param].append(ext)
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
-        Parameters.adjust(self, adjustment, extend_adj=False)
+        Parameters.adjust(
+            self, adjustment, extend_adj=False, raise_errors=raise_errors
+        )
 
     def _resolve_order(self, param):
         """
@@ -474,19 +483,13 @@ class Parameters:
         )
 
     def select_eq(self, param, exact_match, **labels):
-        return select.select_eq(
-            self._data[param]["value"], exact_match, labels
-        )
+        return select_eq(self._data[param]["value"], exact_match, labels)
 
     def select_ne(self, param, exact_match, **labels):
-        return select.select_ne(
-            self._data[param]["value"], exact_match, labels
-        )
+        return select_ne(self._data[param]["value"], exact_match, labels)
 
     def select_gt(self, param, exact_match, **labels):
-        return select.select_gt(
-            self._data[param]["value"], exact_match, labels
-        )
+        return select_gt(self._data[param]["value"], exact_match, labels)
 
     def _update_param(self, param, new_values):
         """

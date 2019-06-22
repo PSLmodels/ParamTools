@@ -1,3 +1,4 @@
+import copy
 import os
 import json
 import datetime
@@ -1051,3 +1052,10 @@ class TestExtend:
         # do=7 is when the 'releated_value' is set to 50, which is
         # less than 70 ==> causes range error
         assert "d0=7" in emsg["extend_param"][0]
+        params = ExtParams()
+        before = copy.deepcopy(params.extend_param)
+        params.adjust(
+            {"extend_param": [{"value": 70, "d0": 5}]}, raise_errors=False
+        )
+        assert params.errors["extend_param"] == emsg["extend_param"]
+        assert np.allclose(params.extend_param, before)
