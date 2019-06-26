@@ -1059,3 +1059,78 @@ class TestExtend:
         )
         assert params.errors["extend_param"] == emsg["extend_param"]
         assert np.allclose(params.extend_param, before)
+
+    def test_extend_adj_nonextend_param(self, extend_ex_path):
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        params = ExtParams()
+        params.adjust({"nonextend_param": 3})
+        assert params.nonextend_param == 3
+
+    def test_extend_adj_w_set_state(self, extend_ex_path):
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        params = ExtParams()
+        params.set_state(d0=list(range(2, 11)))
+        params.adjust({"extend_param": [{"d0": 2, "value": -1}]})
+
+        assert params.extend_param.tolist() == [
+            # [1, 2],
+            # [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+        ]
+
+        params = ExtParams()
+        params.set_state(d0=list(range(2, 11)))
+        params.adjust({"extend_param": [{"d0": 3, "value": -1}]})
+
+        assert params.extend_param.tolist() == [
+            # [1, 2],
+            # [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+        ]
+
+        params = ExtParams()
+        params.set_state(d0=list(range(2, 11)))
+        params.adjust({"extend_param": [{"d0": 1, "value": -1}]})
+        assert params.extend_param.tolist() == []
+        params.array_first = False
+        params.clear_state()
+        params.extend()
+        params.array_first = True
+        params.set_state()
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+            [-1, -1],
+        ]

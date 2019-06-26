@@ -2,6 +2,7 @@ import copy
 import os
 import json
 import itertools
+import warnings
 from collections import OrderedDict, defaultdict
 from functools import reduce
 
@@ -122,26 +123,36 @@ class Parameters:
                 extend_grid = self._stateless_label_grid[self.label_to_extend]
                 for param, vos in parsed_params.items():
                     to_delete = []
-                    for vo in sorted(
-                        vos,
-                        key=lambda v: extend_grid.index(
-                            v[self.label_to_extend]
-                        ),
+                    for vo in utils.grid_sort(
+                        vos, self.label_to_extend, extend_grid
                     ):
-                        gt = select_gt_ix(
-                            self._data[param]["value"],
-                            True,
-                            {self.label_to_extend: vo[self.label_to_extend]},
-                            extend_grid,
-                        )
-                        eq = select_eq(
-                            gt,
-                            True,
-                            utils.filter_labels(
-                                vo, drop=[self.label_to_extend, "value"]
-                            ),
-                        )
-                        to_delete += eq
+                        if self.label_to_extend in vo:
+                            if (
+                                vo[self.label_to_extend]
+                                not in self.label_grid[self.label_to_extend]
+                            ):
+                                warnings.warn(
+                                    "warning: adjusting a parameter that is not "
+                                    "active in the current state."
+                                )
+                            gt = select_gt_ix(
+                                self._data[param]["value"],
+                                True,
+                                {
+                                    self.label_to_extend: vo[
+                                        self.label_to_extend
+                                    ]
+                                },
+                                extend_grid,
+                            )
+                            eq = select_eq(
+                                gt,
+                                True,
+                                utils.filter_labels(
+                                    vo, drop=[self.label_to_extend, "value"]
+                                ),
+                            )
+                            to_delete += eq
                     to_delete = [
                         dict(td, **{"value": None}) for td in to_delete
                     ]
@@ -255,6 +266,8 @@ class Parameters:
                 entire space specified by the Order object.
         """
         value_items = self.select_eq(param, False, **self._state)
+        if not value_items:
+            return np.array([])
         label_order, value_order = self._resolve_order(param)
         shape = []
         for label in label_order:
@@ -348,7 +361,7 @@ class Parameters:
                 for param, data in spec.items()
                 if param in params
             }
-        extend_grid = self.label_grid[label_to_extend]
+        extend_grid = self._stateless_label_grid[label_to_extend]
         adjustment = defaultdict(list)
         for param, data in spec.items():
             if not any(label_to_extend in vo for vo in data["value"]):
