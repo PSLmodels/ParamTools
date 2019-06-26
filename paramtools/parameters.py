@@ -131,10 +131,13 @@ class Parameters:
                                 vo[self.label_to_extend]
                                 not in self.label_grid[self.label_to_extend]
                             ):
-                                warnings.warn(
-                                    "warning: adjusting a parameter that is not "
-                                    "active in the current state."
+                                msg = (
+                                    f"{param}[{self.label_to_extend}={vo[self.label_to_extend]}] "
+                                    f"is not active in the current state: "
+                                    f"{self.label_to_extend}= "
+                                    f"{self.label_grid[self.label_to_extend]}."
                                 )
+                                warnings.warn(msg)
                             gt = select_gt_ix(
                                 self._data[param]["value"],
                                 True,
