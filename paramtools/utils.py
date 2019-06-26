@@ -80,6 +80,8 @@ def consistent_labels(value_items: List[ValueObject]):
     Returns None if labels are omitted or added for
     some value object(s).
     """
+    if not value_items:
+        return set([])
     used = set(k for k in value_items[0] if k != "value")
     for vo in value_items:
         if used != set(k for k in vo if k != "value"):
@@ -128,3 +130,13 @@ def make_label_str(vo: ValueObject) -> str:
         return f"[{lab_str}]"
     else:
         return ""
+
+
+def grid_sort(vos, label_to_extend, grid):
+    def key(v):
+        if label_to_extend in v:
+            return grid.index(v[label_to_extend])
+        else:
+            return grid[0]
+
+    return sorted(vos, key=key)

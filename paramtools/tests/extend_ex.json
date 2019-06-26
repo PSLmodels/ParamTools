@@ -43,5 +43,11 @@
             {"d0": 7, "d1": "c1", "value": 50},
             {"d0": 7, "d1": "c2", "value": 51}
         ]
+    },
+    "nonextend_param": {
+        "title": "nonextend param",
+        "description": "Test error on adjustment extension.",
+        "type": "int",
+        "value": 2
     }
 }
