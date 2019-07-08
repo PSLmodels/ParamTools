@@ -5,6 +5,7 @@ import itertools
 import warnings
 from collections import OrderedDict, defaultdict
 from functools import reduce
+from typing import Dict, List
 
 import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
@@ -12,6 +13,7 @@ from marshmallow import ValidationError as MarshmallowValidationError
 from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
 from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
+from paramtools.typing import ValueObject
 from paramtools.exceptions import (
     SparseValueObjectsException,
     ValidationError,
@@ -23,9 +25,10 @@ from paramtools.exceptions import (
 
 class Parameters:
     defaults = None
-    field_map = {}
-    array_first = False
-    label_to_extend = None
+    field_map: Dict = {}  # field(default_factory=dict)
+    array_first: bool = False
+    label_to_extend: str = None
+    indexed: bool = False
 
     def __init__(self, initial_state=None, array_first=None):
         schemafactory = SchemaFactory(self.defaults, self.field_map)
@@ -426,8 +429,16 @@ class Parameters:
                     # Theoretically, there could be multiple if the inital value
                     # object had less labels than later value objects and thus
                     # matched multiple value objects.
+
+                    # need to know:
+                    # - new vo
+                    # - known vo
+                    # - new label_to_extend val
                     for value_object in value_objects:
                         ext = dict(value_object, **{label_to_extend: val})
+                        ext = self.extend_func(
+                            param, ext, value_object, extend_grid
+                        )
                         extended_vos.add(
                             utils.hashable_value_object(value_object)
                         )
@@ -438,6 +449,29 @@ class Parameters:
         Parameters.adjust(
             self, adjustment, extend_adj=False, raise_errors=raise_errors
         )
+
+    def extend_func(
+        self,
+        param: str,
+        extend_vo: ValueObject,
+        known_vo: ValueObject,
+        extend_grid: List,
+    ):
+        # case 1: extend_vo is the next item in extend_grid
+        # TOOD:
+        # case 2: extend_vo is the first value in the array and
+        #         known_vo is n values ahead.
+
+        if not self.indexed or not self._data[param].get("indexed", False):
+            return extend_vo
+
+        lte_val = known_vo[self.label_to_extend]
+        v = extend_vo["value"] * (1 + self.indexing_rates(param, lte_val))
+        extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
+        return extend_vo
+
+    def indexing_rates(self, param, lte_val):
+        return 0.0
 
     def _set_state(self, params=None, **labels):
         """

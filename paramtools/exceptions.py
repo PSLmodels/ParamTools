@@ -60,7 +60,9 @@ collision_list = [
     "validation_error",
     "view_state",
     "extend",
+    "extend_func",
     "label_to_extend",
+    "indexing_rates",
 ]
 
 
