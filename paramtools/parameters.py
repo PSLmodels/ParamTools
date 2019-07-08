@@ -457,8 +457,17 @@ class Parameters:
         known_vo: ValueObject,
         extend_grid: List,
     ):
+        """
+        Function for applying indexing rates to parameter values as they
+        are extended. Projects may implement their own extend_func by
+        overriding this one. Projects need to write their own indexing_rate
+        method for returning the correct indexing rate for a given parameter
+        and value of label_to_extend (abbreviated to lte_val).
+
+        returns: extended_vo
+        """
         # case 1: extend_vo is the next item in extend_grid
-        # TOOD:
+        # TODO:
         # case 2: extend_vo is the first value in the array and
         #         known_vo is n values ahead.
 
@@ -466,12 +475,17 @@ class Parameters:
             return extend_vo
 
         lte_val = known_vo[self.label_to_extend]
-        v = extend_vo["value"] * (1 + self.indexing_rates(param, lte_val))
+        v = extend_vo["value"] * (1 + self.indexing_rate(param, lte_val))
         extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
         return extend_vo
 
-    def indexing_rates(self, param, lte_val):
-        return 0.0
+    def indexing_rate(self, param, lte_val):
+        """
+        Projects should override this method with their own `indexing_rate`
+        method. This method receives a parameter name and lte_val, the value of
+        label_to_extend. It should return the corresponding indexing_rate.
+        """
+        raise NotImplementedError()
 
     def _set_state(self, params=None, **labels):
         """
