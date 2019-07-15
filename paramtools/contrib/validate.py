@@ -62,6 +62,7 @@ class Range(marshmallow_validate.Range):
                         (self.error_min or self.message_min).format(
                             input=value["value"],
                             min=min_vo["value"],
+                            min_op="less than",
                             labels=utils.make_label_str(value),
                             oth_labels=utils.make_label_str(min_vo),
                         )
@@ -73,6 +74,7 @@ class Range(marshmallow_validate.Range):
                         (self.error_max or self.message_max).format(
                             input=value["value"],
                             max=max_vo["value"],
+                            max_op="greater than",
                             labels=utils.make_label_str(value),
                             oth_labels=utils.make_label_str(max_vo),
                         )

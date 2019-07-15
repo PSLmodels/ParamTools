@@ -99,7 +99,7 @@ class Date(MeshFieldMixin, marshmallow_fields.Date):
         "format": '"{input}" cannot be formatted as a {obj_type}.',
     }
 
-    def _deserialize(self, value, attr, data):
+    def _deserialize(self, value, attr=None, data=None, **kwargs):
         if isinstance(value, (datetime.datetime, datetime.date)):
             return value
-        return super()._deserialize(value, attr, data)
+        return super()._deserialize(value, attr, data, **kwargs)
