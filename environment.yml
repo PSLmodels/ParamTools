@@ -2,7 +2,7 @@ name: paramtools-dev
 channels:
   - conda-forge
 dependencies:
-  - "marshmallow>=3.0.0rc5"
+  - "marshmallow>=3.0.0rc8"
   - "numpy>=1.13"
   - "python-dateutil>=2.8.0"
   - pytest
