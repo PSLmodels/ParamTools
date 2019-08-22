@@ -62,7 +62,8 @@ collision_list = [
     "extend",
     "extend_func",
     "label_to_extend",
-    "indexing_rates",
+    "indexing_rate",
+    "indexed",
 ]
 
 
