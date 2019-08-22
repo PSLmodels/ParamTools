@@ -142,7 +142,7 @@ class BaseValidatorSchema(Schema):
     }
 
     @validates_schema
-    def validate_params(self, data):
+    def validate_params(self, data, **kwargs):
         """
         Loop over all parameters defined on this class. Validate them using
         the `self.validate_param`. Errors are stored until all
