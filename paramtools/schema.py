@@ -101,7 +101,9 @@ class ValueObject(fields.Nested):
     Schema for value objects
     """
 
-    def _deserialize(self, value, attr, data, partial=None, **kwargs):
+    def _deserialize(
+        self, value, attr, data, partial=None, many=False, **kwargs
+    ):
         if not isinstance(value, list) or (
             isinstance(value, list)
             and value
@@ -109,7 +111,7 @@ class ValueObject(fields.Nested):
         ):
             value = [{"value": value}]
         return super()._deserialize(
-            value, attr, data, partial=partial, **kwargs
+            value, attr, data, partial=partial, many=many, **kwargs
         )
 
 

@@ -40,6 +40,9 @@ class Range(marshmallow_validate.Range):
         self.error_max = error_max
         self.step = step or 1  # default to 1
 
+        self.min_inclusive = None
+        self.max_inclusive = None
+
     def __call__(self, value, is_value_object=False):
         """
         This is the method that marshmallow calls by default. is_value_object

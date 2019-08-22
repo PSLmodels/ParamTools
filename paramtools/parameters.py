@@ -563,7 +563,7 @@ class Parameters:
         Get the numpy type for a given parameter.
         """
         return (
-            self._validator_schema.fields[param].nested.fields["value"].np_type
+            self._validator_schema.fields[param].schema.fields["value"].np_type
         )
 
     def select_eq(self, param, exact_match, **labels):

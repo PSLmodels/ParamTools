@@ -79,7 +79,7 @@ class SchemaFactory:
         defaults_schema = DefaultsSchema()
 
         classattrs = {
-            k: ValueObject(v(many=True)) for k, v in validator_dict.items()
+            k: ValueObject(v, many=True) for k, v in validator_dict.items()
         }
         ValidatorSchema = type(
             "ValidatorSchema", (BaseValidatorSchema,), classattrs
