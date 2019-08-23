@@ -5,6 +5,7 @@ import itertools
 import warnings
 from collections import OrderedDict, defaultdict
 from functools import reduce
+from typing import Optional, Dict, List, Any
 
 import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
@@ -12,6 +13,7 @@ from marshmallow import ValidationError as MarshmallowValidationError
 from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
 from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
+from paramtools.typing import ValueObject
 from paramtools.exceptions import (
     SparseValueObjectsException,
     ValidationError,
@@ -23,11 +25,18 @@ from paramtools.exceptions import (
 
 class Parameters:
     defaults = None
-    field_map = {}
-    array_first = False
-    label_to_extend = None
+    field_map: Dict = {}
+    array_first: bool = False
+    label_to_extend: str = None
+    uses_extend_func: bool = False
+    index_rates: Dict = {}
 
-    def __init__(self, initial_state=None, array_first=None):
+    def __init__(
+        self,
+        initial_state: Optional[dict] = None,
+        array_first: Optional[bool] = None,
+        index_rates: Optional[dict] = None,
+    ):
         schemafactory = SchemaFactory(self.defaults, self.field_map)
         (
             self._defaults_schema,
@@ -42,6 +51,7 @@ class Parameters:
         self._validator_schema.context["spec"] = self
         self._errors = {}
         self._state = initial_state or {}
+        self.index_rates = index_rates or self.index_rates
 
         if array_first is not None:
             self.array_first = array_first
@@ -428,6 +438,9 @@ class Parameters:
                     # matched multiple value objects.
                     for value_object in value_objects:
                         ext = dict(value_object, **{label_to_extend: val})
+                        ext = self.extend_func(
+                            param, ext, value_object, extend_grid
+                        )
                         extended_vos.add(
                             utils.hashable_value_object(value_object)
                         )
@@ -439,12 +452,65 @@ class Parameters:
             self, adjustment, extend_adj=False, raise_errors=raise_errors
         )
 
+    def extend_func(
+        self,
+        param: str,
+        extend_vo: ValueObject,
+        known_vo: ValueObject,
+        extend_grid: List,
+    ):
+        """
+        Function for applying indexing rates to parameter values as they
+        are extended. Projects may implement their own extend_func by
+        overriding this one. Projects need to write their own indexing_rate
+        method for returning the correct indexing rate for a given parameter
+        and value of label_to_extend (abbreviated to lte_val).
+
+        returns: extended_vo
+        """
+        if not self.uses_extend_func or not self._data[param].get(
+            "indexed", False
+        ):
+            return extend_vo
+
+        known_val = known_vo[self.label_to_extend]
+        known_ix = extend_grid.index(known_val)
+
+        toext_val = extend_vo[self.label_to_extend]
+        toext_ix = extend_grid.index(toext_val)
+
+        if toext_ix > known_ix:
+            # grow value according to the index rate supplied by the user defined
+            # self.indexing_rate method.
+            v = extend_vo["value"] * (
+                1 + self.get_index_rate(param, known_val)
+            )
+            extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
+        else:
+            # shrink value according to the index rate supplied by the user defined
+            # self.indexing_rate method.
+            for ix in reversed(range(toext_ix, known_ix)):
+                v = (
+                    extend_vo["value"]
+                    * (1 + self.get_index_rate(param, extend_grid[ix])) ** -1
+                )
+                extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
+        return extend_vo
+
+    def get_index_rate(self, param: str, lte_val: Any):
+        """
+        Return the value of the index_rates dictionary matching the
+        label to extend value, `lte_val`.
+        Projects may find it convenient to override this method with their own
+        `index_rate` method.
+        """
+        return self.index_rates[lte_val]
+
     def _set_state(self, params=None, **labels):
         """
         Private method for setting the state on a Parameters instance. Internal
         methods can set which params will be updated. This is helpful when a set
         of parameters are adjusted and only their attributes need to be updated.
-
         """
         messages = {}
         for name, values in labels.items():

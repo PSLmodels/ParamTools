@@ -76,6 +76,7 @@ class BaseParamSchema(Schema):
     validators = fields.Nested(
         ValueValidatorSchema(), required=False, missing={}
     )
+    indexed = fields.Boolean(required=False)
 
 
 class EmptySchema(Schema):

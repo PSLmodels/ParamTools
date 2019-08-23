@@ -12,6 +12,8 @@ API
 
 [**Extend:**](/api/extend/) Write more concise JSON schemas with the extend capability.
 
+[**Extend with Indexing:**](/api/index/) Index parameter values.
+
 *Documentation on these parts of the API coming soon:*
 
 **Array access:** Access parameter values as NumPy arrays.

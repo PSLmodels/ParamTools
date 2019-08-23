@@ -1135,3 +1135,61 @@ class TestExtend:
             [-1, -1],
             [-1, -1],
         ]
+
+
+def grow(n, r, t):
+    mult = 1 if t >= 0 else -1
+    for _ in range(0, abs(t)):
+        n = round(n * (1 + r) ** mult, 2)
+    return n
+
+
+class TestIndex:
+    def test_index_simple(self, extend_ex_path):
+        class IndexParams1(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+            uses_extend_func = True
+            index_rates = {lte: 0 for lte in range(10)}
+
+        params = IndexParams1()
+        params.adjust({"indexed_param": [{"d0": 3, "value": 3}]})
+
+        assert params.indexed_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [3, 3],
+            [3, 3],
+            [3, 3],
+            [3, 3],
+            [3, 3],
+            [3, 3],
+            [3, 3],
+            [3, 3],
+        ]
+
+        class IndexParams2(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+            uses_extend_func = True
+            index_rates = {lte: 0.02 for lte in range(10)}
+
+        params = IndexParams2()
+        params.adjust({"indexed_param": [{"d0": 3, "value": 3}]})
+        exp = [
+            [grow(1, 0.02, -2), grow(2, 0.02, -2)],
+            [grow(1, 0.02, -1), grow(2, 0.02, -1)],
+            [grow(1, 0.02, 0), grow(2, 0.02, 0)],
+            [grow(3, 0.02, 0)] * 2,
+            [grow(3, 0.02, 1)] * 2,
+            [grow(3, 0.02, 2)] * 2,
+            [grow(3, 0.02, 3)] * 2,
+            [grow(3, 0.02, 4)] * 2,
+            [grow(3, 0.02, 5)] * 2,
+            [grow(3, 0.02, 6)] * 2,
+            [grow(3, 0.02, 7)] * 2,
+        ]
+        np.testing.assert_allclose(params.indexed_param.tolist(), exp)
