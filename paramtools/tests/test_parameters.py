@@ -1150,7 +1150,7 @@ class TestIndex:
             defaults = extend_ex_path
             label_to_extend = "d0"
             array_first = True
-            indexed = True
+            uses_extend_func = True
             index_rates = {lte: 0 for lte in range(10)}
 
         params = IndexParams1()
@@ -1174,7 +1174,7 @@ class TestIndex:
             defaults = extend_ex_path
             label_to_extend = "d0"
             array_first = True
-            indexed = True
+            uses_extend_func = True
             index_rates = {lte: 0.02 for lte in range(10)}
 
         params = IndexParams2()

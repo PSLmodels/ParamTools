@@ -28,7 +28,7 @@ class Parameters:
     field_map: Dict = {}
     array_first: bool = False
     label_to_extend: str = None
-    indexed: bool = False
+    uses_extend_func: bool = False
     index_rates: Dict = {}
 
     def __init__(
@@ -468,7 +468,9 @@ class Parameters:
 
         returns: extended_vo
         """
-        if not self.indexed or not self._data[param].get("indexed", False):
+        if not self.uses_extend_func or not self._data[param].get(
+            "indexed", False
+        ):
             return extend_vo
 
         known_val = known_vo[self.label_to_extend]
