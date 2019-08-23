@@ -1138,9 +1138,9 @@ class TestExtend:
 
 
 def grow(n, r, t):
-    while t > 0:
-        n = round(n * (1 + r), 2)
-        t -= 1
+    mult = 1 if t >= 0 else -1
+    for _ in range(0, abs(t)):
+        n = round(n * (1 + r) ** mult, 2)
     return n
 
 
@@ -1151,9 +1151,7 @@ class TestIndex:
             label_to_extend = "d0"
             array_first = True
             indexed = True
-
-            def indexing_rate(self, param, lte_val):
-                return 0
+            index_rates = {lte: 0 for lte in range(10)}
 
         params = IndexParams1()
         params.adjust({"indexed_param": [{"d0": 3, "value": 3}]})
@@ -1177,15 +1175,13 @@ class TestIndex:
             label_to_extend = "d0"
             array_first = True
             indexed = True
-
-            def indexing_rate(self, param, lte_val):
-                return 0.02
+            index_rates = {lte: 0.02 for lte in range(10)}
 
         params = IndexParams2()
         params.adjust({"indexed_param": [{"d0": 3, "value": 3}]})
         exp = [
-            [grow(1, 0.02, 1), grow(2, 0.02, 1)],
-            [grow(1, 0.02, 2), grow(2, 0.02, 2)],
+            [grow(1, 0.02, -2), grow(2, 0.02, -2)],
+            [grow(1, 0.02, -1), grow(2, 0.02, -1)],
             [grow(1, 0.02, 0), grow(2, 0.02, 0)],
             [grow(3, 0.02, 0)] * 2,
             [grow(3, 0.02, 1)] * 2,

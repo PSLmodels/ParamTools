@@ -5,7 +5,7 @@ import itertools
 import warnings
 from collections import OrderedDict, defaultdict
 from functools import reduce
-from typing import Dict, List
+from typing import Optional, Dict, List, Any
 
 import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
@@ -25,12 +25,18 @@ from paramtools.exceptions import (
 
 class Parameters:
     defaults = None
-    field_map: Dict = {}  # field(default_factory=dict)
+    field_map: Dict = {}
     array_first: bool = False
     label_to_extend: str = None
     indexed: bool = False
+    index_rates: Dict = {}
 
-    def __init__(self, initial_state=None, array_first=None):
+    def __init__(
+        self,
+        initial_state: Optional[dict] = None,
+        array_first: Optional[bool] = None,
+        index_rates: Optional[dict] = None,
+    ):
         schemafactory = SchemaFactory(self.defaults, self.field_map)
         (
             self._defaults_schema,
@@ -45,6 +51,7 @@ class Parameters:
         self._validator_schema.context["spec"] = self
         self._errors = {}
         self._state = initial_state or {}
+        self.index_rates = index_rates or self.index_rates
 
         if array_first is not None:
             self.array_first = array_first
@@ -429,11 +436,6 @@ class Parameters:
                     # Theoretically, there could be multiple if the inital value
                     # object had less labels than later value objects and thus
                     # matched multiple value objects.
-
-                    # need to know:
-                    # - new vo
-                    # - known vo
-                    # - new label_to_extend val
                     for value_object in value_objects:
                         ext = dict(value_object, **{label_to_extend: val})
                         ext = self.extend_func(
@@ -466,33 +468,47 @@ class Parameters:
 
         returns: extended_vo
         """
-        # case 1: extend_vo is the next item in extend_grid
-        # TODO:
-        # case 2: extend_vo is the first value in the array and
-        #         known_vo is n values ahead.
-
         if not self.indexed or not self._data[param].get("indexed", False):
             return extend_vo
 
-        lte_val = known_vo[self.label_to_extend]
-        v = extend_vo["value"] * (1 + self.indexing_rate(param, lte_val))
-        extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
+        known_val = known_vo[self.label_to_extend]
+        known_ix = extend_grid.index(known_val)
+
+        toext_val = extend_vo[self.label_to_extend]
+        toext_ix = extend_grid.index(toext_val)
+
+        if toext_ix > known_ix:
+            # grow value according to the index rate supplied by the user defined
+            # self.indexing_rate method.
+            v = extend_vo["value"] * (
+                1 + self.get_index_rate(param, known_val)
+            )
+            extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
+        else:
+            # shrink value according to the index rate supplied by the user defined
+            # self.indexing_rate method.
+            for ix in reversed(range(toext_ix, known_ix)):
+                v = (
+                    extend_vo["value"]
+                    * (1 + self.get_index_rate(param, extend_grid[ix])) ** -1
+                )
+                extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
         return extend_vo
 
-    def indexing_rate(self, param, lte_val):
+    def get_index_rate(self, param: str, lte_val: Any):
         """
-        Projects should override this method with their own `indexing_rate`
-        method. This method receives a parameter name and lte_val, the value of
-        label_to_extend. It should return the corresponding indexing_rate.
+        Return the value of the index_rates dictionary matching the
+        label to extend value, `lte_val`.
+        Projects may find it convenient to override this method with their own
+        `index_rate` method.
         """
-        raise NotImplementedError()
+        return self.index_rates[lte_val]
 
     def _set_state(self, params=None, **labels):
         """
         Private method for setting the state on a Parameters instance. Internal
         methods can set which params will be updated. This is helpful when a set
         of parameters are adjusted and only their attributes need to be updated.
-
         """
         messages = {}
         for name, values in labels.items():
