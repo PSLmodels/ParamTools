@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Extend - ParamTools Docs</title>
+        <title>Extend with Indexing - ParamTools Docs</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -60,12 +60,12 @@
     <a href="../guide/">Guide</a>
 </li>
                                     
-<li class="active">
-    <a href="./">Extend</a>
+<li >
+    <a href="../extend/">Extend</a>
 </li>
                                     
-<li >
-    <a href="../indexing/">Extend with Indexing</a>
+<li class="active">
+    <a href="./">Extend with Indexing</a>
 </li>
                                 </ul>
                             </li>
@@ -78,12 +78,12 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../guide/">
+                                <a rel="next" href="../extend/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
-                            <li >
-                                <a rel="prev" href="../indexing/">
+                            <li class="disabled">
+                                <a rel="prev" >
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -95,18 +95,25 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#extend">Extend</a></li>
+        <li class="main active"><a href="#extend-with-indexing">Extend with Indexing</a></li>
             <li><a href="#example">Example</a></li>
-            <li><a href="#extend-behavior-by-validator">Extend behavior by validator</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="extend">Extend</h1>
-<p>The values of a parameter can be extended along a specified label. This is helpful when a parameter's values are the same for different values of a label and there is some inherent order in that label. The extend feature allows you to simply write down the minimum amount of information needed to fill in a parameter's values and ParamTools will fill in the gaps.</p>
-<p>To use the extend feature, set the <code>label_to_extend</code> class attribute to the label that should be extended.</p>
+<h1 id="extend-with-indexing">Extend with Indexing</h1>
+<p><em>(coming soon in ParamTools 0.8.0)</em></p>
+<p>ParamTools provides out-of-the-box parameter indexing. This is helpful for projects that have parameters that change at some rate over time. For example, tax parameters like the standard deduction are often indexed to price inflation. So, the value of the standard deduction actually increases every year by 1 or 2% depending on that year's inflation rate.</p>
+<p>The <a href="/api/extend/">extend documentation</a> may be useful for gaining a better understanding of how ParamTools extends parameter values along <code>label_to_extend</code>.</p>
+<p>To use the indexing feature:</p>
+<ul>
+<li>Set the <code>label_to_extend</code> class attribute to the label that should be extended</li>
+<li>Set the <code>indexing_rates</code> class attribute to a dictionary of inflation rates where the keys correspond to the value of <code>label_to_extend</code> and the values are the indexing rates.</li>
+<li>Set the <code>uses_extend_func</code> class attribute to <code>True</code>.</li>
+<li>In <code>defaults</code> or <code>defaults.json</code>, set <code>indexed</code> to <code>True</code> for each parameter that needs to be indexed.</li>
+</ul>
 <h2 id="example">Example</h2>
-<p>The standard deduction parameter's values only need to be specified when there is a change in the tax law. For the other years, it does not change (unless its indexed to inflation). It would be annoying to have to manually write out each of its values. Instead, we can more concisely write its values in 2017, its new values in 2018 after the TCJA tax reform was passed, and its values after provisions of the TCJA are phased out in 2026.</p>
+<p>This is a continuation of the tax parameters example from the <a href="/api/extend/">extend documentation</a>. The differences are <code>indexed</code> is set to <code>True</code> for the <code>standard_deducation</code> parameter, <code>uses_extend_func</code> is set to <code>True</code>, and <code>index_rates</code> is specified with inflation rates obtained from the open-source tax modeling package, <a href="https://github.com/PSLmodels/Tax-Calculator/">Tax-Calculator</a>, using version 2.5.0.</p>
 <pre><code class="python">import paramtools
 
 
@@ -128,6 +135,11 @@ class TaxParams(paramtools.Parameters):
             &quot;title&quot;: &quot;Standard deduction amount&quot;,
             &quot;description&quot;: &quot;Amount filing unit can use as a standard deduction.&quot;,
             &quot;type&quot;: &quot;float&quot;,
+
+            # Set indexed to True to extend standard_deduction with the built-in
+            # extension logic.
+            &quot;indexed&quot;: True,
+
             &quot;value&quot;: [
                 {&quot;year&quot;: 2017, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 6350},
                 {&quot;year&quot;: 2017, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 12700},
@@ -143,32 +155,54 @@ class TaxParams(paramtools.Parameters):
             }
         },
     }
-
-    label_to_extend = &quot;year&quot;
     array_first = True
+    label_to_extend = &quot;year&quot;
+    # Activate use of extend_func method.
+    uses_extend_func = True
+    # inflation rates from Tax-Calculator v2.5.0
+    index_rates = {
+        2013: 0.0148,
+        2014: 0.0159,
+        2015: 0.0012,
+        2016: 0.0127,
+        2017: 0.0187,
+        2018: 0.0224,
+        2019: 0.0186,
+        2020: 0.0233,
+        2021: 0.0229,
+        2022: 0.0228,
+        2023: 0.0221,
+        2024: 0.0211,
+        2025: 0.0209,
+        2026: 0.0211,
+        2027: 0.0208,
+        2028: 0.021,
+        2029: 0.021
+    }
+
 
 params = TaxParams()
 params.standard_deduction
 
 # output:
-# array([[ 6350., 12700.],
-#        [ 6350., 12700.],
-#        [ 6350., 12700.],
-#        [ 6350., 12700.],
-#        [ 6350., 12700.],
-#        [12000., 24000.],
-#        [12000., 24000.],
-#        [12000., 24000.],
-#        [12000., 24000.],
-#        [12000., 24000.],
-#        [12000., 24000.],
-#        [12000., 24000.],
-#        [12000., 24000.],
-#        [ 7685., 15369.],
-#        [ 7685., 15369.]])
+# array([[ 6074.92, 12149.84],
+#        [ 6164.83, 12329.66],
+#        [ 6262.85, 12525.7 ],
+#        [ 6270.37, 12540.73],
+#        [ 6350.  , 12700.  ],
+#        [12000.  , 24000.  ],
+#        [12268.8 , 24537.6 ],
+#        [12497.  , 24994.  ],
+#        [12788.18, 25576.36],
+#        [13081.03, 26162.06],
+#        [13379.28, 26758.55],
+#        [13674.96, 27349.91],
+#        [13963.5 , 27926.99],
+#        [ 7685.  , 15369.  ],
+#        [ 7847.15, 15693.29]])
 </code></pre>
 
-<p>Adjustments are also extended along <code>label_to_extend</code>. In the example below, <code>standard_deduction</code> is set to 10,000 in 2017, increased to 15,000 for single tax units in 2020, and increased to 20,000 for joint tax units in 2021:</p>
+<p>Adjustments are also indexed. In the example below, <code>standard_deduction</code> is set to 10,000 in 2017, increased to 15,000 for single tax units in 2020, and increased to 20,000 for joint tax units in 2021:</p>
 <pre><code class="python">params.adjust(
     {
         &quot;standard_deduction&quot;: [
@@ -181,81 +215,36 @@ params.standard_deduction
 
 params.standard_deduction
 
-# output
-# array([[ 6350., 12700.],
-#        [ 6350., 12700.],
-#        [ 6350., 12700.],
-#        [ 6350., 12700.],
-#        [10000., 10000.],
-#        [10000., 10000.],
-#        [10000., 10000.],
-#        [15000., 10000.],
-#        [15000., 20000.],
-#        [15000., 20000.],
-#        [15000., 20000.],
-#        [15000., 20000.],
-#        [15000., 20000.],
-#        [15000., 20000.],
-#        [15000., 20000.]])
+# output:
+# array([[ 6074.92, 12149.84],
+#        [ 6164.83, 12329.66],
+#        [ 6262.85, 12525.7 ],
+#        [ 6270.37, 12540.73],
+#        [10000.  , 10000.  ],
+#        [10187.  , 10187.  ],
+#        [10415.19, 10415.19],
+#        [15000.  , 10608.91],
+#        [15349.5 , 20000.  ],
+#        [15701.  , 20458.  ],
+#        [16058.98, 20924.44],
+#        [16413.88, 21386.87],
+#        [16760.21, 21838.13],
+#        [17110.5 , 22294.55],
+#        [17471.53, 22764.97]])
 
 </code></pre>
 
-<h2 id="extend-behavior-by-validator">Extend behavior by validator</h2>
-<p>ParamTools uses the validator associated with <code>label_to_extend</code> to determine how values should be extended by assuming that there is some order among the range of possible values for the label.</p>
-<p>Note: You can view the grid of values for any label by inspecting the <code>label_grid</code> attribute of a <code>paramtools.Parameters</code> derived instance.</p>
-<h3 id="range">Range</h3>
-<p><strong>Type:</strong> <code>int</code></p>
-<pre><code class="json">{
-    &quot;range&quot;: {&quot;min&quot;: 0, &quot;max&quot;: 5}
+<h3 id="code-for-getting-tax-calculator-index-rates">Code for getting Tax-Calculator index rates</h3>
+<pre><code class="python">import taxcalc
+pol = taxcalc.Policy()
+index_rates = {
+    year: value
+    for year, value in zip(list(range(2013, 2029 + 1)), pol.inflation_rates())
 }
+
 </code></pre>
 
-<p><em>Extend values:</em></p>
-<pre><code class="python">[0, 1, 2, 3, 4, 5]
-</code></pre>
-
-<p><strong>Type:</strong> <code>float</code></p>
-<pre><code class="json">{
-    &quot;range&quot;: {&quot;min&quot;: 0, &quot;max&quot;: 2, &quot;step&quot;: 0.5}
-}
-</code></pre>
-
-<p><em>Extend values:</em></p>
-<pre><code class="python">[0, 0.5, 1.0, 1.5, 2.0]
-</code></pre>
-
-<p><strong>Type:</strong> <code>date</code></p>
-<pre><code class="json">{
-    &quot;range&quot;: {&quot;min&quot;: &quot;2019-01-01&quot;, &quot;max&quot;: &quot;2019-01-05&quot;, &quot;step&quot;: {&quot;days&quot;: 2}}
-}
-</code></pre>
-
-<p><em>Extend values:</em></p>
-<pre><code class="python">[datetime.date(2019, 1, 1),
- datetime.date(2019, 1, 3),
- datetime.date(2019, 1, 5)]
-</code></pre>
-
-<h3 id="choice">Choice</h3>
-<p><strong>Type:</strong> <code>int</code></p>
-<pre><code class="json">{
-    &quot;choice&quot;: {&quot;choices&quot;: [-1, -2, -3]}
-}
-</code></pre>
-
-<p><em>Extend values:</em></p>
-<pre><code class="python">[-1, -2, -3]
-</code></pre>
-
-<p><strong>Type:</strong> <code>str</code></p>
-<pre><code class="json">{
-    &quot;choice&quot;: {&quot;choices&quot;: [&quot;january&quot;, &quot;february&quot;, &quot;march&quot;]}
-}
-</code></pre>
-
-<p><em>Extend values:</em></p>
-<pre><code class="python">[&quot;january&quot;, &quot;february&quot;, &quot;march&quot;]
-</code></pre></div>
+<p>Note that there are some subtle details that are implemented in Tax-Calculator's indexing logic that are not implemented in this example. Tax-Calculator has a parameter called <code>CPI_offset</code> that adjusts inflation rates up or down by a fixed amount. The <code>indexed</code> property can also be turned on and off for each parameter. Implementing these nuanced features is left as the proverbial "trivial exercise to the reader."</p></div>
         </div>
 
         <footer class="col-md-12">

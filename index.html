@@ -63,6 +63,10 @@
 <li >
     <a href="api/extend/">Extend</a>
 </li>
+                                    
+<li >
+    <a href="api/indexing/">Extend with Indexing</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -238,24 +242,30 @@ params.adjust(adjustment)
 </code></pre>
 
 <p>Errors on input that's out of range:</p>
-<pre><code class="python">adjustment[&quot;standard_deduction&quot;] = -1
-params.adjust(adjustment)
+<pre><code class="python">adjustment[&quot;standard_deduction&quot;] = [
+    {&quot;marital_status&quot;: &quot;single&quot;, &quot;year&quot;: 2025, &quot;value&quot;: -1}
+]
 params.adjust(adjustment)
 
+# output:
 # ---------------------------------------------------------------------------
 # ValidationError                           Traceback (most recent call last)
-# &lt;ipython-input-8-8ea95339bb9b&gt; in &lt;module&gt;
-#       1 adjustment[&quot;standard_deduction&quot;] = -1
+# &lt;ipython-input-14-208948dfbd1d&gt; in &lt;module&gt;
+#       1 adjustment[&quot;standard_deduction&quot;] = [{&quot;marital_status&quot;: &quot;single&quot;, &quot;year&quot;: 2025, &quot;value&quot;: -1}]
 # ----&gt; 2 params.adjust(adjustment)
 
-# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors)
-#     134
-#     135         if raise_errors and self._errors:
-# --&gt; 136             raise self.validation_error
-#     137
-#     138         # Update attrs.
+# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors, extend_adj)
+#     183
+#     184         if raise_errors and self._errors:
+# --&gt; 185             raise self.validation_error
+#     186
+#     187         if self.label_to_extend is not None and extend_adj:
 
-# ValidationError: {'standard_deduction': ['standard_deduction -1.0 must be greater than 0.']}
+# ValidationError: {
+#     &quot;standard_deduction&quot;: [
+#         &quot;standard_deduction[marital_status=single, year=2025] -1.0 &lt; min 0 &quot;
+#     ]
+# }
 
 </code></pre>
 
@@ -363,5 +373,5 @@ py.test -v
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2019-06-18 13:27:22
+Build Date UTC : 2019-08-23 16:41:39
 -->
