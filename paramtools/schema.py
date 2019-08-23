@@ -303,6 +303,45 @@ class BaseValidatorSchema(Schema):
         return oth_param_name, res
 
 
+class LabelSchema(Schema):
+    _type = fields.Str(
+        required=True,
+        validate=validate.OneOf(
+            choices=["str", "float", "int", "bool", "date"]
+        ),
+        attribute="type",
+        data_key="type",
+    )
+    number_dims = fields.Integer(required=False, missing=0)
+    validators = fields.Nested(
+        ValueValidatorSchema(), required=False, missing={}
+    )
+
+
+class AdditionalMembersSchema(Schema):
+    _type = fields.Str(
+        required=True,
+        validate=validate.OneOf(
+            choices=["str", "float", "int", "bool", "date"]
+        ),
+        attribute="type",
+        data_key="type",
+    )
+    number_dims = fields.Integer(required=False, missing=0)
+    adjustable = fields.Boolean(required=False)
+
+
+class PTSchema(Schema):
+    labels = fields.Dict(
+        keys=fields.Str(), values=fields.Nested(LabelSchema()), required=False
+    )
+    additional_members = fields.Dict(
+        keys=fields.Str(),
+        values=fields.Nested(AdditionalMembersSchema()),
+        required=False,
+    )
+
+
 # A few fields that have not been instantiated yet
 CLASS_FIELD_MAP = {
     "str": contrib_fields.Str,
@@ -367,6 +406,8 @@ def get_param_schema(base_spec, field_map=None):
     This data is also used to build validators for schema for each parameter
     that will be set on the `BaseValidatorSchema` class
     """
+    schema = PTSchema()
+    base_spec = schema.load(base_spec)
     if field_map is not None:
         field_map = dict(FIELD_MAP, **field_map)
     else:
