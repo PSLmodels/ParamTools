@@ -333,12 +333,16 @@ class AdditionalMembersSchema(Schema):
 
 class PTSchema(Schema):
     labels = fields.Dict(
-        keys=fields.Str(), values=fields.Nested(LabelSchema()), required=False
+        keys=fields.Str(),
+        values=fields.Nested(LabelSchema()),
+        required=False,
+        missing={},
     )
     additional_members = fields.Dict(
         keys=fields.Str(),
         values=fields.Nested(AdditionalMembersSchema()),
         required=False,
+        missing={},
     )
 
 
@@ -413,7 +417,7 @@ def get_param_schema(base_spec, field_map=None):
     else:
         field_map = FIELD_MAP.copy()
     optional_fields = {}
-    for k, v in base_spec.get("additional_members", {}).items():
+    for k, v in base_spec["additional_members"].items():
         fieldtype = field_map[v["type"]]
         if v.get("number_dims", 0) > 0:
             d = v["number_dims"]
@@ -428,7 +432,7 @@ def get_param_schema(base_spec, field_map=None):
         {k: v for k, v in optional_fields.items()},
     )
     label_validators = {}
-    for name, label in base_spec.get("labels", {}).items():
+    for name, label in base_spec["labels"].items():
         validators = []
         for vname, kwargs in label["validators"].items():
             validator_class = VALIDATOR_MAP[vname]
