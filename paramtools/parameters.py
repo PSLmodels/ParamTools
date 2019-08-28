@@ -48,6 +48,7 @@ class Parameters:
             [(name, v.grid()) for name, v in self.label_validators.items()]
         )
         self.label_grid = copy.deepcopy(self._stateless_label_grid)
+        self._schema = schemafactory.base_spec
         self._validator_schema.context["spec"] = self
         self._errors = {}
         self._state = initial_state or {}

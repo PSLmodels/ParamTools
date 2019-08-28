@@ -439,4 +439,4 @@ def get_param_schema(base_spec, field_map=None):
             validators.append(validator_class(**kwargs))
         fieldtype = CLASS_FIELD_MAP[label["type"]]
         label_validators[name] = fieldtype(validate=validators)
-    return ParamSchema, label_validators
+    return ParamSchema, label_validators, base_spec

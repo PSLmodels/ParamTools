@@ -29,9 +29,11 @@ class SchemaFactory:
         defaults = utils.read_json(defaults)
         schema = defaults.get("schema", {})
         self.defaults = {k: v for k, v in defaults.items() if k != "schema"}
-        (self.BaseParamSchema, self.label_validators) = get_param_schema(
-            schema, field_map=field_map
-        )
+        (
+            self.BaseParamSchema,
+            self.label_validators,
+            self.schema,
+        ) = get_param_schema(schema, field_map=field_map)
 
     def schemas(self):
         """
