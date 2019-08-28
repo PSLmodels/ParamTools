@@ -1,7 +1,5 @@
 # Extend with Indexing
 
-*(coming soon in ParamTools 0.8.0)*
-
 ParamTools provides out-of-the-box parameter indexing. This is helpful for projects that have parameters that change at some rate over time. For example, tax parameters like the standard deduction are often indexed to price inflation. So, the value of the standard deduction actually increases every year by 1 or 2% depending on that year's inflation rate.
 
 The [extend documentation](/api/extend/) may be useful for gaining a better understanding of how ParamTools extends parameter values along `label_to_extend`.
