@@ -367,7 +367,13 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def extend(self, label_to_extend=None, params=None, raise_errors=True):
+    def extend(
+        self,
+        label_to_extend=None,
+        label_to_extend_values=None,
+        params=None,
+        raise_errors=True,
+    ):
         """
         Extend parameters along label_to_extend.
 
@@ -385,7 +391,10 @@ class Parameters:
                 for param, data in spec.items()
                 if param in params
             }
-        extend_grid = self._stateless_label_grid[label_to_extend]
+        extend_grid = (
+            label_to_extend_values
+            or self._stateless_label_grid[label_to_extend]
+        )
         adjustment = defaultdict(list)
         for param, data in spec.items():
             if not any(label_to_extend in vo for vo in data["value"]):
@@ -450,7 +459,11 @@ class Parameters:
                     for value_object in value_objects:
                         ext = dict(value_object, **{label_to_extend: val})
                         ext = self.extend_func(
-                            param, ext, value_object, extend_grid
+                            param,
+                            ext,
+                            value_object,
+                            extend_grid,
+                            label_to_extend,
                         )
                         extended_vos.add(
                             utils.hashable_value_object(value_object)
@@ -467,6 +480,7 @@ class Parameters:
         extend_vo: ValueObject,
         known_vo: ValueObject,
         extend_grid: List,
+        label_to_extend: str,
     ):
         """
         Function for applying indexing rates to parameter values as they
@@ -482,10 +496,10 @@ class Parameters:
         ):
             return extend_vo
 
-        known_val = known_vo[self.label_to_extend]
+        known_val = known_vo[label_to_extend]
         known_ix = extend_grid.index(known_val)
 
-        toext_val = extend_vo[self.label_to_extend]
+        toext_val = extend_vo[label_to_extend]
         toext_ix = extend_grid.index(toext_val)
 
         if toext_ix > known_ix:
