@@ -142,8 +142,9 @@ class Parameters:
         if not self._errors:
             if self.label_to_extend is not None and extend_adj:
                 extend_grid = self._stateless_label_grid[self.label_to_extend]
+                to_delete = defaultdict(list)
+                backup = {}
                 for param, vos in parsed_params.items():
-                    to_delete = []
                     for vo in utils.grid_sort(
                         vos, self.label_to_extend, extend_grid
                     ):
@@ -176,31 +177,31 @@ class Parameters:
                                     vo, drop=[self.label_to_extend, "value"]
                                 ),
                             )
-                            to_delete += eq
-                    to_delete = [
-                        dict(td, **{"value": None}) for td in to_delete
-                    ]
+                            to_delete[param] += [
+                                dict(td, **{"value": None}) for td in eq
+                            ]
                     # make copy of value objects since they
                     # are about to be modified
-                    backup = copy.deepcopy(self._data[param]["value"])
-                    try:
-                        array_first = self.array_first
-                        self.array_first = False
-                        # delete params that will be overwritten out by extend.
-                        self._adjust(
-                            {param: to_delete},
-                            extend_adj=False,
-                            raise_errors=True,
-                        )
-                        # set user adjustments.
-                        self._adjust(
-                            {param: vos}, extend_adj=False, raise_errors=True
-                        )
-                        self.array_first = array_first
-                        # extend user adjustments.
-                        self.extend(params=[param], raise_errors=True)
-                    except ValidationError:
-                        self._data[param]["value"] = backup
+                    backup[param] = copy.deepcopy(self._data[param]["value"])
+                try:
+                    array_first = self.array_first
+                    self.array_first = False
+
+                    # delete params that will be overwritten out by extend.
+                    self._adjust(
+                        to_delete, extend_adj=False, raise_errors=True
+                    )
+
+                    # set user adjustments.
+                    self._adjust(
+                        parsed_params, extend_adj=False, raise_errors=True
+                    )
+                    self.extend(params=parsed_params.keys(), raise_errors=True)
+                except ValidationError:
+                    for param in backup:
+                        self._data[param]["value"] = backup[param]
+                finally:
+                    self.array_first = array_first
             else:
                 for param, value in parsed_params.items():
                     self._update_param(param, value)
