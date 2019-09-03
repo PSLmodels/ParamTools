@@ -109,7 +109,10 @@ class Parameters:
         Deserialize and validate parameter adjustments. `params_or_path`
         can be a file path or a `dict` that has not been fully deserialized.
         The adjusted values replace the current values stored in the
-        corresponding parameter attributes.
+        corresponding parameter attributes. This simply calls a private
+        method `_adjust` to do the upate. Creating this layer on top of
+        `_adjust` makes it easy to subclass Parameters and implement custom
+        `adjust` methods.
 
         Returns: parsed, validated parameters.
 
@@ -118,6 +121,14 @@ class Parameters:
 
             ParameterUpdateException if label values do not match at
                 least one existing value item's corresponding label values.
+        """
+        return self._adjust(
+            params_or_path, raise_errors=raise_errors, extend_adj=extend_adj
+        )
+
+    def _adjust(self, params_or_path, raise_errors=True, extend_adj=True):
+        """
+        Internal method for performing adjustments.
         """
         params = self.read_params(params_or_path)
 
@@ -176,13 +187,13 @@ class Parameters:
                         array_first = self.array_first
                         self.array_first = False
                         # delete params that will be overwritten out by extend.
-                        self.adjust(
+                        self._adjust(
                             {param: to_delete},
                             extend_adj=False,
                             raise_errors=True,
                         )
                         # set user adjustments.
-                        self.adjust(
+                        self._adjust(
                             {param: vos}, extend_adj=False, raise_errors=True
                         )
                         self.array_first = array_first
@@ -448,9 +459,7 @@ class Parameters:
                         adjustment[param].append(ext)
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
-        Parameters.adjust(
-            self, adjustment, extend_adj=False, raise_errors=raise_errors
-        )
+        self._adjust(adjustment, extend_adj=False, raise_errors=raise_errors)
 
     def extend_func(
         self,

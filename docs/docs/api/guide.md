@@ -14,6 +14,8 @@ API
 
 [**Extend with Indexing:**](/api/index/) Index parameter values.
 
+[**Custom Adjustment Formats and Logic**](/api/custom-adjust/) Customize the adjustment format and logic to meet your project's needs.
+
 *Documentation on these parts of the API coming soon:*
 
 **Array access:** Access parameter values as NumPy arrays.
