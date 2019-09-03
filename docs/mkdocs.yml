@@ -6,5 +6,6 @@ nav:
         - Guide: 'api/guide.md'
         - Extend: 'api/extend.md'
         - Extend with Indexing: 'api/indexing.md'
+        - Custom Adjustments: 'api/custom-adjust.md'
 
 theme: mkdocs
