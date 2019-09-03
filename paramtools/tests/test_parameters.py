@@ -1136,6 +1136,37 @@ class TestExtend:
             [-1, -1],
         ]
 
+    def test_custom_extend(self, extend_ex_path):
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            # label_to_extend = "d0"
+            array_first = False
+
+        params = ExtParams()
+        params.adjust({"extend_param": [{"value": None}]})
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 2, "d1": "c1", "value": 1},
+                    {"d0": 2, "d1": "c2", "value": 2},
+                ]
+            }
+        )
+        params.extend(
+            label_to_extend="d0",
+            label_to_extend_values=[2, 4, 7],
+            params="extend_param",
+        )
+
+        assert sorted(params.extend_param, key=lambda vo: vo["d0"]) == [
+            {"d0": 2, "d1": "c1", "value": 1},
+            {"d0": 2, "d1": "c2", "value": 2},
+            {"d0": 4, "d1": "c1", "value": 1},
+            {"d0": 4, "d1": "c2", "value": 2},
+            {"d0": 7, "d1": "c1", "value": 1},
+            {"d0": 7, "d1": "c2", "value": 2},
+        ]
+
 
 def grow(n, r, t):
     mult = 1 if t >= 0 else -1
@@ -1193,3 +1224,21 @@ class TestIndex:
             [grow(3, 0.02, 7)] * 2,
         ]
         np.testing.assert_allclose(params.indexed_param.tolist(), exp)
+
+    def test_related_param_errors(self, extend_ex_path):
+        class IndexParams2(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+            uses_extend_func = True
+            index_rates = {lte: 0.02 for lte in range(10)}
+
+        params = IndexParams2()
+
+        with pytest.raises(ValidationError):
+            params.adjust(
+                {
+                    "related_param": [{"value": 8.1, "d0": 4}],
+                    "indexed_param": [{"d0": 3, "value": 8}],
+                }
+            )

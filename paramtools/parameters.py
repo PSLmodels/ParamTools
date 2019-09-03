@@ -142,8 +142,9 @@ class Parameters:
         if not self._errors:
             if self.label_to_extend is not None and extend_adj:
                 extend_grid = self._stateless_label_grid[self.label_to_extend]
+                to_delete = defaultdict(list)
+                backup = {}
                 for param, vos in parsed_params.items():
-                    to_delete = []
                     for vo in utils.grid_sort(
                         vos, self.label_to_extend, extend_grid
                     ):
@@ -176,31 +177,31 @@ class Parameters:
                                     vo, drop=[self.label_to_extend, "value"]
                                 ),
                             )
-                            to_delete += eq
-                    to_delete = [
-                        dict(td, **{"value": None}) for td in to_delete
-                    ]
+                            to_delete[param] += [
+                                dict(td, **{"value": None}) for td in eq
+                            ]
                     # make copy of value objects since they
                     # are about to be modified
-                    backup = copy.deepcopy(self._data[param]["value"])
-                    try:
-                        array_first = self.array_first
-                        self.array_first = False
-                        # delete params that will be overwritten out by extend.
-                        self._adjust(
-                            {param: to_delete},
-                            extend_adj=False,
-                            raise_errors=True,
-                        )
-                        # set user adjustments.
-                        self._adjust(
-                            {param: vos}, extend_adj=False, raise_errors=True
-                        )
-                        self.array_first = array_first
-                        # extend user adjustments.
-                        self.extend(params=[param], raise_errors=True)
-                    except ValidationError:
-                        self._data[param]["value"] = backup
+                    backup[param] = copy.deepcopy(self._data[param]["value"])
+                try:
+                    array_first = self.array_first
+                    self.array_first = False
+
+                    # delete params that will be overwritten out by extend.
+                    self._adjust(
+                        to_delete, extend_adj=False, raise_errors=True
+                    )
+
+                    # set user adjustments.
+                    self._adjust(
+                        parsed_params, extend_adj=False, raise_errors=True
+                    )
+                    self.extend(params=parsed_params.keys(), raise_errors=True)
+                except ValidationError:
+                    for param in backup:
+                        self._data[param]["value"] = backup[param]
+                finally:
+                    self.array_first = array_first
             else:
                 for param, value in parsed_params.items():
                     self._update_param(param, value)
@@ -367,7 +368,13 @@ class Parameters:
             value_items.append(vi)
         return value_items
 
-    def extend(self, label_to_extend=None, params=None, raise_errors=True):
+    def extend(
+        self,
+        label_to_extend=None,
+        label_to_extend_values=None,
+        params=None,
+        raise_errors=True,
+    ):
         """
         Extend parameters along label_to_extend.
 
@@ -385,7 +392,10 @@ class Parameters:
                 for param, data in spec.items()
                 if param in params
             }
-        extend_grid = self._stateless_label_grid[label_to_extend]
+        extend_grid = (
+            label_to_extend_values
+            or self._stateless_label_grid[label_to_extend]
+        )
         adjustment = defaultdict(list)
         for param, data in spec.items():
             if not any(label_to_extend in vo for vo in data["value"]):
@@ -450,7 +460,11 @@ class Parameters:
                     for value_object in value_objects:
                         ext = dict(value_object, **{label_to_extend: val})
                         ext = self.extend_func(
-                            param, ext, value_object, extend_grid
+                            param,
+                            ext,
+                            value_object,
+                            extend_grid,
+                            label_to_extend,
                         )
                         extended_vos.add(
                             utils.hashable_value_object(value_object)
@@ -467,6 +481,7 @@ class Parameters:
         extend_vo: ValueObject,
         known_vo: ValueObject,
         extend_grid: List,
+        label_to_extend: str,
     ):
         """
         Function for applying indexing rates to parameter values as they
@@ -482,10 +497,10 @@ class Parameters:
         ):
             return extend_vo
 
-        known_val = known_vo[self.label_to_extend]
+        known_val = known_vo[label_to_extend]
         known_ix = extend_grid.index(known_val)
 
-        toext_val = extend_vo[self.label_to_extend]
+        toext_val = extend_vo[label_to_extend]
         toext_ix = extend_grid.index(toext_val)
 
         if toext_ix > known_ix:
