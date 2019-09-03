@@ -1193,3 +1193,21 @@ class TestIndex:
             [grow(3, 0.02, 7)] * 2,
         ]
         np.testing.assert_allclose(params.indexed_param.tolist(), exp)
+
+    def test_related_param_errors(self, extend_ex_path):
+        class IndexParams2(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+            uses_extend_func = True
+            index_rates = {lte: 0.02 for lte in range(10)}
+
+        params = IndexParams2()
+
+        with pytest.raises(ValidationError):
+            params.adjust(
+                {
+                    "related_param": [{"value": 8.1, "d0": 4}],
+                    "indexed_param": [{"d0": 3, "value": 8}],
+                }
+            )
