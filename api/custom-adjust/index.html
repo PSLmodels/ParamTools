@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Guide - ParamTools Docs</title>
+        <title>Custom Adjustments - ParamTools Docs</title>
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -56,8 +56,8 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">API <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
-<li class="active">
-    <a href="./">Guide</a>
+<li >
+    <a href="../guide/">Guide</a>
 </li>
                                     
 <li >
@@ -68,8 +68,8 @@
     <a href="../indexing/">Extend with Indexing</a>
 </li>
                                     
-<li >
-    <a href="../custom-adjust/">Custom Adjustments</a>
+<li class="active">
+    <a href="./">Custom Adjustments</a>
 </li>
                                 </ul>
                             </li>
@@ -82,12 +82,12 @@
                             </a>
                         </li>
                             <li >
-                                <a rel="next" href="../../parameters/">
+                                <a rel="next" href="../indexing/">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
-                            <li >
-                                <a rel="prev" href="../extend/">
+                            <li class="disabled">
+                                <a rel="prev" >
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -99,24 +99,115 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#guide">Guide</a></li>
-            <li><a href="#api">API</a></li>
+        <li class="main active"><a href="#custom-adjustments">Custom Adjustments</a></li>
+            <li><a href="#example">Example</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="guide">Guide</h1>
-<p><strong>Just getting started?</strong>
-Check out the <a href="/">home page</a> for a quick start guide.</p>
-<p><strong>Want to learn more about the JSON spec?</strong>
-Check out the <a href="/parameters/">parameters spec</a> to learn more about what types of parameters and validators are supported by ParamTools.</p>
-<h2 id="api">API</h2>
-<p><a href="/api/extend/"><strong>Extend:</strong></a> Write more concise JSON schemas with the extend capability.</p>
-<p><a href="/api/index/"><strong>Extend with Indexing:</strong></a> Index parameter values.</p>
-<p><a href="/api/custom-adjust/"><strong>Custom Adjustment Formats and Logic</strong></a> Customize the adjustment format and logic to meet your project's needs.</p>
-<p><em>Documentation on these parts of the API coming soon:</em></p>
-<p><strong>Array access:</strong> Access parameter values as NumPy arrays.</p>
-<p><strong>Query:</strong> Powerful query language for selecting parameter values based on their associated labels.</p></div>
+<h1 id="custom-adjustments">Custom Adjustments</h1>
+<p>The ParamTools adjustment format and logic can be augmented significantly. This is helpful for projects that need to support a pre-existing data format or require custom adjustment logic. Projects should customize their adjustments by writing their own <code>adjust</code> method and then calling the default <code>adjust</code> method from there:</p>
+<pre><code class="python">
+class Params(paramtools.Parameters):
+    def adjust(self, params_or_path, **kwargs):
+        params = self.read_params(params_or_path)
+
+        # ... custom logic here
+
+        # call default adjust method.
+        return super().adjust(params, **kwargs)
+
+</code></pre>
+
+<h2 id="example">Example</h2>
+<p>Some projects may find it convenient to use CSVs for their adjustment format. That's no problem for ParamTools as long as the CSV is converted to a JSON file or Python dictionary that meets the ParamTools criteria.</p>
+<pre><code class="python">import io
+import os
+
+import pandas as pd
+
+import paramtools
+
+
+class CSVParams(paramtools.Parameters):
+    defaults = {
+        &quot;schema&quot;: {
+            &quot;labels&quot;: {
+                &quot;year&quot;: {
+                    &quot;type&quot;: &quot;int&quot;,
+                    &quot;validators&quot;: {&quot;range&quot;: {&quot;min&quot;: 2000, &quot;max&quot;: 2005}}
+                }
+            }
+        },
+        &quot;a&quot;: {
+            &quot;title&quot;: &quot;A&quot;,
+            &quot;description&quot;: &quot;a param&quot;,
+            &quot;type&quot;: &quot;int&quot;,
+            &quot;value&quot;: [
+                {&quot;year&quot;: 2000, &quot;value&quot;: 1},
+                {&quot;year&quot;: 2001, &quot;value&quot;: 2},
+            ]
+        },
+        &quot;b&quot;: {
+            &quot;title&quot;: &quot;B&quot;,
+            &quot;description&quot;: &quot;b param&quot;,
+            &quot;type&quot;: &quot;int&quot;,
+            &quot;value&quot;: [
+                {&quot;year&quot;: 2000, &quot;value&quot;: 3},
+                {&quot;year&quot;: 2001, &quot;value&quot;: 4},
+            ]
+        }
+    }
+
+    def adjust(self, params_or_path, **kwargs):
+        &quot;&quot;&quot;
+        A custom adjust method that converts CSV files to
+        ParamTools compliant Python dictionaries.
+        &quot;&quot;&quot;
+        if os.path.exists(params_or_path):
+            paramsdf = pd.read_csv(params_or_path, index_col=&quot;year&quot;)
+        else:
+            paramsdf = pd.read_csv(io.StringIO(params_or_path), index_col=&quot;year&quot;)
+
+        dfdict = paramsdf.to_dict()
+        params = {&quot;a&quot;: [], &quot;b&quot;: []}
+        for label in params:
+            for year, value in dfdict[label].items():
+                params[label] += [{&quot;year&quot;: year, &quot;value&quot;: value}]
+
+        # call adjust method on paramtools.Parameters which will
+        # call _adjust to actually do the update.
+        return super().adjust(params, **kwargs)
+
+</code></pre>
+
+<p>Now we create an example CSV file. To keep the example self-contained, the CSV is just a string, but this example works with CSV files, too. The values of "A" are updated to 5 in 2000 and 6 in 2001, and the values of "B" are updated to 6 in 2000 and 7 in 2001.</p>
+<pre><code class="python">
+# this could also be a path to a CSV file.
+csv_string = &quot;&quot;&quot;
+year,a,b
+2000,5,6\n
+2001,6,7\n
+&quot;&quot;&quot;
+
+params = CSVParams()
+params.adjust(csv_string)
+
+# output
+# OrderedDict([('a', [{'year': 2000, 'value': 5}, {'year': 2001, 'value': 6}]),
+#              ('b', [{'year': 2000, 'value': 6}, {'year': 2001, 'value': 7}])])
+
+params.a
+
+# output:
+# [{'year': 2000, 'value': 5}, {'year': 2001, 'value': 6}]
+
+params.b
+
+# output
+# [{'year': 2000, 'value': 6}, {'year': 2001, 'value': 7}]
+
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">
