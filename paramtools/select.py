@@ -8,19 +8,18 @@ def select(value_objects, exact_match, cmp_func, agg_cmp_func, labels):
 
     Returns: [{"value": val, "label0": ..., }]
     """
-    ret = []
-    for value_object in value_objects:
-        matches = []
+
+    def _select(value_object):
         for label_name, label_value in labels.items():
             if label_name in value_object or exact_match:
                 if isinstance(label_value, list):
-                    match = cmp_func(value_object[label_name], label_value)
+                    yield cmp_func(value_object[label_name], label_value)
                 else:
-                    match = cmp_func(value_object[label_name], (label_value,))
-                matches.append(match)
-        if agg_cmp_func(matches):
-            ret.append(value_object)
-    return ret
+                    yield cmp_func(value_object[label_name], (label_value,))
+
+    for value_object in value_objects:
+        if agg_cmp_func(_select(value_object)):
+            yield value_object
 
 
 def eq_func(x, y):
@@ -41,22 +40,24 @@ def gt_ix_func(cmp_list, x, y):
 
 
 def select_eq(value_objects, exact_match, labels):
-    return select(value_objects, exact_match, eq_func, all, labels)
+    return list(select(value_objects, exact_match, eq_func, all, labels))
 
 
 def select_ne(value_objects, exact_match, labels):
-    return select(value_objects, exact_match, ne_func, any, labels)
+    return list(select(value_objects, exact_match, ne_func, any, labels))
 
 
 def select_gt(value_objects, exact_match, labels):
-    return select(value_objects, exact_match, gt_func, all, labels)
+    return list(select(value_objects, exact_match, gt_func, all, labels))
 
 
 def select_gt_ix(value_objects, exact_match, labels, cmp_list):
-    return select(
-        value_objects,
-        exact_match,
-        lambda x, y: gt_ix_func(cmp_list, x, y),
-        all,
-        labels,
+    return list(
+        select(
+            value_objects,
+            exact_match,
+            lambda x, y: gt_ix_func(cmp_list, x, y),
+            all,
+            labels,
+        )
     )

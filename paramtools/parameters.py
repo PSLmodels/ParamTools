@@ -51,6 +51,7 @@ class Parameters:
         self._validator_schema.context["spec"] = self
         self._errors = {}
         self._state = initial_state or {}
+        self._search_tree = {}
         self.index_rates = index_rates or self.index_rates
 
         if array_first is not None:
@@ -635,33 +636,104 @@ class Parameters:
             For now, no exceptions are raised by this method.
 
         """
-        for i in range(len(new_values)):
-            curr_vals = self._data[param]["value"]
-            matched_at_least_once = False
-            labels_to_check = tuple(k for k in new_values[i] if k != "value")
+        # from pprint import pprint
+        # print('got new values', pprint(new_values))
+        curr_vals = self._data[param]["value"]
+        # print('got curr values', pprint(curr_vals))
+
+        if param not in self._search_tree or True:
+            self._search_tree[param] = utils.build_search_tree(curr_vals)
+        search_tree = self._search_tree[param]
+        # case where no labels
+        not_matched = []
+        if not search_tree and new_values:
+            del curr_vals[:]
+            not_matched = list(range(len(new_values)))
+        else:
+            new_search_tree = utils.build_search_tree(new_values)
+
+            search_hits = {ix: set([]) for ix in range(len(new_values))}
+            # pprint(search_tree)
+            # pprint(new_search_tree)
+            # print("labels", self.label_grid)
+            for label in self.label_grid:
+                # print(f"doing: {label}")
+                if label in new_search_tree and label in search_tree:
+                    for label_value in new_search_tree[label]:
+                        if label_value in search_tree[label]:
+                            for new_ix in new_search_tree[label][label_value]:
+                                if (
+                                    new_ix in search_hits
+                                    and search_hits[new_ix]
+                                ):
+                                    search_hits[new_ix] &= search_tree[label][
+                                        label_value
+                                    ]
+                                elif new_ix in search_hits:
+                                    search_hits[new_ix] |= search_tree[label][
+                                        label_value
+                                    ]
+                                # print(label, label_value)
+                                # pprint(search_hits)
+                        else:
+                            for topop in new_search_tree[label][label_value]:
+                                search_hits.pop(topop)
+                                not_matched.append(topop)
+                elif label in search_tree:
+                    unused_label = set.union(*search_tree[label].values())
+                    for new_ix in search_hits:
+                        if search_hits[new_ix]:
+                            search_hits[new_ix] &= unused_label
+                        else:
+                            search_hits[new_ix] |= unused_label
+                    # breakpoint()
+                else:
+                    pass
+                    # print(f"{param} ignores: {label}")
+
             to_delete = []
-            for j in range(len(curr_vals)):
-                match = all(
-                    curr_vals[j][k] == new_values[i][k]
-                    for k in labels_to_check
-                )
-                if match:
-                    matched_at_least_once = True
-                    if new_values[i]["value"] is None:
-                        to_delete.append(j)
+            # print("search_hits", search_hits)
+            for ix, search_hit_ixs in search_hits.items():
+                if search_hit_ixs:
+                    if new_values[ix]["value"] is not None:
+                        for search_hit_ix in search_hit_ixs:
+                            # print("match", new_values[ix], curr_vals[ix])
+                            curr_vals[search_hit_ix]["value"] = new_values[ix][
+                                "value"
+                            ]
                     else:
-                        curr_vals[j]["value"] = new_values[i]["value"]
+                        for search_hit_ix in search_hit_ixs:
+                            for label, label_value in curr_vals[
+                                search_hit_ix
+                            ].items():
+                                if label == "value":
+                                    continue
+                                try:
+                                    search_tree[label][label_value].remove(
+                                        search_hit_ix
+                                    )
+                                    if not search_tree[label][label_value]:
+                                        search_tree[label].pop(label_value)
+                                except KeyError:
+                                    pass
+                                    # print("crap", param, ix)
+                            to_delete.append(search_hit_ix)
+                else:
+                    not_matched.append(ix)
             if to_delete:
                 # Iterate in reverse so that indices point to the correct
                 # value. If iterating ascending then the values will be shifted
                 # towards the front of the list as items are removed.
-                for ix in sorted(to_delete, reverse=True):
+                # print(to_delete, len(curr_vals))
+                for ix in sorted(set(to_delete), reverse=True):
                     del curr_vals[ix]
-            if (
-                not matched_at_least_once
-                and new_values[i]["value"] is not None
-            ):
-                curr_vals.append(new_values[i])
+
+        if not_matched:
+            for ix in not_matched:
+                if new_values[ix]["value"] is not None:
+                    curr_vals.append(new_values[ix])
+
+        # utils.build_search_tree(new_values, search_tree)
 
     def _parse_errors(self, ve, params):
         """

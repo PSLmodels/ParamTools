@@ -1,6 +1,6 @@
 import json
 import os
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from typing import List
 
 from paramtools.typing import ValueObject
@@ -140,3 +140,16 @@ def grid_sort(vos, label_to_extend, grid):
             return grid[0]
 
     return sorted(vos, key=key)
+
+
+def build_search_tree(vos, search_tree=None):
+    search_tree = search_tree or {}
+    for ix, vo in enumerate(vos):
+        for label, label_value in vo.items():
+            if label == "value":
+                continue
+            if label not in search_tree:
+                search_tree[label] = defaultdict(set)
+
+            search_tree[label][label_value].add(ix)
+    return search_tree
