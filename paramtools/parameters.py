@@ -15,6 +15,7 @@ from paramtools import utils
 from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
+    ParamToolsError,
     SparseValueObjectsException,
     ValidationError,
     InconsistentLabelsException,
@@ -51,7 +52,6 @@ class Parameters:
         self._validator_schema.context["spec"] = self
         self._errors = {}
         self._state = initial_state or {}
-        self._search_tree = {}
         self.index_rates = index_rates or self.index_rates
 
         if array_first is not None:
@@ -636,14 +636,8 @@ class Parameters:
             For now, no exceptions are raised by this method.
 
         """
-        # from pprint import pprint
-        # print('got new values', pprint(new_values))
         curr_vals = self._data[param]["value"]
-        # print('got curr values', pprint(curr_vals))
-
-        if param not in self._search_tree or True:
-            self._search_tree[param] = utils.build_search_tree(curr_vals)
-        search_tree = self._search_tree[param]
+        search_tree = utils.build_search_tree(curr_vals)
         # case where no labels
         not_matched = []
         if not search_tree and new_values:
@@ -653,11 +647,7 @@ class Parameters:
             new_search_tree = utils.build_search_tree(new_values)
 
             search_hits = {ix: set([]) for ix in range(len(new_values))}
-            # pprint(search_tree)
-            # pprint(new_search_tree)
-            # print("labels", self.label_grid)
             for label in self.label_grid:
-                # print(f"doing: {label}")
                 if label in new_search_tree and label in search_tree:
                     for label_value in new_search_tree[label]:
                         if label_value in search_tree[label]:
@@ -673,8 +663,6 @@ class Parameters:
                                     search_hits[new_ix] |= search_tree[label][
                                         label_value
                                     ]
-                                # print(label, label_value)
-                                # pprint(search_hits)
                         else:
                             for topop in new_search_tree[label][label_value]:
                                 search_hits.pop(topop)
@@ -686,18 +674,16 @@ class Parameters:
                             search_hits[new_ix] &= unused_label
                         else:
                             search_hits[new_ix] |= unused_label
-                    # breakpoint()
-                else:
-                    pass
-                    # print(f"{param} ignores: {label}")
+                elif label in new_search_tree:
+                    raise ParamToolsError(
+                        f"Label {label} was not defined in the defaults."
+                    )
 
             to_delete = []
-            # print("search_hits", search_hits)
             for ix, search_hit_ixs in search_hits.items():
                 if search_hit_ixs:
                     if new_values[ix]["value"] is not None:
                         for search_hit_ix in search_hit_ixs:
-                            # print("match", new_values[ix], curr_vals[ix])
                             curr_vals[search_hit_ix]["value"] = new_values[ix][
                                 "value"
                             ]
@@ -732,8 +718,6 @@ class Parameters:
             for ix in not_matched:
                 if new_values[ix]["value"] is not None:
                     curr_vals.append(new_values[ix])
-
-        # utils.build_search_tree(new_values, search_tree)
 
     def _parse_errors(self, ve, params):
         """
