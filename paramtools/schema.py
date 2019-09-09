@@ -295,11 +295,15 @@ class BaseValidatorSchema(Schema):
             else:
                 oth_param = self.context["spec"]._data[oth_param_name]
             vals = oth_param["value"]
-        res = [
-            val
-            for val in vals
-            if all(val[k] == param_spec[k] for k in param_spec if k != "value")
-        ]
+        labs_to_check = {k for k in param_spec if k != "value"}
+        if labs_to_check:
+            res = [
+                val
+                for val in vals
+                if all(val[k] == param_spec[k] for k in labs_to_check)
+            ]
+        else:
+            res = vals
         return oth_param_name, res
 
 

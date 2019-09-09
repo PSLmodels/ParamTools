@@ -413,13 +413,13 @@ class Parameters:
                     extended_vos.add(hashable_vo)
                 gt = select_gt_ix(
                     self._data[param]["value"],
-                    True,
+                    False,
                     {label_to_extend: vo[label_to_extend]},
                     extend_grid,
                 )
                 eq = select_eq(
                     gt,
-                    True,
+                    False,
                     utils.filter_labels(vo, drop=["value", label_to_extend]),
                 )
                 extended_vos.update(map(utils.hashable_value_object, eq))

@@ -88,3 +88,30 @@ class Tree:
             for ix in not_matched:
                 if tree.vos[ix]["value"] is not None:
                     self.vos.append(tree.vos[ix])
+
+    def select(self, labels, cmp_func, exact_match=False):
+        search_hits = set([])
+        if not labels:
+            return self.vos
+        if not self.tree:
+            return self.vos
+        for label, _label_value in labels.items():
+            if not isinstance(_label_value, list):
+                label_value = (_label_value,)
+            else:
+                label_value = _label_value
+            label_search_hits = set([])
+            if label in self.tree:
+                for tree_label_value, ixs in self.tree[label].items():
+                    match = cmp_func(tree_label_value, label_value)
+                    if match:
+                        label_search_hits |= ixs
+                if search_hits:
+                    search_hits &= label_search_hits
+                else:
+                    search_hits |= label_search_hits
+            elif exact_match:
+                raise KeyError(
+                    f"Label {label} is not used for this parameter."
+                )
+        return [self.vos[ix] for ix in search_hits]
