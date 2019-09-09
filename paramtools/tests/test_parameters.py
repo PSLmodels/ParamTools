@@ -6,6 +6,7 @@ from collections import OrderedDict
 
 import pytest
 import numpy as np
+import marshmallow as ma
 
 from paramtools import (
     ValidationError,
@@ -138,6 +139,29 @@ class TestSchema:
 
         TestParams()
         assert defaults_["schema"]
+
+    def test_schema_with_errors(self):
+        class Params(Parameters):
+            array_first = True
+            defaults = {
+                "schema": {
+                    "additional_members": {"additional": {"type": 1234}}
+                }
+            }
+
+        with pytest.raises(ma.ValidationError):
+            Params()
+
+        class Params(Parameters):
+            array_first = True
+            defaults = {
+                "schema": {
+                    "additional_members_123": {"additional": {"type": "str"}}
+                }
+            }
+
+        with pytest.raises(ma.ValidationError):
+            Params()
 
 
 class TestAccess:
