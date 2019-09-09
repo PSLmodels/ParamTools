@@ -330,7 +330,7 @@ class AdditionalMembersSchema(Schema):
     number_dims = fields.Integer(required=False, missing=0)
 
 
-class PTSchema(Schema):
+class ParamToolsSchema(Schema):
     labels = fields.Dict(
         keys=fields.Str(),
         values=fields.Nested(LabelSchema()),
@@ -409,7 +409,7 @@ def get_param_schema(base_spec, field_map=None):
     This data is also used to build validators for schema for each parameter
     that will be set on the `BaseValidatorSchema` class
     """
-    schema = PTSchema()
+    schema = ParamToolsSchema()
     base_spec = schema.load(base_spec)
 
     if field_map is not None:
