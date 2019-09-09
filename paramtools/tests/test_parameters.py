@@ -137,6 +137,7 @@ class TestSchema:
         class TestParams(Parameters):
             defaults = defaults_
 
+        print(TestParams.array_first)
         TestParams()
         assert defaults_["schema"]
 
