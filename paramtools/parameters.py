@@ -12,10 +12,10 @@ from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
+from paramtools.search import Tree
 from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
-    ParamToolsError,
     SparseValueObjectsException,
     ValidationError,
     InconsistentLabelsException,
@@ -636,88 +636,11 @@ class Parameters:
             For now, no exceptions are raised by this method.
 
         """
-        curr_vals = self._data[param]["value"]
-        search_tree = utils.build_search_tree(curr_vals)
-        # case where no labels
-        not_matched = []
-        if not search_tree and new_values:
-            del curr_vals[:]
-            not_matched = list(range(len(new_values)))
-        else:
-            new_search_tree = utils.build_search_tree(new_values)
-
-            search_hits = {ix: set([]) for ix in range(len(new_values))}
-            for label in self.label_grid:
-                if label in new_search_tree and label in search_tree:
-                    for label_value in new_search_tree[label]:
-                        if label_value in search_tree[label]:
-                            for new_ix in new_search_tree[label][label_value]:
-                                if (
-                                    new_ix in search_hits
-                                    and search_hits[new_ix]
-                                ):
-                                    search_hits[new_ix] &= search_tree[label][
-                                        label_value
-                                    ]
-                                elif new_ix in search_hits:
-                                    search_hits[new_ix] |= search_tree[label][
-                                        label_value
-                                    ]
-                        else:
-                            for topop in new_search_tree[label][label_value]:
-                                search_hits.pop(topop)
-                                not_matched.append(topop)
-                elif label in search_tree:
-                    unused_label = set.union(*search_tree[label].values())
-                    for new_ix in search_hits:
-                        if search_hits[new_ix]:
-                            search_hits[new_ix] &= unused_label
-                        else:
-                            search_hits[new_ix] |= unused_label
-                elif label in new_search_tree:
-                    raise ParamToolsError(
-                        f"Label {label} was not defined in the defaults."
-                    )
-
-            to_delete = []
-            for ix, search_hit_ixs in search_hits.items():
-                if search_hit_ixs:
-                    if new_values[ix]["value"] is not None:
-                        for search_hit_ix in search_hit_ixs:
-                            curr_vals[search_hit_ix]["value"] = new_values[ix][
-                                "value"
-                            ]
-                    else:
-                        for search_hit_ix in search_hit_ixs:
-                            for label, label_value in curr_vals[
-                                search_hit_ix
-                            ].items():
-                                if label == "value":
-                                    continue
-                                try:
-                                    search_tree[label][label_value].remove(
-                                        search_hit_ix
-                                    )
-                                    if not search_tree[label][label_value]:
-                                        search_tree[label].pop(label_value)
-                                except KeyError:
-                                    pass
-                                    # print("crap", param, ix)
-                            to_delete.append(search_hit_ix)
-                else:
-                    not_matched.append(ix)
-            if to_delete:
-                # Iterate in reverse so that indices point to the correct
-                # value. If iterating ascending then the values will be shifted
-                # towards the front of the list as items are removed.
-                # print(to_delete, len(curr_vals))
-                for ix in sorted(set(to_delete), reverse=True):
-                    del curr_vals[ix]
-
-        if not_matched:
-            for ix in not_matched:
-                if new_values[ix]["value"] is not None:
-                    curr_vals.append(new_values[ix])
+        curr_values = self._data[param]["value"]
+        curr_tree = Tree(vos=curr_values, label_grid=self.label_grid)
+        new_tree = Tree(vos=new_values, label_grid=self.label_grid)
+        curr_tree.update(new_tree)
+        self._data[param]["value"] = curr_tree.vos
 
     def _parse_errors(self, ve, params):
         """
