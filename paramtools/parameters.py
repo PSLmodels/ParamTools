@@ -294,7 +294,7 @@ class Parameters:
         value_items = self.select_eq(param, False, **self._state)
         if not value_items:
             return np.array([])
-        label_order, value_order = self._resolve_order(param)
+        label_order, value_order = self._resolve_order(param, value_items)
         shape = []
         for label in label_order:
             shape.append(len(value_order[label]))
@@ -357,7 +357,8 @@ class Parameters:
                     "A NumPy Ndarray should be passed to this method "
                     "or the instance attribute should be an array."
                 )
-        label_order, value_order = self._resolve_order(param)
+        value_items = self.select_eq(param, False, **self._state)
+        label_order, value_order = self._resolve_order(param, value_items)
         label_values = itertools.product(*value_order.values())
         label_indices = itertools.product(
             *map(lambda x: range(len(x)), value_order.values())
@@ -569,7 +570,7 @@ class Parameters:
             else:
                 setattr(self, name, value)
 
-    def _resolve_order(self, param):
+    def _resolve_order(self, param, value_items):
         """
         Resolve the order of the labels and their values by
         inspecting data in the label grid values.
@@ -588,7 +589,7 @@ class Parameters:
             InconsistentLabelsException: Value objects do not have consistent
                 labels.
         """
-        value_items = self.select_eq(param, False, **self._state)
+        # value_items = self.select_eq(param, False, **self._state)
         used = utils.consistent_labels(value_items)
         if used is None:
             raise InconsistentLabelsException(
