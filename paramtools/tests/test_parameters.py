@@ -164,7 +164,7 @@ class TestSchema:
         with pytest.raises(ma.ValidationError):
             Params2()
 
-    def test_actions_spec(self):
+    def test_operators_spec(self):
         class Params1(Parameters):
             array_first = False
             defaults = {
@@ -179,7 +179,7 @@ class TestSchema:
                             "validators": {"range": {"min": 0, "max": 10}},
                         },
                     },
-                    "actions": {
+                    "operators": {
                         "array_first": False,
                         "label_to_extend": "somelabel",
                     },
@@ -189,7 +189,7 @@ class TestSchema:
         params = Params1(array_first=True, label_to_extend="mylabel")
         assert params.array_first
         assert params.label_to_extend == "mylabel"
-        assert params.actions == {
+        assert params.operators == {
             "array_first": True,
             "label_to_extend": "mylabel",
             "uses_extend_func": False,
@@ -199,19 +199,19 @@ class TestSchema:
         params = Params1()
         assert params.array_first
         assert params.label_to_extend == "somelabel"
-        assert params.actions == {
+        assert params.operators == {
             "array_first": True,
             "label_to_extend": "somelabel",
             "uses_extend_func": False,
         }
 
         class Params2(Parameters):
-            defaults = {"schema": {"actions": {"array_first": True}}}
+            defaults = {"schema": {"operators": {"array_first": True}}}
 
         params = Params2()
         assert params.array_first
         assert params.label_to_extend is None
-        assert params.actions == {
+        assert params.operators == {
             "array_first": True,
             "label_to_extend": None,
             "uses_extend_func": False,

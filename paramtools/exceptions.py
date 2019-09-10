@@ -46,7 +46,7 @@ collision_list = [
     "_update_param",
     "_validator_schema",
     "_defaults_schema",
-    "actions",
+    "operators",
     "adjust",
     "array_first",
     "clear_state",

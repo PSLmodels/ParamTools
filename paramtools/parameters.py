@@ -57,23 +57,19 @@ class Parameters:
         self._state = initial_state or {}
         self.index_rates = index_rates or self.index_rates
 
-        # set actions in order of importance:
+        # set operators in order of importance:
         # __init__ arg: most important
         # class attribute: middle importance
         # schema action: least important
         # default value if three above are not specified.
-        actions = [
+        ops = [
             ("array_first", array_first, False),
             ("label_to_extend", label_to_extend, None),
             ("uses_extend_func", uses_extend_func, False),
         ]
-        schema_actions = self._schema.get("actions", {})
-        for name, init_value, default in actions:
-            user_vals = [
-                init_value,
-                getattr(self, name),
-                schema_actions.get(name),
-            ]
+        schema_ops = self._schema.get("operators", {})
+        for name, init_value, default in ops:
+            user_vals = [init_value, getattr(self, name), schema_ops.get(name)]
             for value in user_vals:
                 if value != default and value is not None:
                     setattr(self, name, value)
@@ -90,9 +86,9 @@ class Parameters:
         else:
             self.set_state()
 
-        if "actions" not in self._schema:
-            self._schema["actions"] = {}
-        self._schema["actions"].update(self.actions)
+        if "operators" not in self._schema:
+            self._schema["operators"] = {}
+        self._schema["operators"].update(self.operators)
 
     def set_state(self, **labels):
         """
@@ -259,7 +255,7 @@ class Parameters:
         )
 
     @property
-    def actions(self):
+    def operators(self):
         return {
             "array_first": self.array_first,
             "label_to_extend": self.label_to_extend,

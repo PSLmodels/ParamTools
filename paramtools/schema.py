@@ -330,7 +330,7 @@ class AdditionalMembersSchema(Schema):
     number_dims = fields.Integer(required=False, missing=0)
 
 
-class ActionsSchema(Schema):
+class OperatorsSchema(Schema):
     array_first = fields.Bool(required=False)
     label_to_extend = fields.Str(required=False, allow_none=True)
     uses_extend_func = fields.Bool(required=False)
@@ -349,7 +349,7 @@ class ParamToolsSchema(Schema):
         required=False,
         missing={},
     )
-    actions = fields.Nested(ActionsSchema, required=False)
+    operators = fields.Nested(OperatorsSchema, required=False)
 
 
 # A few fields that have not been instantiated yet
