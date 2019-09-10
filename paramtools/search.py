@@ -40,13 +40,13 @@ class Tree:
         Touched values will be saved
         """
         touched = set([])
-        not_matched = []
-        to_delete = []
+        not_matched = set([])
+        to_delete = set([])
         self.init()
         tree.init()
         if not self.tree and tree.vos:
             del self.vos[:]
-            not_matched = list(range(len(tree.vos)))
+            not_matched = range(len(tree.vos))
         else:
             search_hits = {ix: set([]) for ix in range(len(tree.vos))}
             for label in self.label_grid:
@@ -69,7 +69,7 @@ class Tree:
                     ):
                         for new_ix in tree.tree[label][label_value]:
                             search_hits.pop(new_ix)
-                            not_matched.append(new_ix)
+                            not_matched.add(new_ix)
                 elif label in self.tree:
                     unused_label = set.union(*self.tree[label].values())
                     for new_ix in search_hits:
@@ -82,7 +82,6 @@ class Tree:
                         f"Label {label} was not defined in the defaults."
                     )
 
-            to_delete = []
             for ix, search_hit_ixs in search_hits.items():
                 if search_hit_ixs:
                     if tree.vos[ix]["value"] is not None:
@@ -92,14 +91,14 @@ class Tree:
                             ]
                             touched.add(search_hit_ix)
                     else:
-                        to_delete += search_hit_ixs
+                        to_delete |= search_hit_ixs
                 else:
-                    not_matched.append(ix)
+                    not_matched.add(ix)
             if to_delete:
                 # Iterate in reverse so that indices point to the correct
                 # value. If iterating ascending then the values will be shifted
                 # towards the front of the list as items are removed.
-                for ix in sorted(set(to_delete), reverse=True):
+                for ix in sorted(to_delete, reverse=True):
                     del self.vos[ix]
 
         if not_matched:
@@ -113,7 +112,7 @@ class Tree:
             self.touched = None
             self.needs_build = True
         else:
-            self.touched = set(touched)
+            self.touched = touched
             self.needs_build = True
 
     def select(self, labels, cmp_func, exact_match=False):

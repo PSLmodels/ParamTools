@@ -26,10 +26,11 @@ def label_grid():
 
 
 def assert_rebalanced(tree):
-    tree.init()
-
     exp_tree = Tree(copy.deepcopy(tree.vos), tree.label_grid)
+
+    tree.init()
     exp_tree.init()
+
     np.testing.assert_equal(tree.tree, exp_tree.tree)
 
 
