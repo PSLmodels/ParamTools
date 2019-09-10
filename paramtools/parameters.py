@@ -266,14 +266,15 @@ class Parameters:
             "uses_extend_func": self.uses_extend_func,
         }
 
-    def dump(self, **labels):
+    def dump(self):
         """
         Dump a representation of this instance to JSON. This makes it
         possible to load this instance's data after sending the data
-        across the wire or from another programming language.
+        across the wire or from another programming language. The
+        dumped values will be queried using this instance's state.
         """
         spec = self.specification(
-            meta_data=True, include_empty=True, serializable=True ** labels
+            meta_data=True, include_empty=True, serializable=True
         )
         schema = ParamToolsSchema().dump(self._schema)
         return {**spec, **{"schema": schema}}

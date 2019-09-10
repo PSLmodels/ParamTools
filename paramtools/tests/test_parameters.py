@@ -288,6 +288,36 @@ class TestAccess:
             params._defaults_schema.load(exp)
         )
 
+    def test_dump(self, TestParams, defaults_spec_path):
+        params1 = TestParams()
+        spec = params1.specification(serializable=True, meta_data=True)
+        schema = params1._schema
+        dumped = params1.dump()
+        assert dumped == {**spec, **{"schema": schema}}
+
+        class TestParams2(Parameters):
+            defaults = dumped
+
+        params2 = TestParams2()
+        assert params2.dump() == dumped
+
+    def test_dump_with_labels(self, TestParams, defaults_spec_path):
+        params1 = TestParams()
+        spec = params1.specification(
+            serializable=True, include_empty=True, meta_data=True, label0="one"
+        )
+        schema = params1._schema
+        params1.set_state(label0="one")
+        dumped = params1.dump()
+        assert dumped == {**spec, **{"schema": schema}}
+
+        class TestParams2(Parameters):
+            defaults = dumped
+
+        params2 = TestParams2()
+        params2.set_state(label0="one")
+        assert params2.dump() == dumped
+
 
 class TestAdjust:
     def test_adjust_int_param(self, TestParams):
