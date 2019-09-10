@@ -3,6 +3,7 @@ import pytest
 import numpy as np
 
 from paramtools.exceptions import ParamToolsError
+from paramtools.select import eq_func
 from paramtools.tree import Tree
 
 
@@ -148,3 +149,22 @@ def test_error_on_extra_label(vos, label_grid):
     with pytest.raises(ParamToolsError):
         tree.update(new_tree)
     assert_rebalanced(tree)
+
+
+def test_select(vos, label_grid):
+    tree = Tree(vos, label_grid)
+
+    res = tree.select({}, eq_func)
+    assert res == vos
+
+    res = tree.select({"d1": "world"}, eq_func)
+    assert res == [
+        {"d0": 1, "d1": "world", "value": 1},
+        {"d0": 3, "d1": "world", "value": 1},
+    ]
+
+    res = tree.select({"d0": 1, "d1": "world"}, eq_func)
+    assert res == [{"d0": 1, "d1": "world", "value": 1}]
+
+    with pytest.raises(KeyError):
+        tree.select({"d2": 1}, eq_func, exact_match=True)
