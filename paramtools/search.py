@@ -32,10 +32,12 @@ class Tree:
         else:
             search_hits = {ix: set([]) for ix in range(len(tree.vos))}
             for label in self.label_grid:
+                print(label, label in tree.tree, label in self.tree)
                 if label in tree.tree and label in self.tree:
                     for label_value in (
                         tree.tree[label].keys() & self.tree[label].keys()
                     ):
+                        print(label, label_value)
                         for new_ix in tree.tree[label][label_value]:
                             if new_ix in search_hits:
                                 if search_hits[new_ix]:
@@ -52,6 +54,7 @@ class Tree:
                         for new_ix in tree.tree[label][label_value]:
                             search_hits.pop(new_ix)
                             not_matched.append(new_ix)
+                    print("1", search_hits)
                 elif label in self.tree:
                     unused_label = set.union(*self.tree[label].values())
                     for new_ix in search_hits:
@@ -59,6 +62,7 @@ class Tree:
                             search_hits[new_ix] &= unused_label
                         else:
                             search_hits[new_ix] |= unused_label
+                    print("2", search_hits)
                 elif label in tree.tree:
                     raise ParamToolsError(
                         f"Label {label} was not defined in the defaults."
