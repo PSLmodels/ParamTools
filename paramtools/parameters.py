@@ -77,6 +77,7 @@ class Parameters:
             for value in user_vals:
                 if value != default and value is not None:
                     setattr(self, name, value)
+                    break
 
         if self.label_to_extend:
             prev_array_first = self.array_first

@@ -142,7 +142,7 @@ class TestSchema:
         assert defaults_["schema"]
 
     def test_schema_with_errors(self):
-        class Params(Parameters):
+        class Params1(Parameters):
             array_first = True
             defaults = {
                 "schema": {
@@ -151,9 +151,9 @@ class TestSchema:
             }
 
         with pytest.raises(ma.ValidationError):
-            Params()
+            Params1()
 
-        class Params(Parameters):
+        class Params2(Parameters):
             array_first = True
             defaults = {
                 "schema": {
@@ -162,7 +162,60 @@ class TestSchema:
             }
 
         with pytest.raises(ma.ValidationError):
-            Params()
+            Params2()
+
+    def test_actions_spec(self):
+        class Params1(Parameters):
+            array_first = False
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "mylabel": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 10}},
+                        },
+                        "somelabel": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 10}},
+                        },
+                    },
+                    "actions": {
+                        "array_first": False,
+                        "label_to_extend": "somelabel",
+                    },
+                }
+            }
+
+        params = Params1(array_first=True, label_to_extend="mylabel")
+        assert params.array_first
+        assert params.label_to_extend == "mylabel"
+        assert params.actions == {
+            "array_first": True,
+            "label_to_extend": "mylabel",
+            "uses_extend_func": False,
+        }
+
+        Params1.array_first = True
+        params = Params1()
+        assert params.array_first
+        assert params.label_to_extend == "somelabel"
+        assert params.actions == {
+            "array_first": True,
+            "label_to_extend": "somelabel",
+            "uses_extend_func": False,
+        }
+
+        class Params2(Parameters):
+            defaults = {"schema": {"actions": {"array_first": True}}}
+
+        params = Params2()
+        assert params.array_first
+        assert params.label_to_extend is None
+        assert params.actions == {
+            "array_first": True,
+            "label_to_extend": None,
+            "uses_extend_func": False,
+        }
 
 
 class TestAccess:
