@@ -126,7 +126,7 @@
             &quot;cpi_inflatable&quot;: {&quot;type&quot;: &quot;bool&quot;},
             &quot;cpi_inflated&quot;: {&quot;type&quot;: &quot;bool&quot;}
         },
-        &quot;actions&quot;: {
+        &quot;operators&quot;: {
             &quot;array_first&quot;: true,
             &quot;label_to_extend&quot;: &quot;year&quot;,
             &quot;uses_extend_func&quot;: true
@@ -186,7 +186,7 @@
             &quot;cpi_inflated&quot;: {&quot;type&quot;: &quot;bool&quot;}
         }
     },
-    &quot;actions&quot;: {
+    &quot;operators&quot;: {
         &quot;array_first&quot;: true,
         &quot;label_to_extend&quot;: true,
         &quot;uses_extend_func&quot;: true
@@ -202,7 +202,7 @@
 <p><code>additional_members</code>: Additional Members are parameter level members that are specific to your model. For example, "title" is a parameter level member that is required by ParamTools, but "cpi_inflated" is not. Therefore, "cpi_inflated" needs to be defined in <code>additional_members</code>.</p>
 </li>
 <li>
-<p><code>actions</code>: Actions affect how the data is read into and handled by the <code>Parameters</code> class:</p>
+<p><code>operators</code>: Operators affect how the data is read into and handled by the <code>Parameters</code> class:</p>
 <ul>
 <li>
 <p><code>array_first</code>: If value is <code>true</code>, parameters' values will be accessed as arrays by default.</p>
