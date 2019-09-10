@@ -125,6 +125,11 @@
         &quot;additional_members&quot;: {
             &quot;cpi_inflatable&quot;: {&quot;type&quot;: &quot;bool&quot;},
             &quot;cpi_inflated&quot;: {&quot;type&quot;: &quot;bool&quot;}
+        },
+        &quot;actions&quot;: {
+            &quot;array_first&quot;: true,
+            &quot;label_to_extend&quot;: &quot;year&quot;,
+            &quot;uses_extend_func&quot;: true
         }
     },
     &quot;personal_exemption&quot;: {
@@ -180,13 +185,36 @@
             &quot;cpi_inflatable&quot;: {&quot;type&quot;: &quot;bool&quot;},
             &quot;cpi_inflated&quot;: {&quot;type&quot;: &quot;bool&quot;}
         }
+    },
+    &quot;actions&quot;: {
+        &quot;array_first&quot;: true,
+        &quot;label_to_extend&quot;: true,
+        &quot;uses_extend_func&quot;: true
     }
 }
 </code></pre>
 
 <ul>
-<li><code>labels</code>: Labels are used for defining, accessing, and updating a parameter's values.</li>
-<li><code>additional_members</code>: Additional Members are parameter level members that are specific to your model. For example, "title" is a parameter level member that is required by ParamTools, but "cpi_inflated" is not. Therefore, "cpi_inflated" needs to be defined in <code>additional_members</code>.</li>
+<li>
+<p><code>labels</code>: Labels are used for defining, accessing, and updating a parameter's values.</p>
+</li>
+<li>
+<p><code>additional_members</code>: Additional Members are parameter level members that are specific to your model. For example, "title" is a parameter level member that is required by ParamTools, but "cpi_inflated" is not. Therefore, "cpi_inflated" needs to be defined in <code>additional_members</code>.</p>
+</li>
+<li>
+<p><code>actions</code>: Actions affect how the data is read into and handled by the <code>Parameters</code> class:</p>
+<ul>
+<li>
+<p><code>array_first</code>: If value is <code>true</code>, parameters' values will be accessed as arrays by default.</p>
+</li>
+<li>
+<p><code>label_to_extend</code>: The name of the label along which the missing values of the parameters will be extended. For more information, check out the <a href="/api/extend/">extend docs</a>.</p>
+</li>
+<li>
+<p><code>uses_extend_func</code>: If value is <code>true</code>, special logic is applied to the values of the parameters as they are extended. For more information, check out the <a href="/api/indexing/">indexing docs</a>.</p>
+</li>
+</ul>
+</li>
 </ul>
 <h2 id="default-parameters">Default Parameters</h2>
 <pre><code class="json">{
@@ -226,8 +254,12 @@
 <li>
 <p><code>description</code>: Describe the parameter.</p>
 </li>
-<li><code>notes</code>: (<em>optional</em>) Additional advice or information.</li>
-<li><code>type</code>: Data type of the parameter. Allowed types are <code>int</code>, <code>float</code>, <code>bool</code>, <code>str</code> and <code>date</code> (YYYY-MM-DD).</li>
+<li>
+<p><code>notes</code>: (<em>optional</em>) Additional advice or information.</p>
+</li>
+<li>
+<p><code>type</code>: Data type of the parameter. Allowed types are <code>int</code>, <code>float</code>, <code>bool</code>, <code>str</code> and <code>date</code> (YYYY-MM-DD).</p>
+</li>
 <li>
 <p><code>number_dims</code>: (<em>optional, default is 0</em>) Number of dimensions for the value, as defined by <a href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.ndim.html"><code>np.ndim</code></a>.</p>
 </li>
