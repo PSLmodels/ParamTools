@@ -9,35 +9,51 @@ class Tree:
     def __init__(self, vos: List[ValueObject], label_grid: dict):
         self.vos = vos
         self.label_grid = label_grid
-        self.tree = self.build()
+        self.tree = None
+        self.touched = None
+        self.needs_build = True
 
-    def build(self):
-        search_tree = {}
-        for ix, vo in enumerate(self.vos):
+    def init(self):
+        if not self.needs_build:
+            return self.tree
+        if self.touched and self.tree:
+            ixs = self.touched
+            search_tree = self.tree
+        else:
+            search_tree = {}
+            ixs = range(len(self.vos))
+        for ix in ixs:
+            vo = self.vos[ix]
             for label, label_value in vo.items():
                 if label == "value":
                     continue
                 if label not in search_tree:
                     search_tree[label] = defaultdict(set)
-
                 search_tree[label][label_value].add(ix)
-        return search_tree
+        self.tree = search_tree
+        self.needs_build = False
+        return self.tree
 
     def update(self, tree: "Tree"):
-        # case where no labels
+        """
+        Update the value objects in this search tree with the new search tree.
+        Touched values will be saved
+        """
+        touched = set([])
         not_matched = []
+        to_delete = []
+        self.init()
+        tree.init()
         if not self.tree and tree.vos:
             del self.vos[:]
             not_matched = list(range(len(tree.vos)))
         else:
             search_hits = {ix: set([]) for ix in range(len(tree.vos))}
             for label in self.label_grid:
-                print(label, label in tree.tree, label in self.tree)
                 if label in tree.tree and label in self.tree:
                     for label_value in (
                         tree.tree[label].keys() & self.tree[label].keys()
                     ):
-                        print(label, label_value)
                         for new_ix in tree.tree[label][label_value]:
                             if new_ix in search_hits:
                                 if search_hits[new_ix]:
@@ -54,7 +70,6 @@ class Tree:
                         for new_ix in tree.tree[label][label_value]:
                             search_hits.pop(new_ix)
                             not_matched.append(new_ix)
-                    print("1", search_hits)
                 elif label in self.tree:
                     unused_label = set.union(*self.tree[label].values())
                     for new_ix in search_hits:
@@ -62,7 +77,6 @@ class Tree:
                             search_hits[new_ix] &= unused_label
                         else:
                             search_hits[new_ix] |= unused_label
-                    print("2", search_hits)
                 elif label in tree.tree:
                     raise ParamToolsError(
                         f"Label {label} was not defined in the defaults."
@@ -76,6 +90,7 @@ class Tree:
                             self.vos[search_hit_ix]["value"] = tree.vos[ix][
                                 "value"
                             ]
+                            touched.add(search_hit_ix)
                     else:
                         to_delete += search_hit_ixs
                 else:
@@ -84,7 +99,6 @@ class Tree:
                 # Iterate in reverse so that indices point to the correct
                 # value. If iterating ascending then the values will be shifted
                 # towards the front of the list as items are removed.
-                # print(to_delete, len(self.vos))
                 for ix in sorted(set(to_delete), reverse=True):
                     del self.vos[ix]
 
@@ -92,11 +106,21 @@ class Tree:
             for ix in not_matched:
                 if tree.vos[ix]["value"] is not None:
                     self.vos.append(tree.vos[ix])
+                    touched.add(len(self.vos) - 1)
+
+        # It's faster to just re-build from scratch if values are deleted.
+        if to_delete:
+            self.touched = None
+            self.needs_build = True
+        else:
+            self.touched = set(touched)
+            self.needs_build = True
 
     def select(self, labels, cmp_func, exact_match=False):
-        search_hits = set([])
         if not labels:
             return self.vos
+        search_hits = set([])
+        self.init()
         if not self.tree:
             return self.vos
         for label, _label_value in labels.items():
