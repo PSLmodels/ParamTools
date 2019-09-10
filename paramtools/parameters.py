@@ -13,7 +13,7 @@ from marshmallow import ValidationError as MarshmallowValidationError
 from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
 from paramtools.tree import Tree
-from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
+from paramtools.select import select_eq, select_gt_ix, select_gt
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
     SparseValueObjectsException,
@@ -613,9 +613,6 @@ class Parameters:
 
     def select_eq(self, param, exact_match, **labels):
         return select_eq(self._data[param]["value"], exact_match, labels)
-
-    def select_ne(self, param, exact_match, **labels):
-        return select_ne(self._data[param]["value"], exact_match, labels)
 
     def select_gt(self, param, exact_match, **labels):
         return select_gt(self._data[param]["value"], exact_match, labels)

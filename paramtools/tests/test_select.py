@@ -1,6 +1,6 @@
 import pytest
 
-from paramtools.select import select_eq, select_ne, select_gt
+from paramtools.select import select_eq, select_gt
 
 
 @pytest.fixture
@@ -29,21 +29,5 @@ def test_select_eq(vos):
 def test_select_gt(vos):
     assert list(select_gt(vos, True, labels={"d0": 1})) == [
         {"d0": 2, "d1": "hello", "value": 1},
-        {"d0": 3, "d1": "world", "value": 1},
-    ]
-
-
-@pytest.mark.xfail
-def test_select_ne(vos):
-    assert list(select_ne(vos, True, labels={"d0": 1, "d1": "hello"})) == [
-        {"d0": 1, "d1": "world", "value": 1},
-        {"d0": 2, "d1": "hello", "value": 1},
-        {"d0": 3, "d1": "world", "value": 1},
-    ]
-
-    assert list(
-        select_ne(vos, True, labels={"d0": [1, 2], "d1": "hello"})
-    ) == [
-        {"d0": 1, "d1": "world", "value": 1},
         {"d0": 3, "d1": "world", "value": 1},
     ]

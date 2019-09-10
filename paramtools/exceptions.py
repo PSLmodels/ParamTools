@@ -33,7 +33,6 @@ collision_list = [
     "_data",
     "_errors",
     "select_eq",
-    "select_ne",
     "select_gt",
     "_adjust",
     "_numpy_type",

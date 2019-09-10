@@ -1,9 +1,7 @@
 from paramtools.tree import Tree
 
 
-def select(
-    value_objects, exact_match, cmp_func, agg_cmp_func, labels, tree=None
-):
+def select(value_objects, exact_match, cmp_func, labels, tree=None):
     """
     Query a parameter along some labels. If exact_match is True,
     all values in `labels` must be equal to the corresponding label
@@ -38,15 +36,11 @@ def gt_ix_func(cmp_list, x, y):
 
 
 def select_eq(value_objects, exact_match, labels):
-    return select(value_objects, exact_match, eq_func, all, labels)
-
-
-def select_ne(value_objects, exact_match, labels):
-    return select(value_objects, exact_match, ne_func, any, labels)
+    return select(value_objects, exact_match, eq_func, labels)
 
 
 def select_gt(value_objects, exact_match, labels):
-    return select(value_objects, exact_match, gt_func, all, labels)
+    return select(value_objects, exact_match, gt_func, labels)
 
 
 def select_gt_ix(value_objects, exact_match, labels, cmp_list):
@@ -54,6 +48,5 @@ def select_gt_ix(value_objects, exact_match, labels, cmp_list):
         value_objects,
         exact_match,
         lambda x, y: gt_ix_func(cmp_list, x, y),
-        all,
         labels,
     )
