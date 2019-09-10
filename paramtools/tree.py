@@ -2,7 +2,7 @@ from collections import defaultdict
 from typing import List
 
 from paramtools.exceptions import ParamToolsError
-from paramtools.typing import ValueObject
+from paramtools.typing import ValueObject, CmpFunc
 
 
 class Tree:
@@ -58,7 +58,7 @@ class Tree:
         self.new_values = None
         return self.tree
 
-    def update(self, tree: "Tree"):
+    def update(self, tree: "Tree") -> List[ValueObject]:
         """
         Update this tree's value objects with value objects from the
         other tree.
@@ -103,6 +103,13 @@ class Tree:
             when it is used again. If there are deletions, do not save the new
             values because the tree needs to be re-built from the new value
             objects.
+
+        Returns:
+            List of updated value objects.
+
+        Raises:
+            ParamToolsError if a label is specied in the new value objects
+                that is not present in the default value objects.
         """
         new_values = set([])
         not_matched = set([])
@@ -189,7 +196,11 @@ class Tree:
             self.new_values = new_values
             self.needs_build = True
 
-    def select(self, labels, cmp_func, exact_match=False):
+        return self.vos
+
+    def select(
+        self, labels: dict, cmp_func: CmpFunc, exact_match: bool = False
+    ) -> List[ValueObject]:
         """
         Select all value objects from self.vos according to the label query,
         labels, and the comparison function, cmp_func. exact_match dictates
@@ -202,7 +213,12 @@ class Tree:
         3. Take the intersection of all of the successful matches across
             the different labels to get the final reasult.
 
-        returns: list of value objects satisfying the query.
+        Returns:
+            List of value objects satisfying the query.
+
+        Raises:
+            KeyError if exact_match is true and a label is used in the query
+                that is not present in one or more of the value objects.
         """
         if not labels:
             return self.vos

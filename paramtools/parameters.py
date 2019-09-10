@@ -641,8 +641,7 @@ class Parameters:
         else:
             curr_tree = Tree(vos=curr_values, label_grid=self.label_grid)
         new_tree = Tree(vos=new_values, label_grid=self.label_grid)
-        curr_tree.update(new_tree)
-        self._data[param]["value"] = curr_tree.vos
+        self._data[param]["value"] = curr_tree.update(new_tree)
         self._search_trees[param] = curr_tree
 
     def _parse_errors(self, ve, params):
