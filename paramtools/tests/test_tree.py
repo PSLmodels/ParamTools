@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 
 from paramtools.exceptions import ParamToolsError
-from paramtools.search import Tree
+from paramtools.tree import Tree
 
 
 @pytest.fixture

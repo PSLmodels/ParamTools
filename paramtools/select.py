@@ -1,4 +1,4 @@
-from paramtools.search import Tree
+from paramtools.tree import Tree
 
 
 def select(

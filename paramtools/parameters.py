@@ -12,7 +12,7 @@ from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
-from paramtools.search import Tree
+from paramtools.tree import Tree
 from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
