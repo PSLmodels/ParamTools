@@ -796,3 +796,14 @@ class Parameters:
             error_info["labels"][pname] = error_labels
 
         self._errors.update(dict(error_info))
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def keys(self):
+        return self._data.keys()
+
+    def items(self):
+        for param in self:
+            yield param, getattr(self, param)
+        return
