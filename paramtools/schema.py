@@ -330,6 +330,12 @@ class AdditionalMembersSchema(Schema):
     number_dims = fields.Integer(required=False, missing=0)
 
 
+class ActionsSchema(Schema):
+    array_first = fields.Bool(required=False)
+    label_to_extend = fields.Str(required=False, allow_none=True)
+    uses_extend_func = fields.Bool(required=False)
+
+
 class ParamToolsSchema(Schema):
     labels = fields.Dict(
         keys=fields.Str(),
@@ -343,6 +349,7 @@ class ParamToolsSchema(Schema):
         required=False,
         missing={},
     )
+    actions = fields.Nested(ActionsSchema, required=False)
 
 
 # A few fields that have not been instantiated yet
@@ -409,9 +416,6 @@ def get_param_schema(base_spec, field_map=None):
     This data is also used to build validators for schema for each parameter
     that will be set on the `BaseValidatorSchema` class
     """
-    schema = ParamToolsSchema()
-    base_spec = schema.load(base_spec)
-
     if field_map is not None:
         field_map = dict(FIELD_MAP, **field_map)
     else:

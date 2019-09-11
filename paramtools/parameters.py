@@ -12,6 +12,7 @@ from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
+from paramtools.schema import ParamToolsSchema
 from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
@@ -34,13 +35,16 @@ class Parameters:
     def __init__(
         self,
         initial_state: Optional[dict] = None,
-        array_first: Optional[bool] = None,
+        array_first: Optional[bool] = False,
+        label_to_extend: str = None,
+        uses_extend_func: bool = False,
         index_rates: Optional[dict] = None,
     ):
         schemafactory = SchemaFactory(self.defaults, self.field_map)
         (
             self._defaults_schema,
             self._validator_schema,
+            self._schema,
             self._data,
         ) = schemafactory.schemas()
         self.label_validators = schemafactory.label_validators
@@ -53,8 +57,28 @@ class Parameters:
         self._state = initial_state or {}
         self.index_rates = index_rates or self.index_rates
 
-        if array_first is not None:
-            self.array_first = array_first
+        # set actions in order of importance:
+        # __init__ arg: most important
+        # class attribute: middle importance
+        # schema action: least important
+        # default value if three above are not specified.
+        actions = [
+            ("array_first", array_first, False),
+            ("label_to_extend", label_to_extend, None),
+            ("uses_extend_func", uses_extend_func, False),
+        ]
+        schema_actions = self._schema.get("actions", {})
+        for name, init_value, default in actions:
+            user_vals = [
+                init_value,
+                getattr(self, name),
+                schema_actions.get(name),
+            ]
+            for value in user_vals:
+                if value != default and value is not None:
+                    setattr(self, name, value)
+                    break
+
         if self.label_to_extend:
             prev_array_first = self.array_first
             self.array_first = False
@@ -65,6 +89,10 @@ class Parameters:
                 self.set_state()
         else:
             self.set_state()
+
+        if "actions" not in self._schema:
+            self._schema["actions"] = {}
+        self._schema["actions"].update(self.actions)
 
     def set_state(self, **labels):
         """
@@ -229,6 +257,27 @@ class Parameters:
         return ValidationError(
             self._errors["messages"], self._errors["labels"]
         )
+
+    @property
+    def actions(self):
+        return {
+            "array_first": self.array_first,
+            "label_to_extend": self.label_to_extend,
+            "uses_extend_func": self.uses_extend_func,
+        }
+
+    def dump(self):
+        """
+        Dump a representation of this instance to JSON. This makes it
+        possible to load this instance's data after sending the data
+        across the wire or from another programming language. The
+        dumped values will be queried using this instance's state.
+        """
+        spec = self.specification(
+            meta_data=True, include_empty=True, serializable=True
+        )
+        schema = ParamToolsSchema().dump(self._schema)
+        return {**spec, **{"schema": schema}}
 
     def specification(
         self,

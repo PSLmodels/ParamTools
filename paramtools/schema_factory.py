@@ -5,6 +5,7 @@ from paramtools.schema import (
     OrderedSchema,
     BaseValidatorSchema,
     ValueObject,
+    ParamToolsSchema,
     get_type,
     get_param_schema,
 )
@@ -27,10 +28,10 @@ class SchemaFactory:
 
     def __init__(self, defaults, field_map={}):
         defaults = utils.read_json(defaults)
-        schema = defaults.get("schema", {})
         self.defaults = {k: v for k, v in defaults.items() if k != "schema"}
+        self.schema = ParamToolsSchema().load(defaults.get("schema", {}))
         (self.BaseParamSchema, self.label_validators) = get_param_schema(
-            schema, field_map=field_map
+            self.schema, field_map=field_map
         )
 
     def schemas(self):
@@ -89,5 +90,6 @@ class SchemaFactory:
         return (
             defaults_schema,
             validator_schema,
+            self.schema,
             defaults_schema.load(self.defaults),
         )
