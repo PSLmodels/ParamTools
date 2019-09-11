@@ -318,6 +318,19 @@ class TestAccess:
         params2.set_state(label0="one")
         assert params2.dump() == dumped
 
+    def test_iterable(self, TestParams):
+        params = TestParams()
+
+        act = set([])
+        for param in params:
+            act.add(param)
+
+        assert set(params._data.keys()) == act
+        assert set(params._data.keys()) == set(params.keys())
+
+        for param, data in params.items():
+            np.testing.assert_equal(data, getattr(params, param))
+
 
 class TestAdjust:
     def test_adjust_int_param(self, TestParams):

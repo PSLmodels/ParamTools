@@ -52,6 +52,8 @@ collision_list = [
     "clear_state",
     "defaults",
     "dump",
+    "items",
+    "keys",
     "label_grid",
     "label_validators",
     "errors",
