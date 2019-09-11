@@ -632,8 +632,8 @@ class TestArray:
         params = TestParams()
         params.madeup = vi
         params._data["madeup"] = {"value": vi}
-
-        assert params._resolve_order("madeup") == (
+        value_items = params.select_eq("madeup", False, **params._state)
+        assert params._resolve_order("madeup", value_items) == (
             exp_label_order,
             exp_value_order,
         )
@@ -641,14 +641,16 @@ class TestArray:
         # test with specified state.
         exp_value_order = {"label0": ["zero", "one"], "label2": [0, 1]}
         params.set_state(label2=[0, 1])
-        assert params._resolve_order("madeup") == (
+        value_items = params.select_eq("madeup", False, **params._state)
+        assert params._resolve_order("madeup", value_items) == (
             exp_label_order,
             exp_value_order,
         )
 
         params.madeup[0]["label1"] = 0
+        value_items = params.select_eq("madeup", False, **params._state)
         with pytest.raises(InconsistentLabelsException):
-            params._resolve_order("madeup")
+            params._resolve_order("madeup", value_items)
 
     def test_to_array_with_state1(self, TestParams):
         params = TestParams()

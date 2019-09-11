@@ -10,10 +10,11 @@ from typing import Optional, Dict, List, Any
 import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
 
-from paramtools.schema_factory import SchemaFactory
 from paramtools import utils
 from paramtools.schema import ParamToolsSchema
-from paramtools.select import select_eq, select_ne, select_gt_ix, select_gt
+from paramtools.schema_factory import SchemaFactory
+from paramtools.select import select_eq, select_gt_ix, select_gt
+from paramtools.tree import Tree
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
     SparseValueObjectsException,
@@ -55,6 +56,7 @@ class Parameters:
         self._validator_schema.context["spec"] = self
         self._errors = {}
         self._state = initial_state or {}
+        self._search_trees = {}
         self.index_rates = index_rates or self.index_rates
 
         # set actions in order of importance:
@@ -197,6 +199,7 @@ class Parameters:
                                     ]
                                 },
                                 extend_grid,
+                                tree=self._search_trees.get(param),
                             )
                             eq = select_eq(
                                 gt,
@@ -342,7 +345,7 @@ class Parameters:
         value_items = self.select_eq(param, False, **self._state)
         if not value_items:
             return np.array([])
-        label_order, value_order = self._resolve_order(param)
+        label_order, value_order = self._resolve_order(param, value_items)
         shape = []
         for label in label_order:
             shape.append(len(value_order[label]))
@@ -405,7 +408,8 @@ class Parameters:
                     "A NumPy Ndarray should be passed to this method "
                     "or the instance attribute should be an array."
                 )
-        label_order, value_order = self._resolve_order(param)
+        value_items = self.select_eq(param, False, **self._state)
+        label_order, value_order = self._resolve_order(param, value_items)
         label_values = itertools.product(*value_order.values())
         label_indices = itertools.product(
             *map(lambda x: range(len(x)), value_order.values())
@@ -461,13 +465,14 @@ class Parameters:
                     extended_vos.add(hashable_vo)
                 gt = select_gt_ix(
                     self._data[param]["value"],
-                    True,
+                    False,
                     {label_to_extend: vo[label_to_extend]},
                     extend_grid,
+                    tree=self._search_trees.get(param),
                 )
                 eq = select_eq(
                     gt,
-                    True,
+                    False,
                     utils.filter_labels(vo, drop=["value", label_to_extend]),
                 )
                 extended_vos.update(map(utils.hashable_value_object, eq))
@@ -617,7 +622,7 @@ class Parameters:
             else:
                 setattr(self, name, value)
 
-    def _resolve_order(self, param):
+    def _resolve_order(self, param, value_items):
         """
         Resolve the order of the labels and their values by
         inspecting data in the label grid values.
@@ -636,7 +641,6 @@ class Parameters:
             InconsistentLabelsException: Value objects do not have consistent
                 labels.
         """
-        value_items = self.select_eq(param, False, **self._state)
         used = utils.consistent_labels(value_items)
         if used is None:
             raise InconsistentLabelsException(
@@ -658,13 +662,20 @@ class Parameters:
         )
 
     def select_eq(self, param, exact_match, **labels):
-        return select_eq(self._data[param]["value"], exact_match, labels)
-
-    def select_ne(self, param, exact_match, **labels):
-        return select_ne(self._data[param]["value"], exact_match, labels)
+        return select_eq(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
 
     def select_gt(self, param, exact_match, **labels):
-        return select_gt(self._data[param]["value"], exact_match, labels)
+        return select_gt(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
 
     def _update_param(self, param, new_values):
         """
@@ -684,33 +695,14 @@ class Parameters:
             For now, no exceptions are raised by this method.
 
         """
-        for i in range(len(new_values)):
-            curr_vals = self._data[param]["value"]
-            matched_at_least_once = False
-            labels_to_check = tuple(k for k in new_values[i] if k != "value")
-            to_delete = []
-            for j in range(len(curr_vals)):
-                match = all(
-                    curr_vals[j][k] == new_values[i][k]
-                    for k in labels_to_check
-                )
-                if match:
-                    matched_at_least_once = True
-                    if new_values[i]["value"] is None:
-                        to_delete.append(j)
-                    else:
-                        curr_vals[j]["value"] = new_values[i]["value"]
-            if to_delete:
-                # Iterate in reverse so that indices point to the correct
-                # value. If iterating ascending then the values will be shifted
-                # towards the front of the list as items are removed.
-                for ix in sorted(to_delete, reverse=True):
-                    del curr_vals[ix]
-            if (
-                not matched_at_least_once
-                and new_values[i]["value"] is not None
-            ):
-                curr_vals.append(new_values[i])
+        curr_values = self._data[param]["value"]
+        if param in self._search_trees:
+            curr_tree = self._search_trees[param]
+        else:
+            curr_tree = Tree(vos=curr_values, label_grid=self.label_grid)
+        new_tree = Tree(vos=new_values, label_grid=self.label_grid)
+        self._data[param]["value"] = curr_tree.update(new_tree)
+        self._search_trees[param] = curr_tree
 
     def _parse_errors(self, ve, params):
         """
