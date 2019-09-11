@@ -46,15 +46,21 @@ def gt_ix_func(cmp_list: list, x: Any, y: Iterable) -> bool:
 
 
 def select_eq(
-    value_objects: List[ValueObject], exact_match: bool, labels: dict
+    value_objects: List[ValueObject],
+    exact_match: bool,
+    labels: dict,
+    tree: Tree = None,
 ) -> List[ValueObject]:
-    return select(value_objects, exact_match, eq_func, labels)
+    return select(value_objects, exact_match, eq_func, labels, tree)
 
 
 def select_gt(
-    value_objects: List[ValueObject], exact_match: bool, labels: dict
+    value_objects: List[ValueObject],
+    exact_match: bool,
+    labels: dict,
+    tree: Tree = None,
 ) -> List[ValueObject]:
-    return select(value_objects, exact_match, gt_func, labels)
+    return select(value_objects, exact_match, gt_func, labels, tree)
 
 
 def select_gt_ix(
@@ -62,10 +68,12 @@ def select_gt_ix(
     exact_match: bool,
     labels: dict,
     cmp_list: List,
+    tree: Tree = None,
 ) -> List[ValueObject]:
     return select(
         value_objects,
         exact_match,
         lambda x, y: gt_ix_func(cmp_list, x, y),
         labels,
+        tree,
     )

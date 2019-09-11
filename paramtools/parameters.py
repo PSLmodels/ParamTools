@@ -171,6 +171,7 @@ class Parameters:
                                     ]
                                 },
                                 extend_grid,
+                                tree=self._search_trees.get(param),
                             )
                             eq = select_eq(
                                 gt,
@@ -418,6 +419,7 @@ class Parameters:
                     False,
                     {label_to_extend: vo[label_to_extend]},
                     extend_grid,
+                    tree=self._search_trees.get(param),
                 )
                 eq = select_eq(
                     gt,
@@ -590,7 +592,6 @@ class Parameters:
             InconsistentLabelsException: Value objects do not have consistent
                 labels.
         """
-        # value_items = self.select_eq(param, False, **self._state)
         used = utils.consistent_labels(value_items)
         if used is None:
             raise InconsistentLabelsException(
@@ -612,10 +613,20 @@ class Parameters:
         )
 
     def select_eq(self, param, exact_match, **labels):
-        return select_eq(self._data[param]["value"], exact_match, labels)
+        return select_eq(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
 
     def select_gt(self, param, exact_match, **labels):
-        return select_gt(self._data[param]["value"], exact_match, labels)
+        return select_gt(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
 
     def _update_param(self, param, new_values):
         """
