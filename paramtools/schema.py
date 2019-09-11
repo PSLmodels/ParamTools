@@ -307,6 +307,55 @@ class BaseValidatorSchema(Schema):
         return oth_param_name, res
 
 
+class LabelSchema(Schema):
+    _type = fields.Str(
+        required=True,
+        validate=validate.OneOf(
+            choices=["str", "float", "int", "bool", "date"]
+        ),
+        attribute="type",
+        data_key="type",
+    )
+    number_dims = fields.Integer(required=False, missing=0)
+    validators = fields.Nested(
+        ValueValidatorSchema(), required=False, missing={}
+    )
+
+
+class AdditionalMembersSchema(Schema):
+    _type = fields.Str(
+        required=True,
+        validate=validate.OneOf(
+            choices=["str", "float", "int", "bool", "date"]
+        ),
+        attribute="type",
+        data_key="type",
+    )
+    number_dims = fields.Integer(required=False, missing=0)
+
+
+class ActionsSchema(Schema):
+    array_first = fields.Bool(required=False)
+    label_to_extend = fields.Str(required=False, allow_none=True)
+    uses_extend_func = fields.Bool(required=False)
+
+
+class ParamToolsSchema(Schema):
+    labels = fields.Dict(
+        keys=fields.Str(),
+        values=fields.Nested(LabelSchema()),
+        required=False,
+        missing={},
+    )
+    additional_members = fields.Dict(
+        keys=fields.Str(),
+        values=fields.Nested(AdditionalMembersSchema()),
+        required=False,
+        missing={},
+    )
+    actions = fields.Nested(ActionsSchema, required=False)
+
+
 # A few fields that have not been instantiated yet
 CLASS_FIELD_MAP = {
     "str": contrib_fields.Str,
@@ -376,7 +425,7 @@ def get_param_schema(base_spec, field_map=None):
     else:
         field_map = FIELD_MAP.copy()
     optional_fields = {}
-    for k, v in base_spec.get("additional_members", {}).items():
+    for k, v in base_spec["additional_members"].items():
         fieldtype = field_map[v["type"]]
         if v.get("number_dims", 0) > 0:
             d = v["number_dims"]
@@ -391,7 +440,7 @@ def get_param_schema(base_spec, field_map=None):
         {k: v for k, v in optional_fields.items()},
     )
     label_validators = {}
-    for name, label in base_spec.get("labels", {}).items():
+    for name, label in base_spec["labels"].items():
         validators = []
         for vname, kwargs in label["validators"].items():
             validator_class = VALIDATOR_MAP[vname]
