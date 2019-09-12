@@ -17,6 +17,7 @@ from paramtools.select import select_eq, select_gt_ix, select_gt
 from paramtools.tree import Tree
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
+    ParamToolsError,
     SparseValueObjectsException,
     ValidationError,
     InconsistentLabelsException,
@@ -341,6 +342,8 @@ class Parameters:
                 labels.
             SparseValueObjectsException: Value object does not span the
                 entire space specified by the Order object.
+            ParamToolsError: Parameter is an array type and has labels.
+                This is not supported by ParamTools when using array_first.
         """
         value_items = self.select_eq(param, False, **self._state)
         if not value_items:
@@ -350,11 +353,23 @@ class Parameters:
         for label in label_order:
             shape.append(len(value_order[label]))
         shape = tuple(shape)
-        arr = np.empty(shape, dtype=self._numpy_type(param))
         # Compare len value items with the expected length if they are full.
         # In the futute, sparse objects should be supported by filling in the
         # unspecified labels.
-        if not shape:
+        number_dims = self._data[param].get("number_dims", 0)
+        if not shape and number_dims > 0:
+            return np.array(
+                value_items[0]["value"], dtype=self._numpy_type(param)
+            )
+        elif shape and number_dims > 0:
+            raise ParamToolsError(
+                f"\nParameter '{param}' is an array parameter with {number_dims} dimension(s) and "
+                f"has labels: {', '.join(label_order)}.\n\nParamTools does not "
+                f"support the use of 'array_first' with array parameters that use labels. "
+                f"\nYou may be able to describe this parameter's values with additional "
+                f"labels\nand the 'label_to_extend' operator."
+            )
+        elif not shape:
             exp_full_shape = 1
         else:
             exp_full_shape = reduce(lambda x, y: x * y, shape)
@@ -376,6 +391,8 @@ class Parameters:
 
         def list_2_tuple(x):
             return tuple(x) if isinstance(x, list) else x
+
+        arr = np.empty(shape, dtype=self._numpy_type(param))
 
         for vi in value_items:
             # ix stores the indices of `arr` that need to be filled in.
@@ -793,9 +810,21 @@ class Parameters:
         return iter(self._data)
 
     def keys(self):
+        """
+        Return parameter names.
+        """
         return self._data.keys()
 
     def items(self):
+        """
+        Iterate using python dictionary .items() syntax.
+        """
         for param in self:
             yield param, getattr(self, param)
         return
+
+    def to_dict(self):
+        """
+        Return instance as python dictionary.
+        """
+        return dict(self.items())

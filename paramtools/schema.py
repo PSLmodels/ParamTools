@@ -408,7 +408,9 @@ def get_type(data):
     fieldtype = types[data["type"]]
     dim = data.get("number_dims", 0)
     while dim > 0:
+        np_type = getattr(fieldtype, "np_type", object)
         fieldtype = fields.List(fieldtype, allow_none=True)
+        fieldtype.np_type = np_type
         dim -= 1
     return fieldtype
 

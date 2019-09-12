@@ -9,6 +9,7 @@ import numpy as np
 import marshmallow as ma
 
 from paramtools import (
+    ParamToolsError,
     ValidationError,
     SparseValueObjectsException,
     InconsistentLabelsException,
@@ -848,6 +849,50 @@ class TestArrayFirst:
             )
             == exp
         )
+
+    def test_to_array_with_nd_lists(self):
+        class ArrayAdjust(Parameters):
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "label1": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 5}},
+                        }
+                    }
+                },
+                "arr": {
+                    "title": "Array param",
+                    "description": "",
+                    "type": "float",
+                    "number_dims": 1,
+                    "value": [1, 2, 3, 4],
+                },
+                "arr_2D": {
+                    "title": "2D Array Param",
+                    "description": "",
+                    "type": "int",
+                    "number_dims": 2,
+                    "value": [[1, 2, 3], [4, 5, 6]],
+                },
+            }
+            array_first = True
+
+        params = ArrayAdjust()
+        assert params
+        assert isinstance(params.arr, np.ndarray)
+        assert params.arr.tolist() == [1, 2, 3, 4]
+        assert isinstance(params.arr_2D, np.ndarray)
+        assert params.arr_2D.tolist() == [[1, 2, 3], [4, 5, 6]]
+
+        params.adjust({"arr": [4, 6, 8], "arr_2D": [[7, 8, 9], [1, 5, 7]]})
+        assert isinstance(params.arr, np.ndarray)
+        assert isinstance(params.arr_2D, np.ndarray)
+        np.testing.assert_allclose(params.arr, [4, 6, 8])
+        np.testing.assert_allclose(params.arr_2D, [[7, 8, 9], [1, 5, 7]])
+
+        with pytest.raises(ParamToolsError):
+            params.adjust({"arr": [{"label1": 1, "value": [4, 5, 6]}]})
 
 
 class TestCollisions:
