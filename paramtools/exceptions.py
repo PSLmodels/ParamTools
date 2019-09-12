@@ -71,6 +71,7 @@ collision_list = [
     "label_to_extend",
     "get_index_rate",
     "index_rates",
+    "to_dict",
 ]
 
 
