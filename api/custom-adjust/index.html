@@ -207,6 +207,47 @@ params.b
 # output
 # [{'year': 2000, 'value': 6}, {'year': 2001, 'value': 7}]
 
+</code></pre>
+
+<p>Now, if we use <code>array_first</code> and <a href="/api/extend/"><code>label_to_extend</code></a>, the params instance can be loaded into a Pandas
+DataFrame like this:</p>
+<pre><code class="python">csv_string = &quot;&quot;&quot;
+year,a,b
+2000,5,6\n
+2001,6,7\n
+&quot;&quot;&quot;
+
+params = CSVParams(array_first=True, label_to_extend=&quot;year&quot;)
+params.adjust(csv_string)
+
+# OrderedDict([('a', [{'value': 5, 'year': 2000}, {'value': 6, 'year': 2001}]),
+#              ('b', [{'value': 6, 'year': 2000}, {'value': 7, 'year': 2001}])])
+
+params_df = pd.DataFrame.from_dict(params.to_dict())
+params_df
+
+# output:
+#    a  b
+# 0  5  6
+# 1  6  7
+# 2  6  7
+# 3  6  7
+# 4  6  7
+# 5  6  7
+
+params_df[&quot;year&quot;] = params.label_grid[&quot;year&quot;]
+params_df.set_index(&quot;year&quot;)
+
+# output:
+#       a  b
+# year
+# 2000  5  6
+# 2001  6  7
+# 2002  6  7
+# 2003  6  7
+# 2004  6  7
+# 2005  6  7
+
 </code></pre></div>
         </div>
 
