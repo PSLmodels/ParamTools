@@ -369,10 +369,14 @@ class Parameters:
                 f"\nYou may be able to describe this parameter's values with additional "
                 f"labels\nand the 'label_to_extend' operator."
             )
-        elif not shape:
-            exp_full_shape = 1
-        else:
-            exp_full_shape = reduce(lambda x, y: x * y, shape)
+        elif not shape and number_dims == 0:
+            data_type = self._numpy_type(param)
+            value = value_items[0]["value"]
+            if data_type == object:
+                return value
+            else:
+                return data_type(value)
+        exp_full_shape = reduce(lambda x, y: x * y, shape)
         if len(value_items) != exp_full_shape:
             # maintains label value order over value objects.
             exp_grid = list(itertools.product(*value_order.values()))

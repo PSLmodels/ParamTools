@@ -833,7 +833,7 @@ class TestArrayFirst:
             [datetime.date(2018, 1, 15)]
         ]
         assert af_params.int_dense_array_param.tolist() == [[[4, 5, 6]]]
-        assert af_params.str_choice_param.tolist() == "value0"
+        assert af_params.str_choice_param == "value0"
 
     def test_from_array(self, af_params):
         exp = [
@@ -893,6 +893,31 @@ class TestArrayFirst:
 
         with pytest.raises(ParamToolsError):
             params.adjust({"arr": [{"label1": 1, "value": [4, 5, 6]}]})
+
+    def test_array_first_with_zero_dim(self):
+        class ZeroDim(Parameters):
+            defaults = {
+                "myint": {
+                    "title": "my int",
+                    "description": "",
+                    "type": "int",
+                    "value": 2,
+                },
+                "mystring": {
+                    "title": "my string",
+                    "description": "",
+                    "type": "str",
+                    "value": "hello world",
+                },
+            }
+            array_first = True
+
+        params = ZeroDim()
+        assert params.myint == 2.0
+        assert isinstance(params.myint, np.int64)
+
+        assert params.mystring == "hello world"
+        assert isinstance(params.mystring, str)
 
 
 class TestCollisions:
