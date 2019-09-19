@@ -111,6 +111,24 @@
         "value": 2,
         "validators": {"range": {"min": "default", "max": 10}}
     },
+    "when_param": {
+        "title": "When validator reference param",
+        "description": "Example for using 'when' validator",
+        "type": "int",
+        "value": 0,
+        "validators": {
+            "when": {
+                "param": "str_choice_param",
+                "is": "value0",
+                "then": {
+                    "range": {"min": 0, "max": 0}
+                },
+                "otherwise": {
+                    "choice": {"choices": [0, 2, 5, 7]}
+                }
+            }
+        }
+    },
     "int_dense_array_param": {
         "title": "Integer Dense Array Param",
         "description": "Example of using an int type param that supports to/from_array.",

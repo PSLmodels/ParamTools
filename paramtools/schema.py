@@ -41,6 +41,14 @@ class ValueValidatorSchema(Schema):
     )
     date_range = fields.Nested(RangeSchema(), required=False)
     choice = fields.Nested(ChoiceSchema(), required=False)
+    when = fields.Nested("WhenSchema", required=False)
+
+
+class WhenSchema(Schema):
+    param = fields.Str()
+    _is = fields.Field(attribute="is", data_key="is")
+    then = fields.Nested(ValueValidatorSchema())
+    otherwise = fields.Nested(ValueValidatorSchema())
 
 
 class BaseParamSchema(Schema):
@@ -142,6 +150,7 @@ class BaseValidatorSchema(Schema):
         "range": "_get_range_validator",
         "date_range": "_get_range_validator",
         "choice": "_get_choice_validator",
+        "when": "_get_when_validator",
     }
 
     @validates_schema
@@ -156,10 +165,15 @@ class BaseValidatorSchema(Schema):
         errors_exist = False
         for name, specs in data.items():
             for i, spec in enumerate(specs):
-                iserrors = self.validate_param(name, spec, data)
-                if iserrors:
+                try:
+                    iserrors = self.validate_param(name, spec, data)
+                except MarshmallowValidationError as mve:
                     errors_exist = True
-                    errors[name][i] = {"value": iserrors}
+                    errors[name][i] = {"value": mve.messages}
+                else:
+                    if iserrors:
+                        errors_exist = True
+                        errors[name][i] = {"value": iserrors}
         if errors_exist:
             raise MarshmallowValidationError(dict(errors))
 
@@ -171,13 +185,9 @@ class BaseValidatorSchema(Schema):
         # sort keys to guarantee order.
         validator_spec = param_info["validators"]
         validators = []
-        for validator_name in validator_spec:
-            validator = getattr(self, self.WRAPPER_MAP[validator_name])(
-                validator_name,
-                validator_spec[validator_name],
-                param_name,
-                param_spec,
-                raw_data,
+        for vname, vdata in validator_spec.items():
+            validator = getattr(self, self.WRAPPER_MAP[vname])(
+                vname, vdata, param_name, param_spec, raw_data
             )
             validators.append(validator)
 
@@ -189,6 +199,42 @@ class BaseValidatorSchema(Schema):
                 errors += ve.messages
 
         return errors
+
+    def _get_when_validator(
+        self, vname, when_dict, param_name, param_spec, raw_data
+    ):
+        when_param = when_dict["param"]
+
+        if (
+            when_param not in self.context["spec"]._data.keys()
+            and when_param != "default"
+        ):
+            raise MarshmallowValidationError(
+                f"'{when_param}' is not a specified parameter."
+            )
+
+        validators = []
+        oth_param, when_vos = self._resolve_op_value(
+            when_param, param_name, param_spec, raw_data
+        )
+        then_validators = []
+        for vname, vdata in when_dict["then"].items():
+            then_validators.append(
+                getattr(self, self.WRAPPER_MAP[vname])(
+                    vname, vdata, param_name, param_spec, raw_data
+                )
+            )
+        otherwise_validators = []
+        for vname, vdata in when_dict["otherwise"].items():
+            validators.append(
+                getattr(self, self.WRAPPER_MAP[vname])(
+                    vname, vdata, param_name, param_spec, raw_data
+                )
+            )
+
+        return contrib_validate.When(
+            when_dict["is"], when_vos, then_validators, otherwise_validators
+        )
 
     def _get_range_validator(
         self, vname, range_dict, param_name, param_spec, raw_data

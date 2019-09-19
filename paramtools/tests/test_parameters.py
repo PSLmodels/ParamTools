@@ -437,6 +437,17 @@ class TestAdjust:
             == 18
         )
 
+    def test_adjust_when_param(self, TestParams):
+        params = TestParams()
+        params.adjust({"when_param": 2, "str_choice_param": "value1"})
+
+        params = TestParams()
+        with pytest.raises(ValidationError):
+            params.adjust({"when_param": 2})
+
+        params = TestParams()
+        params.adjust({"when_param": 0})
+
 
 class TestErrors:
     def test_errors_attribute(self, TestParams):

@@ -1,16 +1,52 @@
+from typing import List
+from paramtools.typing import ValueObject
 import datetime
 
 import numpy as np
 from marshmallow import (
-    validate as marshmallow_validate,
+    validate as ma_validate,
     ValidationError,
-    fields as marshmallow_fields,
+    fields as ma_fields,
 )
 
 from paramtools import utils
 
 
-class Range(marshmallow_validate.Range):
+class When(ma_validate.Validator):
+    def __init__(
+        self,
+        is_val,
+        when_vos: List[ValueObject],
+        then_validators: List[ma_validate.Validator],
+        otherwise_validators: List[ma_validate.Validator],
+    ):
+        self.is_val = is_val
+        self.when_vos = when_vos
+        self.then_validators = then_validators
+        self.otherwise_validators = otherwise_validators
+
+    def __call__(self, value, is_value_object=False):
+        if value is None:
+            return value
+        if not is_value_object:
+            value = {"value": value}
+        for vo in self.when_vos:
+            if vo["value"] == self.is_val:
+                for validator in self.then_validators:
+                    validator(value, is_value_object=True)
+            else:
+                for validator in self.otherwise_validators:
+                    validator(value, is_value_object=True)
+
+    def grid(self):
+        """
+        Just return grid of first validator. It's unlikely that
+        there will be multiple.
+        """
+        return self.then_validators[0].grid()
+
+
+class Range(ma_validate.Range):
     """
     Implements "range" :ref:`spec:Validator object`.
     """
@@ -154,7 +190,7 @@ class DateRange(Range):
         if isinstance(date, datetime.date):
             return date
         else:
-            return marshmallow_fields.Date()._deserialize(date, None, None)
+            return ma_fields.Date()._deserialize(date, None, None)
 
     def grid(self):
         # make np.arange inclusive.
@@ -165,7 +201,7 @@ class DateRange(Range):
         return arr[arr <= self.max[0]["value"]].tolist()
 
 
-class OneOf(marshmallow_validate.OneOf):
+class OneOf(ma_validate.OneOf):
     """
     Implements "choice" :ref:`spec:Validator object`.
     """
