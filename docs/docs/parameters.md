@@ -22,7 +22,7 @@ The ParamTools JSON file is split into two components: a component that defines 
             "cpi_inflatable": {"type": "bool"},
             "cpi_inflated": {"type": "bool"}
         },
-        "actions": {
+        "operators": {
             "array_first": true,
             "label_to_extend": "year",
             "uses_extend_func": true
@@ -88,7 +88,7 @@ The ParamTools JSON file is split into two components: a component that defines 
             "cpi_inflated": {"type": "bool"}
         }
     },
-    "actions": {
+    "operators": {
         "array_first": true,
         "label_to_extend": true,
         "uses_extend_func": true
@@ -100,7 +100,7 @@ The ParamTools JSON file is split into two components: a component that defines 
 
 - `additional_members`: Additional Members are parameter level members that are specific to your model. For example, "title" is a parameter level member that is required by ParamTools, but "cpi_inflated" is not. Therefore, "cpi_inflated" needs to be defined in `additional_members`.
 
-- `actions`: Actions affect how the data is read into and handled by the `Parameters` class:
+- `operators`: Operators affect how the data is read into and handled by the `Parameters` class:
 
     - `array_first`: If value is `true`, parameters' values will be accessed as arrays by default.
 
