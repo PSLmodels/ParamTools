@@ -393,6 +393,22 @@ class TestAccess:
         params.set_state()
         assert params.param == exp
 
+    def test_dump_sort_values(self, TestParams):
+        """Test sort_values keyword in dump()"""
+        tp = TestParams()
+        tp = TestParams()
+        for param in tp:
+            shuffle(tp._data[param]["value"])
+
+        shuffled_dump = tp.dump()
+        sorted_dump = tp.dump(sort_values=True)
+
+        assert sorted_dump != shuffled_dump
+
+        sortedtp = TestParams()
+        sortedtp.sort_values()
+        assert sortedtp.dump() == sorted_dump
+
 
 class TestAdjust:
     def test_adjust_int_param(self, TestParams):
