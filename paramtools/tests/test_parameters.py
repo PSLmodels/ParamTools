@@ -3,6 +3,7 @@ import os
 import json
 import datetime
 from collections import OrderedDict
+from random import shuffle
 
 import pytest
 import numpy as np
@@ -331,6 +332,66 @@ class TestAccess:
 
         for param, data in params.items():
             np.testing.assert_equal(data, getattr(params, param))
+
+    def test_sort_values(self, TestParams):
+        """Ensure sort works and is stable"""
+        sorted_tp = TestParams()
+        sorted_tp.sort_values()
+        assert sorted_tp.dump() == TestParams().dump()
+
+        shuffled_tp = TestParams()
+        for param in shuffled_tp:
+            shuffle(shuffled_tp._data[param]["value"])
+
+        assert sorted_tp != shuffled_tp.dump()
+
+        shuffled_tp.sort_values()
+        assert sorted_tp.dump() == shuffled_tp.dump()
+
+    def test_sort_values_correctness(self):
+        """Ensure sort is correct"""
+        exp = [
+            {"value": 1},
+            {"label0": 1, "label1": "one", "value": 1},
+            {"label0": 1, "label1": "two", "value": 1},
+            {"label0": 2, "label1": "one", "value": 1},
+            {"label0": 2, "label1": "two", "value": 1},
+            {"label0": 3, "label1": "one", "value": 1},
+        ]
+        shuffled = copy.deepcopy(exp)
+        shuffle(shuffled)
+
+        class Params(Parameters):
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "label0": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 3}},
+                        },
+                        "label1": {
+                            "type": "str",
+                            "validators": {
+                                "choice": {"choices": ["one", "two"]}
+                            },
+                        },
+                    }
+                },
+                "param": {
+                    "title": "test",
+                    "description": "",
+                    "type": "int",
+                    "value": shuffled,
+                },
+            }
+
+        params = Params()
+
+        assert params.param != exp and params.param == shuffled
+
+        params.sort_values()
+        params.set_state()
+        assert params.param == exp
 
 
 class TestAdjust:

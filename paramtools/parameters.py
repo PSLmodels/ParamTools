@@ -4,7 +4,7 @@ import json
 import itertools
 import warnings
 from collections import OrderedDict, defaultdict
-from functools import reduce
+from functools import partial, reduce
 from typing import Optional, Dict, List, Any
 
 import numpy as np
@@ -828,3 +828,29 @@ class Parameters:
         Return instance as python dictionary.
         """
         return dict(self.items())
+
+    def sort_values(self):
+        """
+        Sort value objects for all parameters according
+        to the order specified in schema.
+        """
+
+        def keyfunc(vo, label, label_values):
+            if label in vo:
+                return label_values.index(vo[label])
+            else:
+                return -1
+
+        # iterate over labels so that the first label's order
+        # takes precedence.
+        label_grid = self._stateless_label_grid
+        order = list(reversed(label_grid))
+
+        for param, data in self._data.items():
+            for label in order:
+                label_values = label_grid[label]
+                data["value"].sort(
+                    key=partial(
+                        keyfunc, label=label, label_values=label_values
+                    )
+                )
