@@ -62,6 +62,7 @@ collision_list = [
     "read_params",
     "set_state",
     "specification",
+    "sort_values",
     "to_array",
     "validation_error",
     "view_state",

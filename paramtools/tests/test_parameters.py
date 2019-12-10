@@ -3,6 +3,7 @@ import os
 import json
 import datetime
 from collections import OrderedDict
+from random import shuffle
 
 import pytest
 import numpy as np
@@ -331,6 +332,98 @@ class TestAccess:
 
         for param, data in params.items():
             np.testing.assert_equal(data, getattr(params, param))
+
+    def test_sort_values(self, TestParams):
+        """Ensure sort runs and is stable"""
+        sorted_tp = TestParams()
+        sorted_tp.sort_values()
+        assert sorted_tp.dump() == TestParams().dump()
+
+        shuffled_tp = TestParams()
+        for param in shuffled_tp:
+            shuffle(shuffled_tp._data[param]["value"])
+
+        assert sorted_tp.dump() != shuffled_tp.dump()
+
+        shuffled_tp.sort_values()
+        assert sorted_tp.dump() == shuffled_tp.dump()
+        # Test attribute is updated, too.
+        for param in sorted_tp:
+            assert getattr(sorted_tp, param) == getattr(shuffled_tp, param)
+
+    def test_sort_values_correctness(self):
+        """Ensure sort is correct"""
+        exp = [
+            {"value": 1},
+            {"label0": 1, "label1": "one", "value": 1},
+            {"label0": 1, "label1": "two", "value": 1},
+            {"label0": 2, "label1": "one", "value": 1},
+            {"label0": 2, "label1": "two", "value": 1},
+            {"label0": 3, "label1": "one", "value": 1},
+        ]
+        shuffled = copy.deepcopy(exp)
+        shuffle(shuffled)
+
+        class Params(Parameters):
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "label0": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 3}},
+                        },
+                        "label1": {
+                            "type": "str",
+                            "validators": {
+                                "choice": {"choices": ["one", "two"]}
+                            },
+                        },
+                    }
+                },
+                "param": {
+                    "title": "test",
+                    "description": "",
+                    "type": "int",
+                    "value": shuffled,
+                },
+            }
+
+        params = Params()
+
+        assert params.param != exp and params.param == shuffled
+
+        params.sort_values()
+        assert params.param == exp
+
+    def test_dump_sort_values(self, TestParams):
+        """Test sort_values keyword in dump()"""
+        tp = TestParams()
+        for param in tp:
+            shuffle(tp._data[param]["value"])
+
+        shuffled_dump = tp.dump()
+        sorted_dump = tp.dump(sort_values=True)
+
+        assert sorted_dump != shuffled_dump
+
+        sorted_tp = TestParams()
+        sorted_tp.sort_values()
+        assert sorted_tp.dump() == sorted_dump
+
+    def test_sort_values_w_array(self, extend_ex_path):
+        """Test sort values with array first config"""
+
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        # Test that param attributes are not updated when
+        # array first is True
+        params = ExtParams()
+        params.extend_param = "don't update me"
+        params.sort_values()
+        assert params.extend_param == "don't update me"
 
 
 class TestAdjust:

@@ -4,7 +4,7 @@ import json
 import itertools
 import warnings
 from collections import OrderedDict, defaultdict
-from functools import reduce
+from functools import partial, reduce
 from typing import Optional, Dict, List, Any
 
 import numpy as np
@@ -266,13 +266,15 @@ class Parameters:
             "uses_extend_func": self.uses_extend_func,
         }
 
-    def dump(self):
+    def dump(self, sort_values=False):
         """
         Dump a representation of this instance to JSON. This makes it
         possible to load this instance's data after sending the data
         across the wire or from another programming language. The
         dumped values will be queried using this instance's state.
         """
+        if sort_values:
+            self.sort_values()
         spec = self.specification(
             meta_data=True, include_empty=True, serializable=True
         )
@@ -828,3 +830,33 @@ class Parameters:
         Return instance as python dictionary.
         """
         return dict(self.items())
+
+    def sort_values(self):
+        """
+        Sort value objects for all parameters according
+        to the order specified in schema.
+        """
+
+        def keyfunc(vo, label, label_values):
+            if label in vo:
+                return label_values.index(vo[label])
+            else:
+                return -1
+
+        # iterate over labels so that the first label's order
+        # takes precedence.
+        label_grid = self._stateless_label_grid
+        order = list(reversed(label_grid))
+
+        for param, data in self._data.items():
+            for label in order:
+                label_values = label_grid[label]
+                data["value"].sort(
+                    key=partial(
+                        keyfunc, label=label, label_values=label_values
+                    )
+                )
+            # Only update attributes when array first is off, since
+            # value order will not affect how arrays are constructed.
+            if not self.array_first:
+                setattr(self, param, data["value"])
