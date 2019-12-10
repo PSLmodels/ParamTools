@@ -856,3 +856,7 @@ class Parameters:
                         keyfunc, label=label, label_values=label_values
                     )
                 )
+            # Only update attributes when array first is off, since
+            # value order will not affect how arrays are constructed.
+            if not self.array_first:
+                setattr(self, param, data["value"])

@@ -334,7 +334,7 @@ class TestAccess:
             np.testing.assert_equal(data, getattr(params, param))
 
     def test_sort_values(self, TestParams):
-        """Ensure sort works and is stable"""
+        """Ensure sort runs and is stable"""
         sorted_tp = TestParams()
         sorted_tp.sort_values()
         assert sorted_tp.dump() == TestParams().dump()
@@ -343,10 +343,13 @@ class TestAccess:
         for param in shuffled_tp:
             shuffle(shuffled_tp._data[param]["value"])
 
-        assert sorted_tp != shuffled_tp.dump()
+        assert sorted_tp.dump() != shuffled_tp.dump()
 
         shuffled_tp.sort_values()
         assert sorted_tp.dump() == shuffled_tp.dump()
+        # Test attribute is updated, too.
+        for param in sorted_tp:
+            assert getattr(sorted_tp, param) == getattr(shuffled_tp, param)
 
     def test_sort_values_correctness(self):
         """Ensure sort is correct"""
@@ -390,7 +393,6 @@ class TestAccess:
         assert params.param != exp and params.param == shuffled
 
         params.sort_values()
-        params.set_state()
         assert params.param == exp
 
     def test_dump_sort_values(self, TestParams):
@@ -405,9 +407,24 @@ class TestAccess:
 
         assert sorted_dump != shuffled_dump
 
-        sortedtp = TestParams()
-        sortedtp.sort_values()
-        assert sortedtp.dump() == sorted_dump
+        sorted_tp = TestParams()
+        sorted_tp.sort_values()
+        assert sorted_tp.dump() == sorted_dump
+
+    def test_sort_values_w_array(self, extend_ex_path):
+        """Test sort values with array first config"""
+
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        # Test that param attributes are not updated when
+        # array first is True
+        params = ExtParams()
+        params.extend_param = 2
+        params.sort_values()
+        assert params.extend_param == 2
 
 
 class TestAdjust:
