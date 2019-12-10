@@ -398,7 +398,6 @@ class TestAccess:
     def test_dump_sort_values(self, TestParams):
         """Test sort_values keyword in dump()"""
         tp = TestParams()
-        tp = TestParams()
         for param in tp:
             shuffle(tp._data[param]["value"])
 
@@ -422,9 +421,9 @@ class TestAccess:
         # Test that param attributes are not updated when
         # array first is True
         params = ExtParams()
-        params.extend_param = 2
+        params.extend_param = "don't update me"
         params.sort_values()
-        assert params.extend_param == 2
+        assert params.extend_param == "don't update me"
 
 
 class TestAdjust:
