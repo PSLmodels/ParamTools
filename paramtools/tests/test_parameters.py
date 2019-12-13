@@ -337,16 +337,22 @@ class TestAccess:
         """Ensure sort runs and is stable"""
         sorted_tp = TestParams()
         sorted_tp.sort_values()
-        assert sorted_tp.dump() == TestParams().dump()
+        assert sorted_tp.dump(sort_values=False) == TestParams().dump(
+            sort_values=False
+        )
 
         shuffled_tp = TestParams()
         for param in shuffled_tp:
             shuffle(shuffled_tp._data[param]["value"])
 
-        assert sorted_tp.dump() != shuffled_tp.dump()
+        assert sorted_tp.dump(sort_values=False) != shuffled_tp.dump(
+            sort_values=False
+        )
 
         shuffled_tp.sort_values()
-        assert sorted_tp.dump() == shuffled_tp.dump()
+        assert sorted_tp.dump(sort_values=False) == shuffled_tp.dump(
+            sort_values=False
+        )
         # Test attribute is updated, too.
         for param in sorted_tp:
             assert getattr(sorted_tp, param) == getattr(shuffled_tp, param)
@@ -401,14 +407,14 @@ class TestAccess:
         for param in tp:
             shuffle(tp._data[param]["value"])
 
-        shuffled_dump = tp.dump()
+        shuffled_dump = tp.dump(sort_values=False)
         sorted_dump = tp.dump(sort_values=True)
 
         assert sorted_dump != shuffled_dump
 
         sorted_tp = TestParams()
         sorted_tp.sort_values()
-        assert sorted_tp.dump() == sorted_dump
+        assert sorted_tp.dump(sort_values=False) == sorted_dump
 
     def test_sort_values_w_array(self, extend_ex_path):
         """Test sort values with array first config"""
