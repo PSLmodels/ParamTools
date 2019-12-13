@@ -266,7 +266,7 @@ class Parameters:
             "uses_extend_func": self.uses_extend_func,
         }
 
-    def dump(self, sort_values=False):
+    def dump(self, sort_values=True):
         """
         Dump a representation of this instance to JSON. This makes it
         possible to load this instance's data after sending the data
@@ -842,6 +842,10 @@ class Parameters:
                 return label_values.index(vo[label])
             else:
                 return -1
+
+        # nothing to do if labels aren't specified
+        if not self._stateless_label_grid:
+            return
 
         # iterate over labels so that the first label's order
         # takes precedence.
