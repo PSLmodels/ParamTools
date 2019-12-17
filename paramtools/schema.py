@@ -8,10 +8,7 @@ from marshmallow import (
     ValidationError as MarshmallowValidationError,
 )
 
-from paramtools.contrib import (
-    validate as contrib_validate,
-    fields as contrib_fields,
-)
+from paramtools import contrib
 from paramtools import utils
 
 
@@ -25,10 +22,12 @@ class RangeSchema(Schema):
 
     _min = fields.Field(attribute="min", data_key="min")
     _max = fields.Field(attribute="max", data_key="max")
+    level = fields.String(validate=[validate.OneOf(["warn", "error"])])
 
 
 class ChoiceSchema(Schema):
     choices = fields.List(fields.Field)
+    level = fields.String(validate=[validate.OneOf(["warn", "error"])])
 
 
 class ValueValidatorSchema(Schema):
@@ -144,6 +143,13 @@ class BaseValidatorSchema(Schema):
         "choice": "_get_choice_validator",
     }
 
+    def load(self, data, ignore_warnings):
+        self.ignore_warnings = ignore_warnings
+        try:
+            return super().load(data)
+        finally:
+            self.ignore_warnings = False
+
     @validates_schema
     def validate_params(self, data, **kwargs):
         """
@@ -152,16 +158,20 @@ class BaseValidatorSchema(Schema):
         parameters have been validated. Note that all data has been
         type-validated. These methods only do range validation.
         """
+        warnings = defaultdict(dict)
         errors = defaultdict(dict)
-        errors_exist = False
         for name, specs in data.items():
             for i, spec in enumerate(specs):
-                iserrors = self.validate_param(name, spec, data)
-                if iserrors:
-                    errors_exist = True
-                    errors[name][i] = {"value": iserrors}
-        if errors_exist:
-            raise MarshmallowValidationError(dict(errors))
+                _warnings, _errors = self.validate_param(name, spec, data)
+                if _warnings:
+                    warnings[name][i] = {"value": _warnings}
+                if _errors:
+                    errors[name][i] = {"value": _errors}
+        if warnings and not self.ignore_warnings:
+            errors["warnings"] = warnings
+        if errors:
+            ve = MarshmallowValidationError(dict(errors))
+            raise ve
 
     def validate_param(self, param_name, param_spec, raw_data):
         """
@@ -181,22 +191,26 @@ class BaseValidatorSchema(Schema):
             )
             validators.append(validator)
 
+        warnings = []
         errors = []
         for validator in validators:
             try:
                 validator(param_spec, is_value_object=True)
-            except MarshmallowValidationError as ve:
-                errors += ve.messages
+            except contrib.validate.ValidationError as ve:
+                if ve.level == "warn":
+                    warnings += ve.messages
+                else:
+                    errors += ve.messages
 
-        return errors
+        return warnings, errors
 
     def _get_range_validator(
         self, vname, range_dict, param_name, param_spec, raw_data
     ):
         if vname == "range":
-            range_class = contrib_validate.Range
+            range_class = contrib.validate.Range
         elif vname == "date_range":
-            range_class = contrib_validate.DateRange
+            range_class = contrib.validate.DateRange
         else:
             raise MarshmallowValidationError(
                 f"{vname} is not an allowed validator."
@@ -220,6 +234,7 @@ class BaseValidatorSchema(Schema):
             max_vo=max_vos,
             error_min=error_min,
             error_max=error_max,
+            level=range_dict.get("level"),
         )
 
     def _sort_by_label_to_extend(self, vos):
@@ -259,7 +274,9 @@ class BaseValidatorSchema(Schema):
             choices="{choices}",
             label_suffix=label_suffix,
         )
-        return contrib_validate.OneOf(choices, error=error)
+        return contrib.validate.OneOf(
+            choices, error=error, level=choice_dict.get("level")
+        )
 
     def _resolve_op_value(self, op_value, param_name, param_spec, raw_data):
         """
@@ -358,11 +375,11 @@ class ParamToolsSchema(Schema):
 
 # A few fields that have not been instantiated yet
 CLASS_FIELD_MAP = {
-    "str": contrib_fields.Str,
-    "int": contrib_fields.Integer,
-    "float": contrib_fields.Float,
-    "bool": contrib_fields.Boolean,
-    "date": contrib_fields.Date,
+    "str": contrib.fields.Str,
+    "int": contrib.fields.Integer,
+    "float": contrib.fields.Float,
+    "bool": contrib.fields.Boolean,
+    "date": contrib.fields.Date,
 }
 
 
@@ -372,35 +389,35 @@ INVALID_DATE = {"invalid": "Not a valid date: {input}."}
 
 # A few fields that have been instantiated
 FIELD_MAP = {
-    "str": contrib_fields.Str(allow_none=True),
-    "int": contrib_fields.Integer(
+    "str": contrib.fields.Str(allow_none=True),
+    "int": contrib.fields.Integer(
         allow_none=True, error_messages=INVALID_NUMBER
     ),
-    "float": contrib_fields.Float(
+    "float": contrib.fields.Float(
         allow_none=True, error_messages=INVALID_NUMBER
     ),
-    "bool": contrib_fields.Boolean(
+    "bool": contrib.fields.Boolean(
         allow_none=True, error_messages=INVALID_BOOLEAN
     ),
-    "date": contrib_fields.Date(allow_none=True, error_messages=INVALID_DATE),
+    "date": contrib.fields.Date(allow_none=True, error_messages=INVALID_DATE),
 }
 
 VALIDATOR_MAP = {
-    "range": contrib_validate.Range,
-    "date_range": contrib_validate.DateRange,
-    "choice": contrib_validate.OneOf,
+    "range": contrib.validate.Range,
+    "date_range": contrib.validate.DateRange,
+    "choice": contrib.validate.OneOf,
 }
 
 
 def get_type(data):
     numeric_types = {
-        "int": contrib_fields.Int64(
+        "int": contrib.fields.Int64(
             allow_none=True, error_messages=INVALID_NUMBER
         ),
-        "bool": contrib_fields.Bool_(
+        "bool": contrib.fields.Bool_(
             allow_none=True, error_messages=INVALID_BOOLEAN
         ),
-        "float": contrib_fields.Float64(
+        "float": contrib.fields.Float64(
             allow_none=True, error_messages=INVALID_NUMBER
         ),
     }

@@ -1,16 +1,18 @@
 import datetime
 
 import numpy as np
-from marshmallow import (
-    validate as marshmallow_validate,
-    ValidationError,
-    fields as marshmallow_fields,
-)
+import marshmallow as ma
 
 from paramtools import utils
 
 
-class Range(marshmallow_validate.Range):
+class ValidationError(ma.ValidationError):
+    def __init__(self, *args, level=None, **kwargs):
+        self.level = level or "error"
+        super().__init__(*args, **kwargs)
+
+
+class Range(ma.validate.Range):
     """
     Implements "range" :ref:`spec:Validator object`.
     """
@@ -26,6 +28,7 @@ class Range(marshmallow_validate.Range):
         error_min=None,
         error_max=None,
         step=None,
+        level=None,
     ):
         if min is not None:
             self.min = [{"value": min}]
@@ -42,6 +45,7 @@ class Range(marshmallow_validate.Range):
 
         self.min_inclusive = None
         self.max_inclusive = None
+        self.level = level or "error"
 
     def __call__(self, value, is_value_object=False):
         """
@@ -83,7 +87,9 @@ class Range(marshmallow_validate.Range):
                         )
                     )
         if msgs:
-            raise ValidationError(msgs if len(msgs) > 1 else msgs[0])
+            raise ValidationError(
+                msgs if len(msgs) > 1 else msgs[0], level=self.level
+            )
         return value
 
     def grid(self):
@@ -109,6 +115,7 @@ class DateRange(Range):
         error_min=None,
         error_max=None,
         step=None,
+        level=None,
     ):
         if min is not None:
             self.min = [{"value": self.safe_deserialize(min)}]
@@ -150,11 +157,13 @@ class DateRange(Range):
         assert len(set(step.keys()) - timedelta_args) == 0
         self.step = datetime.timedelta(**step)
 
+        self.level = level or "error"
+
     def safe_deserialize(self, date):
         if isinstance(date, datetime.date):
             return date
         else:
-            return marshmallow_fields.Date()._deserialize(date, None, None)
+            return ma.fields.Date()._deserialize(date, None, None)
 
     def grid(self):
         # make np.arange inclusive.
@@ -165,12 +174,16 @@ class DateRange(Range):
         return arr[arr <= self.max[0]["value"]].tolist()
 
 
-class OneOf(marshmallow_validate.OneOf):
+class OneOf(ma.validate.OneOf):
     """
     Implements "choice" :ref:`spec:Validator object`.
     """
 
     default_message = "Input {input} must be one of {choices}"
+
+    def __init__(self, *args, level=None, **kwargs):
+        self.level = level or "error"
+        super().__init__(*args, **kwargs)
 
     def __call__(self, value, is_value_object=False):
         if value is None:
@@ -188,9 +201,11 @@ class OneOf(marshmallow_validate.OneOf):
         for vo in vos["value"]:
             try:
                 if vo not in self.choices:
-                    raise ValidationError(self._format_error(vo))
+                    raise ValidationError(
+                        self._format_error(vo), level=self.level
+                    )
             except TypeError:
-                raise ValidationError(self._format_error(vo))
+                raise ValidationError(self._format_error(vo), level=self.level)
         return value
 
     def grid(self):
