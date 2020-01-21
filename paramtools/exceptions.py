@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 
 from paramtools import utils
 
@@ -19,10 +20,11 @@ class ValidationError(ParamToolsError):
     def __init__(self, messages, labels):
         self.messages = messages
         self.labels = labels
-        raveled_messages = {
-            param: utils.ravel(msgs) for param, msgs in self.messages.items()
-        }
-        super().__init__(json.dumps(raveled_messages, indent=4))
+        error_msg = defaultdict(dict)
+        for error_type, msgs in self.messages.items():
+            for param, msg in msgs.items():
+                error_msg[error_type][param] = utils.ravel(msg)
+        super().__init__(json.dumps(error_msg, indent=4))
 
 
 class InconsistentLabelsException(ParamToolsError):
@@ -32,6 +34,7 @@ class InconsistentLabelsException(ParamToolsError):
 collision_list = [
     "_data",
     "_errors",
+    "_warnings",
     "select_eq",
     "select_gt",
     "_adjust",
@@ -57,6 +60,7 @@ collision_list = [
     "label_grid",
     "label_validators",
     "errors",
+    "warnings",
     "field_map",
     "from_array",
     "read_params",
@@ -73,6 +77,7 @@ collision_list = [
     "get_index_rate",
     "index_rates",
     "to_dict",
+    "_parse_validation_messages",
 ]
 
 

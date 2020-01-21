@@ -55,6 +55,7 @@ class Parameters:
         )
         self.label_grid = copy.deepcopy(self._stateless_label_grid)
         self._validator_schema.context["spec"] = self
+        self._warnings = {}
         self._errors = {}
         self._state = initial_state or {}
         self._search_trees = {}
@@ -131,7 +132,13 @@ class Parameters:
             raise ValueError("params_or_path is not dict or file path")
         return params
 
-    def adjust(self, params_or_path, raise_errors=True, extend_adj=True):
+    def adjust(
+        self,
+        params_or_path,
+        ignore_warnings=False,
+        raise_errors=True,
+        extend_adj=True,
+    ):
         """
         Deserialize and validate parameter adjustments. `params_or_path`
         can be a file path or a `dict` that has not been fully deserialized.
@@ -150,10 +157,19 @@ class Parameters:
                 least one existing value item's corresponding label values.
         """
         return self._adjust(
-            params_or_path, raise_errors=raise_errors, extend_adj=extend_adj
+            params_or_path,
+            ignore_warnings=ignore_warnings,
+            raise_errors=raise_errors,
+            extend_adj=extend_adj,
         )
 
-    def _adjust(self, params_or_path, raise_errors=True, extend_adj=True):
+    def _adjust(
+        self,
+        params_or_path,
+        ignore_warnings=False,
+        raise_errors=True,
+        extend_adj=True,
+    ):
         """
         Internal method for performing adjustments.
         """
@@ -162,9 +178,11 @@ class Parameters:
         # Validate user adjustments.
         parsed_params = {}
         try:
-            parsed_params = self._validator_schema.load(params)
+            parsed_params = self._validator_schema.load(
+                params, ignore_warnings
+            )
         except MarshmallowValidationError as ve:
-            self._parse_errors(ve, params)
+            self._parse_validation_messages(ve.messages, params)
 
         if not self._errors:
             if self.label_to_extend is not None and extend_adj:
@@ -217,14 +235,24 @@ class Parameters:
 
                     # delete params that will be overwritten out by extend.
                     self._adjust(
-                        to_delete, extend_adj=False, raise_errors=True
+                        to_delete,
+                        extend_adj=False,
+                        raise_errors=True,
+                        ignore_warnings=ignore_warnings,
                     )
 
                     # set user adjustments.
                     self._adjust(
-                        parsed_params, extend_adj=False, raise_errors=True
+                        parsed_params,
+                        extend_adj=False,
+                        raise_errors=True,
+                        ignore_warnings=ignore_warnings,
                     )
-                    self.extend(params=parsed_params.keys(), raise_errors=True)
+                    self.extend(
+                        params=parsed_params.keys(),
+                        ignore_warnings=ignore_warnings,
+                        raise_errors=True,
+                    )
                 except ValidationError:
                     for param in backup:
                         self._data[param]["value"] = backup[param]
@@ -236,7 +264,12 @@ class Parameters:
 
         self._validator_schema.context["spec"] = self
 
-        if raise_errors and self._errors:
+        has_errors = bool(self._errors.get("messages"))
+        has_warnings = bool(self._warnings.get("messages"))
+        # throw error if raise_errors is True or ignore_warnings is False
+        if (raise_errors and has_errors) or (
+            not ignore_warnings and has_warnings
+        ):
             raise self.validation_error
 
         # Update attrs for params that were adjusted.
@@ -246,17 +279,33 @@ class Parameters:
 
     @property
     def errors(self):
-        new_errors = {}
-        if self._errors:
-            for param, messages in self._errors["messages"].items():
-                new_errors[param] = utils.ravel(messages)
-        return new_errors
+        if not self._errors:
+            return {}
+        return {
+            param: utils.ravel(messages)
+            for param, messages in self._errors["messages"].items()
+        }
+
+    @property
+    def warnings(self):
+        if not self._warnings:
+            return {}
+        return {
+            param: utils.ravel(messages)
+            for param, messages in self._warnings["messages"].items()
+        }
 
     @property
     def validation_error(self):
-        return ValidationError(
-            self._errors["messages"], self._errors["labels"]
-        )
+        messages = {
+            "errors": self._errors.get("messages", {}),
+            "warnings": self._warnings.get("messages", {}),
+        }
+        labels = {
+            "errors": self._errors.get("labels", {}),
+            "warnings": self._warnings.get("labels", {}),
+        }
+        return ValidationError(messages=messages, labels=labels)
 
     @property
     def operators(self):
@@ -446,6 +495,7 @@ class Parameters:
         label_to_extend_values=None,
         params=None,
         raise_errors=True,
+        ignore_warnings=False,
     ):
         """
         Extend parameters along label_to_extend.
@@ -546,7 +596,12 @@ class Parameters:
                         adjustment[param].append(ext)
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
-        self._adjust(adjustment, extend_adj=False, raise_errors=raise_errors)
+        self._adjust(
+            adjustment,
+            extend_adj=False,
+            ignore_warnings=ignore_warnings,
+            raise_errors=raise_errors,
+        )
 
     def extend_func(
         self,
@@ -622,7 +677,7 @@ class Parameters:
                 except MarshmallowValidationError as ve:
                     messages[name] = str(ve)
         if messages:
-            raise ValidationError(messages, labels=None)
+            raise ValidationError({"errors": messages}, labels=None)
         self._state.update(labels)
         for label_name, label_value in self._state.items():
             if not isinstance(label_value, list):
@@ -723,7 +778,15 @@ class Parameters:
         self._data[param]["value"] = curr_tree.update(new_tree)
         self._search_trees[param] = curr_tree
 
-    def _parse_errors(self, ve, params):
+    def _parse_validation_messages(self, messages, params):
+        """Parse validation messages from marshmallow"""
+        if messages.get("warnings"):
+            self._warnings.update(
+                self._parse_errors(messages.pop("warnings"), params)
+            )
+        self._errors.update(self._parse_errors(messages, params))
+
+    def _parse_errors(self, messages, params):
         """
         Parse the error messages given by marshmallow.
 
@@ -778,7 +841,7 @@ class Parameters:
             "labels": defaultdict(dict),
         }
 
-        for pname, data in ve.messages.items():
+        for pname, data in messages.items():
             if pname == "_schema":
                 error_info["messages"]["schema"] = [
                     f"Data format error: {data}"
@@ -806,7 +869,7 @@ class Parameters:
             error_info["messages"][pname] = formatted_errors
             error_info["labels"][pname] = error_labels
 
-        self._errors.update(dict(error_info))
+        return error_info
 
     def __iter__(self):
         return iter(self._data)

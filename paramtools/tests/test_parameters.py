@@ -537,10 +537,11 @@ class TestAdjust:
         )
 
 
-class TestErrors:
-    def test_errors_attribute(self, TestParams):
+class TestValidationMessages:
+    def test_attributes(self, TestParams):
         params = TestParams()
         assert params.errors == {}
+        assert params.warnings == {}
 
     def test_errors(self, TestParams):
         params = TestParams()
@@ -549,15 +550,17 @@ class TestErrors:
             params.adjust(adj)
 
         exp_user_message = {"min_int_param": ["Not a valid number: abc."]}
-        assert json.loads(excinfo.value.args[0]) == exp_user_message
+        assert json.loads(excinfo.value.args[0]) == {
+            "errors": exp_user_message
+        }
 
         exp_internal_message = {
             "min_int_param": [["Not a valid number: abc."]]
         }
-        assert excinfo.value.messages == exp_internal_message
+        assert excinfo.value.messages["errors"] == exp_internal_message
 
         exp_labels = {"min_int_param": [{}]}
-        assert excinfo.value.labels == exp_labels
+        assert excinfo.value.labels["errors"] == exp_labels
 
         params = TestParams()
         adj = {"min_int_param": "abc"}
@@ -573,7 +576,10 @@ class TestErrors:
             'str_choice_param "not a valid choice" must be in list of choices value0, '
             "value1."
         ]
-        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
+        assert (
+            json.loads(excinfo.value.args[0])["errors"]["str_choice_param"]
+            == msg
+        )
 
         params = TestParams()
         adjustment = {"str_choice_param": [{"value": 4}]}
@@ -581,7 +587,10 @@ class TestErrors:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
         msg = ["Not a valid string."]
-        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
+        assert (
+            json.loads(excinfo.value.args[0])["errors"]["str_choice_param"]
+            == msg
+        )
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
@@ -592,7 +601,10 @@ class TestErrors:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
         msg = ["Not a valid string."]
-        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
+        assert (
+            json.loads(excinfo.value.args[0])["errors"]["str_choice_param"]
+            == msg
+        )
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
@@ -660,7 +672,9 @@ class TestErrors:
                 "Not a valid number: ijk.",
             ]
         }
-        assert json.loads(excinfo.value.args[0]) == exp_user_message
+        assert json.loads(excinfo.value.args[0]) == {
+            "errors": exp_user_message
+        }
 
         exp_internal_message = {
             "float_list_param": [
@@ -668,7 +682,7 @@ class TestErrors:
                 ["Not a valid number: ijk."],
             ]
         }
-        assert excinfo.value.messages == exp_internal_message
+        assert excinfo.value.messages["errors"] == exp_internal_message
 
         exp_labels = {
             "float_list_param": [
@@ -676,7 +690,7 @@ class TestErrors:
                 {"label0": "one", "label1": 2},
             ]
         }
-        assert excinfo.value.labels == exp_labels
+        assert excinfo.value.labels["errors"] == exp_labels
 
     def test_range_validation_on_list_param(self, TestParams):
         params = TestParams()
@@ -689,6 +703,48 @@ class TestErrors:
         exp = ["float_list_param[label0=zero, label1=1] [-1.0, 1.0] < min 0 "]
 
         assert params.errors["float_list_param"] == exp
+
+    def test_warnings(self, TestParams):
+        params = TestParams()
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"str_choice_warn_param": "not a valid choice"})
+
+        assert params.warnings
+        assert not params.errors
+
+        msg = [
+            'str_choice_warn_param "not a valid choice" must be in list of choices value0, '
+            "value1."
+        ]
+        assert (
+            json.loads(excinfo.value.args[0])["warnings"][
+                "str_choice_warn_param"
+            ]
+            == msg
+        )
+
+        params = TestParams()
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"int_warn_param": -1})
+
+        assert params.warnings
+        assert not params.errors
+
+        msg = [f"int_warn_param -1 < min 0 "]
+        assert (
+            json.loads(excinfo.value.args[0])["warnings"]["int_warn_param"]
+            == msg
+        )
+
+    def test_ignore_warnings(self, TestParams):
+        params = TestParams()
+        params.adjust({"int_warn_param": -2}, ignore_warnings=True)
+        assert params.int_warn_param == [{"value": -2}]
+        assert not params.errors
+        assert not params.warnings
+
+        with pytest.raises(ValidationError):
+            params.adjust({"int_warn_param": "abc"}, ignore_warnings=True)
 
 
 class TestArray:
@@ -1343,13 +1399,13 @@ class TestExtend:
         emsg = json.loads(excinfo.value.args[0])
         # do=7 is when the 'releated_value' is set to 50, which is
         # less than 70 ==> causes range error
-        assert "d0=7" in emsg["extend_param"][0]
+        assert "d0=7" in emsg["errors"]["extend_param"][0]
         params = ExtParams()
         before = copy.deepcopy(params.extend_param)
         params.adjust(
             {"extend_param": [{"value": 70, "d0": 5}]}, raise_errors=False
         )
-        assert params.errors["extend_param"] == emsg["extend_param"]
+        assert params.errors["extend_param"] == emsg["errors"]["extend_param"]
         assert np.allclose(params.extend_param, before)
 
     def test_extend_adj_nonextend_param(self, extend_ex_path):
