@@ -401,6 +401,24 @@ class TestAccess:
         params.sort_values()
         assert params.param == exp
 
+        # test passing in a data object
+        params = Params()
+        assert params.param != exp and params.param == shuffled
+
+        data1 = {"param": params.param}
+        params.sort_values(data1, has_meta_data=False)
+        data1 = copy.deepcopy(data1)
+
+        data2 = {"param": {"value": params.param}}
+        params.sort_values(data2, has_meta_data=True)
+        data2 = copy.deepcopy(data2)
+
+        params.sort_values()
+        assert data1["param"] == data2["param"]["value"] == params.param
+
+        with pytest.raises(ParamToolsError):
+            params.sort_values(has_meta_data=False)
+
     def test_dump_sort_values(self, TestParams):
         """Test sort_values keyword in dump()"""
         tp = TestParams()
@@ -415,6 +433,25 @@ class TestAccess:
         sorted_tp = TestParams()
         sorted_tp.sort_values()
         assert sorted_tp.dump(sort_values=False) == sorted_dump
+
+        # Test that sort works when state is activated
+        state_tp = TestParams()
+        for param in tp:
+            shuffle(state_tp._data[param]["value"])
+        state_tp.set_state(label0="zero", label2=1)
+        state_dump = copy.deepcopy(state_tp.dump(sort_values=False))
+
+        class NoStateParams(Parameters):
+            defaults = state_dump
+
+        nostate_tp = NoStateParams()
+        assert nostate_tp.dump(sort_values=False) == state_dump
+        assert not nostate_tp.view_state()
+        assert state_tp.view_state()
+
+        assert nostate_tp.dump(sort_values=True) == state_tp.dump(
+            sort_values=True
+        )
 
     def test_sort_values_w_array(self, extend_ex_path):
         """Test sort values with array first config"""
