@@ -322,10 +322,11 @@ class Parameters:
         across the wire or from another programming language. The
         dumped values will be queried using this instance's state.
         """
-        if sort_values:
-            self.sort_values()
         spec = self.specification(
-            meta_data=True, include_empty=True, serializable=True
+            meta_data=True,
+            include_empty=True,
+            serializable=True,
+            sort_values=sort_values,
         )
         schema = ParamToolsSchema().dump(self._schema)
         return {**spec, **{"schema": schema}}
@@ -336,6 +337,7 @@ class Parameters:
         meta_data=False,
         include_empty=False,
         serializable=False,
+        sort_values=False,
         **labels,
     ):
         """
@@ -358,6 +360,8 @@ class Parameters:
         all_params = OrderedDict()
         for param in self._validator_schema.fields:
             result = self.select_eq(param, False, **labels)
+            if sort_values and result:
+                self.sort_values(data={param: result}, has_meta_data=False)
             if result or include_empty:
                 if meta_data:
                     param_data = self._data[param]
@@ -894,10 +898,17 @@ class Parameters:
         """
         return dict(self.items())
 
-    def sort_values(self):
+    def sort_values(self, data=None, has_meta_data=True):
         """
-        Sort value objects for all parameters according
-        to the order specified in schema.
+        Sort value objects for all parameters in data according
+        to the order specified in schema. If data is not specified,
+        the existing value objects are used. User specified data
+        can be:
+            {param: [...value objects]}
+
+            or
+
+            {param: {"value": [...value objects]}}
         """
 
         def keyfunc(vo, label, label_values):
@@ -915,15 +926,28 @@ class Parameters:
         label_grid = self._stateless_label_grid
         order = list(reversed(label_grid))
 
-        for param, data in self._data.items():
+        if data is None:
+            data = self._data
+            update_attrs = True
+            if not has_meta_data:
+                raise ParamToolsError(
+                    "has_meta_data must be True if data is not specified."
+                )
+        else:
+            update_attrs = False
+
+        for param, param_data in data.items():
             for label in order:
                 label_values = label_grid[label]
-                data["value"].sort(
-                    key=partial(
-                        keyfunc, label=label, label_values=label_values
-                    )
+                pfunc = partial(
+                    keyfunc, label=label, label_values=label_values
                 )
+                if has_meta_data:
+                    param_data["value"].sort(key=pfunc)
+                else:
+                    param_data.sort(key=pfunc)
+
             # Only update attributes when array first is off, since
             # value order will not affect how arrays are constructed.
-            if not self.array_first:
-                setattr(self, param, data["value"])
+            if update_attrs and has_meta_data and not self.array_first:
+                setattr(self, param, param_data["value"])
