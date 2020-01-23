@@ -22,7 +22,7 @@ The ParamTools JSON file is split into two components: a component that defines 
             "cpi_inflatable": {"type": "bool"},
             "cpi_inflated": {"type": "bool"}
         },
-        "actions": {
+        "operators": {
             "array_first": true,
             "label_to_extend": "year",
             "uses_extend_func": true
@@ -61,7 +61,7 @@ The ParamTools JSON file is split into two components: a component that defines 
         "validators": {
             "range": {
                 "min": 0,
-                "max": 9e+99
+                "level": "warn",
             }
         }
     },
@@ -88,7 +88,7 @@ The ParamTools JSON file is split into two components: a component that defines 
             "cpi_inflated": {"type": "bool"}
         }
     },
-    "actions": {
+    "operators": {
         "array_first": true,
         "label_to_extend": true,
         "uses_extend_func": true
@@ -100,7 +100,7 @@ The ParamTools JSON file is split into two components: a component that defines 
 
 - `additional_members`: Additional Members are parameter level members that are specific to your model. For example, "title" is a parameter level member that is required by ParamTools, but "cpi_inflated" is not. Therefore, "cpi_inflated" needs to be defined in `additional_members`.
 
-- `actions`: Actions affect how the data is read into and handled by the `Parameters` class:
+- `operators`: Operators affect how the data is read into and handled by the `Parameters` class:
 
     - `array_first`: If value is `true`, parameters' values will be accessed as arrays by default.
 
@@ -160,17 +160,17 @@ The ParamTools JSON file is split into two components: a component that defines 
     - if labels are not used: `{"value": "my value"}`
 
 - `validators`: Key-value pairs of the validator objects (*the ranges are inclusive*):
+    - `level`: All validators take a `level` argument which is either "error" or "warn". By default it is set to "error".
 
 ```json
 {
     "validators": {
-        "range": {"min": "min value", "max": "max value"},
+        "range": {"min": "min value", "max": "max value", "level": "warn"},
         "choice": {"choices": ["list", "of", "allowed", "values"]},
         "date_range": {"min": "2018-01-01", "max": "2018-06-01"}
     }
 }
 ```
-
 
 
 [1]: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.ndim.html

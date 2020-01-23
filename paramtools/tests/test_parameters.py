@@ -3,6 +3,7 @@ import os
 import json
 import datetime
 from collections import OrderedDict
+from random import shuffle
 
 import pytest
 import numpy as np
@@ -165,7 +166,7 @@ class TestSchema:
         with pytest.raises(ma.ValidationError):
             Params2()
 
-    def test_actions_spec(self):
+    def test_operators_spec(self):
         class Params1(Parameters):
             array_first = False
             defaults = {
@@ -180,7 +181,7 @@ class TestSchema:
                             "validators": {"range": {"min": 0, "max": 10}},
                         },
                     },
-                    "actions": {
+                    "operators": {
                         "array_first": False,
                         "label_to_extend": "somelabel",
                     },
@@ -190,7 +191,7 @@ class TestSchema:
         params = Params1(array_first=True, label_to_extend="mylabel")
         assert params.array_first
         assert params.label_to_extend == "mylabel"
-        assert params.actions == {
+        assert params.operators == {
             "array_first": True,
             "label_to_extend": "mylabel",
             "uses_extend_func": False,
@@ -200,19 +201,19 @@ class TestSchema:
         params = Params1()
         assert params.array_first
         assert params.label_to_extend == "somelabel"
-        assert params.actions == {
+        assert params.operators == {
             "array_first": True,
             "label_to_extend": "somelabel",
             "uses_extend_func": False,
         }
 
         class Params2(Parameters):
-            defaults = {"schema": {"actions": {"array_first": True}}}
+            defaults = {"schema": {"operators": {"array_first": True}}}
 
         params = Params2()
         assert params.array_first
         assert params.label_to_extend is None
-        assert params.actions == {
+        assert params.operators == {
             "array_first": True,
             "label_to_extend": None,
             "uses_extend_func": False,
@@ -332,6 +333,141 @@ class TestAccess:
         for param, data in params.items():
             np.testing.assert_equal(data, getattr(params, param))
 
+    def test_sort_values(self, TestParams):
+        """Ensure sort runs and is stable"""
+        sorted_tp = TestParams()
+        sorted_tp.sort_values()
+        assert sorted_tp.dump(sort_values=False) == TestParams().dump(
+            sort_values=False
+        )
+
+        shuffled_tp = TestParams()
+        for param in shuffled_tp:
+            shuffle(shuffled_tp._data[param]["value"])
+
+        assert sorted_tp.dump(sort_values=False) != shuffled_tp.dump(
+            sort_values=False
+        )
+
+        shuffled_tp.sort_values()
+        assert sorted_tp.dump(sort_values=False) == shuffled_tp.dump(
+            sort_values=False
+        )
+        # Test attribute is updated, too.
+        for param in sorted_tp:
+            assert getattr(sorted_tp, param) == getattr(shuffled_tp, param)
+
+    def test_sort_values_correctness(self):
+        """Ensure sort is correct"""
+        exp = [
+            {"value": 1},
+            {"label0": 1, "label1": "one", "value": 1},
+            {"label0": 1, "label1": "two", "value": 1},
+            {"label0": 2, "label1": "one", "value": 1},
+            {"label0": 2, "label1": "two", "value": 1},
+            {"label0": 3, "label1": "one", "value": 1},
+        ]
+        shuffled = copy.deepcopy(exp)
+        shuffle(shuffled)
+
+        class Params(Parameters):
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "label0": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 3}},
+                        },
+                        "label1": {
+                            "type": "str",
+                            "validators": {
+                                "choice": {"choices": ["one", "two"]}
+                            },
+                        },
+                    }
+                },
+                "param": {
+                    "title": "test",
+                    "description": "",
+                    "type": "int",
+                    "value": shuffled,
+                },
+            }
+
+        params = Params()
+
+        assert params.param != exp and params.param == shuffled
+
+        params.sort_values()
+        assert params.param == exp
+
+        # test passing in a data object
+        params = Params()
+        assert params.param != exp and params.param == shuffled
+
+        data1 = {"param": params.param}
+        params.sort_values(data1, has_meta_data=False)
+        data1 = copy.deepcopy(data1)
+
+        data2 = {"param": {"value": params.param}}
+        params.sort_values(data2, has_meta_data=True)
+        data2 = copy.deepcopy(data2)
+
+        params.sort_values()
+        assert data1["param"] == data2["param"]["value"] == params.param
+
+        with pytest.raises(ParamToolsError):
+            params.sort_values(has_meta_data=False)
+
+    def test_dump_sort_values(self, TestParams):
+        """Test sort_values keyword in dump()"""
+        tp = TestParams()
+        for param in tp:
+            shuffle(tp._data[param]["value"])
+
+        shuffled_dump = tp.dump(sort_values=False)
+        sorted_dump = tp.dump(sort_values=True)
+
+        assert sorted_dump != shuffled_dump
+
+        sorted_tp = TestParams()
+        sorted_tp.sort_values()
+        assert sorted_tp.dump(sort_values=False) == sorted_dump
+
+        # Test that sort works when state is activated
+        state_tp = TestParams()
+        for param in tp:
+            shuffle(state_tp._data[param]["value"])
+        state_tp.set_state(label0="zero", label2=1)
+        state_dump = copy.deepcopy(state_tp.dump(sort_values=False))
+
+        class NoStateParams(Parameters):
+            defaults = state_dump
+
+        nostate_tp = NoStateParams()
+        assert nostate_tp.dump(sort_values=False) == state_dump
+        assert not nostate_tp.view_state()
+        assert state_tp.view_state()
+
+        assert nostate_tp.dump(sort_values=True) == state_tp.dump(
+            sort_values=True
+        )
+
+    def test_sort_values_w_array(self, extend_ex_path):
+        """Test sort values with array first config"""
+
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        # Test that param attributes are not updated when
+        # array first is True
+        params = ExtParams()
+        params.extend_param = "don't update me"
+        params.sort_values()
+        assert params.extend_param == "don't update me"
+
 
 class TestAdjust:
     def test_adjust_int_param(self, TestParams):
@@ -449,10 +585,11 @@ class TestAdjust:
         params.adjust({"when_param": 0})
 
 
-class TestErrors:
-    def test_errors_attribute(self, TestParams):
+class TestValidationMessages:
+    def test_attributes(self, TestParams):
         params = TestParams()
         assert params.errors == {}
+        assert params.warnings == {}
 
     def test_errors(self, TestParams):
         params = TestParams()
@@ -461,15 +598,17 @@ class TestErrors:
             params.adjust(adj)
 
         exp_user_message = {"min_int_param": ["Not a valid number: abc."]}
-        assert json.loads(excinfo.value.args[0]) == exp_user_message
+        assert json.loads(excinfo.value.args[0]) == {
+            "errors": exp_user_message
+        }
 
         exp_internal_message = {
             "min_int_param": [["Not a valid number: abc."]]
         }
-        assert excinfo.value.messages == exp_internal_message
+        assert excinfo.value.messages["errors"] == exp_internal_message
 
         exp_labels = {"min_int_param": [{}]}
-        assert excinfo.value.labels == exp_labels
+        assert excinfo.value.labels["errors"] == exp_labels
 
         params = TestParams()
         adj = {"min_int_param": "abc"}
@@ -485,7 +624,10 @@ class TestErrors:
             'str_choice_param "not a valid choice" must be in list of choices value0, '
             "value1."
         ]
-        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
+        assert (
+            json.loads(excinfo.value.args[0])["errors"]["str_choice_param"]
+            == msg
+        )
 
         params = TestParams()
         adjustment = {"str_choice_param": [{"value": 4}]}
@@ -493,7 +635,10 @@ class TestErrors:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
         msg = ["Not a valid string."]
-        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
+        assert (
+            json.loads(excinfo.value.args[0])["errors"]["str_choice_param"]
+            == msg
+        )
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
@@ -504,7 +649,10 @@ class TestErrors:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adjustment)
         msg = ["Not a valid string."]
-        assert json.loads(excinfo.value.args[0])["str_choice_param"] == msg
+        assert (
+            json.loads(excinfo.value.args[0])["errors"]["str_choice_param"]
+            == msg
+        )
 
         params = TestParams()
         params.adjust(adjustment, raise_errors=False)
@@ -572,7 +720,9 @@ class TestErrors:
                 "Not a valid number: ijk.",
             ]
         }
-        assert json.loads(excinfo.value.args[0]) == exp_user_message
+        assert json.loads(excinfo.value.args[0]) == {
+            "errors": exp_user_message
+        }
 
         exp_internal_message = {
             "float_list_param": [
@@ -580,7 +730,7 @@ class TestErrors:
                 ["Not a valid number: ijk."],
             ]
         }
-        assert excinfo.value.messages == exp_internal_message
+        assert excinfo.value.messages["errors"] == exp_internal_message
 
         exp_labels = {
             "float_list_param": [
@@ -588,7 +738,7 @@ class TestErrors:
                 {"label0": "one", "label1": 2},
             ]
         }
-        assert excinfo.value.labels == exp_labels
+        assert excinfo.value.labels["errors"] == exp_labels
 
     def test_range_validation_on_list_param(self, TestParams):
         params = TestParams()
@@ -601,6 +751,48 @@ class TestErrors:
         exp = ["float_list_param[label0=zero, label1=1] [-1.0, 1.0] < min 0 "]
 
         assert params.errors["float_list_param"] == exp
+
+    def test_warnings(self, TestParams):
+        params = TestParams()
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"str_choice_warn_param": "not a valid choice"})
+
+        assert params.warnings
+        assert not params.errors
+
+        msg = [
+            'str_choice_warn_param "not a valid choice" must be in list of choices value0, '
+            "value1."
+        ]
+        assert (
+            json.loads(excinfo.value.args[0])["warnings"][
+                "str_choice_warn_param"
+            ]
+            == msg
+        )
+
+        params = TestParams()
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"int_warn_param": -1})
+
+        assert params.warnings
+        assert not params.errors
+
+        msg = [f"int_warn_param -1 < min 0 "]
+        assert (
+            json.loads(excinfo.value.args[0])["warnings"]["int_warn_param"]
+            == msg
+        )
+
+    def test_ignore_warnings(self, TestParams):
+        params = TestParams()
+        params.adjust({"int_warn_param": -2}, ignore_warnings=True)
+        assert params.int_warn_param == [{"value": -2}]
+        assert not params.errors
+        assert not params.warnings
+
+        with pytest.raises(ValidationError):
+            params.adjust({"int_warn_param": "abc"}, ignore_warnings=True)
 
 
 class TestArray:
@@ -844,7 +1036,7 @@ class TestArrayFirst:
             [datetime.date(2018, 1, 15)]
         ]
         assert af_params.int_dense_array_param.tolist() == [[[4, 5, 6]]]
-        assert af_params.str_choice_param.tolist() == "value0"
+        assert af_params.str_choice_param == "value0"
 
     def test_from_array(self, af_params):
         exp = [
@@ -904,6 +1096,31 @@ class TestArrayFirst:
 
         with pytest.raises(ParamToolsError):
             params.adjust({"arr": [{"label1": 1, "value": [4, 5, 6]}]})
+
+    def test_array_first_with_zero_dim(self):
+        class ZeroDim(Parameters):
+            defaults = {
+                "myint": {
+                    "title": "my int",
+                    "description": "",
+                    "type": "int",
+                    "value": 2,
+                },
+                "mystring": {
+                    "title": "my string",
+                    "description": "",
+                    "type": "str",
+                    "value": "hello world",
+                },
+            }
+            array_first = True
+
+        params = ZeroDim()
+        assert params.myint == 2.0
+        assert isinstance(params.myint, np.int64)
+
+        assert params.mystring == "hello world"
+        assert isinstance(params.mystring, str)
 
 
 class TestCollisions:
@@ -1230,13 +1447,13 @@ class TestExtend:
         emsg = json.loads(excinfo.value.args[0])
         # do=7 is when the 'releated_value' is set to 50, which is
         # less than 70 ==> causes range error
-        assert "d0=7" in emsg["extend_param"][0]
+        assert "d0=7" in emsg["errors"]["extend_param"][0]
         params = ExtParams()
         before = copy.deepcopy(params.extend_param)
         params.adjust(
             {"extend_param": [{"value": 70, "d0": 5}]}, raise_errors=False
         )
-        assert params.errors["extend_param"] == emsg["extend_param"]
+        assert params.errors["extend_param"] == emsg["errors"]["extend_param"]
         assert np.allclose(params.extend_param, before)
 
     def test_extend_adj_nonextend_param(self, extend_ex_path):

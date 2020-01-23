@@ -141,3 +141,17 @@ def test_When():
         when(12)
 
     assert when.grid() == list(range(10 + 1))
+
+
+def test_level():
+    oneof = OneOf(choices=["allowed1", "allowed2"], level="warn")
+    assert oneof.level == "warn"
+    with pytest.raises(ValidationError) as excinfo:
+        oneof("notachoice")
+    assert excinfo.value.level == "warn"
+
+    range_ = Range(0, 10, level="warn")
+    assert range_.level == "warn"
+    with pytest.raises(ValidationError) as excinfo:
+        range_(11)
+    assert excinfo.value.level == "warn"
