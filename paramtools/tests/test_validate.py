@@ -117,7 +117,7 @@ def test_When():
     choices = [12, 15]
     oneof = OneOf(choices=choices)
     when = When(
-        "world",
+        {"equal_to": "world"},
         when_vos=[{"value": "hello"}],
         then_validators=[range_],
         otherwise_validators=[oneof],
@@ -129,7 +129,7 @@ def test_When():
         when(3)
 
     when = When(
-        "hello",
+        {"equal_to": "hello"},
         when_vos=[{"value": "hello"}],
         then_validators=[range_],
         otherwise_validators=[oneof],

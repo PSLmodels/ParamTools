@@ -126,6 +126,13 @@ class When(ma.validate.Validator):
                     )
         return msgs
 
+    def grid(self):
+        """
+        Just return grid of first validator. It's unlikely that
+        there will be multiple.
+        """
+        return self.then_validators[0].grid()
+
 
 class Range(ma.validate.Range):
     """
