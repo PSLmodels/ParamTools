@@ -220,6 +220,28 @@ class TestSchema:
             "uses_extend_func": False,
         }
 
+    def test_when_schema(self):
+        class Params(Parameters):
+            defaults = {
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": 0,
+                    "validators": {
+                        "when": {
+                            "param": "default",
+                            "is": {"less_than": 0, "greater_than": 1},
+                            "then": {"range": {"min": 0}},
+                            "otherwise": {"range": {"min": "default"}},
+                        }
+                    },
+                }
+            }
+
+        with pytest.raises(ma.ValidationError):
+            Params()
+
 
 class TestAccess:
     def test_specification(self, TestParams, defaults_spec_path):
