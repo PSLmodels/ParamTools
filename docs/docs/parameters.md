@@ -161,16 +161,35 @@ The ParamTools JSON file is split into two components: a component that defines 
 
 - `validators`: Key-value pairs of the validator objects (*the ranges are inclusive*):
     - `level`: All validators take a `level` argument which is either "error" or "warn". By default it is set to "error".
+    - `when`:
+        - `is` is set to `equal_to` by default but can also be `greater_than` or `less_than`.
+            - e.g: `"is": {"greater_than": 0}`
+
+        - If the sub-validators refer to the value of another parameter, then the other parameter
+        must have `number_dims` equal to 0, i.e. be a scalar value and not an array value.
 
 ```json
 {
     "validators": {
         "range": {"min": "min value", "max": "max value", "level": "warn"},
         "choice": {"choices": ["list", "of", "allowed", "values"]},
-        "date_range": {"min": "2018-01-01", "max": "2018-06-01"}
+        "date_range": {"min": "2018-01-01", "max": "2018-06-01"},
+        "when": {
+            "param": "other parameter",
+            "is": "equal_value",
+            "then": {
+                "range": {
+                    "min": "min value if other parameter is 'equal_value'"
+                }
+            },
+            "otherwise": {
+                "range": {
+                    "min": "min value if other parameter is not 'equal_value'"
+                }
+            }
+        }
     }
 }
 ```
-
 
 [1]: https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.ndim.html

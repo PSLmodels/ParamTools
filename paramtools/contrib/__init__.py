@@ -1,4 +1,4 @@
-from paramtools.contrib.validate import Range, DateRange, OneOf
+from paramtools.contrib.validate import Range, DateRange, OneOf, When
 from paramtools.contrib.fields import (
     Float64,
     Int64,
@@ -16,6 +16,7 @@ __all__ = [
     "Range",
     "DateRange",
     "OneOf",
+    "When",
     "Float64",
     "Int64",
     "Bool_",

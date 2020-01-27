@@ -3,19 +3,100 @@
     "labels": {
       "label0": {
         "type": "str",
-        "validators": { "choice": { "choices": ["zero", "one"] } }
+        "validators": {
+          "choice": {
+            "choices": [
+              "zero",
+              "one"
+            ]
+          }
+        }
       },
       "label1": {
         "type": "int",
-        "validators": { "range": { "min": 0, "max": 5 } }
+        "validators": {
+          "range": {
+            "min": 0,
+            "max": 5
+          }
+        }
       },
       "label2": {
         "type": "int",
-        "validators": { "range": { "min": 0, "max": 2 } }
+        "validators": {
+          "range": {
+            "min": 0,
+            "max": 2
+          }
+        }
       }
     },
     "additional_members": {
-      "opt0": { "type": "str" }
+      "opt0": {
+        "type": "str"
+      }
+    }
+  },
+  "when_param": {
+    "title": "When validator reference param",
+    "description": "Example for using 'when' validator",
+    "type": "int",
+    "value": 0,
+    "validators": {
+      "when": {
+        "param": "str_choice_param",
+        "is": "value0",
+        "then": {
+          "range": {
+            "min": 0,
+            "max": 0
+          }
+        },
+        "otherwise": {
+          "choice": {
+            "choices": [
+              0,
+              2,
+              5,
+              7
+            ]
+          }
+        }
+      }
+    }
+  },
+  "when_array_param": {
+    "title": "When validator reference array param",
+    "description": "Example for using 'when' validator with an array param",
+    "type": "int",
+    "number_dims": 1,
+    "value": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "validators": {
+      "when": {
+        "param": "simple_int_list_param",
+        "is": 2,
+        "then": {
+          "choice": {
+            "choices": [
+              1
+            ]
+          }
+        },
+        "otherwise": {
+          "choice": {
+            "choices": [
+              0,
+              2,
+              5
+            ]
+          }
+        }
+      }
     }
   },
   "min_int_param": {
@@ -25,10 +106,23 @@
     "opt0": "an option",
     "type": "int",
     "value": [
-      { "label0": "zero", "label1": 1, "value": 1 },
-      { "label0": "one", "label1": 2, "value": 2 }
+      {
+        "label0": "zero",
+        "label1": 1,
+        "value": 1
+      },
+      {
+        "label0": "one",
+        "label1": 2,
+        "value": 2
+      }
     ],
-    "validators": { "range": { "min": 0, "max": "max_int_param" } }
+    "validators": {
+      "range": {
+        "min": 0,
+        "max": "max_int_param"
+      }
+    }
   },
   "max_int_param": {
     "title": "max integer parameter",
@@ -37,10 +131,23 @@
     "opt0": "an option",
     "type": "int",
     "value": [
-      { "label0": "zero", "label1": 1, "value": 3 },
-      { "label0": "one", "label1": 2, "value": 4 }
+      {
+        "label0": "zero",
+        "label1": 1,
+        "value": 3
+      },
+      {
+        "label0": "one",
+        "label1": 2,
+        "value": 4
+      }
     ],
-    "validators": { "range": { "min": "min_int_param", "max": 10 } }
+    "validators": {
+      "range": {
+        "min": "min_int_param",
+        "max": 10
+      }
+    }
   },
   "str_choice_param": {
     "title": "String Choice Param",
@@ -48,15 +155,33 @@
     "opt0": "another option",
     "type": "str",
     "value": "value0",
-    "validators": { "choice": { "choices": ["value0", "value1"] } }
+    "validators": {
+      "choice": {
+        "choices": [
+          "value0",
+          "value1"
+        ]
+      }
+    }
   },
   "date_param": {
     "title": "Date parameter",
     "description": "Example for a date parameter",
     "opt0": "another option",
     "type": "date",
-    "value": [{ "label0": "zero", "label1": 1, "value": "2018-01-15" }],
-    "validators": { "date_range": { "min": "2018-01-01", "max": "2018-12-31" } }
+    "value": [
+      {
+        "label0": "zero",
+        "label1": 1,
+        "value": "2018-01-15"
+      }
+    ],
+    "validators": {
+      "date_range": {
+        "min": "2018-01-01",
+        "max": "2018-12-31"
+      }
+    }
   },
   "date_min_param": {
     "title": "Date Min Param",
@@ -64,9 +189,18 @@
     "notes": "See date_max_param.",
     "opt0": "an option",
     "type": "date",
-    "value": [{ "label0": "zero", "label1": 1, "value": "2018-01-15" }],
+    "value": [
+      {
+        "label0": "zero",
+        "label1": 1,
+        "value": "2018-01-15"
+      }
+    ],
     "validators": {
-      "date_range": { "min": "2018-01-01", "max": "date_max_param" }
+      "date_range": {
+        "min": "2018-01-01",
+        "max": "date_max_param"
+      }
     }
   },
   "date_max_param": {
@@ -75,9 +209,54 @@
     "notes": "See date_min_param.",
     "opt0": "an option",
     "type": "date",
-    "value": [{ "label0": "zero", "label1": 1, "value": "2018-01-15" }],
+    "value": [
+      {
+        "label0": "zero",
+        "label1": 1,
+        "value": "2018-01-15"
+      }
+    ],
     "validators": {
-      "date_range": { "min": "date_min_param", "max": "2018-12-31" }
+      "date_range": {
+        "min": "date_min_param",
+        "max": "2018-12-31"
+      }
+    }
+  },
+  "float_list_when_param": {
+    "title": "Float List When Param",
+    "description": "Reference for a float list param, using a when validator.",
+    "opt0": "an option",
+    "type": "float",
+    "number_dims": 1,
+    "value": [
+      {
+        "label0": "zero",
+        "value": [
+          0,
+          2.0,
+          3.0,
+          4.0
+        ]
+      }
+    ],
+    "validators": {
+      "when": {
+        "param": "float_list_param",
+        "is": {
+          "greater_than": 1
+        },
+        "then": {
+          "range": {
+            "min": 1
+          }
+        },
+        "otherwise": {
+          "range": {
+            "min": 0
+          }
+        }
+      }
     }
   },
   "float_list_param": {
@@ -86,8 +265,24 @@
     "opt0": "an option",
     "type": "float",
     "number_dims": 1,
-    "value": [{ "label0": "zero", "label1": 1, "value": [1, 2.0, 3.5, 4.6] }],
-    "validators": { "range": { "min": 0, "max": 10 } }
+    "value": [
+      {
+        "label0": "zero",
+        "label1": 1,
+        "value": [
+          1,
+          2.0,
+          3.5,
+          4.6
+        ]
+      }
+    ],
+    "validators": {
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    }
   },
   "simple_int_list_param": {
     "title": "Simple Int List Param",
@@ -95,8 +290,18 @@
     "opt0": "an option",
     "type": "int",
     "number_dims": 1,
-    "value": [1, 2, 3, 4],
-    "validators": { "range": { "min": 0, "max": 10 } }
+    "value": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "validators": {
+      "range": {
+        "min": 0,
+        "max": 10
+      }
+    }
   },
   "int_default_param": {
     "title": "Integer Default Reference Param",
@@ -104,7 +309,12 @@
     "opt0": "an option",
     "type": "int",
     "value": 2,
-    "validators": { "range": { "min": "default", "max": 10 } }
+    "validators": {
+      "range": {
+        "min": "default",
+        "max": 10
+      }
+    }
   },
   "int_dense_array_param": {
     "title": "Integer Dense Array Param",
@@ -112,45 +322,229 @@
     "opt0": "an option",
     "type": "int",
     "value": [
-      { "label0": "zero", "label1": 0, "label2": 0, "value": 1 },
-      { "label0": "zero", "label1": 0, "label2": 1, "value": 2 },
-      { "label0": "zero", "label1": 0, "label2": 2, "value": 3 },
-      { "label0": "zero", "label1": 1, "label2": 0, "value": 4 },
-      { "label0": "zero", "label1": 1, "label2": 1, "value": 5 },
-      { "label0": "zero", "label1": 1, "label2": 2, "value": 6 },
-      { "label0": "zero", "label1": 2, "label2": 0, "value": 7 },
-      { "label0": "zero", "label1": 2, "label2": 1, "value": 8 },
-      { "label0": "zero", "label1": 2, "label2": 2, "value": 9 },
-      { "label0": "zero", "label1": 3, "label2": 0, "value": 10 },
-      { "label0": "zero", "label1": 3, "label2": 1, "value": 11 },
-      { "label0": "zero", "label1": 3, "label2": 2, "value": 12 },
-      { "label0": "zero", "label1": 4, "label2": 0, "value": 13 },
-      { "label0": "zero", "label1": 4, "label2": 1, "value": 14 },
-      { "label0": "zero", "label1": 4, "label2": 2, "value": 15 },
-      { "label0": "zero", "label1": 5, "label2": 0, "value": 16 },
-      { "label0": "zero", "label1": 5, "label2": 1, "value": 17 },
-      { "label0": "zero", "label1": 5, "label2": 2, "value": 18 },
-
-      { "label0": "one", "label1": 0, "label2": 0, "value": 19 },
-      { "label0": "one", "label1": 0, "label2": 1, "value": 20 },
-      { "label0": "one", "label1": 0, "label2": 2, "value": 21 },
-      { "label0": "one", "label1": 1, "label2": 0, "value": 22 },
-      { "label0": "one", "label1": 1, "label2": 1, "value": 23 },
-      { "label0": "one", "label1": 1, "label2": 2, "value": 24 },
-      { "label0": "one", "label1": 2, "label2": 0, "value": 25 },
-      { "label0": "one", "label1": 2, "label2": 1, "value": 26 },
-      { "label0": "one", "label1": 2, "label2": 2, "value": 27 },
-      { "label0": "one", "label1": 3, "label2": 0, "value": 28 },
-      { "label0": "one", "label1": 3, "label2": 1, "value": 29 },
-      { "label0": "one", "label1": 3, "label2": 2, "value": 30 },
-      { "label0": "one", "label1": 4, "label2": 0, "value": 31 },
-      { "label0": "one", "label1": 4, "label2": 1, "value": 32 },
-      { "label0": "one", "label1": 4, "label2": 2, "value": 33 },
-      { "label0": "one", "label1": 5, "label2": 0, "value": 34 },
-      { "label0": "one", "label1": 5, "label2": 1, "value": 35 },
-      { "label0": "one", "label1": 5, "label2": 2, "value": 36 }
+      {
+        "label0": "zero",
+        "label1": 0,
+        "label2": 0,
+        "value": 1
+      },
+      {
+        "label0": "zero",
+        "label1": 0,
+        "label2": 1,
+        "value": 2
+      },
+      {
+        "label0": "zero",
+        "label1": 0,
+        "label2": 2,
+        "value": 3
+      },
+      {
+        "label0": "zero",
+        "label1": 1,
+        "label2": 0,
+        "value": 4
+      },
+      {
+        "label0": "zero",
+        "label1": 1,
+        "label2": 1,
+        "value": 5
+      },
+      {
+        "label0": "zero",
+        "label1": 1,
+        "label2": 2,
+        "value": 6
+      },
+      {
+        "label0": "zero",
+        "label1": 2,
+        "label2": 0,
+        "value": 7
+      },
+      {
+        "label0": "zero",
+        "label1": 2,
+        "label2": 1,
+        "value": 8
+      },
+      {
+        "label0": "zero",
+        "label1": 2,
+        "label2": 2,
+        "value": 9
+      },
+      {
+        "label0": "zero",
+        "label1": 3,
+        "label2": 0,
+        "value": 10
+      },
+      {
+        "label0": "zero",
+        "label1": 3,
+        "label2": 1,
+        "value": 11
+      },
+      {
+        "label0": "zero",
+        "label1": 3,
+        "label2": 2,
+        "value": 12
+      },
+      {
+        "label0": "zero",
+        "label1": 4,
+        "label2": 0,
+        "value": 13
+      },
+      {
+        "label0": "zero",
+        "label1": 4,
+        "label2": 1,
+        "value": 14
+      },
+      {
+        "label0": "zero",
+        "label1": 4,
+        "label2": 2,
+        "value": 15
+      },
+      {
+        "label0": "zero",
+        "label1": 5,
+        "label2": 0,
+        "value": 16
+      },
+      {
+        "label0": "zero",
+        "label1": 5,
+        "label2": 1,
+        "value": 17
+      },
+      {
+        "label0": "zero",
+        "label1": 5,
+        "label2": 2,
+        "value": 18
+      },
+      {
+        "label0": "one",
+        "label1": 0,
+        "label2": 0,
+        "value": 19
+      },
+      {
+        "label0": "one",
+        "label1": 0,
+        "label2": 1,
+        "value": 20
+      },
+      {
+        "label0": "one",
+        "label1": 0,
+        "label2": 2,
+        "value": 21
+      },
+      {
+        "label0": "one",
+        "label1": 1,
+        "label2": 0,
+        "value": 22
+      },
+      {
+        "label0": "one",
+        "label1": 1,
+        "label2": 1,
+        "value": 23
+      },
+      {
+        "label0": "one",
+        "label1": 1,
+        "label2": 2,
+        "value": 24
+      },
+      {
+        "label0": "one",
+        "label1": 2,
+        "label2": 0,
+        "value": 25
+      },
+      {
+        "label0": "one",
+        "label1": 2,
+        "label2": 1,
+        "value": 26
+      },
+      {
+        "label0": "one",
+        "label1": 2,
+        "label2": 2,
+        "value": 27
+      },
+      {
+        "label0": "one",
+        "label1": 3,
+        "label2": 0,
+        "value": 28
+      },
+      {
+        "label0": "one",
+        "label1": 3,
+        "label2": 1,
+        "value": 29
+      },
+      {
+        "label0": "one",
+        "label1": 3,
+        "label2": 2,
+        "value": 30
+      },
+      {
+        "label0": "one",
+        "label1": 4,
+        "label2": 0,
+        "value": 31
+      },
+      {
+        "label0": "one",
+        "label1": 4,
+        "label2": 1,
+        "value": 32
+      },
+      {
+        "label0": "one",
+        "label1": 4,
+        "label2": 2,
+        "value": 33
+      },
+      {
+        "label0": "one",
+        "label1": 5,
+        "label2": 0,
+        "value": 34
+      },
+      {
+        "label0": "one",
+        "label1": 5,
+        "label2": 1,
+        "value": 35
+      },
+      {
+        "label0": "one",
+        "label1": 5,
+        "label2": 2,
+        "value": 36
+      }
     ],
-    "validators": { "range": { "min": 1, "max": 36 } }
+    "validators": {
+      "range": {
+        "min": 1,
+        "max": 36
+      }
+    }
   },
   "str_choice_warn_param": {
     "title": "String Choice Warnings Param",
@@ -159,7 +553,13 @@
     "type": "str",
     "value": "value0",
     "validators": {
-      "choice": { "choices": ["value0", "value1"], "level": "warn" }
+      "choice": {
+        "choices": [
+          "value0",
+          "value1"
+        ],
+        "level": "warn"
+      }
     }
   },
   "int_warn_param": {
@@ -168,6 +568,12 @@
     "opt0": "an option",
     "type": "int",
     "value": 2,
-    "validators": { "range": { "min": 0, "max": 10, "level": "warn" } }
+    "validators": {
+      "range": {
+        "min": 0,
+        "max": 10,
+        "level": "warn"
+      }
+    }
   }
 }

@@ -40,6 +40,35 @@ class ValueValidatorSchema(Schema):
     )
     date_range = fields.Nested(RangeSchema(), required=False)
     choice = fields.Nested(ChoiceSchema(), required=False)
+    when = fields.Nested("WhenSchema", required=False)
+
+
+class IsSchema(Schema):
+    equal_to = fields.Field(required=False)
+    greater_than = fields.Field(required=False)
+    less_than = fields.Field(required=False)
+
+    @validates_schema
+    def just_one(self, data, **kwargs):
+        if len(data.keys()) > 1:
+            raise MarshmallowValidationError(
+                f"Only one condition may be specified for the 'is' field. "
+                f"You specified {len(data.keys())}."
+            )
+
+    def _deserialize(self, data, **kwargs):
+        if data is not None and not isinstance(data, dict):
+            data = {"equal_to": data}
+        return super()._deserialize(data, **kwargs)
+
+
+class WhenSchema(Schema):
+    param = fields.Str()
+    _is = fields.Nested(
+        IsSchema(), attribute="is", data_key="is", required=False
+    )
+    then = fields.Nested(ValueValidatorSchema())
+    otherwise = fields.Nested(ValueValidatorSchema())
 
 
 class BaseParamSchema(Schema):
@@ -141,6 +170,7 @@ class BaseValidatorSchema(Schema):
         "range": "_get_range_validator",
         "date_range": "_get_range_validator",
         "choice": "_get_choice_validator",
+        "when": "_get_when_validator",
     }
 
     def load(self, data, ignore_warnings):
@@ -181,13 +211,9 @@ class BaseValidatorSchema(Schema):
         # sort keys to guarantee order.
         validator_spec = param_info["validators"]
         validators = []
-        for validator_name in validator_spec:
-            validator = getattr(self, self.WRAPPER_MAP[validator_name])(
-                validator_name,
-                validator_spec[validator_name],
-                param_name,
-                param_spec,
-                raw_data,
+        for vname, vdata in validator_spec.items():
+            validator = getattr(self, self.WRAPPER_MAP[vname])(
+                vname, vdata, param_name, param_spec, raw_data
             )
             validators.append(validator)
 
@@ -204,8 +230,84 @@ class BaseValidatorSchema(Schema):
 
         return warnings, errors
 
+    def _get_when_validator(
+        self,
+        vname,
+        when_dict,
+        param_name,
+        param_spec,
+        raw_data,
+        ndim_restriction=False,
+    ):
+        when_param = when_dict["param"]
+
+        if (
+            when_param not in self.context["spec"]._data.keys()
+            and when_param != "default"
+        ):
+            raise MarshmallowValidationError(
+                f"'{when_param}' is not a specified parameter."
+            )
+
+        oth_param, when_vos = self._resolve_op_value(
+            when_param, param_name, param_spec, raw_data
+        )
+        then_validators = []
+        for vname, vdata in when_dict["then"].items():
+            then_validators.append(
+                getattr(self, self.WRAPPER_MAP[vname])(
+                    vname,
+                    vdata,
+                    param_name,
+                    param_spec,
+                    raw_data,
+                    ndim_restriction=True,
+                )
+            )
+        otherwise_validators = []
+        for vname, vdata in when_dict["otherwise"].items():
+            otherwise_validators.append(
+                getattr(self, self.WRAPPER_MAP[vname])(
+                    vname,
+                    vdata,
+                    param_name,
+                    param_spec,
+                    raw_data,
+                    ndim_restriction=True,
+                )
+            )
+
+        _type = self.context["spec"]._data[oth_param]["type"]
+        number_dims = self.context["spec"]._data[oth_param]["number_dims"]
+
+        error_then = (
+            f"When {oth_param}{{when_labels}}{{ix}} is {{is_val}}, "
+            f"{param_name}{{labels}}{{ix}} value is invalid: {{submsg}}"
+        )
+        error_otherwise = (
+            f"When {oth_param}{{when_labels}}{{ix}} is not {{is_val}}, "
+            f"{param_name}{{labels}}{{ix}} value is invalid: {{submsg}}"
+        )
+
+        return contrib.validate.When(
+            when_dict["is"],
+            when_vos,
+            then_validators,
+            otherwise_validators,
+            error_then,
+            error_otherwise,
+            _type,
+            number_dims,
+        )
+
     def _get_range_validator(
-        self, vname, range_dict, param_name, param_spec, raw_data
+        self,
+        vname,
+        range_dict,
+        param_name,
+        param_spec,
+        raw_data,
+        ndim_restriction=False,
     ):
         if vname == "range":
             range_class = contrib.validate.Range
@@ -220,11 +322,22 @@ class BaseValidatorSchema(Schema):
             min_oth_param, min_vos = self._resolve_op_value(
                 min_value, param_name, param_spec, raw_data
             )
+        else:
+            min_oth_param, min_vos = None, []
+
         max_value = range_dict.get("max", None)
         if max_value is not None:
             max_oth_param, max_vos = self._resolve_op_value(
                 max_value, param_name, param_spec, raw_data
             )
+        else:
+            max_oth_param, max_vos = None, []
+        self._check_ndim_restriction(
+            param_name,
+            min_oth_param,
+            max_oth_param,
+            ndim_restriction=ndim_restriction,
+        )
         min_vos = self._sort_by_label_to_extend(min_vos)
         max_vos = self._sort_by_label_to_extend(max_vos)
         error_min = f"{param_name}{{labels}} {{input}} < min {{min}} {min_oth_param}{{oth_labels}}"
@@ -255,7 +368,13 @@ class BaseValidatorSchema(Schema):
             return vos
 
     def _get_choice_validator(
-        self, vname, choice_dict, param_name, param_spec, raw_data
+        self,
+        vname,
+        choice_dict,
+        param_name,
+        param_spec,
+        raw_data,
+        ndim_restriction=False,
     ):
         choices = choice_dict["choices"]
         labels = utils.make_label_str(param_spec)
@@ -322,6 +441,30 @@ class BaseValidatorSchema(Schema):
         else:
             res = vals
         return oth_param_name, res
+
+    def _check_ndim_restriction(
+        self, param_name, *other_params, ndim_restriction=False
+    ):
+        """
+        Test restriction on validator's concerning references to other
+        parameters with number of dimensions >= 1.
+        """
+        if ndim_restriction and any(other_params):
+            for other_param in other_params:
+                if other_param is None:
+                    continue
+                if other_param == "default":
+                    ndims = self.context["spec"]._data[param_name][
+                        "number_dims"
+                    ]
+                else:
+                    ndims = self.context["spec"]._data[other_param][
+                        "number_dims"
+                    ]
+                if ndims > 0:
+                    raise contrib.validate.ValidationError(
+                        f"{param_name} is validated against {other_param} in an invalid context."
+                    )
 
 
 class LabelSchema(Schema):

@@ -3,7 +3,7 @@ import datetime
 import pytest
 from marshmallow import ValidationError
 
-from paramtools.contrib import OneOf, Range, DateRange
+from paramtools.contrib import OneOf, Range, DateRange, When
 
 
 def test_OneOf():
@@ -110,6 +110,37 @@ def test_DateRange():
 
         with pytest.raises(ValidationError):
             drange({"value": datetime.date(2020, 1, 2)}, is_value_object=True)
+
+
+def test_When():
+    range_ = Range(0, 10)
+    choices = [12, 15]
+    oneof = OneOf(choices=choices)
+    when = When(
+        {"equal_to": "world"},
+        when_vos=[{"value": "hello"}],
+        then_validators=[range_],
+        otherwise_validators=[oneof],
+    )
+
+    when(12)
+
+    with pytest.raises(ValidationError):
+        when(3)
+
+    when = When(
+        {"equal_to": "hello"},
+        when_vos=[{"value": "hello"}],
+        then_validators=[range_],
+        otherwise_validators=[oneof],
+    )
+
+    when(3)
+
+    with pytest.raises(ValidationError):
+        when(12)
+
+    assert when.grid() == list(range(10 + 1))
 
 
 def test_level():
