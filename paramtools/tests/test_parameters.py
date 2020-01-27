@@ -39,6 +39,7 @@ def array_first_defaults(defaults_spec_path):
         r = json.loads(f.read())
     r.pop("float_list_param")
     r.pop("simple_int_list_param")
+    r.pop("float_list_when_param")
     return r
 
 
@@ -576,13 +577,23 @@ class TestAdjust:
     def test_adjust_when_param(self, TestParams):
         params = TestParams()
         params.adjust({"when_param": 2, "str_choice_param": "value1"})
-
-        params = TestParams()
-        with pytest.raises(ValidationError):
-            params.adjust({"when_param": 2})
+        assert params.when_param == [{"value": 2}]
 
         params = TestParams()
         params.adjust({"when_param": 0})
+        assert params.when_param == [{"value": 0}]
+
+    def test_adjust_when_array_param(self, TestParams):
+        params = TestParams()
+        params.adjust({"when_array_param": [0, 1, 0, 0]})
+        assert params.when_array_param == [{"value": [0, 1, 0, 0]}]
+
+    def test_adjust_float_list_when_param(self, TestParams):
+        params = TestParams()
+        params.adjust({"float_list_when_param": [0, 2.0, 2.0, 2.0]})
+        assert params.float_list_when_param == [
+            {"label0": "zero", "value": [0, 2.0, 2.0, 2.0]}
+        ]
 
 
 class TestValidationMessages:
@@ -793,6 +804,195 @@ class TestValidationMessages:
 
         with pytest.raises(ValidationError):
             params.adjust({"int_warn_param": "abc"}, ignore_warnings=True)
+
+    def test_when_validation(self):
+        class Params(Parameters):
+            defaults = {
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": 0,
+                    "validators": {
+                        "when": {
+                            "param": "when_param",
+                            "is": {"less_than": 0},
+                            "then": {"range": {"min": 0}},
+                            "otherwise": {
+                                # only valid for ndim = 0
+                                "range": {"min": "when_param"}
+                            },
+                        }
+                    },
+                },
+                "when_param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": 2,
+                },
+            }
+
+        params = Params(array_first=True)
+        params.adjust({"param": 3})
+        assert params.param == 3.0
+
+        params.adjust({"when_param": -2, "param": 0})
+
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"when_param": -2, "param": -1})
+
+        msg = json.loads(excinfo.value.args[0])
+        assert msg["errors"]["param"] == [
+            "When when_param is less than 0, param value is invalid: param -1 < min 0 "
+        ]
+
+    def test_when_validation_limitations(self):
+        """
+        When validation prohibits child validators from doing referential violation
+        when the other parameter is an array type (number_dims > 0).
+        """
+
+        class Params(Parameters):
+            defaults = {
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "number_dims": 1,
+                    "value": [0, 0],
+                    "validators": {
+                        "when": {
+                            "param": "when_param",
+                            "is": {"less_than": 0},
+                            "then": {"range": {"min": 0}},
+                            "otherwise": {
+                                # only valid for ndim = 0
+                                "range": {"min": "when_param"}
+                            },
+                        }
+                    },
+                },
+                "when_param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "number_dims": 1,
+                    "value": [3, 5],
+                },
+            }
+
+        params = Params(array_first=True)
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"param": [4, 6]})
+
+        msg = json.loads(excinfo.value.args[0])["errors"]
+        assert msg == {
+            "schema": [
+                "Data format error: ['param is validated against "
+                "when_param in an invalid context.']"
+            ]
+        }
+
+        class Params(Parameters):
+            defaults = {
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "number_dims": 1,
+                    "value": [0, 0],
+                    "validators": {
+                        "when": {
+                            "param": "default",
+                            "is": {"less_than": 0},
+                            "then": {"range": {"min": 0}},
+                            "otherwise": {
+                                # only valid for ndim = 0
+                                "range": {"min": "default"}
+                            },
+                        }
+                    },
+                }
+            }
+
+        params = Params(array_first=True)
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"param": [4, 6]})
+
+        msg = json.loads(excinfo.value.args[0])["errors"]
+        assert msg == {
+            "schema": [
+                "Data format error: ['param is validated against default in an invalid context.']"
+            ]
+        }
+
+    def test_when_validation_examples(self, TestParams):
+        params = TestParams()
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"when_param": 2})
+
+        params = TestParams()
+        with pytest.raises(ValidationError):
+            params.adjust({"when_array_param": [0, 2, 0, 0]})
+
+        params = TestParams()
+        with pytest.raises(ValidationError):
+            params.adjust({"when_array_param": [0, 1, 0]})
+
+        params = TestParams()
+        with pytest.raises(ValidationError) as excinfo:
+            params.adjust({"float_list_when_param": [-1, 0, 0, 0]})
+
+        msg = json.loads(excinfo.value.args[0])
+        assert len(msg["errors"]["float_list_when_param"]) == 4
+
+    def test_when_validation_referential(self):
+        """
+        Test referential validation with when validator.
+
+        Check limitations to referential validation with when validator
+        in test test_when_validation_limitations
+        """
+
+        class Params(Parameters):
+            defaults = {
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": 3,
+                    "validators": {
+                        "when": {
+                            "param": "when_param",
+                            "is": {"less_than": 0},
+                            "then": {"range": {"min": 0}},
+                            "otherwise": {
+                                # only valid for ndim = 0
+                                "range": {"min": "when_param"}
+                            },
+                        }
+                    },
+                },
+                "when_param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": 3,
+                },
+            }
+
+        params = Params(array_first=True)
+        params.adjust({"param": 4})
+        params.adjust({"param": 0, "when_param": -1})
+
+        params = Params(array_first=True)
+        with pytest.raises(ValidationError):
+            params.adjust({"param": -1, "when_param": -2})
+
+        params = Params(array_first=True)
+        with pytest.raises(ValidationError):
+            params.adjust({"param": params.when_param - 1})
 
 
 class TestArray:

@@ -65,6 +65,40 @@
       }
     }
   },
+  "when_array_param": {
+    "title": "When validator reference array param",
+    "description": "Example for using 'when' validator with an array param",
+    "type": "int",
+    "number_dims": 1,
+    "value": [
+      0,
+      1,
+      2,
+      5
+    ],
+    "validators": {
+      "when": {
+        "param": "simple_int_list_param",
+        "is": 2,
+        "then": {
+          "choice": {
+            "choices": [
+              1
+            ]
+          }
+        },
+        "otherwise": {
+          "choice": {
+            "choices": [
+              0,
+              2,
+              5
+            ]
+          }
+        }
+      }
+    }
+  },
   "min_int_param": {
     "title": "min integer parameter",
     "description": "Serves as minimum reference variable.",
@@ -186,6 +220,42 @@
       "date_range": {
         "min": "date_min_param",
         "max": "2018-12-31"
+      }
+    }
+  },
+  "float_list_when_param": {
+    "title": "Float List When Param",
+    "description": "Reference for a float list param, using a when validator.",
+    "opt0": "an option",
+    "type": "float",
+    "number_dims": 1,
+    "value": [
+      {
+        "label0": "zero",
+        "value": [
+          0,
+          2.0,
+          3.0,
+          4.0
+        ]
+      }
+    ],
+    "validators": {
+      "when": {
+        "param": "float_list_param",
+        "is": {
+          "greater_than": 1
+        },
+        "then": {
+          "range": {
+            "min": 1
+          }
+        },
+        "otherwise": {
+          "range": {
+            "min": 0
+          }
+        }
       }
     }
   },

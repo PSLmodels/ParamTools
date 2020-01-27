@@ -1,10 +1,11 @@
 from typing import List
-from paramtools.typing import ValueObject
 import datetime
+import itertools
 
 import numpy as np
 import marshmallow as ma
 
+from paramtools.typing import ValueObject
 from paramtools import utils
 
 
@@ -15,37 +16,115 @@ class ValidationError(ma.ValidationError):
 
 
 class When(ma.validate.Validator):
+    then_message = "When value is {is_val}, the input is invalid: {submsg}"
+    otherwise_message = (
+        "When value is {is_val}, the input is invalid: {submsg}"
+    )
+    shape_mismatch = "Shape mismatch between parameters: {shape1} {shape2}"
+
+    is_value_evaluators = {
+        "equal_to": lambda when_value, is_val: when_value == is_val,
+        "less_than": lambda when_value, is_val: when_value < is_val,
+        "greater_than": lambda when_value, is_val: when_value > is_val,
+    }
+
     def __init__(
         self,
-        is_val,
+        is_object,
         when_vos: List[ValueObject],
         then_validators: List[ma.validate.Validator],
         otherwise_validators: List[ma.validate.Validator],
+        then_message: str = None,
+        otherwise_message: str = None,
+        level: str = "error",
+        type: str = "int",
+        number_dims: int = 0,
     ):
-        self.is_val = is_val
+        self.is_operator = next(iter(is_object))
+        self.is_val = is_object[self.is_operator]
         self.when_vos = when_vos
         self.then_validators = then_validators
         self.otherwise_validators = otherwise_validators
+        self.then_message = then_message or self.then_message
+        self.otherwise_message = otherwise_message or self.otherwise_message
+        self.level = level
+        self.type = type
+        self.number_dims = number_dims
 
     def __call__(self, value, is_value_object=False):
         if value is None:
             return value
         if not is_value_object:
             value = {"value": value}
-        for vo in self.when_vos:
-            if vo["value"] == self.is_val:
-                for validator in self.then_validators:
-                    validator(value, is_value_object=True)
-            else:
-                for validator in self.otherwise_validators:
-                    validator(value, is_value_object=True)
 
-    def grid(self):
-        """
-        Just return grid of first validator. It's unlikely that
-        there will be multiple.
-        """
-        return self.then_validators[0].grid()
+        msgs = []
+        arr = np.array(value["value"])
+        for when_vo in self.when_vos:
+            if not isinstance(when_vo["value"], list):
+                msgs += self.apply_validator(
+                    value, when_vo["value"], value, when_vo, ix=None
+                )
+                continue
+
+            when_arr = np.array(when_vo["value"])
+            if when_arr.shape != arr.shape:
+                raise ValidationError(
+                    self.shape_mismatch.format(
+                        shape1=when_arr.shape, shape2=arr.shape
+                    )
+                )
+            for ix in itertools.product(*(map(range, arr.shape))):
+                msgs += self.apply_validator(
+                    {"value": arr[ix]}, when_arr[ix], value, when_vo, ix
+                )
+
+        if msgs:
+            raise ValidationError(
+                msgs if len(msgs) > 1 else msgs[0], level=self.level
+            )
+
+    def evaluate_is_value(self, when_value):
+        return self.is_value_evaluators[self.is_operator](
+            when_value, self.is_val
+        )
+
+    def apply_validator(self, value, when_value, labels, when_labels, ix=None):
+        def ix2string(ix):
+            return (
+                f"[index={', '.join(map(str, ix))}]" if ix is not None else ""
+            )
+
+        msgs = []
+        is_val_cond = self.evaluate_is_value(when_value)
+        if is_val_cond:
+            for validator in self.then_validators:
+                try:
+                    validator(value, is_value_object=True)
+                except ValidationError as ve:
+                    msgs.append(
+                        self.then_message.format(
+                            is_val=f"{self.is_operator.replace('_', ' ')} {self.is_val}",
+                            submsg=str(ve),
+                            labels=utils.make_label_str(labels),
+                            when_labels=utils.make_label_str(when_labels),
+                            ix=ix2string(ix),
+                        )
+                    )
+        else:
+            for validator in self.otherwise_validators:
+                try:
+                    validator(value, is_value_object=True)
+                except ValidationError as ve:
+                    msgs.append(
+                        self.otherwise_message.format(
+                            is_val=f"{self.is_operator.replace('_', ' ')} {self.is_val}",
+                            submsg=str(ve),
+                            labels=utils.make_label_str(labels),
+                            when_labels=utils.make_label_str(when_labels),
+                            ix=ix2string(ix),
+                        )
+                    )
+        return msgs
 
 
 class Range(ma.validate.Range):
