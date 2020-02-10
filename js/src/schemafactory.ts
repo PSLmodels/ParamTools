@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 export interface ValueObject {
-  value: number | string | Date | Array<number | string | Date>;
+  value: number | string | boolean | Date | Array<number | string | boolean | Date>;
   [key: string]: any;
 }
 
@@ -62,7 +62,7 @@ interface ParamSchemaObject {
 }
 
 interface AdditionalMembers {
-  [name: string]: { type: AllowedTypes; number_dims: Number };
+  [name: string]: { type: AllowedTypes; number_dims: Number; };
 }
 
 export interface Labels {
@@ -122,10 +122,7 @@ const getField = (param_data: {
   number_dims?: Param["number_dims"];
 }) => {
   let yupObj = inspectType(param_data.type);
-  if (yupObj instanceof yup.boolean) {
-    return yupObj;
-  }
-  if ("range" in param_data.validators) {
+  if ("range" in param_data.validators && !(yupObj instanceof yup.boolean)) {
     let min_val = null;
     let max_val = null;
     if (param_data.validators?.range && "min" in param_data.validators.range) {
@@ -238,14 +235,14 @@ const readDefaults = (defaults: Defaults): Params => {
 };
 
 const readSchema = (schema: Schema) => {
-  let optionalFields: { [field: string]: yup.MixedSchema<any> } = {};
+  let optionalFields: { [field: string]: yup.MixedSchema<any>; } = {};
   for (const [name, data] of Object.entries(schema.additional_members || {})) {
     let fieldType = inspectType(data.type);
     optionalFields[name] = fieldType;
   }
   const ParamSchema: ParamSchemaObject = { ...BaseParamSchema, ...optionalFields };
 
-  let labelFields: { [field: string]: yup.MixedSchema<any> } = {};
+  let labelFields: { [field: string]: yup.MixedSchema<any>; } = {};
   for (const [label, data] of Object.entries(schema.labels || {})) {
     labelFields[label] = getField(data);
   }
@@ -256,7 +253,7 @@ export class SchemaFactory {
   defaults: Params;
   schema: Schema;
   ParamSchema: ParamSchemaObject;
-  labelFields: { [label: string]: yup.Schema<any> };
+  labelFields: { [label: string]: yup.Schema<any>; };
 
   constructor(defaults: Defaults) {
     defaults = readDefaults(defaults);
@@ -276,8 +273,8 @@ export class SchemaFactory {
   }
 
   schemas() {
-    let defaultsschema: { [param: string]: yup.ObjectSchema<Param> } = {};
-    let validatorschema: { [param: string]: yup.ArraySchema<any> } = {};
+    let defaultsschema: { [param: string]: yup.ObjectSchema<Param>; } = {};
+    let validatorschema: { [param: string]: yup.ArraySchema<any>; } = {};
     for (const [param, param_data] of Object.entries(this.defaults)) {
       const field = getField(param_data);
       const valueObjectField = yup.array().of(
@@ -286,13 +283,11 @@ export class SchemaFactory {
           value: field,
         })
       );
-      defaultsschema[param] = yup.object().shape({ value: valueObjectField, ...this.ParamSchema });
+      defaultsschema[param] = yup.object().shape({ ...this.ParamSchema, value: valueObjectField });
       validatorschema[param] = valueObjectField;
     }
     let DefaultsSchema = yup.object().shape<Params>(defaultsschema);
-    let ValidatorSchema: yup.ObjectSchema<{
-      [param: string]: Array<ValueObject>;
-    }> = yup.object().shape(validatorschema);
+    let ValidatorSchema: yup.ObjectSchema<Adjustment> = yup.object().shape(validatorschema);
 
     return {
       DefaultsSchema,
