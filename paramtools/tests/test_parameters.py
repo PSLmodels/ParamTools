@@ -242,6 +242,51 @@ class TestSchema:
         with pytest.raises(ma.ValidationError):
             Params()
 
+    def test_custom_fields(self):
+        class Custom(ma.Schema):
+            hello = ma.fields.Boolean()
+            world = ma.fields.Boolean()
+
+        class Params(Parameters):
+            field_map = {"custom_type": ma.fields.Nested(Custom)}
+            defaults = {
+                "schema": {
+                    "additional_members": {"custom": {"type": "custom_type"}}
+                },
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": 0,
+                    "custom": {"hello": True, "world": True},
+                },
+            }
+
+        params = Params()
+        assert params
+        assert params._data["param"]["custom"] == {
+            "hello": True,
+            "world": True,
+        }
+
+        class BadSpec(Parameters):
+            field_map = {"custom_type": ma.fields.Nested(Custom)}
+            defaults = {
+                "schema": {
+                    "additional_members": {"custom": {"type": "custom_type"}}
+                },
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": 0,
+                    "custom": {"hello": 123, "world": "whoops"},
+                },
+            }
+
+        with pytest.raises(ma.ValidationError):
+            BadSpec()
+
 
 class TestAccess:
     def test_specification(self, TestParams, defaults_spec_path):

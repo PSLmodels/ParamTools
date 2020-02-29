@@ -12,6 +12,9 @@ from paramtools import contrib
 from paramtools import utils
 
 
+ALLOWED_TYPES = ["str", "float", "int", "bool", "date"]
+
+
 class RangeSchema(Schema):
     """
     Schema for range object
@@ -93,9 +96,7 @@ class BaseParamSchema(Schema):
     notes = fields.Str(required=False)
     _type = fields.Str(
         required=True,
-        validate=validate.OneOf(
-            choices=["str", "float", "int", "bool", "date"]
-        ),
+        validate=validate.OneOf(choices=ALLOWED_TYPES),
         attribute="type",
         data_key="type",
     )
@@ -470,9 +471,7 @@ class BaseValidatorSchema(Schema):
 class LabelSchema(Schema):
     _type = fields.Str(
         required=True,
-        validate=validate.OneOf(
-            choices=["str", "float", "int", "bool", "date"]
-        ),
+        validate=validate.OneOf(choices=ALLOWED_TYPES),
         attribute="type",
         data_key="type",
     )
@@ -482,16 +481,17 @@ class LabelSchema(Schema):
     )
 
 
-class AdditionalMembersSchema(Schema):
-    _type = fields.Str(
-        required=True,
-        validate=validate.OneOf(
-            choices=["str", "float", "int", "bool", "date"]
-        ),
-        attribute="type",
-        data_key="type",
-    )
-    number_dims = fields.Integer(required=False, missing=0)
+def make_additional_members(allowed_types):
+    class AdditionalMembersSchema(Schema):
+        _type = fields.Str(
+            required=True,
+            validate=validate.OneOf(choices=allowed_types),
+            attribute="type",
+            data_key="type",
+        )
+        number_dims = fields.Integer(required=False, missing=0)
+
+    return AdditionalMembersSchema
 
 
 class OperatorsSchema(Schema):
@@ -500,20 +500,26 @@ class OperatorsSchema(Schema):
     uses_extend_func = fields.Bool(required=False)
 
 
-class ParamToolsSchema(Schema):
-    labels = fields.Dict(
-        keys=fields.Str(),
-        values=fields.Nested(LabelSchema()),
-        required=False,
-        missing={},
-    )
-    additional_members = fields.Dict(
-        keys=fields.Str(),
-        values=fields.Nested(AdditionalMembersSchema()),
-        required=False,
-        missing={},
-    )
-    operators = fields.Nested(OperatorsSchema, required=False)
+def make_schema(allowed_types):
+    class ParamToolsSchema(Schema):
+        labels = fields.Dict(
+            keys=fields.Str(),
+            values=fields.Nested(LabelSchema()),
+            required=False,
+            missing={},
+        )
+        additional_members = fields.Dict(
+            keys=fields.Str(),
+            values=fields.Nested(make_additional_members(allowed_types)()),
+            required=False,
+            missing={},
+        )
+        operators = fields.Nested(OperatorsSchema, required=False)
+
+    return ParamToolsSchema
+
+
+ParamToolsSchema = make_schema(allowed_types=ALLOWED_TYPES)
 
 
 # A few fields that have not been instantiated yet
