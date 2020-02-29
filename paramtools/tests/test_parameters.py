@@ -258,7 +258,6 @@ class TestSchema:
                     "description": "",
                     "type": "int",
                     "value": 0,
-                    "validators": {},
                     "custom": {"hello": True, "world": True},
                 },
             }
@@ -281,7 +280,6 @@ class TestSchema:
                     "description": "",
                     "type": "int",
                     "value": 0,
-                    "validators": {},
                     "custom": {"hello": 123, "world": "whoops"},
                 },
             }
