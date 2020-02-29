@@ -5,9 +5,10 @@ from paramtools.schema import (
     OrderedSchema,
     BaseValidatorSchema,
     ValueObject,
-    ParamToolsSchema,
     get_type,
     get_param_schema,
+    make_schema,
+    ALLOWED_TYPES,
 )
 from paramtools import utils
 
@@ -26,9 +27,14 @@ class SchemaFactory:
     deserialize and validate parameter data.
     """
 
-    def __init__(self, defaults, field_map={}):
+    def __init__(self, defaults, field_map=None):
         defaults = utils.read_json(defaults)
         self.defaults = {k: v for k, v in defaults.items() if k != "schema"}
+        # Make shallow copy to prevent modifications to the original.
+        allowed_types = list(ALLOWED_TYPES)
+        if field_map:
+            allowed_types += field_map.keys()
+        ParamToolsSchema = make_schema(allowed_types)
         self.schema = ParamToolsSchema().load(defaults.get("schema", {}))
         (self.BaseParamSchema, self.label_validators) = get_param_schema(
             self.schema, field_map=field_map
