@@ -1777,8 +1777,7 @@ class TestExtend:
 
         params = ExtParams()
         params.set_state(d0=list(range(2, 11)))
-        with pytest.warns(UserWarning):
-            params.adjust({"extend_param": [{"d0": 1, "value": -1}]})
+        params.adjust({"extend_param": [{"d0": 1, "value": -1}]})
         assert params.extend_param.tolist() == []
         params.array_first = False
         params.clear_state()
