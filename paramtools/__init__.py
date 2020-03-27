@@ -21,6 +21,7 @@ from paramtools.schema import (
     VALIDATOR_MAP,
     get_type,
     get_param_schema,
+    register_custom_type,
 )
 from paramtools.select import select, select_eq, select_gt, select_gt_ix
 from paramtools.typing import ValueObject
@@ -62,6 +63,7 @@ __all__ = [
     "VALIDATOR_MAP",
     "get_type",
     "get_param_schema",
+    "register_custom_type",
     "select",
     "select_eq",
     "select_gt",

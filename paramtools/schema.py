@@ -15,6 +15,11 @@ from paramtools import utils
 ALLOWED_TYPES = ["str", "float", "int", "bool", "date"]
 
 
+def register_custom_type(name: str, field: fields.Field):
+    ALLOWED_TYPES.append(name)
+    FIELD_MAP.update({name: field})
+
+
 class RangeSchema(Schema):
     """
     Schema for range object
