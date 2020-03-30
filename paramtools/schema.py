@@ -8,16 +8,12 @@ from marshmallow import (
     ValidationError as MarshmallowValidationError,
 )
 
+from paramtools.exceptions import UnknownTypeException, ParamToolsError
 from paramtools import contrib
 from paramtools import utils
 
 
 ALLOWED_TYPES = ["str", "float", "int", "bool", "date"]
-
-
-def register_custom_type(name: str, field: fields.Field):
-    ALLOWED_TYPES.append(name)
-    FIELD_MAP.update({name: field})
 
 
 class RangeSchema(Schema):
@@ -524,36 +520,72 @@ def make_schema(allowed_types):
     return ParamToolsSchema
 
 
+def is_field_class_like(field):
+    if isinstance(field, type) and issubclass(field, fields.FieldABC):
+        return True
+    elif isinstance(field, PartialField):
+        return True
+    else:
+        return False
+
+
+def is_field_instance_like(field):
+    if not isinstance(field, type) and isinstance(field, fields.Field):
+        return True
+    else:
+        return False
+
+
+def register_custom_type(name: str, field: fields.Field):
+    if isinstance(field, type):
+        raise TypeError(
+            f"Custom fields must be instances. {field} is a class."
+        )
+    elif not isinstance(field, PartialField) and not is_field_instance_like(
+        field
+    ):
+        raise TypeError(
+            "Custom fields must either be instances of PartialField or a marshmallow field."
+        )
+    ALLOWED_TYPES.append(name)
+    FIELD_MAP.update({name: field})
+
+
 ParamToolsSchema = make_schema(allowed_types=ALLOWED_TYPES)
-
-
-# A few fields that have not been instantiated yet
-CLASS_FIELD_MAP = {
-    "str": contrib.fields.Str,
-    "int": contrib.fields.Integer,
-    "float": contrib.fields.Float,
-    "bool": contrib.fields.Boolean,
-    "date": contrib.fields.Date,
-}
 
 
 INVALID_NUMBER = {"invalid": "Not a valid number: {input}."}
 INVALID_BOOLEAN = {"invalid": "Not a valid boolean: {input}."}
 INVALID_DATE = {"invalid": "Not a valid date: {input}."}
 
+
+class PartialField:
+    def __init__(self, field, default_kwargs):
+        self.field = field
+        self.default_kwargs = default_kwargs
+
+    def __call__(self, **kwargs):
+        return self.field(**dict(self.default_kwargs, **kwargs))
+
+
 # A few fields that have been instantiated
 FIELD_MAP = {
-    "str": contrib.fields.Str(allow_none=True),
-    "int": contrib.fields.Integer(
-        allow_none=True, error_messages=INVALID_NUMBER
+    "str": PartialField(contrib.fields.Str, dict(allow_none=True)),
+    "int": PartialField(
+        contrib.fields.Integer,
+        dict(allow_none=True, error_messages=INVALID_NUMBER),
     ),
-    "float": contrib.fields.Float(
-        allow_none=True, error_messages=INVALID_NUMBER
+    "float": PartialField(
+        contrib.fields.Float,
+        dict(allow_none=True, error_messages=INVALID_NUMBER),
     ),
-    "bool": contrib.fields.Boolean(
-        allow_none=True, error_messages=INVALID_BOOLEAN
+    "bool": PartialField(
+        contrib.fields.Boolean,
+        dict(allow_none=True, error_messages=INVALID_BOOLEAN),
     ),
-    "date": contrib.fields.Date(allow_none=True, error_messages=INVALID_DATE),
+    "date": PartialField(
+        contrib.fields.Date, dict(allow_none=True, error_messages=INVALID_DATE)
+    ),
 }
 
 VALIDATOR_MAP = {
@@ -576,7 +608,18 @@ def get_type(data):
         ),
     }
     types = dict(FIELD_MAP, **numeric_types)
-    fieldtype = types[data["type"]]
+    try:
+        _fieldtype = types[data["type"]]
+        if is_field_class_like(_fieldtype):
+            fieldtype = _fieldtype()
+        elif is_field_instance_like(_fieldtype):
+            fieldtype = _fieldtype
+        else:
+            raise TypeError("Field is invalid.")
+    except KeyError:
+        raise UnknownTypeException(
+            f"Received unknown type: {data['type']}. Expected one of {', '.join(ALLOWED_TYPES)}."
+        )
     dim = data.get("number_dims", 0)
     while dim > 0:
         np_type = getattr(fieldtype, "np_type", object)
@@ -586,20 +629,29 @@ def get_type(data):
     return fieldtype
 
 
-def get_param_schema(base_spec, field_map=None):
+def get_param_schema(base_spec):
     """
     Read in data from the initializing schema. This will be used to fill in the
     optional properties on classes derived from the `BaseParamSchema` class.
     This data is also used to build validators for schema for each parameter
     that will be set on the `BaseValidatorSchema` class
     """
-    if field_map is not None:
-        field_map = dict(FIELD_MAP, **field_map)
-    else:
-        field_map = FIELD_MAP.copy()
+    field_map = FIELD_MAP
     optional_fields = {}
     for k, v in base_spec["additional_members"].items():
-        fieldtype = field_map[v["type"]]
+        try:
+            # in the future, we may want to allow validators.
+            _fieldtype = field_map[v["type"]]
+            if is_field_class_like(_fieldtype):
+                fieldtype = _fieldtype()
+            elif is_field_instance_like(_fieldtype):
+                fieldtype = _fieldtype
+            else:
+                raise TypeError("Field is invalid.")
+        except KeyError:
+            raise UnknownTypeException(
+                f"Received unknown type: {v['type']}. Expected one of {', '.join(ALLOWED_TYPES)}."
+            )
         if v.get("number_dims", 0) > 0:
             d = v["number_dims"]
             while d > 0:
@@ -615,9 +667,30 @@ def get_param_schema(base_spec, field_map=None):
     label_validators = {}
     for name, label in base_spec["labels"].items():
         validators = []
-        for vname, kwargs in label["validators"].items():
+        for vname, kwargs in label.get("validators", {}).items():
             validator_class = VALIDATOR_MAP[vname]
             validators.append(validator_class(**kwargs))
-        fieldtype = CLASS_FIELD_MAP[label["type"]]
-        label_validators[name] = fieldtype(validate=validators)
+        try:
+            _fieldtype = field_map[label["type"]]
+            if is_field_class_like(_fieldtype):
+                fieldtype = _fieldtype(validate=validators)
+            elif validators:
+                raise ParamToolsError(
+                    "If a field is already initialized, then it cannot define "
+                    "its validators via JSON configuration. You should use "
+                    "PartialField if you want to define validators via JSON."
+                )
+            elif is_field_instance_like(_fieldtype):
+                fieldtype = _fieldtype
+            else:
+                raise TypeError("Field is invalid.")
+
+            label_validators[name] = fieldtype
+
+        except KeyError:
+            raise UnknownTypeException(
+                f"Received unknown type: {label['type']}. Expected one of "
+                f"{', '.join(ALLOWED_TYPES)}."
+            )
+
     return ParamSchema, label_validators

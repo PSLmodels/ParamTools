@@ -16,9 +16,9 @@ from paramtools import (
     InconsistentLabelsException,
     collision_list,
     ParameterNameCollisionException,
+    register_custom_type,
+    Parameters,
 )
-
-from paramtools import Parameters
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -247,17 +247,19 @@ class TestSchema:
             hello = ma.fields.Boolean()
             world = ma.fields.Boolean()
 
+        register_custom_type("custom_type", ma.fields.Nested(Custom()))
+
         class Params(Parameters):
-            field_map = {"custom_type": ma.fields.Nested(Custom)}
             defaults = {
                 "schema": {
-                    "additional_members": {"custom": {"type": "custom_type"}}
+                    "labels": {"custom_label": {"type": "custom_type"}},
+                    "additional_members": {"custom": {"type": "custom_type"}},
                 },
                 "param": {
                     "title": "",
                     "description": "",
                     "type": "int",
-                    "value": 0,
+                    "value": [{"custom_label": {"hello": True}, "value": 0}],
                     "custom": {"hello": True, "world": True},
                 },
             }

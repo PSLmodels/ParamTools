@@ -7,6 +7,7 @@ from paramtools.exceptions import (
     InconsistentLabelsException,
     collision_list,
     ParameterNameCollisionException,
+    UnknownTypeException,
 )
 from paramtools.parameters import Parameters
 from paramtools.schema import (
@@ -16,12 +17,13 @@ from paramtools.schema import (
     BaseParamSchema,
     EmptySchema,
     BaseValidatorSchema,
-    CLASS_FIELD_MAP,
+    ALLOWED_TYPES,
     FIELD_MAP,
     VALIDATOR_MAP,
     get_type,
     get_param_schema,
     register_custom_type,
+    PartialField,
 )
 from paramtools.select import select, select_eq, select_gt, select_gt_ix
 from paramtools.typing import ValueObject
@@ -51,6 +53,7 @@ __all__ = [
     "InconsistentLabelsException",
     "collision_list",
     "ParameterNameCollisionException",
+    "UnknownTypeException",
     "Parameters",
     "RangeSchema",
     "ChoiceSchema",
@@ -58,12 +61,13 @@ __all__ = [
     "BaseParamSchema",
     "EmptySchema",
     "BaseValidatorSchema",
-    "CLASS_FIELD_MAP",
+    "ALLOWED_TYPES",
     "FIELD_MAP",
     "VALIDATOR_MAP",
     "get_type",
     "get_param_schema",
     "register_custom_type",
+    "PartialField",
     "select",
     "select_eq",
     "select_gt",

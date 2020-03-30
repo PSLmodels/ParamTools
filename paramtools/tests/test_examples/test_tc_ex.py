@@ -4,7 +4,7 @@ import pytest
 
 from marshmallow import fields, Schema
 
-from paramtools import Parameters
+from paramtools import Parameters, register_custom_type
 
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -23,8 +23,10 @@ class CompatibleDataSchema(Schema):
 
 
 @pytest.fixture
-def field_map():
-    return {"compatible_data": fields.Nested(CompatibleDataSchema())}
+def register_compatible_data():
+    register_custom_type(
+        "compatible_data", fields.Nested(CompatibleDataSchema())
+    )
 
 
 @pytest.fixture
@@ -33,10 +35,9 @@ def defaults_spec_path():
 
 
 @pytest.fixture
-def TaxcalcParams(defaults_spec_path, field_map):
+def TaxcalcParams(defaults_spec_path, register_compatible_data):
     class _TaxcalcParams(Parameters):
         defaults = defaults_spec_path
-        field_map = {"compatible_data": fields.Nested(CompatibleDataSchema())}
 
     return _TaxcalcParams
 

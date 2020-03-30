@@ -16,6 +16,10 @@ class SparseValueObjectsException(ParamToolsError):
     pass
 
 
+class UnknownTypeException(ParamToolsError):
+    pass
+
+
 class ValidationError(ParamToolsError):
     def __init__(self, messages, labels):
         self.messages = messages
@@ -61,7 +65,6 @@ collision_list = [
     "label_validators",
     "errors",
     "warnings",
-    "field_map",
     "from_array",
     "read_params",
     "set_state",

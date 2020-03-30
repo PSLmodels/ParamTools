@@ -28,7 +28,6 @@ from paramtools.exceptions import (
 
 class Parameters:
     defaults = None
-    field_map: Dict = {}
     array_first: bool = False
     label_to_extend: str = None
     uses_extend_func: bool = False
@@ -42,7 +41,7 @@ class Parameters:
         uses_extend_func: bool = False,
         index_rates: Optional[dict] = None,
     ):
-        schemafactory = SchemaFactory(self.defaults, self.field_map)
+        schemafactory = SchemaFactory(self.defaults)
         (
             self._defaults_schema,
             self._validator_schema,
@@ -50,9 +49,12 @@ class Parameters:
             self._data,
         ) = schemafactory.schemas()
         self.label_validators = schemafactory.label_validators
-        self._stateless_label_grid = OrderedDict(
-            [(name, v.grid()) for name, v in self.label_validators.items()]
-        )
+        self._stateless_label_grid = OrderedDict()
+        for name, v in self.label_validators.items():
+            if hasattr(v, "grid"):
+                self._stateless_label_grid[name] = v.grid()
+            else:
+                self._stateless_label_grid[name] = []
         self.label_grid = copy.deepcopy(self._stateless_label_grid)
         self._validator_schema.context["spec"] = self
         self._warnings = {}
