@@ -41,6 +41,7 @@ collision_list = [
     "_warnings",
     "select_eq",
     "select_gt",
+    "select_lt",
     "_adjust",
     "_numpy_type",
     "_parse_errors",

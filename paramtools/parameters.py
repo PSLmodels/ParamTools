@@ -12,7 +12,7 @@ from marshmallow import ValidationError as MarshmallowValidationError
 from paramtools import utils
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
-from paramtools.select import select_eq, select_gt_ix, select_gt
+from paramtools.select import select_eq, select_gt_ix, select_gt, select_lt
 from paramtools.tree import Tree
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
@@ -739,6 +739,14 @@ class Parameters:
 
     def select_gt(self, param, exact_match, **labels):
         return select_gt(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
+
+    def select_lt(self, param, exact_match, **labels):
+        return select_lt(
             self._data[param]["value"],
             exact_match,
             labels,
