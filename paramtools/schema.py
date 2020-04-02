@@ -560,9 +560,9 @@ INVALID_DATE = {"invalid": "Not a valid date: {input}."}
 
 
 class PartialField:
-    def __init__(self, field, default_kwargs):
+    def __init__(self, field, default_kwargs=None):
         self.field = field
-        self.default_kwargs = default_kwargs
+        self.default_kwargs = default_kwargs or {}
 
     def __call__(self, **kwargs):
         return self.field(**dict(self.default_kwargs, **kwargs))
