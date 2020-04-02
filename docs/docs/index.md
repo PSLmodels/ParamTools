@@ -206,7 +206,7 @@ py.test -v
 
 Documentation
 ----------------
-Full documentation available at [paramtools.dev](https://paramtools.org).
+Full documentation available at [paramtools.dev](https://paramtools.dev).
 
 Contributing
 -------------------------
