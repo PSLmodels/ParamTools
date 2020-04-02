@@ -7,5 +7,18 @@ nav:
         - Extend: 'api/extend.md'
         - Extend with Indexing: 'api/indexing.md'
         - Custom Adjustments: 'api/custom-adjust.md'
-
-theme: mkdocs
+        - Custom Type: 'api/custom-types.md'
+        - Reference: 'api/reference.md'
+markdown_extensions:
+  - admonition
+  - codehilite
+  - mkautodoc
+extra_css:
+    - css/custom.css
+theme:
+    name: 'material'
+    highlightjs: true
+    hljs_languages:
+        - python
+        - json
+        - bash
