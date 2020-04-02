@@ -7,7 +7,7 @@ nav:
         - Extend: 'api/extend.md'
         - Extend with Indexing: 'api/indexing.md'
         - Custom Adjustments: 'api/custom-adjust.md'
-        - Custom Type: 'api/custom-types.md'
+        - Custom Types: 'api/custom-types.md'
         - Reference: 'api/reference.md'
 markdown_extensions:
   - admonition
