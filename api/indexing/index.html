@@ -1,111 +1,402 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
-        
-        
-        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
+    
+    
+      
         <title>Extend with Indexing - ParamTools Docs</title>
-        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="../../css/font-awesome.min.css" rel="stylesheet">
-        <link href="../../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-        <script src="../../js/jquery-1.10.2.min.js" defer></script>
-        <script src="../../js/bootstrap-3.0.3.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
-    </head>
-
-    <body>
-
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container">
-
-                <!-- Collapsed navigation -->
-                <div class="navbar-header">
-                    <!-- Expander button -->
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="../..">ParamTools Docs</a>
-                </div>
-
-                <!-- Expanded navigation -->
-                <div class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li >
-                                <a href="../..">Home</a>
-                            </li>
-                            <li >
-                                <a href="../../parameters/">Parameters</a>
-                            </li>
-                            <li class="dropdown active">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">API <b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    
-<li >
-    <a href="../guide/">Guide</a>
-</li>
-                                    
-<li >
-    <a href="../extend/">Extend</a>
-</li>
-                                    
-<li class="active">
-    <a href="./">Extend with Indexing</a>
-</li>
-                                    
-<li >
-    <a href="../custom-adjust/">Custom Adjustments</a>
-</li>
-                                </ul>
-                            </li>
-                        </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
-                                <i class="fa fa-search"></i> Search
-                            </a>
-                        </li>
-                            <li >
-                                <a rel="next" href="../extend/">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li >
-                                <a rel="prev" href="../custom-adjust/">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                    </ul>
-                </div>
-            </div>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#extend-with-indexing" tabindex="0" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="ParamTools Docs" aria-label="ParamTools Docs" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              ParamTools Docs
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Extend with Indexing
+              
+            </span>
+          
         </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="ParamTools Docs" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    ParamTools Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
 
-        <div class="container">
-                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#extend-with-indexing">Extend with Indexing</a></li>
-            <li><a href="#example">Example</a></li>
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../parameters/" title="Parameters" class="md-nav__link">
+      Parameters
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+    <label class="md-nav__link" for="nav-3">
+      API
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        API
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../guide/" title="Guide" class="md-nav__link">
+      Guide
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../extend/" title="Extend" class="md-nav__link">
+      Extend
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Extend with Indexing
+      </label>
+    
+    <a href="./" title="Extend with Indexing" class="md-nav__link md-nav__link--active">
+      Extend with Indexing
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-for-getting-tax-calculator-index-rates" class="md-nav__link">
+    Code for getting Tax-Calculator index rates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
     </ul>
-</div></div>
-                <div class="col-md-9" role="main">
+  
+</nav>
+    
+  </li>
 
-<h1 id="extend-with-indexing">Extend with Indexing</h1>
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../custom-adjust/" title="Custom Adjustments" class="md-nav__link">
+      Custom Adjustments
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../custom-types/" title="Custom Type" class="md-nav__link">
+      Custom Type
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../reference/" title="Reference" class="md-nav__link">
+      Reference
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    Example
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-for-getting-tax-calculator-index-rates" class="md-nav__link">
+    Code for getting Tax-Calculator index rates
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="extend-with-indexing">Extend with Indexing</h1>
 <p>ParamTools provides out-of-the-box parameter indexing. This is helpful for projects that have parameters that change at some rate over time. For example, tax parameters like the standard deduction are often indexed to price inflation. So, the value of the standard deduction actually increases every year by 1 or 2% depending on that year's inflation rate.</p>
 <p>The <a href="/api/extend/">extend documentation</a> may be useful for gaining a better understanding of how ParamTools extends parameter values along <code>label_to_extend</code>.</p>
 <p>To use the indexing feature:</p>
@@ -117,213 +408,212 @@
 </ul>
 <h2 id="example">Example</h2>
 <p>This is a continuation of the tax parameters example from the <a href="/api/extend/">extend documentation</a>. The differences are <code>indexed</code> is set to <code>True</code> for the <code>standard_deducation</code> parameter, <code>uses_extend_func</code> is set to <code>True</code>, and <code>index_rates</code> is specified with inflation rates obtained from the open-source tax modeling package, <a href="https://github.com/PSLmodels/Tax-Calculator/">Tax-Calculator</a>, using version 2.5.0.</p>
-<pre><code class="python">import paramtools
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">paramtools</span>
 
 
-class TaxParams(paramtools.Parameters):
-    defaults = {
-        &quot;schema&quot;: {
-            &quot;labels&quot;: {
-                &quot;year&quot;: {
-                    &quot;type&quot;: &quot;int&quot;,
-                    &quot;validators&quot;: {&quot;range&quot;: {&quot;min&quot;: 2013, &quot;max&quot;: 2027}}
-                },
-                &quot;marital_status&quot;: {
-                    &quot;type&quot;: &quot;str&quot;,
-                    &quot;validators&quot;: {&quot;choice&quot;: {&quot;choices&quot;: [&quot;single&quot;, &quot;joint&quot;]}}
-                },
-            }
-        },
-        &quot;standard_deduction&quot;: {
-            &quot;title&quot;: &quot;Standard deduction amount&quot;,
-            &quot;description&quot;: &quot;Amount filing unit can use as a standard deduction.&quot;,
-            &quot;type&quot;: &quot;float&quot;,
+<span class="k">class</span> <span class="nc">TaxParams</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">2013</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">2027</span><span class="p">}}</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;choice&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;joint&quot;</span><span class="p">]}}</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Standard deduction amount&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Amount filing unit can use as a standard deduction.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
 
-            # Set indexed to True to extend standard_deduction with the built-in
-            # extension logic.
-            &quot;indexed&quot;: True,
+            <span class="c1"># Set indexed to True to extend standard_deduction with the built-in</span>
+            <span class="c1"># extension logic.</span>
+            <span class="s2">&quot;indexed&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
 
-            &quot;value&quot;: [
-                {&quot;year&quot;: 2017, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 6350},
-                {&quot;year&quot;: 2017, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 12700},
-                {&quot;year&quot;: 2018, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 12000},
-                {&quot;year&quot;: 2018, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 24000},
-                {&quot;year&quot;: 2026, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 7685},
-                {&quot;year&quot;: 2026, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 15369}],
-            &quot;validators&quot;: {
-                &quot;range&quot;: {
-                    &quot;min&quot;: 0,
-                    &quot;max&quot;: 9e+99
-                }
-            }
-        },
-    }
-    array_first = True
-    label_to_extend = &quot;year&quot;
-    # Activate use of extend_func method.
-    uses_extend_func = True
-    # inflation rates from Tax-Calculator v2.5.0
-    index_rates = {
-        2013: 0.0148,
-        2014: 0.0159,
-        2015: 0.0012,
-        2016: 0.0127,
-        2017: 0.0187,
-        2018: 0.0224,
-        2019: 0.0186,
-        2020: 0.0233,
-        2021: 0.0229,
-        2022: 0.0228,
-        2023: 0.0221,
-        2024: 0.0211,
-        2025: 0.0209,
-        2026: 0.0211,
-        2027: 0.0208,
-        2028: 0.021,
-        2029: 0.021
-    }
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">6350</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">12700</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2018</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">12000</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2018</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">24000</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">7685</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15369</span><span class="p">}],</span>
+            <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">9e+99</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+    <span class="n">array_first</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">label_to_extend</span> <span class="o">=</span> <span class="s2">&quot;year&quot;</span>
+    <span class="c1"># Activate use of extend_func method.</span>
+    <span class="n">uses_extend_func</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># inflation rates from Tax-Calculator v2.5.0</span>
+    <span class="n">index_rates</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">2013</span><span class="p">:</span> <span class="mf">0.0148</span><span class="p">,</span>
+        <span class="mi">2014</span><span class="p">:</span> <span class="mf">0.0159</span><span class="p">,</span>
+        <span class="mi">2015</span><span class="p">:</span> <span class="mf">0.0012</span><span class="p">,</span>
+        <span class="mi">2016</span><span class="p">:</span> <span class="mf">0.0127</span><span class="p">,</span>
+        <span class="mi">2017</span><span class="p">:</span> <span class="mf">0.0187</span><span class="p">,</span>
+        <span class="mi">2018</span><span class="p">:</span> <span class="mf">0.0224</span><span class="p">,</span>
+        <span class="mi">2019</span><span class="p">:</span> <span class="mf">0.0186</span><span class="p">,</span>
+        <span class="mi">2020</span><span class="p">:</span> <span class="mf">0.0233</span><span class="p">,</span>
+        <span class="mi">2021</span><span class="p">:</span> <span class="mf">0.0229</span><span class="p">,</span>
+        <span class="mi">2022</span><span class="p">:</span> <span class="mf">0.0228</span><span class="p">,</span>
+        <span class="mi">2023</span><span class="p">:</span> <span class="mf">0.0221</span><span class="p">,</span>
+        <span class="mi">2024</span><span class="p">:</span> <span class="mf">0.0211</span><span class="p">,</span>
+        <span class="mi">2025</span><span class="p">:</span> <span class="mf">0.0209</span><span class="p">,</span>
+        <span class="mi">2026</span><span class="p">:</span> <span class="mf">0.0211</span><span class="p">,</span>
+        <span class="mi">2027</span><span class="p">:</span> <span class="mf">0.0208</span><span class="p">,</span>
+        <span class="mi">2028</span><span class="p">:</span> <span class="mf">0.021</span><span class="p">,</span>
+        <span class="mi">2029</span><span class="p">:</span> <span class="mf">0.021</span>
+    <span class="p">}</span>
 
 
-params = TaxParams()
-params.standard_deduction
+<span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
+<span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
 
-# output:
-# array([[ 6074.92, 12149.84],
-#        [ 6164.83, 12329.66],
-#        [ 6262.85, 12525.7 ],
-#        [ 6270.37, 12540.73],
-#        [ 6350.  , 12700.  ],
-#        [12000.  , 24000.  ],
-#        [12268.8 , 24537.6 ],
-#        [12497.  , 24994.  ],
-#        [12788.18, 25576.36],
-#        [13081.03, 26162.06],
-#        [13379.28, 26758.55],
-#        [13674.96, 27349.91],
-#        [13963.5 , 27926.99],
-#        [ 7685.  , 15369.  ],
-#        [ 7847.15, 15693.29]])
-</code></pre>
+<span class="c1"># output:</span>
+<span class="c1"># array([[ 6074.92, 12149.84],</span>
+<span class="c1">#        [ 6164.83, 12329.66],</span>
+<span class="c1">#        [ 6262.85, 12525.7 ],</span>
+<span class="c1">#        [ 6270.37, 12540.73],</span>
+<span class="c1">#        [ 6350.  , 12700.  ],</span>
+<span class="c1">#        [12000.  , 24000.  ],</span>
+<span class="c1">#        [12268.8 , 24537.6 ],</span>
+<span class="c1">#        [12497.  , 24994.  ],</span>
+<span class="c1">#        [12788.18, 25576.36],</span>
+<span class="c1">#        [13081.03, 26162.06],</span>
+<span class="c1">#        [13379.28, 26758.55],</span>
+<span class="c1">#        [13674.96, 27349.91],</span>
+<span class="c1">#        [13963.5 , 27926.99],</span>
+<span class="c1">#        [ 7685.  , 15369.  ],</span>
+<span class="c1">#        [ 7847.15, 15693.29]])</span>
+</code></pre></div>
+
 
 <p>Adjustments are also indexed. In the example below, <code>standard_deduction</code> is set to 10,000 in 2017, increased to 15,000 for single tax units in 2020, and increased to 20,000 for joint tax units in 2021:</p>
-<pre><code class="python">params.adjust(
-    {
-        &quot;standard_deduction&quot;: [
-            {&quot;year&quot;: 2017, &quot;value&quot;: 10000},
-            {&quot;year&quot;: 2020, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 15000},
-            {&quot;year&quot;: 2021, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 20000}
-        ]
-    }
-)
+<div class="codehilite"><pre><span></span><code><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2020</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15000</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2021</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">20000</span><span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">)</span>
 
-params.standard_deduction
+<span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
 
-# output:
-# array([[ 6074.92, 12149.84],
-#        [ 6164.83, 12329.66],
-#        [ 6262.85, 12525.7 ],
-#        [ 6270.37, 12540.73],
-#        [10000.  , 10000.  ],
-#        [10187.  , 10187.  ],
-#        [10415.19, 10415.19],
-#        [15000.  , 10608.91],
-#        [15349.5 , 20000.  ],
-#        [15701.  , 20458.  ],
-#        [16058.98, 20924.44],
-#        [16413.88, 21386.87],
-#        [16760.21, 21838.13],
-#        [17110.5 , 22294.55],
-#        [17471.53, 22764.97]])
+<span class="c1"># output:</span>
+<span class="c1"># array([[ 6074.92, 12149.84],</span>
+<span class="c1">#        [ 6164.83, 12329.66],</span>
+<span class="c1">#        [ 6262.85, 12525.7 ],</span>
+<span class="c1">#        [ 6270.37, 12540.73],</span>
+<span class="c1">#        [10000.  , 10000.  ],</span>
+<span class="c1">#        [10187.  , 10187.  ],</span>
+<span class="c1">#        [10415.19, 10415.19],</span>
+<span class="c1">#        [15000.  , 10608.91],</span>
+<span class="c1">#        [15349.5 , 20000.  ],</span>
+<span class="c1">#        [15701.  , 20458.  ],</span>
+<span class="c1">#        [16058.98, 20924.44],</span>
+<span class="c1">#        [16413.88, 21386.87],</span>
+<span class="c1">#        [16760.21, 21838.13],</span>
+<span class="c1">#        [17110.5 , 22294.55],</span>
+<span class="c1">#        [17471.53, 22764.97]])</span>
+</code></pre></div>
 
-</code></pre>
 
 <h3 id="code-for-getting-tax-calculator-index-rates">Code for getting Tax-Calculator index rates</h3>
-<pre><code class="python">import taxcalc
-pol = taxcalc.Policy()
-index_rates = {
-    year: value
-    for year, value in zip(list(range(2013, 2029 + 1)), pol.inflation_rates())
-}
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">taxcalc</span>
+<span class="n">pol</span> <span class="o">=</span> <span class="n">taxcalc</span><span class="o">.</span><span class="n">Policy</span><span class="p">()</span>
+<span class="n">index_rates</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">year</span><span class="p">:</span> <span class="n">value</span>
+    <span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span> <span class="mi">2029</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">pol</span><span class="o">.</span><span class="n">inflation_rates</span><span class="p">())</span>
+<span class="p">}</span>
+</code></pre></div>
 
-</code></pre>
 
-<p>Note that there are some subtle details that are implemented in Tax-Calculator's indexing logic that are not implemented in this example. Tax-Calculator has a parameter called <code>CPI_offset</code> that adjusts inflation rates up or down by a fixed amount. The <code>indexed</code> property can also be turned on and off for each parameter. Implementing these nuanced features is left as the proverbial "trivial exercise to the reader."</p></div>
+<p>Note that there are some subtle details that are implemented in Tax-Calculator's indexing logic that are not implemented in this example. Tax-Calculator has a parameter called <code>CPI_offset</code> that adjusts inflation rates up or down by a fixed amount. The <code>indexed</code> property can also be turned on and off for each parameter. Implementing these nuanced features is left as the proverbial "trivial exercise to the reader."</p>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
         </div>
-
-        <footer class="col-md-12">
-            <hr>
-            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script>
-            var base_url = "../..",
-                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
-        </script>
-        <script src="../../js/base.js" defer></script>
-        <script src="../../search/main.js" defer></script>
-
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../extend/" title="Extend" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
-            <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
-                <form role="form">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results"></div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Extend
+              </span>
             </div>
-            <div class="modal-footer">
+          </a>
+        
+        
+          <a href="../custom-adjust/" title="Custom Adjustments" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Custom Adjustments
+              </span>
             </div>
-        </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
     </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="help shortcut"><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td class="next shortcut"><kbd>n</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td class="prev shortcut"><kbd>p</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td class="search shortcut"><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
     </div>
-</div>
-
-    </body>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+      <script>app.initialize({version:"1.1",url:{base:"../.."}})</script>
+      
+    
+  </body>
 </html>

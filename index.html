@@ -1,381 +1,680 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="None">
-        
-        
-        <link rel="shortcut icon" href="img/favicon.ico">
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
+    
+    
+      
         <title>ParamTools Docs</title>
-        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-        <script src="js/jquery-1.10.2.min.js" defer></script>
-        <script src="js/bootstrap-3.0.3.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script> 
-    </head>
-
-    <body class="homepage">
-
-        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container">
-
-                <!-- Collapsed navigation -->
-                <div class="navbar-header">
-                    <!-- Expander button -->
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href=".">ParamTools Docs</a>
-                </div>
-
-                <!-- Expanded navigation -->
-                <div class="navbar-collapse collapse">
-                        <!-- Main navigation -->
-                        <ul class="nav navbar-nav">
-                            <li class="active">
-                                <a href=".">Home</a>
-                            </li>
-                            <li >
-                                <a href="parameters/">Parameters</a>
-                            </li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">API <b class="caret"></b></a>
-                                <ul class="dropdown-menu">
-                                    
-<li >
-    <a href="api/guide/">Guide</a>
-</li>
-                                    
-<li >
-    <a href="api/extend/">Extend</a>
-</li>
-                                    
-<li >
-    <a href="api/indexing/">Extend with Indexing</a>
-</li>
-                                    
-<li >
-    <a href="api/custom-adjust/">Custom Adjustments</a>
-</li>
-                                </ul>
-                            </li>
-                        </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
-                                <i class="fa fa-search"></i> Search
-                            </a>
-                        </li>
-                            <li class="disabled">
-                                <a rel="next" >
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li >
-                                <a rel="prev" href="parameters/">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
-                    </ul>
-                </div>
-            </div>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/application.adb8469c.css">
+      
+      
+    
+    
+      <script src="assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="css/custom.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#paramtools" tabindex="0" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="." title="ParamTools Docs" aria-label="ParamTools Docs" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              ParamTools Docs
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Home
+              
+            </span>
+          
         </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="." title="ParamTools Docs" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    ParamTools Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
 
-        <div class="container">
-                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
-    <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#paramtools">ParamTools</a></li>
-            <li><a href="#how-to-use-paramtools">How to use ParamTools</a></li>
-            <li><a href="#how-to-install-paramtools">How to install ParamTools</a></li>
-            <li><a href="#documentation">Documentation</a></li>
-            <li><a href="#contributing">Contributing</a></li>
-            <li><a href="#credits">Credits</a></li>
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Home
+      </label>
+    
+    <a href="." title="Home" class="md-nav__link md-nav__link--active">
+      Home
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use-paramtools" class="md-nav__link">
+    How to use ParamTools
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-install-paramtools" class="md-nav__link">
+    How to install ParamTools
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    Documentation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    Contributing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credits" class="md-nav__link">
+    Credits
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
     </ul>
-</div></div>
-                <div class="col-md-9" role="main">
+  
+</nav>
+    
+  </li>
 
-<h1 id="paramtools">ParamTools</h1>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="parameters/" title="Parameters" class="md-nav__link">
+      Parameters
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      API
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        API
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="api/guide/" title="Guide" class="md-nav__link">
+      Guide
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="api/extend/" title="Extend" class="md-nav__link">
+      Extend
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="api/indexing/" title="Extend with Indexing" class="md-nav__link">
+      Extend with Indexing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="api/custom-adjust/" title="Custom Adjustments" class="md-nav__link">
+      Custom Adjustments
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="api/custom-types/" title="Custom Type" class="md-nav__link">
+      Custom Type
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="api/reference/" title="Reference" class="md-nav__link">
+      Reference
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use-paramtools" class="md-nav__link">
+    How to use ParamTools
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-install-paramtools" class="md-nav__link">
+    How to install ParamTools
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    Documentation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    Contributing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#credits" class="md-nav__link">
+    Credits
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="paramtools">ParamTools</h1>
 <p>Define, update, and validate your model's parameters.</p>
 <h2 id="how-to-use-paramtools">How to use ParamTools</h2>
 <p>Subclass <code>paramtools.Parameters</code> and define your model's <a href="https://paramtools.org/parameters">parameters</a>:</p>
-<pre><code class="python">import paramtools
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">paramtools</span>
 
 
-class TaxParams(paramtools.Parameters):
-    defaults = {
-        &quot;schema&quot;: {
-            &quot;labels&quot;: {
-                &quot;year&quot;: {
-                    &quot;type&quot;: &quot;int&quot;,
-                    &quot;validators&quot;: {&quot;range&quot;: {&quot;min&quot;: 2013, &quot;max&quot;: 2027}}
-                },
-                &quot;marital_status&quot;: {
-                    &quot;type&quot;: &quot;str&quot;,
-                    &quot;validators&quot;: {&quot;choice&quot;: {&quot;choices&quot;: [&quot;single&quot;, &quot;joint&quot;]}}
-                },
-            },
-            &quot;additional_members&quot;: {
-                &quot;cpi_inflatable&quot;: {&quot;type&quot;: &quot;bool&quot;, &quot;number_dims&quot;: 0},
-                &quot;cpi_inflated&quot;: {&quot;type&quot;: &quot;bool&quot;, &quot;number_dims&quot;: 0}
-            }
-        },
-        &quot;standard_deduction&quot;: {
-            &quot;title&quot;: &quot;Standard deduction amount&quot;,
-            &quot;description&quot;: &quot;Amount filing unit can use as a standard deduction.&quot;,
-            &quot;cpi_inflatable&quot;: True,
-            &quot;cpi_inflated&quot;: True,
-            &quot;type&quot;: &quot;float&quot;,
-            &quot;value&quot;: [
-                {&quot;year&quot;: 2024, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 13673.68},
-                {&quot;year&quot;: 2024, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 27347.36},
-                {&quot;year&quot;: 2025, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 13967.66},
-                {&quot;year&quot;: 2025, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 27935.33},
-                {&quot;year&quot;: 2026, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 7690.0},
-                {&quot;year&quot;: 2026, &quot;marital_status&quot;: &quot;joint&quot;, &quot;value&quot;: 15380.0}],
-            &quot;validators&quot;: {
-                &quot;range&quot;: {
-                    &quot;min&quot;: 0,
-                    &quot;max&quot;: 9e+99
-                }
-            }
-        },
-    }
+<span class="k">class</span> <span class="nc">TaxParams</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">2013</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">2027</span><span class="p">}}</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;choice&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;joint&quot;</span><span class="p">]}}</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;additional_members&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;cpi_inflatable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span> <span class="s2">&quot;number_dims&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+                <span class="s2">&quot;cpi_inflated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span> <span class="s2">&quot;number_dims&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Standard deduction amount&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Amount filing unit can use as a standard deduction.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cpi_inflatable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;cpi_inflated&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13673.68</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27347.36</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13967.66</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27935.33</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">7690.0</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">15380.0</span><span class="p">}],</span>
+            <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">9e+99</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
 
-params = TaxParams(
-    initial_state={&quot;year&quot;: [2024, 2025, 2026]},
-    array_first=True
-)
+<span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">(</span>
+    <span class="n">initial_state</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">2025</span><span class="p">,</span> <span class="mi">2026</span><span class="p">]},</span>
+    <span class="n">array_first</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</code></pre></div>
 
-
-</code></pre>
 
 <p>Check out the state:</p>
-<pre><code class="python">params.view_state()
+<div class="codehilite"><pre><span></span><code><span class="n">params</span><span class="o">.</span><span class="n">view_state</span><span class="p">()</span>
 
-# {'year': [2024, 2025, 2026]}
+<span class="c1"># {&#39;year&#39;: [2024, 2025, 2026]}</span>
+</code></pre></div>
 
-</code></pre>
 
 <p>Parameters are available via instance attributes:</p>
-<pre><code class="python">params.standard_deduction
+<div class="codehilite"><pre><span></span><code><span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
 
-# array([[13673.68, 27347.36],
-#        [13967.66, 27935.33],
-#        [ 7690.  , 15380.  ]])
-</code></pre>
+<span class="c1"># array([[13673.68, 27347.36],</span>
+<span class="c1">#        [13967.66, 27935.33],</span>
+<span class="c1">#        [ 7690.  , 15380.  ]])</span>
+</code></pre></div>
+
 
 <p>Take a look at the standard deduction parameter's labels:</p>
-<pre><code class="python">params.from_array(&quot;standard_deduction&quot;)
+<div class="codehilite"><pre><span></span><code><span class="n">params</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="s2">&quot;standard_deduction&quot;</span><span class="p">)</span>
 
-# [{'year': 2024, 'marital_status': 'single', 'value': 13673.68},
-#  {'year': 2024, 'marital_status': 'joint', 'value': 27347.36},
-#  {'year': 2025, 'marital_status': 'single', 'value': 13967.66},
-#  {'year': 2025, 'marital_status': 'joint', 'value': 27935.33},
-#  {'year': 2026, 'marital_status': 'single', 'value': 7690.0},
-#  {'year': 2026, 'marital_status': 'joint', 'value': 15380.0}]
-</code></pre>
+<span class="c1"># [{&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13673.68},</span>
+<span class="c1">#  {&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27347.36},</span>
+<span class="c1">#  {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13967.66},</span>
+<span class="c1">#  {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27935.33},</span>
+<span class="c1">#  {&#39;year&#39;: 2026, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 7690.0},</span>
+<span class="c1">#  {&#39;year&#39;: 2026, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 15380.0}]</span>
+</code></pre></div>
+
 
 <p>Query the parameters:</p>
-<pre><code class="python">params.specification(year=2026, marital_status=&quot;single&quot;, use_state=False)
+<div class="codehilite"><pre><span></span><code><span class="n">params</span><span class="o">.</span><span class="n">specification</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2026</span><span class="p">,</span> <span class="n">marital_status</span><span class="o">=</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="n">use_state</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-# OrderedDict([('standard_deduction',
-#               [{'value': 0.0, 'year': 2026, 'marital_status': 'single'}])])
-</code></pre>
+<span class="c1"># OrderedDict([(&#39;standard_deduction&#39;,</span>
+<span class="c1">#               [{&#39;value&#39;: 0.0, &#39;year&#39;: 2026, &#39;marital_status&#39;: &#39;single&#39;}])])</span>
+</code></pre></div>
+
 
 <p>Adjust the default values:</p>
-<pre><code class="python">adjustment = {
-    &quot;standard_deduction&quot;: [
-        {&quot;year&quot;: 2026, &quot;marital_status&quot;: &quot;single&quot;, &quot;value&quot;: 10000.0}
-    ],
-}
-params.adjust(adjustment)
-params.standard_deduction
+<div class="codehilite"><pre><span></span><code><span class="n">adjustment</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">10000.0</span><span class="p">}</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">adjustment</span><span class="p">)</span>
+<span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
 
-# array([[13673.68, 27347.36],
-#        [13967.66, 27935.33],
-#        [10000.  , 15380.  ]])
+<span class="c1"># array([[13673.68, 27347.36],</span>
+<span class="c1">#        [13967.66, 27935.33],</span>
+<span class="c1">#        [10000.  , 15380.  ]])</span>
+</code></pre></div>
 
-</code></pre>
 
 <p>Set all values of the standard deduction parameter to 0:</p>
-<pre><code class="python">adjustment = {
-    &quot;standard_deduction&quot;: 0,
-}
-params.adjust(adjustment)
-params.standard_deduction
+<div class="codehilite"><pre><span></span><code><span class="n">adjustment</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">adjustment</span><span class="p">)</span>
+<span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
 
-# array([[0., 0.],
-#        [0., 0.],
-#        [0., 0.]])
+<span class="c1"># array([[0., 0.],</span>
+<span class="c1">#        [0., 0.],</span>
+<span class="c1">#        [0., 0.]])</span>
+</code></pre></div>
 
-</code></pre>
 
 <p>Errors on invalid input:</p>
-<pre><code class="python">adjustment[&quot;standard_deduction&quot;] = &quot;higher&quot;
-params.adjust(adjustment)
+<div class="codehilite"><pre><span></span><code><span class="n">adjustment</span><span class="p">[</span><span class="s2">&quot;standard_deduction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;higher&quot;</span>
+<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">adjustment</span><span class="p">)</span>
 
-# ---------------------------------------------------------------------------
-# ValidationError                           Traceback (most recent call last)
-# &lt;ipython-input-7-d9ad03cf54d8&gt; in &lt;module&gt;
-#       1 adjustment[&quot;standard_deduction&quot;] = &quot;higher&quot;
-# ----&gt; 2 params.adjust(adjustment)
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># ValidationError                           Traceback (most recent call last)</span>
+<span class="c1"># &lt;ipython-input-7-d9ad03cf54d8&gt; in &lt;module&gt;</span>
+<span class="c1">#       1 adjustment[&quot;standard_deduction&quot;] = &quot;higher&quot;</span>
+<span class="c1"># ----&gt; 2 params.adjust(adjustment)</span>
 
-# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors)
-#     134
-#     135         if raise_errors and self._errors:
-# --&gt; 136             raise self.validation_error
-#     137
-#     138         # Update attrs.
+<span class="c1"># ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors)</span>
+<span class="c1">#     134</span>
+<span class="c1">#     135         if raise_errors and self._errors:</span>
+<span class="c1"># --&gt; 136             raise self.validation_error</span>
+<span class="c1">#     137</span>
+<span class="c1">#     138         # Update attrs.</span>
 
-# ValidationError: {'standard_deduction': ['Not a valid number: higher.']}
-</code></pre>
+<span class="c1"># ValidationError: {&#39;standard_deduction&#39;: [&#39;Not a valid number: higher.&#39;]}</span>
+</code></pre></div>
+
 
 <p>Errors on input that's out of range:</p>
-<pre><code class="python">adjustment[&quot;standard_deduction&quot;] = [
-    {&quot;marital_status&quot;: &quot;single&quot;, &quot;year&quot;: 2025, &quot;value&quot;: -1}
-]
-params.adjust(adjustment)
+<div class="codehilite"><pre><span></span><code><span class="n">adjustment</span><span class="p">[</span><span class="s2">&quot;standard_deduction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>
+<span class="p">]</span>
+<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">adjustment</span><span class="p">)</span>
 
-# output:
-# ---------------------------------------------------------------------------
-# ValidationError                           Traceback (most recent call last)
-# &lt;ipython-input-14-208948dfbd1d&gt; in &lt;module&gt;
-#       1 adjustment[&quot;standard_deduction&quot;] = [{&quot;marital_status&quot;: &quot;single&quot;, &quot;year&quot;: 2025, &quot;value&quot;: -1}]
-# ----&gt; 2 params.adjust(adjustment)
+<span class="c1"># output:</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># ValidationError                           Traceback (most recent call last)</span>
+<span class="c1"># &lt;ipython-input-14-208948dfbd1d&gt; in &lt;module&gt;</span>
+<span class="c1">#       1 adjustment[&quot;standard_deduction&quot;] = [{&quot;marital_status&quot;: &quot;single&quot;, &quot;year&quot;: 2025, &quot;value&quot;: -1}]</span>
+<span class="c1"># ----&gt; 2 params.adjust(adjustment)</span>
 
-# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors, extend_adj)
-#     183
-#     184         if raise_errors and self._errors:
-# --&gt; 185             raise self.validation_error
-#     186
-#     187         if self.label_to_extend is not None and extend_adj:
+<span class="c1"># ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors, extend_adj)</span>
+<span class="c1">#     183</span>
+<span class="c1">#     184         if raise_errors and self._errors:</span>
+<span class="c1"># --&gt; 185             raise self.validation_error</span>
+<span class="c1">#     186</span>
+<span class="c1">#     187         if self.label_to_extend is not None and extend_adj:</span>
 
-# ValidationError: {
-#     &quot;standard_deduction&quot;: [
-#         &quot;standard_deduction[marital_status=single, year=2025] -1.0 &lt; min 0 &quot;
-#     ]
-# }
+<span class="c1"># ValidationError: {</span>
+<span class="c1">#     &quot;standard_deduction&quot;: [</span>
+<span class="c1">#         &quot;standard_deduction[marital_status=single, year=2025] -1.0 &lt; min 0 &quot;</span>
+<span class="c1">#     ]</span>
+<span class="c1"># }</span>
+</code></pre></div>
 
-</code></pre>
 
 <h2 id="how-to-install-paramtools">How to install ParamTools</h2>
 <p>Install with conda:</p>
-<pre><code>conda install -c conda-forge paramtools
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="err">conda install -c conda-forge paramtools</span>
+</code></pre></div>
+
 
 <p>Install from source:</p>
-<pre><code>git clone https://github.com/PSLmodels/ParamTools
-cd ParamTools
-conda env create
-conda activate paramtools-dev
-pip install -e .
+<div class="codehilite"><pre><span></span><code><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">PSLmodels</span><span class="o">/</span><span class="n">ParamTools</span>
+<span class="n">cd</span> <span class="n">ParamTools</span>
+<span class="n">conda</span> <span class="n">env</span> <span class="k">create</span>
+<span class="n">conda</span> <span class="n">activate</span> <span class="n">paramtools</span><span class="o">-</span><span class="n">dev</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="p">.</span>
 
-# optionally run tests:
-py.test -v
-</code></pre>
+<span class="o">#</span> <span class="n">optionally</span> <span class="n">run</span> <span class="n">tests</span><span class="p">:</span>
+<span class="n">py</span><span class="p">.</span><span class="n">test</span> <span class="o">-</span><span class="n">v</span>
+</code></pre></div>
+
 
 <h2 id="documentation">Documentation</h2>
 <p>Full documentation available at <a href="https://paramtools.org">paramtools.org</a>.</p>
 <h2 id="contributing">Contributing</h2>
 <p>Contributions are welcome! Checkout <a href="https://github.com/PSLmodels/ParamTools/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a> to get started.</p>
 <h2 id="credits">Credits</h2>
-<p>ParamTools is built on top of the excellent <a href="https://github.com/marshmallow-code/marshmallow">marshmallow</a> JSON schema and validation framework. I encourage everyone to check out their repo and documentation. ParamTools was modeled off of <a href="https://github.com/PSLmodels/Tax-Calculator">Tax-Calculator's</a> parameter processing and validation engine due to its maturity and sophisticated capabilities.</p></div>
-        </div>
+<p>ParamTools is built on top of the excellent <a href="https://github.com/marshmallow-code/marshmallow">marshmallow</a> JSON schema and validation framework. I encourage everyone to check out their repo and documentation. ParamTools was modeled off of <a href="https://github.com/PSLmodels/Tax-Calculator">Tax-Calculator's</a> parameter processing and validation engine due to its maturity and sophisticated capabilities.</p>
+                
+                  
+                
+                
+              
+              
+                
 
-        <footer class="col-md-12">
-            <hr>
-            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
-        </footer>
-        <script>
-            var base_url = ".",
-                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
-        </script>
-        <script src="js/base.js" defer></script>
-        <script src="search/main.js" defer></script>
 
-        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
-            </div>
-            <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
-                <form role="form">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
-                    </div>
-                </form>
-                <div id="mkdocs-search-results"></div>
-            </div>
-            <div class="modal-footer">
-            </div>
+              
+            </article>
+          </div>
         </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+        
+          <a href="parameters/" title="Parameters" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Parameters
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
     </div>
-</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
-            </div>
-            <div class="modal-body">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 20%;">Keys</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="help shortcut"><kbd>?</kbd></td>
-                    <td>Open this help</td>
-                  </tr>
-                  <tr>
-                    <td class="next shortcut"><kbd>n</kbd></td>
-                    <td>Next page</td>
-                  </tr>
-                  <tr>
-                    <td class="prev shortcut"><kbd>p</kbd></td>
-                    <td>Previous page</td>
-                  </tr>
-                  <tr>
-                    <td class="search shortcut"><kbd>s</kbd></td>
-                    <td>Search</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
     </div>
-</div>
-
-    </body>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="assets/javascripts/application.c33a9706.js"></script>
+      
+      <script>app.initialize({version:"1.1",url:{base:"."}})</script>
+      
+    
+  </body>
 </html>
-
-<!--
-MkDocs version : 1.0.4
-Build Date UTC : 2020-01-27 21:21:05
--->

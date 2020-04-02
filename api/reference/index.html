@@ -1,0 +1,527 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
+    
+    
+      
+        <title>Reference - ParamTools Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+      <link rel="stylesheet" href="../../css/custom.css">
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#api-documentation" tabindex="0" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="ParamTools Docs" aria-label="ParamTools Docs" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              ParamTools Docs
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Reference
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="ParamTools Docs" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    ParamTools Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../parameters/" title="Parameters" class="md-nav__link">
+      Parameters
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+    <label class="md-nav__link" for="nav-3">
+      API
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        API
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../guide/" title="Guide" class="md-nav__link">
+      Guide
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../extend/" title="Extend" class="md-nav__link">
+      Extend
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../indexing/" title="Extend with Indexing" class="md-nav__link">
+      Extend with Indexing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../custom-adjust/" title="Custom Adjustments" class="md-nav__link">
+      Custom Adjustments
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../custom-types/" title="Custom Type" class="md-nav__link">
+      Custom Type
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+    <a href="./" title="Reference" class="md-nav__link md-nav__link--active">
+      Reference
+    </a>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="api-documentation">API documentation</h1>
+<div class="autodoc">
+<div class="autodoc-signature"><em>class </em><code>paramtools.<strong>Parameters</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">initial_state=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">array_first=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">label_to_extend=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">uses_extend_func=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">index_rates=None</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-members">
+<div class="autodoc-signature"><code><strong>adjust</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params_or_path</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">raise_errors=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">extend_adj=True</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Deserialize and validate parameter adjustments. <code>params_or_path</code>
+can be a file path or a <code>dict</code> that has not been fully deserialized.
+The adjusted values replace the current values stored in the
+corresponding parameter attributes. This simply calls a private
+method <code>_adjust</code> to do the upate. Creating this layer on top of
+<code>_adjust</code> makes it easy to subclass Parameters and implement custom
+<code>adjust</code> methods.</p>
+<p>Returns: parsed, validated parameters.</p>
+<p>Raises:
+    marshmallow.exceptions.ValidationError if data is not valid.</p>
+<div class="codehilite"><pre><span></span><code><span class="err">ParameterUpdateException if label values do not match at</span>
+<span class="err">    least one existing value item&#39;s corresponding label values.</span>
+</code></pre></div></div>
+<div class="autodoc-signature"><code><strong>array_first</strong></code></div>
+<div class="autodoc-docstring"><p>bool(x) -&gt; bool</p>
+<p>Returns True when the argument x is true, False otherwise.
+The builtins True and False are the only two instances of the class bool.
+The class bool is a subclass of the class int, and cannot be subclassed.</p></div>
+<div class="autodoc-signature"><code><strong>clear_state</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Reset the state of the Parameters instance.</p></div>
+<div class="autodoc-signature"><code><strong>defaults</strong></code></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>dump</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Dump a representation of this instance to JSON. This makes it
+possible to load this instance's data after sending the data
+across the wire or from another programming language. The
+dumped values will be queried using this instance's state.</p></div>
+<div class="autodoc-signature"><code><strong>errors</strong></code></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>extend</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">label_to_extend=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">label_to_extend_values=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">raise_errors=True</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Extend parameters along label_to_extend.</p>
+<p>Raises:
+    InconsistentLabelsException: Value objects do not have consistent
+        labels.</p></div>
+<div class="autodoc-signature"><code><strong>extend_func</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">extend_vo</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">known_vo</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">extend_grid</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">label_to_extend</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Function for applying indexing rates to parameter values as they
+are extended. Projects may implement their own extend_func by
+overriding this one. Projects need to write their own indexing_rate
+method for returning the correct indexing rate for a given parameter
+and value of label_to_extend (abbreviated to lte_val).</p>
+<p>returns: extended_vo</p></div>
+<div class="autodoc-signature"><code><strong>field_map</strong></code></div>
+<div class="autodoc-docstring"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+    (key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+    d = {}
+    for k, v in iterable:
+        d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+    in the keyword argument list.  For example:  dict(one=1, two=2)</p></div>
+<div class="autodoc-signature"><code><strong>from_array</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">array=None</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Convert NumPy array to a Value object.</p>
+<p>Returns:
+    Value object (shape: [{"value": val, labels:...}])</p>
+<p>Raises:
+    InconsistentLabelsException: Value objects do not have consistent
+        labels.</p></div>
+<div class="autodoc-signature"><code><strong>get_index_rate</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">lte_val</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Return the value of the index_rates dictionary matching the
+label to extend value, <code>lte_val</code>.
+Projects may find it convenient to override this method with their own
+<code>index_rate</code> method.</p></div>
+<div class="autodoc-signature"><code><strong>index_rates</strong></code></div>
+<div class="autodoc-docstring"><p>dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object's
+    (key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+    d = {}
+    for k, v in iterable:
+        d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+    in the keyword argument list.  For example:  dict(one=1, two=2)</p></div>
+<div class="autodoc-signature"><code><strong>items</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Iterate using python dictionary .items() syntax.</p></div>
+<div class="autodoc-signature"><code><strong>keys</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Return parameter names.</p></div>
+<div class="autodoc-signature"><code><strong>label_to_extend</strong></code></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>operators</strong></code></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>read_params</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params_or_path</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>select_eq</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>select_gt</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>set_state</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Sets state for the Parameters instance. The state, label_grid, and
+parameter attributes are all updated with the new state.</p>
+<p>Raises:
+    ValidationError if the labels kwargs contain labels that are not
+        specified in schema.json or if the label values fail the
+        validator set for the corresponding label in schema.json.</p></div>
+<div class="autodoc-signature"><code><strong>specification</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">use_state=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">meta_data=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">include_empty=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">serializable=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Query value(s) of all parameters along labels specified in
+<code>labels</code>.</p>
+<p>Parameters:
+    - use_state: If true, use the instance's state for the select operation.
+    - meta_data: If true, include information like the parameter
+        description and title.
+    - include_empty: If true, include parameters that do not meet the label query.
+    - serializable: If true, return data that is compatible with <code>json.dumps</code>.</p>
+<p>Returns: serialized data of shape
+    {"param_name": [{"value": val, "label0": ..., }], ...}</p></div>
+<div class="autodoc-signature"><code><strong>to_array</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Convert a Value object to an n-labelal array. The list of Value
+objects must span the specified parameter space. The parameter space
+is defined by inspecting the label validators in schema.json
+and the state attribute of the Parameters instance.</p>
+<p>Returns: n-labelal NumPy array.</p>
+<p>Raises:
+    InconsistentLabelsException: Value objects do not have consistent
+        labels.
+    SparseValueObjectsException: Value object does not span the
+        entire space specified by the Order object.
+    ParamToolsError: Parameter is an array type and has labels.
+        This is not supported by ParamTools when using array_first.</p></div>
+<div class="autodoc-signature"><code><strong>to_dict</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Return instance as python dictionary.</p></div>
+<div class="autodoc-signature"><code><strong>uses_extend_func</strong></code></div>
+<div class="autodoc-docstring"><p>bool(x) -&gt; bool</p>
+<p>Returns True when the argument x is true, False otherwise.
+The builtins True and False are the only two instances of the class bool.
+The class bool is a subclass of the class int, and cannot be subclassed.</p></div>
+<div class="autodoc-signature"><code><strong>validation_error</strong></code></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>view_state</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Access the label state of the <code>Parameters</code> instance.</p></div>
+</div>
+</div>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../custom-types/" title="Custom Type" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Custom Type
+              </span>
+            </div>
+          </a>
+        
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs</a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
+      
+      <script>app.initialize({version:"1.1",url:{base:"../.."}})</script>
+      
+    
+  </body>
+</html>
