@@ -330,7 +330,7 @@
 <div class="autodoc-signature"><em>class </em><code>paramtools.<strong>Parameters</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">initial_state=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">array_first=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">label_to_extend=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">uses_extend_func=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">index_rates=None</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"></div>
 <div class="autodoc-members">
-<div class="autodoc-signature"><code><strong>adjust</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params_or_path</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">raise_errors=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">extend_adj=True</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-signature"><code><strong>adjust</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params_or_path</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">ignore_warnings=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">raise_errors=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">extend_adj=True</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Deserialize and validate parameter adjustments. <code>params_or_path</code>
 can be a file path or a <code>dict</code> that has not been fully deserialized.
 The adjusted values replace the current values stored in the
@@ -353,14 +353,14 @@ The class bool is a subclass of the class int, and cannot be subclassed.</p></di
 <div class="autodoc-docstring"><p>Reset the state of the Parameters instance.</p></div>
 <div class="autodoc-signature"><code><strong>defaults</strong></code></div>
 <div class="autodoc-docstring"></div>
-<div class="autodoc-signature"><code><strong>dump</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-signature"><code><strong>dump</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">sort_values=True</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Dump a representation of this instance to JSON. This makes it
 possible to load this instance's data after sending the data
 across the wire or from another programming language. The
 dumped values will be queried using this instance's state.</p></div>
 <div class="autodoc-signature"><code><strong>errors</strong></code></div>
 <div class="autodoc-docstring"></div>
-<div class="autodoc-signature"><code><strong>extend</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">label_to_extend=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">label_to_extend_values=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">raise_errors=True</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-signature"><code><strong>extend</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">label_to_extend=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">label_to_extend_values=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">raise_errors=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">ignore_warnings=False</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Extend parameters along label_to_extend.</p>
 <p>Raises:
     InconsistentLabelsException: Value objects do not have consistent
@@ -372,16 +372,6 @@ overriding this one. Projects need to write their own indexing_rate
 method for returning the correct indexing rate for a given parameter
 and value of label_to_extend (abbreviated to lte_val).</p>
 <p>returns: extended_vo</p></div>
-<div class="autodoc-signature"><code><strong>field_map</strong></code></div>
-<div class="autodoc-docstring"><p>dict() -&gt; new empty dictionary
-dict(mapping) -&gt; new dictionary initialized from a mapping object's
-    (key, value) pairs
-dict(iterable) -&gt; new dictionary initialized as if via:
-    d = {}
-    for k, v in iterable:
-        d[k] = v
-dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
-    in the keyword argument list.  For example:  dict(one=1, two=2)</p></div>
 <div class="autodoc-signature"><code><strong>from_array</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">array=None</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Convert NumPy array to a Value object.</p>
 <p>Returns:
@@ -418,6 +408,8 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
 <div class="autodoc-docstring"></div>
 <div class="autodoc-signature"><code><strong>select_gt</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>select_lt</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"></div>
 <div class="autodoc-signature"><code><strong>set_state</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Sets state for the Parameters instance. The state, label_grid, and
 parameter attributes are all updated with the new state.</p>
@@ -425,7 +417,17 @@ parameter attributes are all updated with the new state.</p>
     ValidationError if the labels kwargs contain labels that are not
         specified in schema.json or if the label values fail the
         validator set for the corresponding label in schema.json.</p></div>
-<div class="autodoc-signature"><code><strong>specification</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">use_state=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">meta_data=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">include_empty=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">serializable=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-signature"><code><strong>sort_values</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">data=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">has_meta_data=True</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Sort value objects for all parameters in data according
+to the order specified in schema. If data is not specified,
+the existing value objects are used. User specified data
+can be:
+    {param: [...value objects]}</p>
+<div class="codehilite"><pre><span></span><code><span class="k">or</span>
+
+<span class="err">{</span><span class="n">param</span><span class="p">:</span> <span class="err">{</span><span class="ss">&quot;value&quot;</span><span class="p">:</span> <span class="p">[...</span><span class="n">value</span> <span class="n">objects</span><span class="p">]</span><span class="err">}}</span>
+</code></pre></div></div>
+<div class="autodoc-signature"><code><strong>specification</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">use_state=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">meta_data=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">include_empty=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">serializable=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">sort_values=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Query value(s) of all parameters along labels specified in
 <code>labels</code>.</p>
 <p>Parameters:
@@ -460,6 +462,8 @@ The class bool is a subclass of the class int, and cannot be subclassed.</p></di
 <div class="autodoc-docstring"></div>
 <div class="autodoc-signature"><code><strong>view_state</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Access the label state of the <code>Parameters</code> instance.</p></div>
+<div class="autodoc-signature"><code><strong>warnings</strong></code></div>
+<div class="autodoc-docstring"></div>
 </div>
 </div>
                 
