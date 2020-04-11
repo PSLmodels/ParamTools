@@ -140,7 +140,6 @@ class TestSchema:
         class TestParams(Parameters):
             defaults = defaults_
 
-        print(TestParams.array_first)
         TestParams()
         assert defaults_["schema"]
 
@@ -624,6 +623,45 @@ class TestAdjust:
         params = TestParams()
         adj = {"int_dense_array_param": [{"label0": "zero", "value": None}]}
         params.adjust(adj)
+        assert len(params._data["int_dense_array_param"]["value"]) == 18
+        assert len(params.int_dense_array_param) == 18
+        assert (
+            len(
+                params.specification(
+                    use_state=False, include_empty=True, label0="zero"
+                )["int_dense_array_param"]
+            )
+            == 0
+        )
+        assert (
+            len(
+                params.specification(
+                    use_state=False, include_empty=True, label0="one"
+                )["int_dense_array_param"]
+            )
+            == 18
+        )
+
+    def test_delete(self, TestParams):
+        params = TestParams()
+        adj = {
+            "min_int_param": [{"label0": "one", "label1": 2, "value": 2}],
+            "str_choice_param": None,
+        }
+        params.delete(adj)
+
+        assert len(params.min_int_param) == 1
+        assert len(params.str_choice_param) == 0
+
+        params = TestParams()
+        adj = {"int_dense_array_param": None}
+        params.delete(adj)
+        assert len(params._data["int_dense_array_param"]["value"]) == 0
+        assert len(params.int_dense_array_param) == 0
+
+        params = TestParams()
+        adj = {"int_dense_array_param": [{"label0": "zero", "value": 2}]}
+        params.delete(adj)
         assert len(params._data["int_dense_array_param"]["value"]) == 18
         assert len(params.int_dense_array_param) == 18
         assert (
