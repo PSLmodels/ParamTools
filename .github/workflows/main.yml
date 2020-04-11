@@ -22,19 +22,16 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Install miniconda
+    - name: Install miniconda and deps
       run: |
           wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
           bash miniconda.sh -b -p $HOME/miniconda
           export PATH="$HOME/miniconda/bin:$PATH"
           conda config --set always_yes yes
           conda update -n base -c defaults conda
-    
-    - name: Install deps
-      run: |
-        conda create -n paramtools-dev
-        conda activate paramtools-dev
-        conda env update -f environment.yml
+          conda create -n paramtools-dev
+          conda activate paramtools-dev
+          conda env update -f environment.yml
 
     # Runs a set of commands using the runners shell
     - name: Run a multi-line script
