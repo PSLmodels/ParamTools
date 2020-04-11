@@ -25,7 +25,15 @@ from paramtools.schema import (
     register_custom_type,
     PartialField,
 )
-from paramtools.select import select, select_eq, select_gt, select_gt_ix
+from paramtools.select import (
+    select,
+    select_eq,
+    select_gt,
+    select_gte,
+    select_gt_ix,
+    select_lt,
+    select_lte,
+)
 from paramtools.typing import ValueObject
 from paramtools.utils import (
     read_json,
@@ -71,7 +79,10 @@ __all__ = [
     "select",
     "select_eq",
     "select_gt",
+    "select_gte",
     "select_gt_ix",
+    "select_lt",
+    "select_lte",
     "select_ne",
     "read_json",
     "get_example_paths",
