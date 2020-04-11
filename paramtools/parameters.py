@@ -12,7 +12,14 @@ from marshmallow import ValidationError as MarshmallowValidationError
 from paramtools import utils
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
-from paramtools.select import select_eq, select_gt_ix, select_gt, select_lt
+from paramtools.select import (
+    select_eq,
+    select_gt_ix,
+    select_gt,
+    select_gte,
+    select_lt,
+    select_lte,
+)
 from paramtools.tree import Tree
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
@@ -729,7 +736,7 @@ class Parameters:
             self._validator_schema.fields[param].schema.fields["value"].np_type
         )
 
-    def select_eq(self, param, exact_match, **labels):
+    def select_eq(self, param, exact_match=True, **labels):
         return select_eq(
             self._data[param]["value"],
             exact_match,
@@ -737,7 +744,7 @@ class Parameters:
             tree=self._search_trees.get(param),
         )
 
-    def select_gt(self, param, exact_match, **labels):
+    def select_gt(self, param, exact_match=True, **labels):
         return select_gt(
             self._data[param]["value"],
             exact_match,
@@ -745,8 +752,24 @@ class Parameters:
             tree=self._search_trees.get(param),
         )
 
-    def select_lt(self, param, exact_match, **labels):
+    def select_gte(self, param, exact_match=True, **labels):
+        return select_gte(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
+
+    def select_lt(self, param, exact_match=True, **labels):
         return select_lt(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
+
+    def select_lte(self, param, exact_match=True, **labels):
+        return select_lte(
             self._data[param]["value"],
             exact_match,
             labels,
