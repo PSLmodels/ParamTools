@@ -33,7 +33,7 @@ jobs:
     - name: Install deps
       run: |
         conda create -n paramtools-dev
-        source activate paramtools-dev
+        conda activate paramtools-dev
         conda env update -f environment.yml
 
     # Runs a set of commands using the runners shell
