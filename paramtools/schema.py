@@ -132,6 +132,13 @@ class ValueObject(fields.Nested):
     Schema for value objects
     """
 
+    def _validate_missing(self, value):
+        """
+        If the value is None, this indicates that all of the values
+        of the corresponding parameter should be deleted.
+        """
+        pass
+
     def _deserialize(
         self, value, attr, data, partial=None, many=False, **kwargs
     ):

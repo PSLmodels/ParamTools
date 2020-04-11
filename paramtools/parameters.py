@@ -170,20 +170,23 @@ class Parameters:
         ignore_warnings=False,
         raise_errors=True,
         extend_adj=True,
+        is_deserialized=False,
     ):
         """
         Internal method for performing adjustments.
         """
-        params = self.read_params(params_or_path)
-
         # Validate user adjustments.
-        parsed_params = {}
-        try:
-            parsed_params = self._validator_schema.load(
-                params, ignore_warnings
-            )
-        except MarshmallowValidationError as ve:
-            self._parse_validation_messages(ve.messages, params)
+        if is_deserialized:
+            parsed_params = params_or_path
+        else:
+            params = self.read_params(params_or_path)
+            parsed_params = {}
+            try:
+                parsed_params = self._validator_schema.load(
+                    params, ignore_warnings
+                )
+            except MarshmallowValidationError as ve:
+                self._parse_validation_messages(ve.messages, params)
 
         if not self._errors:
             if self.label_to_extend is not None and extend_adj:
@@ -266,6 +269,64 @@ class Parameters:
         self._set_state(params=parsed_params.keys())
 
         return parsed_params
+
+    def delete(
+        self,
+        params_or_path,
+        ignore_warnings=False,
+        raise_errors=True,
+        extend_adj=True,
+    ):
+        """
+        Delete value objects in params_or_path.
+
+        Returns: adjustment for deleting parameters.
+
+        Raises:
+            marshmallow.exceptions.ValidationError if data is not valid.
+
+            ParameterUpdateException if label values do not match at
+                least one existing value item's corresponding label values.
+        """
+        return self._delete(
+            params_or_path,
+            ignore_warnings=ignore_warnings,
+            raise_errors=raise_errors,
+            extend_adj=extend_adj,
+        )
+
+    def _delete(
+        self,
+        params_or_path,
+        ignore_warnings=False,
+        raise_errors=True,
+        extend_adj=True,
+    ):
+        """
+        Internal method that sets the 'value' member for all value objects
+        to None. Value objects with 'value' set to None are deleted.
+        """
+        params = self.read_params(params_or_path)
+        # Validate user adjustments.
+        parsed_params = {}
+        try:
+            parsed_params = self._validator_schema.load(
+                params, ignore_warnings=True
+            )
+        except MarshmallowValidationError as ve:
+            self._parse_validation_messages(ve.messages, params)
+
+        to_delete = {}
+        for param, vos in parsed_params.items():
+            to_delete[param] = [dict(vo, **{"value": None}) for vo in vos]
+
+        return self._adjust(
+            to_delete,
+            ignore_warnings=ignore_warnings,
+            raise_errors=raise_errors,
+            extend_adj=extend_adj,
+            is_deserialized=True,
+        )
 
     @property
     def errors(self):
