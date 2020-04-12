@@ -40,9 +40,21 @@ def gt_func(x: Any, y: Iterable) -> bool:
     return all(x > item for item in y)
 
 
+def gte_func(x: Any, y: Iterable) -> bool:
+    return all(x >= item for item in y)
+
+
 def gt_ix_func(cmp_list: list, x: Any, y: Iterable) -> bool:
     x_val = cmp_list.index(x)
     return all(x_val > cmp_list.index(item) for item in y)
+
+
+def lt_func(x, y) -> bool:
+    return all(x < item for item in y)
+
+
+def lte_func(x, y) -> bool:
+    return all(x <= item for item in y)
 
 
 def select_eq(
@@ -63,6 +75,15 @@ def select_gt(
     return select(value_objects, exact_match, gt_func, labels, tree)
 
 
+def select_gte(
+    value_objects: List[ValueObject],
+    exact_match: bool,
+    labels: dict,
+    tree: Tree = None,
+) -> List[ValueObject]:
+    return select(value_objects, exact_match, gte_func, labels, tree)
+
+
 def select_gt_ix(
     value_objects: List[ValueObject],
     exact_match: bool,
@@ -77,3 +98,21 @@ def select_gt_ix(
         labels,
         tree,
     )
+
+
+def select_lt(
+    value_objects: List[ValueObject],
+    exact_match: bool,
+    labels: dict,
+    tree: Tree = None,
+) -> List[ValueObject]:
+    return select(value_objects, exact_match, lt_func, labels, tree)
+
+
+def select_lte(
+    value_objects: List[ValueObject],
+    exact_match: bool,
+    labels: dict,
+    tree: Tree = None,
+) -> List[ValueObject]:
+    return select(value_objects, exact_match, lte_func, labels, tree)

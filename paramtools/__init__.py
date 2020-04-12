@@ -7,6 +7,7 @@ from paramtools.exceptions import (
     InconsistentLabelsException,
     collision_list,
     ParameterNameCollisionException,
+    UnknownTypeException,
 )
 from paramtools.parameters import Parameters
 from paramtools.schema import (
@@ -16,13 +17,23 @@ from paramtools.schema import (
     BaseParamSchema,
     EmptySchema,
     BaseValidatorSchema,
-    CLASS_FIELD_MAP,
+    ALLOWED_TYPES,
     FIELD_MAP,
     VALIDATOR_MAP,
     get_type,
     get_param_schema,
+    register_custom_type,
+    PartialField,
 )
-from paramtools.select import select, select_eq, select_gt, select_gt_ix
+from paramtools.select import (
+    select,
+    select_eq,
+    select_gt,
+    select_gte,
+    select_gt_ix,
+    select_lt,
+    select_lte,
+)
 from paramtools.typing import ValueObject
 from paramtools.utils import (
     read_json,
@@ -39,7 +50,7 @@ from paramtools.utils import (
 
 
 name = "paramtools"
-__version__ = "0.11.0"
+__version__ = "0.13.0"
 
 __all__ = [
     "SchemaFactory",
@@ -50,6 +61,7 @@ __all__ = [
     "InconsistentLabelsException",
     "collision_list",
     "ParameterNameCollisionException",
+    "UnknownTypeException",
     "Parameters",
     "RangeSchema",
     "ChoiceSchema",
@@ -57,15 +69,20 @@ __all__ = [
     "BaseParamSchema",
     "EmptySchema",
     "BaseValidatorSchema",
-    "CLASS_FIELD_MAP",
+    "ALLOWED_TYPES",
     "FIELD_MAP",
     "VALIDATOR_MAP",
     "get_type",
     "get_param_schema",
+    "register_custom_type",
+    "PartialField",
     "select",
     "select_eq",
     "select_gt",
+    "select_gte",
     "select_gt_ix",
+    "select_lt",
+    "select_lte",
     "select_ne",
     "read_json",
     "get_example_paths",

@@ -5,7 +5,7 @@ Define, update, and validate your model's parameters.
 How to use ParamTools
 ---------------------------
 
-Subclass `paramtools.Parameters` and define your model's [parameters](https://paramtools.org/parameters):
+Subclass `paramtools.Parameters` and define your model's [parameters](https://paramtools.dev/parameters):
 
 ```python
 import paramtools
@@ -206,7 +206,7 @@ py.test -v
 
 Documentation
 ----------------
-Full documentation available at [paramtools.org](https://paramtools.org).
+Full documentation available at [paramtools.dev](https://paramtools.dev).
 
 Contributing
 -------------------------

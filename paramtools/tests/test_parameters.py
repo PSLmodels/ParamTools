@@ -16,9 +16,9 @@ from paramtools import (
     InconsistentLabelsException,
     collision_list,
     ParameterNameCollisionException,
+    register_custom_type,
+    Parameters,
 )
-
-from paramtools import Parameters
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -140,7 +140,6 @@ class TestSchema:
         class TestParams(Parameters):
             defaults = defaults_
 
-        print(TestParams.array_first)
         TestParams()
         assert defaults_["schema"]
 
@@ -241,6 +240,53 @@ class TestSchema:
 
         with pytest.raises(ma.ValidationError):
             Params()
+
+    def test_custom_fields(self):
+        class Custom(ma.Schema):
+            hello = ma.fields.Boolean()
+            world = ma.fields.Boolean()
+
+        register_custom_type("custom_type", ma.fields.Nested(Custom()))
+
+        class Params(Parameters):
+            defaults = {
+                "schema": {
+                    "labels": {"custom_label": {"type": "custom_type"}},
+                    "additional_members": {"custom": {"type": "custom_type"}},
+                },
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": [{"custom_label": {"hello": True}, "value": 0}],
+                    "custom": {"hello": True, "world": True},
+                },
+            }
+
+        params = Params()
+        assert params
+        assert params._data["param"]["custom"] == {
+            "hello": True,
+            "world": True,
+        }
+
+        class BadSpec(Parameters):
+            field_map = {"custom_type": ma.fields.Nested(Custom)}
+            defaults = {
+                "schema": {
+                    "additional_members": {"custom": {"type": "custom_type"}}
+                },
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": 0,
+                    "custom": {"hello": 123, "world": "whoops"},
+                },
+            }
+
+        with pytest.raises(ma.ValidationError):
+            BadSpec()
 
 
 class TestAccess:
@@ -577,6 +623,45 @@ class TestAdjust:
         params = TestParams()
         adj = {"int_dense_array_param": [{"label0": "zero", "value": None}]}
         params.adjust(adj)
+        assert len(params._data["int_dense_array_param"]["value"]) == 18
+        assert len(params.int_dense_array_param) == 18
+        assert (
+            len(
+                params.specification(
+                    use_state=False, include_empty=True, label0="zero"
+                )["int_dense_array_param"]
+            )
+            == 0
+        )
+        assert (
+            len(
+                params.specification(
+                    use_state=False, include_empty=True, label0="one"
+                )["int_dense_array_param"]
+            )
+            == 18
+        )
+
+    def test_delete(self, TestParams):
+        params = TestParams()
+        adj = {
+            "min_int_param": [{"label0": "one", "label1": 2, "value": 2}],
+            "str_choice_param": None,
+        }
+        params.delete(adj)
+
+        assert len(params.min_int_param) == 1
+        assert len(params.str_choice_param) == 0
+
+        params = TestParams()
+        adj = {"int_dense_array_param": None}
+        params.delete(adj)
+        assert len(params._data["int_dense_array_param"]["value"]) == 0
+        assert len(params.int_dense_array_param) == 0
+
+        params = TestParams()
+        adj = {"int_dense_array_param": [{"label0": "zero", "value": 2}]}
+        params.delete(adj)
         assert len(params._data["int_dense_array_param"]["value"]) == 18
         assert len(params.int_dense_array_param) == 18
         assert (
@@ -1732,8 +1817,7 @@ class TestExtend:
 
         params = ExtParams()
         params.set_state(d0=list(range(2, 11)))
-        with pytest.warns(UserWarning):
-            params.adjust({"extend_param": [{"d0": 1, "value": -1}]})
+        params.adjust({"extend_param": [{"d0": 1, "value": -1}]})
         assert params.extend_param.tolist() == []
         params.array_first = False
         params.clear_state()
@@ -1860,3 +1944,39 @@ class TestIndex:
                     "indexed_param": [{"d0": 3, "value": 8}],
                 }
             )
+
+
+class TestSelect:
+    def test_select_lt(self):
+        class Params(Parameters):
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "d0": {"type": "int"},
+                        "d1": {
+                            "type": "str",
+                            "validators": {
+                                "choice": {"choices": ["hello", "world"]}
+                            },
+                        },
+                    }
+                },
+                "param": {
+                    "title": "",
+                    "description": "",
+                    "type": "int",
+                    "value": [
+                        {"d0": 1, "d1": "hello", "value": 1},
+                        {"d0": 1, "d1": "world", "value": 1},
+                        {"d0": 2, "d1": "hello", "value": 1},
+                        {"d0": 3, "d1": "world", "value": 1},
+                    ],
+                },
+            }
+
+        params = Params()
+        assert list(params.select_lt("param", False, d0=3)) == [
+            {"d0": 1, "d1": "hello", "value": 1},
+            {"d0": 1, "d1": "world", "value": 1},
+            {"d0": 2, "d1": "hello", "value": 1},
+        ]

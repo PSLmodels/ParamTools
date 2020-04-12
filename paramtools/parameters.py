@@ -2,7 +2,6 @@ import copy
 import os
 import json
 import itertools
-import warnings
 from collections import OrderedDict, defaultdict
 from functools import partial, reduce
 from typing import Optional, Dict, List, Any
@@ -13,7 +12,14 @@ from marshmallow import ValidationError as MarshmallowValidationError
 from paramtools import utils
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
-from paramtools.select import select_eq, select_gt_ix, select_gt
+from paramtools.select import (
+    select_eq,
+    select_gt_ix,
+    select_gt,
+    select_gte,
+    select_lt,
+    select_lte,
+)
 from paramtools.tree import Tree
 from paramtools.typing import ValueObject
 from paramtools.exceptions import (
@@ -28,7 +34,6 @@ from paramtools.exceptions import (
 
 class Parameters:
     defaults = None
-    field_map: Dict = {}
     array_first: bool = False
     label_to_extend: str = None
     uses_extend_func: bool = False
@@ -42,7 +47,7 @@ class Parameters:
         uses_extend_func: bool = False,
         index_rates: Optional[dict] = None,
     ):
-        schemafactory = SchemaFactory(self.defaults, self.field_map)
+        schemafactory = SchemaFactory(self.defaults)
         (
             self._defaults_schema,
             self._validator_schema,
@@ -50,9 +55,12 @@ class Parameters:
             self._data,
         ) = schemafactory.schemas()
         self.label_validators = schemafactory.label_validators
-        self._stateless_label_grid = OrderedDict(
-            [(name, v.grid()) for name, v in self.label_validators.items()]
-        )
+        self._stateless_label_grid = OrderedDict()
+        for name, v in self.label_validators.items():
+            if hasattr(v, "grid"):
+                self._stateless_label_grid[name] = v.grid()
+            else:
+                self._stateless_label_grid[name] = []
         self.label_grid = copy.deepcopy(self._stateless_label_grid)
         self._validator_schema.context["spec"] = self
         self._warnings = {}
@@ -169,20 +177,23 @@ class Parameters:
         ignore_warnings=False,
         raise_errors=True,
         extend_adj=True,
+        is_deserialized=False,
     ):
         """
         Internal method for performing adjustments.
         """
-        params = self.read_params(params_or_path)
-
         # Validate user adjustments.
-        parsed_params = {}
-        try:
-            parsed_params = self._validator_schema.load(
-                params, ignore_warnings
-            )
-        except MarshmallowValidationError as ve:
-            self._parse_validation_messages(ve.messages, params)
+        if is_deserialized:
+            parsed_params = params_or_path
+        else:
+            params = self.read_params(params_or_path)
+            parsed_params = {}
+            try:
+                parsed_params = self._validator_schema.load(
+                    params, ignore_warnings
+                )
+            except MarshmallowValidationError as ve:
+                self._parse_validation_messages(ve.messages, params)
 
         if not self._errors:
             if self.label_to_extend is not None and extend_adj:
@@ -194,17 +205,6 @@ class Parameters:
                         vos, self.label_to_extend, extend_grid
                     ):
                         if self.label_to_extend in vo:
-                            if (
-                                vo[self.label_to_extend]
-                                not in self.label_grid[self.label_to_extend]
-                            ):
-                                msg = (
-                                    f"{param}[{self.label_to_extend}={vo[self.label_to_extend]}] "
-                                    f"is not active in the current state: "
-                                    f"{self.label_to_extend}= "
-                                    f"{self.label_grid[self.label_to_extend]}."
-                                )
-                                warnings.warn(msg)
                             gt = select_gt_ix(
                                 self._data[param]["value"],
                                 True,
@@ -276,6 +276,64 @@ class Parameters:
         self._set_state(params=parsed_params.keys())
 
         return parsed_params
+
+    def delete(
+        self,
+        params_or_path,
+        ignore_warnings=False,
+        raise_errors=True,
+        extend_adj=True,
+    ):
+        """
+        Delete value objects in params_or_path.
+
+        Returns: adjustment for deleting parameters.
+
+        Raises:
+            marshmallow.exceptions.ValidationError if data is not valid.
+
+            ParameterUpdateException if label values do not match at
+                least one existing value item's corresponding label values.
+        """
+        return self._delete(
+            params_or_path,
+            ignore_warnings=ignore_warnings,
+            raise_errors=raise_errors,
+            extend_adj=extend_adj,
+        )
+
+    def _delete(
+        self,
+        params_or_path,
+        ignore_warnings=False,
+        raise_errors=True,
+        extend_adj=True,
+    ):
+        """
+        Internal method that sets the 'value' member for all value objects
+        to None. Value objects with 'value' set to None are deleted.
+        """
+        params = self.read_params(params_or_path)
+        # Validate user adjustments.
+        parsed_params = {}
+        try:
+            parsed_params = self._validator_schema.load(
+                params, ignore_warnings=True
+            )
+        except MarshmallowValidationError as ve:
+            self._parse_validation_messages(ve.messages, params)
+
+        to_delete = {}
+        for param, vos in parsed_params.items():
+            to_delete[param] = [dict(vo, **{"value": None}) for vo in vos]
+
+        return self._adjust(
+            to_delete,
+            ignore_warnings=ignore_warnings,
+            raise_errors=raise_errors,
+            extend_adj=extend_adj,
+            is_deserialized=True,
+        )
 
     @property
     def errors(self):
@@ -739,7 +797,7 @@ class Parameters:
             self._validator_schema.fields[param].schema.fields["value"].np_type
         )
 
-    def select_eq(self, param, exact_match, **labels):
+    def select_eq(self, param, exact_match=True, **labels):
         return select_eq(
             self._data[param]["value"],
             exact_match,
@@ -747,8 +805,32 @@ class Parameters:
             tree=self._search_trees.get(param),
         )
 
-    def select_gt(self, param, exact_match, **labels):
+    def select_gt(self, param, exact_match=True, **labels):
         return select_gt(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
+
+    def select_gte(self, param, exact_match=True, **labels):
+        return select_gte(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
+
+    def select_lt(self, param, exact_match=True, **labels):
+        return select_lt(
+            self._data[param]["value"],
+            exact_match,
+            labels,
+            tree=self._search_trees.get(param),
+        )
+
+    def select_lte(self, param, exact_match=True, **labels):
+        return select_lte(
             self._data[param]["value"],
             exact_match,
             labels,

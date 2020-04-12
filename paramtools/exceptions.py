@@ -16,6 +16,10 @@ class SparseValueObjectsException(ParamToolsError):
     pass
 
 
+class UnknownTypeException(ParamToolsError):
+    pass
+
+
 class ValidationError(ParamToolsError):
     def __init__(self, messages, labels):
         self.messages = messages
@@ -37,7 +41,11 @@ collision_list = [
     "_warnings",
     "select_eq",
     "select_gt",
+    "select_gte",
+    "select_lt",
+    "select_lte",
     "_adjust",
+    "_delete",
     "_numpy_type",
     "_parse_errors",
     "_resolve_order",
@@ -51,6 +59,7 @@ collision_list = [
     "_defaults_schema",
     "operators",
     "adjust",
+    "delete",
     "array_first",
     "clear_state",
     "defaults",
@@ -61,7 +70,6 @@ collision_list = [
     "label_validators",
     "errors",
     "warnings",
-    "field_map",
     "from_array",
     "read_params",
     "set_state",
