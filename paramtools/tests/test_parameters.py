@@ -733,6 +733,27 @@ class TestValidationMessages:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adj)
 
+    def test_label_errors(self, TestParams):
+        params = TestParams()
+
+        params.adjust(
+            {"min_int_param": [{"value": 2, "label1": 6}]}, raise_errors=False
+        )
+
+        assert params.errors["min_int_param"] == [
+            "Input 6 must be less than 5."
+        ]
+
+        params = TestParams()
+
+        params.adjust(
+            {"min_int_param": [{"value": 2, "label1": -1}]}, raise_errors=False
+        )
+
+        assert params.errors["min_int_param"] == [
+            "Input -1 must be greater than 0."
+        ]
+
     def test_errors_choice_param(self, TestParams):
         params = TestParams()
         adjustment = {"str_choice_param": [{"value": "not a valid choice"}]}
