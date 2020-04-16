@@ -856,6 +856,20 @@ class TestValidationMessages:
         }
         assert excinfo.value.labels["errors"] == exp_labels
 
+        params = TestParams()
+        adjustment = {"float_param": [2.5]}
+
+        params.adjust(adjustment, raise_errors=False)
+        exp = {"float_param": ["Not a valid number: [2.5]."]}
+        assert params.errors == exp
+
+        params = TestParams()
+        adjustment = {"bool_param": [False]}
+
+        params.adjust(adjustment, raise_errors=False)
+        exp = {"bool_param": ["Not a valid boolean: [False]."]}
+        assert params.errors == exp
+
     def test_range_validation_on_list_param(self, TestParams):
         params = TestParams()
         adj = {
