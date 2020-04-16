@@ -353,6 +353,14 @@ The class bool is a subclass of the class int, and cannot be subclassed.</p></di
 <div class="autodoc-docstring"><p>Reset the state of the Parameters instance.</p></div>
 <div class="autodoc-signature"><code><strong>defaults</strong></code></div>
 <div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>delete</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params_or_path</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">ignore_warnings=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">raise_errors=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">extend_adj=True</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Delete value objects in params_or_path.</p>
+<p>Returns: adjustment for deleting parameters.</p>
+<p>Raises:
+    marshmallow.exceptions.ValidationError if data is not valid.</p>
+<div class="codehilite"><pre><span></span><code><span class="err">ParameterUpdateException if label values do not match at</span>
+<span class="err">    least one existing value item&#39;s corresponding label values.</span>
+</code></pre></div></div>
 <div class="autodoc-signature"><code><strong>dump</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">sort_values=True</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Dump a representation of this instance to JSON. This makes it
 possible to load this instance's data after sending the data
@@ -404,11 +412,15 @@ dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
 <div class="autodoc-docstring"></div>
 <div class="autodoc-signature"><code><strong>read_params</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params_or_path</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"></div>
-<div class="autodoc-signature"><code><strong>select_eq</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-signature"><code><strong>select_eq</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"></div>
-<div class="autodoc-signature"><code><strong>select_gt</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-signature"><code><strong>select_gt</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"></div>
-<div class="autodoc-signature"><code><strong>select_lt</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-signature"><code><strong>select_gte</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>select_lt</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"></div>
+<div class="autodoc-signature"><code><strong>select_lte</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">exact_match=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"></div>
 <div class="autodoc-signature"><code><strong>set_state</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Sets state for the Parameters instance. The state, label_grid, and
