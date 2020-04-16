@@ -140,6 +140,8 @@ class Range(ma.validate.Range):
     """
 
     error = ""
+    message_min = "Input {input} must be {min_op} {min}."
+    message_max = "Input {input} must be {max_op} {max}."
 
     def __init__(
         self,
@@ -191,7 +193,7 @@ class Range(ma.validate.Range):
                         (self.error_min or self.message_min).format(
                             input=value["value"],
                             min=min_vo["value"],
-                            min_op="less than",
+                            min_op="greater than",
                             labels=utils.make_label_str(value),
                             oth_labels=utils.make_label_str(min_vo),
                         )
@@ -203,7 +205,7 @@ class Range(ma.validate.Range):
                         (self.error_max or self.message_max).format(
                             input=value["value"],
                             max=max_vo["value"],
-                            max_op="greater than",
+                            max_op="less than",
                             labels=utils.make_label_str(value),
                             oth_labels=utils.make_label_str(max_vo),
                         )
@@ -301,7 +303,7 @@ class OneOf(ma.validate.OneOf):
     Implements "choice" :ref:`spec:Validator object`.
     """
 
-    default_message = "Input {input} must be one of {choices}"
+    default_message = "Input {input} must be one of {choices}."
 
     def __init__(self, *args, level=None, **kwargs):
         self.level = level or "error"
