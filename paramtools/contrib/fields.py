@@ -19,7 +19,7 @@ class Float64(NumPySerializeMixin, marshmallow_fields.Number):
     num_type = np_type = np.float64
 
 
-class Int64(NumPySerializeMixin, marshmallow_fields.Number):
+class Int64(NumPySerializeMixin, marshmallow_fields.Integer):
     """
     Implements "int" :ref:`spec:Type property` for parameter values.
     Defined as `numpy.int64 <https://docs.scipy.org/doc/numpy-1.15.0/user/basics.types.html>`__ type

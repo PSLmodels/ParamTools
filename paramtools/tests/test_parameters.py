@@ -715,13 +715,13 @@ class TestValidationMessages:
         with pytest.raises(ValidationError) as excinfo:
             params.adjust(adj)
 
-        exp_user_message = {"min_int_param": ["Not a valid number: abc."]}
+        exp_user_message = {"min_int_param": ["Not a valid integer: abc."]}
         assert json.loads(excinfo.value.args[0]) == {
             "errors": exp_user_message
         }
 
         exp_internal_message = {
-            "min_int_param": [["Not a valid number: abc."]]
+            "min_int_param": [["Not a valid integer: abc."]]
         }
         assert excinfo.value.messages["errors"] == exp_internal_message
 
@@ -789,13 +789,11 @@ class TestValidationMessages:
     def test_errors_int_param(self, TestParams):
         params = TestParams()
         adjustment = {
-            "min_int_param": [
-                {"label0": "zero", "label1": 1, "value": "not a number"}
-            ]
+            "min_int_param": [{"label0": "zero", "label1": 1, "value": 2.5}]
         }
 
         params.adjust(adjustment, raise_errors=False)
-        exp = {"min_int_param": ["Not a valid number: not a number."]}
+        exp = {"min_int_param": ["Not a valid integer: 2.5."]}
         assert params.errors == exp
 
     def test_errors_multiple_params(self, TestParams):
@@ -813,8 +811,8 @@ class TestValidationMessages:
         params.adjust(adjustment, raise_errors=False)
         exp = {
             "min_int_param": [
-                "Not a valid number: not a number.",
-                "Not a valid number: still not a number.",
+                "Not a valid integer: not a number.",
+                "Not a valid integer: still not a number.",
             ],
             "date_param": ["Not a valid date: not a date."],
         }
