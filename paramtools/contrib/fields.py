@@ -8,6 +8,12 @@ class NumPySerializeMixin:
     def _serialize(self, value, attr, obj, **kwargs):
         return value.tolist()
 
+    def _validated(self, value):
+        value = super()._validated(value)
+        if value.shape != tuple():
+            raise self.make_error("invalid", input=value)
+        return value
+
 
 class Float64(NumPySerializeMixin, marshmallow_fields.Number):
     """

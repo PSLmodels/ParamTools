@@ -99,6 +99,22 @@
       }
     }
   },
+  "float_param": {
+    "title": "Float Reference Param",
+    "description": "Example for a float param.",
+    "opt0": "an option",
+    "type": "float",
+    "value": 2.0,
+    "validators": {}
+  },
+  "bool_param": {
+    "title": "Boolean Reference Param",
+    "description": "Example for a bool param.",
+    "opt0": "an option",
+    "type": "bool",
+    "value": true,
+    "validators": {}
+  },
   "min_int_param": {
     "title": "min integer parameter",
     "description": "Serves as minimum reference variable.",
