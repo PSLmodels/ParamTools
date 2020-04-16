@@ -562,6 +562,7 @@ ParamToolsSchema = make_schema(allowed_types=ALLOWED_TYPES)
 
 
 INVALID_NUMBER = {"invalid": "Not a valid number: {input}."}
+INVALID_INTEGER = {"invalid": "Not a valid integer: {input}."}
 INVALID_BOOLEAN = {"invalid": "Not a valid boolean: {input}."}
 INVALID_DATE = {"invalid": "Not a valid date: {input}."}
 
@@ -580,7 +581,7 @@ FIELD_MAP = {
     "str": PartialField(contrib.fields.Str, dict(allow_none=True)),
     "int": PartialField(
         contrib.fields.Integer,
-        dict(allow_none=True, error_messages=INVALID_NUMBER),
+        dict(allow_none=True, error_messages=INVALID_INTEGER),
     ),
     "float": PartialField(
         contrib.fields.Float,
@@ -605,7 +606,7 @@ VALIDATOR_MAP = {
 def get_type(data):
     numeric_types = {
         "int": contrib.fields.Int64(
-            allow_none=True, error_messages=INVALID_NUMBER
+            allow_none=True, error_messages=INVALID_INTEGER, strict=True
         ),
         "bool": contrib.fields.Bool_(
             allow_none=True, error_messages=INVALID_BOOLEAN
