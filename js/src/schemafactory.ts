@@ -62,7 +62,7 @@ interface ParamSchemaObject {
 }
 
 interface AdditionalMembers {
-  [name: string]: { type: AllowedTypes; number_dims: Number; };
+  [name: string]: { type: AllowedTypes; number_dims: Number };
 }
 
 export interface Labels {
@@ -85,7 +85,7 @@ export interface Schema {
 }
 
 export interface Params {
-  [paramName: string]: Param;
+  [paramName: string]: Param | Schema;
 }
 
 export interface Adjustment {
@@ -235,14 +235,14 @@ const readDefaults = (defaults: Defaults): Params => {
 };
 
 const readSchema = (schema: Schema) => {
-  let optionalFields: { [field: string]: yup.MixedSchema<any>; } = {};
+  let optionalFields: { [field: string]: yup.MixedSchema<any> } = {};
   for (const [name, data] of Object.entries(schema.additional_members || {})) {
     let fieldType = inspectType(data.type);
     optionalFields[name] = fieldType;
   }
   const ParamSchema: ParamSchemaObject = { ...BaseParamSchema, ...optionalFields };
 
-  let labelFields: { [field: string]: yup.MixedSchema<any>; } = {};
+  let labelFields: { [field: string]: yup.MixedSchema<any> } = {};
   for (const [label, data] of Object.entries(schema.labels || {})) {
     labelFields[label] = getField(data);
   }
@@ -253,7 +253,7 @@ export class SchemaFactory {
   defaults: Params;
   schema: Schema;
   ParamSchema: ParamSchemaObject;
-  labelFields: { [label: string]: yup.Schema<any>; };
+  labelFields: { [label: string]: yup.Schema<any> };
 
   constructor(defaults: Defaults) {
     defaults = readDefaults(defaults);
@@ -273,10 +273,10 @@ export class SchemaFactory {
   }
 
   schemas() {
-    let defaultsschema: { [param: string]: yup.ObjectSchema<Param>; } = {};
-    let validatorschema: { [param: string]: yup.ArraySchema<any>; } = {};
-    for (const [param, param_data] of Object.entries(this.defaults)) {
-      const field = getField(param_data);
+    let defaultsschema: { [param: string]: yup.ObjectSchema<Param> } = {};
+    let validatorschema: { [param: string]: yup.ArraySchema<any> } = {};
+    for (let [param, param_data] of Object.entries(this.defaults)) {
+      const field = getField(param_data as Param);
       const valueObjectField = yup.array().of(
         yup.object().shape({
           ...this.labelFields,
