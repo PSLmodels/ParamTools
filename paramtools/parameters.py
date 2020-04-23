@@ -220,7 +220,12 @@ class Parameters:
                                 gt,
                                 True,
                                 utils.filter_labels(
-                                    vo, drop=[self.label_to_extend, "value"]
+                                    vo,
+                                    drop=[
+                                        self.label_to_extend,
+                                        "value",
+                                        "pt_extend",
+                                    ],
                                 ),
                             )
                             to_delete[param] += [
@@ -604,7 +609,9 @@ class Parameters:
                 eq = select_eq(
                     gt,
                     False,
-                    utils.filter_labels(vo, drop=["value", label_to_extend]),
+                    utils.filter_labels(
+                        vo, drop=["value", label_to_extend, "pt_extend"]
+                    ),
                 )
                 extended_vos.update(map(utils.hashable_value_object, eq))
                 eq += [vo]
@@ -655,7 +662,7 @@ class Parameters:
                             utils.hashable_value_object(value_object)
                         )
                         extended[val].append(ext)
-                        adjustment[param].append(ext)
+                        adjustment[param].append(dict(ext, pt_extend=True))
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
         self._adjust(

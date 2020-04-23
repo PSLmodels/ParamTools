@@ -60,7 +60,11 @@ class SchemaFactory:
         validator_dict = {}
         for k, v in self.defaults.items():
             fieldtype = get_type(v)
-            classattrs = {"value": fieldtype, **self.label_validators}
+            classattrs = {
+                "value": fieldtype,
+                "pt_extend": fields.Boolean(required=False, load_only=True),
+                **self.label_validators,
+            }
 
             # TODO: what about case where number_dims > 0
             # if not isinstance(v["value"], list):

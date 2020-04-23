@@ -82,9 +82,9 @@ def consistent_labels(value_items: List[ValueObject]):
     """
     if not value_items:
         return set([])
-    used = set(k for k in value_items[0] if k != "value")
+    used = set(k for k in value_items[0] if k not in ("value", "pt_extend"))
     for vo in value_items:
-        if used != set(k for k in vo if k != "value"):
+        if used != set(k for k in vo if k not in ("value", "pt_extend")):
             return None
     return used
 
@@ -102,7 +102,11 @@ def hashable_value_object(vo: ValueObject) -> tuple:
     Helper function convertinga value object into a format
     that can be stored in a set.
     """
-    return tuple(sorted(vo.items()))
+    return tuple(
+        (label, value)
+        for label, value in sorted(vo.items())
+        if label not in ("pt_extend",)
+    )
 
 
 def filter_labels(vo: ValueObject, drop=None, keep=None) -> ValueObject:
@@ -124,7 +128,11 @@ def make_label_str(vo: ValueObject) -> str:
     Create string from labels. This is used to create error messages.
     """
     lab_str = ", ".join(
-        [f"{lab}={vo[lab]}" for lab in sorted(vo) if lab != "value"]
+        [
+            f"{lab}={vo[lab]}"
+            for lab in sorted(vo)
+            if lab not in ("value", "pt_extend")
+        ]
     )
     if lab_str:
         return f"[{lab_str}]"
