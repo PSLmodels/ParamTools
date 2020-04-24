@@ -166,5 +166,4 @@ def test_select(vos, label_grid):
     res = tree.select({"d0": 1, "d1": "world"}, eq_func)
     assert res == [{"d0": 1, "d1": "world", "value": 1}]
 
-    with pytest.raises(KeyError):
-        tree.select({"d2": 1}, eq_func, exact_match=True)
+    assert tree.select({"d2": 1}, eq_func, strict=True) == []

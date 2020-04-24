@@ -201,11 +201,11 @@ class Tree:
         return self.vos
 
     def select(
-        self, labels: dict, cmp_func: CmpFunc, exact_match: bool = False
+        self, labels: dict, cmp_func: CmpFunc, strict: bool = False
     ) -> List[ValueObject]:
         """
         Select all value objects from self.vos according to the label query,
-        labels, and the comparison function, cmp_func. exact_match dictates
+        labels, and the comparison function, cmp_func. strict dictates
         whether vos missing a label in the query are eligble for inclusion
         in the select results.
 
@@ -219,8 +219,8 @@ class Tree:
             List of value objects satisfying the query.
 
         Raises:
-            KeyError if exact_match is true and a label is used in the query
-                that is not present in one or more of the value objects.
+            KeyError if strict is true and a label is used in the query
+                that is not present in all of the value objects.
         """
         if not labels:
             return self.vos
@@ -241,10 +241,6 @@ class Tree:
                         label_search_hits |= ixs
                 if search_hits:
                     search_hits &= label_search_hits
-                else:
+                elif not strict or label_search_hits:
                     search_hits |= label_search_hits
-            elif exact_match:
-                raise KeyError(
-                    f"Label {label} is not used for this parameter."
-                )
         return [self.vos[ix] for ix in search_hits]

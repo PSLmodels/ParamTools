@@ -14,6 +14,7 @@ from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
 from paramtools.select import (
     select_eq,
+    select_ne,
     select_gt_ix,
     select_gt,
     select_gte,
@@ -146,15 +147,23 @@ class Parameters:
         ignore_warnings=False,
         raise_errors=True,
         extend_adj=True,
+        clobber=True,
     ):
         """
         Deserialize and validate parameter adjustments. `params_or_path`
         can be a file path or a `dict` that has not been fully deserialized.
         The adjusted values replace the current values stored in the
-        corresponding parameter attributes. This simply calls a private
-        method `_adjust` to do the upate. Creating this layer on top of
-        `_adjust` makes it easy to subclass Parameters and implement custom
-        `adjust` methods.
+        corresponding parameter attributes.
+
+        If `clobber` is `True` and extend mode is on, then all future values
+        for a given parameter be replaced by the values in the adjustment.
+        If `clobber` is `False` and extend mode is on, then user-defined values
+        will not be replaced by values in this adjustment. Only values that
+        were added automatically via the extend method will be updated.
+
+        This simply calls a private method `_adjust` to do the upate. Creating
+        this layer on top of `_adjust` makes it easy to subclass Parameters and
+        implement custom `adjust` methods.
 
         Returns: parsed, validated parameters.
 
@@ -169,6 +178,7 @@ class Parameters:
             ignore_warnings=ignore_warnings,
             raise_errors=raise_errors,
             extend_adj=extend_adj,
+            clobber=clobber,
         )
 
     def _adjust(
@@ -178,6 +188,7 @@ class Parameters:
         raise_errors=True,
         extend_adj=True,
         is_deserialized=False,
+        clobber=True,
     ):
         """
         Internal method for performing adjustments.
@@ -204,22 +215,30 @@ class Parameters:
                     for vo in utils.grid_sort(
                         vos, self.label_to_extend, extend_grid
                     ):
+
                         if self.label_to_extend in vo:
+                            query_args = {
+                                self.label_to_extend: vo[self.label_to_extend]
+                            }
+                            if clobber:
+                                queryset = self._data[param]["value"]
+                                tree = self._search_trees.get(param)
+                            else:
+                                queryset = self.select_eq(
+                                    param, strict=True, pt_extend=True
+                                )
+                                tree = None
                             gt = select_gt_ix(
-                                self._data[param]["value"],
-                                True,
-                                {
-                                    self.label_to_extend: vo[
-                                        self.label_to_extend
-                                    ]
-                                },
-                                extend_grid,
-                                tree=self._search_trees.get(param),
+                                queryset,
+                                strict=False,
+                                labels=query_args,
+                                cmp_list=extend_grid,
+                                tree=tree,
                             )
-                            eq = select_eq(
+                            to_delete[param] += select_eq(
                                 gt,
-                                True,
-                                utils.filter_labels(
+                                strict=False,
+                                labels=utils.filter_labels(
                                     vo,
                                     drop=[
                                         self.label_to_extend,
@@ -228,9 +247,6 @@ class Parameters:
                                     ],
                                 ),
                             )
-                            to_delete[param] += [
-                                dict(td, **{"value": None}) for td in eq
-                            ]
                     # make copy of value objects since they
                     # are about to be modified
                     backup[param] = copy.deepcopy(self._data[param]["value"])
@@ -239,7 +255,7 @@ class Parameters:
                     self.array_first = False
 
                     # delete params that will be overwritten out by extend.
-                    self._adjust(
+                    self.delete(
                         to_delete,
                         extend_adj=False,
                         raise_errors=True,
@@ -331,14 +347,25 @@ class Parameters:
         to_delete = {}
         for param, vos in parsed_params.items():
             to_delete[param] = [dict(vo, **{"value": None}) for vo in vos]
+            self._update_param(param, to_delete[param])
 
-        return self._adjust(
-            to_delete,
-            ignore_warnings=ignore_warnings,
-            raise_errors=raise_errors,
-            extend_adj=extend_adj,
-            is_deserialized=True,
-        )
+        if self.label_to_extend is not None and extend_adj:
+            self.extend()
+
+        self._validator_schema.context["spec"] = self
+
+        has_errors = bool(self._errors.get("messages"))
+        has_warnings = bool(self._warnings.get("messages"))
+        # throw error if raise_errors is True or ignore_warnings is False
+        if (raise_errors and has_errors) or (
+            not ignore_warnings and has_warnings
+        ):
+            raise self.validation_error
+
+        # Update attrs for params that were adjusted.
+        self._set_state(params=to_delete.keys())
+
+        return to_delete
 
     @property
     def errors(self):
@@ -636,14 +663,14 @@ class Parameters:
                             key=lambda val: extend_grid.index(val),
                         )
                         value_objects = select_eq(
-                            eq, True, {label_to_extend: first_defined_value}
+                            eq, False, {label_to_extend: first_defined_value}
                         )
                     elif extend_grid[eg_ix - 1] in extended:
                         value_objects = extended.pop(extend_grid[eg_ix - 1])
                     else:
                         prev_defined_value = extend_grid[eg_ix - 1]
                         value_objects = select_eq(
-                            eq, True, {label_to_extend: prev_defined_value}
+                            eq, False, {label_to_extend: prev_defined_value}
                         )
                     # In practice, value_objects has length one.
                     # Theoretically, there could be multiple if the inital value
@@ -804,42 +831,50 @@ class Parameters:
             self._validator_schema.fields[param].schema.fields["value"].np_type
         )
 
-    def select_eq(self, param, exact_match=True, **labels):
+    def select_eq(self, param, strict=True, **labels):
         return select_eq(
             self._data[param]["value"],
-            exact_match,
+            strict,
             labels,
             tree=self._search_trees.get(param),
         )
 
-    def select_gt(self, param, exact_match=True, **labels):
+    def select_ne(self, param, strict=True, **labels):
+        return select_ne(
+            self._data[param]["value"],
+            strict,
+            labels,
+            tree=self._search_trees.get(param),
+        )
+
+    def select_gt(self, param, strict=True, **labels):
         return select_gt(
             self._data[param]["value"],
-            exact_match,
+            strict,
             labels,
             tree=self._search_trees.get(param),
         )
 
-    def select_gte(self, param, exact_match=True, **labels):
+    def select_gte(self, param, strict=True, **labels):
         return select_gte(
             self._data[param]["value"],
-            exact_match,
+            strict,
             labels,
             tree=self._search_trees.get(param),
         )
 
-    def select_lt(self, param, exact_match=True, **labels):
+    def select_lt(self, param, strict=True, **labels):
         return select_lt(
             self._data[param]["value"],
-            exact_match,
+            strict,
             labels,
             tree=self._search_trees.get(param),
         )
 
-    def select_lte(self, param, exact_match=True, **labels):
+    def select_lte(self, param, strict=True, **labels):
         return select_lte(
             self._data[param]["value"],
-            exact_match,
+            strict,
             labels,
             tree=self._search_trees.get(param),
         )
