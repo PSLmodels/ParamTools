@@ -217,10 +217,6 @@ class Tree:
 
         Returns:
             List of value objects satisfying the query.
-
-        Raises:
-            KeyError if strict is true and a label is used in the query
-                that is not present in all of the value objects.
         """
         if not labels:
             return self.vos
