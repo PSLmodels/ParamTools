@@ -224,6 +224,7 @@ class Tree:
         self.init()
         if not self.tree:
             return self.vos
+        all_ixs = set(range(len(self.vos)))
         for label, _label_value in labels.items():
             if not isinstance(_label_value, list):
                 label_value = (_label_value,)
@@ -239,4 +240,8 @@ class Tree:
                     search_hits &= label_search_hits
                 elif not strict or label_search_hits:
                     search_hits |= label_search_hits
+                if not strict:
+                    search_hits |= all_ixs - set.union(
+                        *self.tree[label].values()
+                    )
         return [self.vos[ix] for ix in search_hits]

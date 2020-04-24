@@ -45,6 +45,13 @@ def test_select_eq_strict(vos):
         {"d0": 2, "d1": "hello", "value": 1},
     ]
 
+    vos[2]["_auto"] = True
+    vos[3]["_auto"] = True
+    assert list(select_eq(vos, False, labels={"_auto": False})) == [
+        {"d0": 1, "d1": "hello", "value": 1},
+        {"d0": 1, "d1": "world", "value": 1},
+    ]
+
 
 def test_select_ne(vos):
     assert list(select_ne(vos, False, labels={"d0": 1, "d1": "hello"})) == [
