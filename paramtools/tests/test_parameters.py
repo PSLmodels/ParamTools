@@ -1569,9 +1569,9 @@ class TestExtend:
         assert params.from_array("int_dense_array_param") == exp
         for val in params._data["int_dense_array_param"]["value"]:
             if val["label1"] in (2, 4, 5):
-                assert val["pt_extend"] is True
+                assert val["_auto"] is True
             else:
-                assert "pt_extend" not in val
+                assert "_auto" not in val
 
         assert params.dump()["int_dense_array_param"]["value"] == exp
 
@@ -1630,9 +1630,9 @@ class TestExtend:
 
         for val in params._data["int_dense_array_param"]["value"]:
             if val["label0"] == "zero":
-                assert val["pt_extend"] is True
+                assert val["_auto"] is True
             else:
-                assert "pt_extend" not in val
+                assert "_auto" not in val
 
     def test_extend_w_array(self, extend_ex_path):
         class ExtParams(Parameters):
@@ -1682,9 +1682,9 @@ class TestExtend:
         for val in params._data["extend_param"]["value"]:
             # 0, 1 extended at the beginning.
             if val["d0"] > 3 or val["d0"] in (0, 1):
-                assert val["pt_extend"] is True
+                assert val["_auto"] is True
             else:
-                assert "pt_extend" not in val
+                assert "_auto" not in val
 
         params = ExtParams()
         params.adjust(
@@ -2009,10 +2009,10 @@ class TestExtend:
         assert sorted(params.extend_param, key=lambda vo: vo["d0"]) == [
             {"d0": 2, "d1": "c1", "value": 1},
             {"d0": 2, "d1": "c2", "value": 2},
-            {"d0": 4, "d1": "c1", "value": 1, "pt_extend": True},
-            {"d0": 4, "d1": "c2", "value": 2, "pt_extend": True},
-            {"d0": 7, "d1": "c1", "value": 1, "pt_extend": True},
-            {"d0": 7, "d1": "c2", "value": 2, "pt_extend": True},
+            {"d0": 4, "d1": "c1", "value": 1, "_auto": True},
+            {"d0": 4, "d1": "c2", "value": 2, "_auto": True},
+            {"d0": 7, "d1": "c1", "value": 1, "_auto": True},
+            {"d0": 7, "d1": "c2", "value": 2, "_auto": True},
         ]
 
 
@@ -2052,9 +2052,9 @@ class TestIndex:
         for val in params._data["indexed_param"]["value"]:
             # 0, 1 extended at the beginning.
             if val["d0"] > 3 or val["d0"] in (0, 1):
-                assert val["pt_extend"] is True
+                assert val["_auto"] is True
             else:
-                assert "pt_extend" not in val
+                assert "_auto" not in val
 
         class IndexParams2(Parameters):
             defaults = extend_ex_path

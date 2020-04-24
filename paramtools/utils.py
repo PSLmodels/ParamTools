@@ -82,9 +82,9 @@ def consistent_labels(value_items: List[ValueObject]):
     """
     if not value_items:
         return set([])
-    used = set(k for k in value_items[0] if k not in ("value", "pt_extend"))
+    used = set(k for k in value_items[0] if k not in ("value", "_auto"))
     for vo in value_items:
-        if used != set(k for k in vo if k not in ("value", "pt_extend")):
+        if used != set(k for k in vo if k not in ("value", "_auto")):
             return None
     return used
 
@@ -105,7 +105,7 @@ def hashable_value_object(vo: ValueObject) -> tuple:
     return tuple(
         (label, value)
         for label, value in sorted(vo.items())
-        if label not in ("pt_extend",)
+        if label not in ("_auto",)
     )
 
 
@@ -131,7 +131,7 @@ def make_label_str(vo: ValueObject) -> str:
         [
             f"{lab}={vo[lab]}"
             for lab in sorted(vo)
-            if lab not in ("value", "pt_extend")
+            if lab not in ("value", "_auto")
         ]
     )
     if lab_str:

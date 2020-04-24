@@ -17,7 +17,7 @@ class Tree:
 
     def __init__(self, vos: List[ValueObject], label_grid: dict):
         self.vos = vos
-        self.label_grid = dict(label_grid or {}, pt_extend=[False, True])
+        self.label_grid = dict(label_grid or {}, _auto=[False, True])
         self.tree = None
         self.new_values = None
         self.needs_build = True
@@ -126,7 +126,7 @@ class Tree:
             # The indices in the sets at the end are the search hits.
             search_hits = {ix: set([]) for ix in range(len(tree.vos))}
             for label in self.label_grid:
-                if label in ("pt_extend",):
+                if label in ("_auto",):
                     continue
                 if label in tree.tree and label in self.tree:
                     # All label values that exist in both trees.

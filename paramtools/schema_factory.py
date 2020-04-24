@@ -62,7 +62,7 @@ class SchemaFactory:
             fieldtype = get_type(v)
             classattrs = {
                 "value": fieldtype,
-                "pt_extend": fields.Boolean(required=False, load_only=True),
+                "_auto": fields.Boolean(required=False, load_only=True),
                 **self.label_validators,
             }
 

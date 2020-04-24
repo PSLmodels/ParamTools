@@ -225,7 +225,7 @@ class Parameters:
                                 tree = self._search_trees.get(param)
                             else:
                                 queryset = self.select_eq(
-                                    param, strict=True, pt_extend=True
+                                    param, strict=True, _auto=True
                                 )
                                 tree = None
                             gt = select_gt_ix(
@@ -243,7 +243,7 @@ class Parameters:
                                     drop=[
                                         self.label_to_extend,
                                         "value",
-                                        "pt_extend",
+                                        "_auto",
                                     ],
                                 ),
                             )
@@ -637,7 +637,7 @@ class Parameters:
                     gt,
                     False,
                     utils.filter_labels(
-                        vo, drop=["value", label_to_extend, "pt_extend"]
+                        vo, drop=["value", label_to_extend, "_auto"]
                     ),
                 )
                 extended_vos.update(map(utils.hashable_value_object, eq))
@@ -689,7 +689,7 @@ class Parameters:
                             utils.hashable_value_object(value_object)
                         )
                         extended[val].append(ext)
-                        adjustment[param].append(dict(ext, pt_extend=True))
+                        adjustment[param].append(dict(ext, _auto=True))
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
         self._adjust(
