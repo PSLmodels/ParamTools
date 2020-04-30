@@ -592,18 +592,27 @@ class Parameters:
 
     def extend(
         self,
-        label_to_extend=None,
-        label_to_extend_values=None,
-        params=None,
-        raise_errors=True,
-        ignore_warnings=False,
+        label: Optional[str] = None,
+        label_values: Optional[List[Any]] = None,
+        params: Optional[List[str]] = None,
+        raise_errors: bool = True,
+        ignore_warnings: bool = False,
     ):
         """
-        Extend parameters along label_to_extend.
+        Extend parameters along `label`.
 
-        Raises:
-            InconsistentLabelsException: Value objects do not have consistent
-                labels.
+        **Parameters**
+
+        - `label`: label to extend values along.
+        - `label_values`: values of `label` to extend.
+        - `params`: parameters to extend.
+        - `raise_errors`: whether `adjust` should raise or store errors.
+        - `ignore_warnings`: whether `adjust` should raise or ignore warnings.
+
+        **Raises**
+
+          - `InconsistentLabelsException`: Value objects do not have consistent
+            labels.
         """
 
         def get_closest_val(search_value, values, keyfunc):
@@ -625,8 +634,10 @@ class Parameters:
             else:
                 return neg_closest[1]
 
-        if label_to_extend is None:
-            label_to_extend = self.label_to_extend
+        if label is None:
+            label = self.label_to_extend
+        else:
+            label = label
 
         spec = self.specification(meta_data=True)
         if params is not None:
@@ -635,28 +646,23 @@ class Parameters:
                 for param, data in spec.items()
                 if param in params
             }
-        full_extend_grid = self._stateless_label_grid[label_to_extend]
-        if label_to_extend_values is not None:
-            labels = self.parse_labels(
-                **{label_to_extend: label_to_extend_values}
-            )
-            extend_grid = labels[label_to_extend]
+        full_extend_grid = self._stateless_label_grid[label]
+        if label_values is not None:
+            labels = self.parse_labels(**{label: label_values})
+            extend_grid = labels[label]
         else:
-            extend_grid = self._stateless_label_grid[label_to_extend]
+            extend_grid = self._stateless_label_grid[label]
 
-        cmp_funcs = self.label_validators[label_to_extend].cmp_funcs(
-            choices=extend_grid
-        )
+        cmp_funcs = self.label_validators[label].cmp_funcs(choices=extend_grid)
         gt_cmp_func = make_cmp_func(cmp_funcs["gt"], all_or_any=all)
 
         adjustment = defaultdict(list)
         for param, data in spec.items():
-            if not any(label_to_extend in vo for vo in data["value"]):
+            if not any(label in vo for vo in data["value"]):
                 continue
             extended_vos = set()
             for vo in sorted(
-                data["value"],
-                key=lambda val: cmp_funcs["key"](val[label_to_extend]),
+                data["value"], key=lambda val: cmp_funcs["key"](val[label])
             ):
                 hashable_vo = utils.hashable_value_object(vo)
                 if hashable_vo in extended_vos:
@@ -667,20 +673,18 @@ class Parameters:
                     self._data[param]["value"],
                     False,
                     gt_cmp_func,
-                    {label_to_extend: vo[label_to_extend]},
+                    {label: vo[label]},
                     tree=self._search_trees.get(param),
                 )
                 eq = select_eq(
                     gt,
                     False,
-                    utils.filter_labels(
-                        vo, drop=["value", label_to_extend, "_auto"]
-                    ),
+                    utils.filter_labels(vo, drop=["value", label, "_auto"]),
                 )
                 extended_vos.update(map(utils.hashable_value_object, eq))
                 eq += [vo]
 
-                defined_vals = {eq_vo[label_to_extend] for eq_vo in eq}
+                defined_vals = {eq_vo[label] for eq_vo in eq}
 
                 missing_vals = sorted(
                     set(extend_grid) - defined_vals, key=cmp_funcs["key"]
@@ -691,7 +695,7 @@ class Parameters:
 
                 extended = defaultdict(list)
                 for vo in eq:
-                    extended[vo[label_to_extend]].append(vo)
+                    extended[vo[label]].append(vo)
 
                 for val in missing_vals:
                     full_eg_ix = full_extend_grid.index(val)
@@ -701,14 +705,14 @@ class Parameters:
                             defined_vals, key=cmp_funcs["key"]
                         )
                         value_objects = select_eq(
-                            eq, False, {label_to_extend: first_defined_value}
+                            eq, False, {label: first_defined_value}
                         )
                     elif eg_ix == 0:
                         closest_val = get_closest_val(
                             val, extended.keys(), cmp_funcs["key"]
                         )
                         value_objects = select_eq(
-                            eq, False, {label_to_extend: closest_val}
+                            eq, False, {label: closest_val}
                         )
                     else:
                         closest_val = get_closest_val(
@@ -718,20 +722,16 @@ class Parameters:
                             value_objects = extended.pop(closest_val)
                         else:
                             value_objects = select_eq(
-                                eq, False, {label_to_extend: closest_val}
+                                eq, False, {label: closest_val}
                             )
                     # In practice, value_objects has length one.
                     # Theoretically, there could be multiple if the inital value
                     # object had less labels than later value objects and thus
                     # matched multiple value objects.
                     for value_object in value_objects:
-                        ext = dict(value_object, **{label_to_extend: val})
+                        ext = dict(value_object, **{label: val})
                         ext = self.extend_func(
-                            param,
-                            ext,
-                            value_object,
-                            full_extend_grid,
-                            label_to_extend,
+                            param, ext, value_object, full_extend_grid, label
                         )
                         extended_vos.add(
                             utils.hashable_value_object(value_object)
@@ -753,14 +753,14 @@ class Parameters:
         extend_vo: ValueObject,
         known_vo: ValueObject,
         extend_grid: List,
-        label_to_extend: str,
+        label: str,
     ):
         """
         Function for applying indexing rates to parameter values as they
-        are extended. Projects may implement their own extend_func by
-        overriding this one. Projects need to write their own indexing_rate
+        are extended. Projects may implement their own `extend_func` by
+        overriding this one. Projects need to write their own `indexing_rate`
         method for returning the correct indexing rate for a given parameter
-        and value of label_to_extend (abbreviated to lte_val).
+        and value of `label`.
 
         returns: extended_vo
         """
@@ -769,10 +769,10 @@ class Parameters:
         ):
             return extend_vo
 
-        known_val = known_vo[label_to_extend]
+        known_val = known_vo[label]
         known_ix = extend_grid.index(known_val)
 
-        toext_val = extend_vo[label_to_extend]
+        toext_val = extend_vo[label]
         toext_ix = extend_grid.index(toext_val)
 
         if toext_ix > known_ix:
