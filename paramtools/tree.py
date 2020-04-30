@@ -17,7 +17,7 @@ class Tree:
 
     def __init__(self, vos: List[ValueObject], label_grid: dict):
         self.vos = vos
-        self.label_grid = label_grid
+        self.label_grid = dict(label_grid or {}, _auto=[False, True])
         self.tree = None
         self.new_values = None
         self.needs_build = True
@@ -126,6 +126,8 @@ class Tree:
             # The indices in the sets at the end are the search hits.
             search_hits = {ix: set([]) for ix in range(len(tree.vos))}
             for label in self.label_grid:
+                if label in ("_auto",):
+                    continue
                 if label in tree.tree and label in self.tree:
                     # All label values that exist in both trees.
                     for label_value in (
@@ -199,11 +201,11 @@ class Tree:
         return self.vos
 
     def select(
-        self, labels: dict, cmp_func: CmpFunc, exact_match: bool = False
+        self, labels: dict, cmp_func: CmpFunc, strict: bool = False
     ) -> List[ValueObject]:
         """
         Select all value objects from self.vos according to the label query,
-        labels, and the comparison function, cmp_func. exact_match dictates
+        labels, and the comparison function, cmp_func. strict dictates
         whether vos missing a label in the query are eligble for inclusion
         in the select results.
 
@@ -215,10 +217,6 @@ class Tree:
 
         Returns:
             List of value objects satisfying the query.
-
-        Raises:
-            KeyError if exact_match is true and a label is used in the query
-                that is not present in one or more of the value objects.
         """
         if not labels:
             return self.vos
@@ -226,6 +224,7 @@ class Tree:
         self.init()
         if not self.tree:
             return self.vos
+        all_ixs = set(range(len(self.vos)))
         for label, _label_value in labels.items():
             if not isinstance(_label_value, list):
                 label_value = (_label_value,)
@@ -239,10 +238,10 @@ class Tree:
                         label_search_hits |= ixs
                 if search_hits:
                     search_hits &= label_search_hits
-                else:
+                elif not strict or label_search_hits:
                     search_hits |= label_search_hits
-            elif exact_match:
-                raise KeyError(
-                    f"Label {label} is not used for this parameter."
-                )
+                if not strict:
+                    search_hits |= all_ixs - set.union(
+                        *self.tree[label].values()
+                    )
         return [self.vos[ix] for ix in search_hits]

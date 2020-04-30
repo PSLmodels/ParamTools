@@ -1567,6 +1567,13 @@ class TestExtend:
         params = AFParams()
         assert isinstance(params.int_dense_array_param, np.ndarray)
         assert params.from_array("int_dense_array_param") == exp
+        for val in params._data["int_dense_array_param"]["value"]:
+            if val["label1"] in (2, 4, 5):
+                assert val["_auto"] is True
+            else:
+                assert "_auto" not in val
+
+        assert params.dump()["int_dense_array_param"]["value"] == exp
 
         class AFParams(Parameters):
             defaults = array_first_defaults
@@ -1621,6 +1628,12 @@ class TestExtend:
         ]
         assert params.from_array("int_dense_array_param") == exp
 
+        for val in params._data["int_dense_array_param"]["value"]:
+            if val["label0"] == "zero":
+                assert val["_auto"] is True
+            else:
+                assert "_auto" not in val
+
     def test_extend_w_array(self, extend_ex_path):
         class ExtParams(Parameters):
             defaults = extend_ex_path
@@ -1666,29 +1679,12 @@ class TestExtend:
             [-1, -1],
         ]
 
-        params = ExtParams()
-        params.adjust(
-            {
-                "extend_param": [
-                    {"d0": 3, "d1": "c1", "value": -1},
-                    {"d0": 3, "d1": "c2", "value": 1},
-                ]
-            }
-        )
-
-        assert params.extend_param.tolist() == [
-            [1, 2],
-            [1, 2],
-            [1, 2],
-            [-1, 1],
-            [-1, 1],
-            [-1, 1],
-            [-1, 1],
-            [-1, 1],
-            [-1, 1],
-            [-1, 1],
-            [-1, 1],
-        ]
+        for val in params._data["extend_param"]["value"]:
+            # 0, 1 extended at the beginning.
+            if val["d0"] > 3 or val["d0"] in (0, 1):
+                assert val["_auto"] is True
+            else:
+                assert "_auto" not in val
 
         params = ExtParams()
         params.adjust(
@@ -1767,8 +1763,125 @@ class TestExtend:
 
         params = ExtParams()
         params.adjust({"extend_param": [{"d0": 0, "value": 1}]})
-
         assert params.extend_param.tolist() == [[1, 1]] * 11
+
+    def test_extend_adj_without_clobber(self, extend_ex_path):
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = True
+
+        params = ExtParams()
+        params.adjust(
+            {"extend_param": [{"d0": 3, "value": -1}]}, clobber=False
+        )
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [5, 6],
+            [5, 6],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "d1": "c1", "value": -1},
+                    {"d0": 3, "d1": "c2", "value": 1},
+                ]
+            },
+            clobber=False,
+        )
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, 1],
+            [-1, 1],
+            [5, 6],
+            [5, 6],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "value": -1},
+                    {"d0": 5, "d1": "c1", "value": 0},
+                    {"d0": 5, "d1": "c2", "value": 1},
+                    {"d0": 8, "d1": "c1", "value": 22},
+                    {"d0": 8, "d1": "c2", "value": 23},
+                ]
+            },
+            clobber=False,
+        )
+
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [0, 1],
+            [0, 1],
+            [7, 8],
+            [22, 23],
+            [22, 23],
+            [22, 23],
+        ]
+
+        params = ExtParams()
+        params.adjust(
+            {
+                "extend_param": [
+                    {"d0": 3, "value": -1},
+                    {"d0": 5, "d1": "c1", "value": 0},
+                    {"d0": 6, "d1": "c2", "value": 1},
+                ]
+            },
+            clobber=False,
+        )
+        assert params.extend_param.tolist() == [
+            [1, 2],
+            [1, 2],
+            [1, 2],
+            [-1, -1],
+            [-1, -1],
+            [0, 6],
+            [0, 1],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+        ]
+
+        params = ExtParams()
+        params.adjust({"extend_param": [{"d0": 0, "value": 1}]}, clobber=False)
+        assert params.extend_param.tolist() == [
+            [1, 1],
+            [1, 1],
+            [1, 2],
+            [3, 4],
+            [3, 4],
+            [5, 6],
+            [5, 6],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+            [7, 8],
+        ]
 
     def test_extend_adj_w_errors(self, extend_ex_path):
         class ExtParams(Parameters):
@@ -1896,10 +2009,10 @@ class TestExtend:
         assert sorted(params.extend_param, key=lambda vo: vo["d0"]) == [
             {"d0": 2, "d1": "c1", "value": 1},
             {"d0": 2, "d1": "c2", "value": 2},
-            {"d0": 4, "d1": "c1", "value": 1},
-            {"d0": 4, "d1": "c2", "value": 2},
-            {"d0": 7, "d1": "c1", "value": 1},
-            {"d0": 7, "d1": "c2", "value": 2},
+            {"d0": 4, "d1": "c1", "value": 1, "_auto": True},
+            {"d0": 4, "d1": "c2", "value": 2, "_auto": True},
+            {"d0": 7, "d1": "c1", "value": 1, "_auto": True},
+            {"d0": 7, "d1": "c2", "value": 2, "_auto": True},
         ]
 
 
@@ -1935,6 +2048,13 @@ class TestIndex:
             [3, 3],
             [3, 3],
         ]
+
+        for val in params._data["indexed_param"]["value"]:
+            # 0, 1 extended at the beginning.
+            if val["d0"] > 3 or val["d0"] in (0, 1):
+                assert val["_auto"] is True
+            else:
+                assert "_auto" not in val
 
         class IndexParams2(Parameters):
             defaults = extend_ex_path

@@ -28,6 +28,7 @@ from paramtools.schema import (
 from paramtools.select import (
     select,
     select_eq,
+    select_ne,
     select_gt,
     select_gte,
     select_gt_ix,
@@ -50,7 +51,7 @@ from paramtools.utils import (
 
 
 name = "paramtools"
-__version__ = "0.13.1"
+__version__ = "0.13.1-track-extend-vals"
 
 __all__ = [
     "SchemaFactory",

@@ -104,6 +104,41 @@ params.standard_deduction
 
 ```
 
+### Clobber
+
+In the previous example, the new values _clobber_ the existing values in years after they are specified. By setting `clobber` to `False`, only values that were added automatically will be replaced by the new ones. User defined values such as those in 2026 will not be over-written by the new values:
+
+```python
+params = TaxParams()
+params.adjust(
+    {
+        "standard_deduction": [
+            {"year": 2017, "value": 10000},
+            {"year": 2020, "marital_status": "single", "value": 15000},
+            {"year": 2021, "marital_status": "joint", "value": 20000}
+        ]
+    },
+    clobber=False,
+)
+
+params.standard_deduction
+
+# array([[ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [ 6350., 12700.],
+#        [10000., 10000.],
+#        [12000., 24000.],
+#        [12000., 24000.],
+#        [15000., 24000.],
+#        [15000., 20000.],
+#        [15000., 20000.],
+#        [15000., 20000.],
+#        [15000., 20000.],
+#        [15000., 20000.],
+#        [ 7685., 15369.],
+#        [ 7685., 15369.]])
+```
 
 ## Extend behavior by validator
 
@@ -117,11 +152,11 @@ Note: You can view the grid of values for any label by inspecting the `label_gri
 
 ```json
 {
-    "range": {"min": 0, "max": 5}
+  "range": { "min": 0, "max": 5 }
 }
 ```
 
-*Extend values:*
+_Extend values:_
 
 ```python
 [0, 1, 2, 3, 4, 5]
@@ -131,11 +166,11 @@ Note: You can view the grid of values for any label by inspecting the `label_gri
 
 ```json
 {
-    "range": {"min": 0, "max": 2, "step": 0.5}
+  "range": { "min": 0, "max": 2, "step": 0.5 }
 }
 ```
 
-*Extend values:*
+_Extend values:_
 
 ```python
 [0, 0.5, 1.0, 1.5, 2.0]
@@ -145,11 +180,11 @@ Note: You can view the grid of values for any label by inspecting the `label_gri
 
 ```json
 {
-    "range": {"min": "2019-01-01", "max": "2019-01-05", "step": {"days": 2}}
+  "range": { "min": "2019-01-01", "max": "2019-01-05", "step": { "days": 2 } }
 }
 ```
 
-*Extend values:*
+_Extend values:_
 
 ```python
 [datetime.date(2019, 1, 1),
@@ -163,11 +198,11 @@ Note: You can view the grid of values for any label by inspecting the `label_gri
 
 ```json
 {
-    "choice": {"choices": [-1, -2, -3]}
+  "choice": { "choices": [-1, -2, -3] }
 }
 ```
 
-*Extend values:*
+_Extend values:_
 
 ```python
 [-1, -2, -3]
@@ -177,11 +212,11 @@ Note: You can view the grid of values for any label by inspecting the `label_gri
 
 ```json
 {
-    "choice": {"choices": ["january", "february", "march"]}
+  "choice": { "choices": ["january", "february", "march"] }
 }
 ```
 
-*Extend values:*
+_Extend values:_
 
 ```python
 ["january", "february", "march"]

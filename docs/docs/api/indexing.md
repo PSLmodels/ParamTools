@@ -6,10 +6,10 @@ The [extend documentation](/api/extend/) may be useful for gaining a better unde
 
 To use the indexing feature:
 
- - Set the `label_to_extend` class attribute to the label that should be extended
- - Set the `indexing_rates` class attribute to a dictionary of inflation rates where the keys correspond to the value of `label_to_extend` and the values are the indexing rates.
- - Set the `uses_extend_func` class attribute to `True`.
- - In `defaults` or `defaults.json`, set `indexed` to `True` for each parameter that needs to be indexed.
+- Set the `label_to_extend` class attribute to the label that should be extended
+- Set the `indexing_rates` class attribute to a dictionary of inflation rates where the keys correspond to the value of `label_to_extend` and the values are the indexing rates.
+- Set the `uses_extend_func` class attribute to `True`.
+- In `defaults` or `defaults.json`, set `indexed` to `True` for each parameter that needs to be indexed.
 
 ## Example
 
@@ -138,6 +138,80 @@ params.standard_deduction
 
 ```
 
+All values that are added automatically via the `extend` method are given an `_auto` attribute. You can select them like this:
+
+```python
+params = TaxParams()
+
+params.select_eq(
+    "standard_deduction", strict=True, _auto=True
+)
+
+# [{'_auto': True, 'marital_status': 'single', 'year': 2013, 'value': 5840.42},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2014, 'value': 5985.26},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2015, 'value': 6140.28},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2016, 'value': 6209.05},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2019, 'value': 12388.8},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2020, 'value': 12743.12},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2021, 'value': 13167.47},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2022, 'value': 13600.68},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2023, 'value': 14046.78},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2024, 'value': 14497.68},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2025, 'value': 14948.56},
+#  {'_auto': True, 'marital_status': 'single', 'year': 2027, 'value': 7924.0},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2013, 'value': 11680.85},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2014, 'value': 11970.54},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2015, 'value': 12280.58},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2016, 'value': 12418.12},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2019, 'value': 24777.6},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2020, 'value': 25486.24},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2021, 'value': 26334.93},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2022, 'value': 27201.35},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2023, 'value': 28093.55},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2024, 'value': 28995.35},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2025, 'value': 29897.11},
+#  {'_auto': True, 'marital_status': 'joint', 'year': 2027, 'value': 15846.98}]
+
+
+```
+
+If you want to update the index rates and apply them to your existing values, then all you need to do is remove the values that were added automatically. ParamTools will fill in the missing values using the updated index rates:
+
+```python
+params = TaxParams()
+
+offset = 0.0025
+for year, rate in params.index_rates.items():
+    params.index_rates[year] = rate + offset
+
+automatically_added = params.select_eq(
+    "standard_deduction", strict=True, _auto=True
+)
+
+params.delete(
+    {
+        "standard_deduction": automatically_added
+    }
+)
+
+params.standard_deduction
+
+# array([[ 5783.57, 11567.15],
+#        [ 5941.46, 11882.93],
+#        [ 6110.2 , 12220.41],
+#        [ 6193.91, 12387.83],
+#        [ 6350.  , 12700.  ],
+#        [12000.  , 24000.  ],
+#        [12418.8 , 24837.6 ],
+#        [12805.02, 25610.05],
+#        [13263.44, 26526.89],
+#        [13732.97, 27465.94],
+#        [14217.74, 28435.49],
+#        [14709.67, 29419.36],
+#        [15203.91, 30407.85],
+#        [ 7685.  , 15369.  ],
+#        [ 7943.22, 15885.4 ]])
+```
 
 ### Code for getting Tax-Calculator index rates
 

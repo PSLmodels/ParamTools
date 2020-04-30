@@ -440,7 +440,7 @@ class BaseValidatorSchema(Schema):
             else:
                 oth_param = self.context["spec"]._data[oth_param_name]
             vals = oth_param["value"]
-        labs_to_check = {k for k in param_spec if k != "value"}
+        labs_to_check = {k for k in param_spec if k not in ("value", "_auto")}
         if labs_to_check:
             res = [
                 val

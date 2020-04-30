@@ -40,6 +40,7 @@ collision_list = [
     "_errors",
     "_warnings",
     "select_eq",
+    "select_ne",
     "select_gt",
     "select_gte",
     "select_lt",
