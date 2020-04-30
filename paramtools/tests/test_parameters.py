@@ -2005,8 +2005,8 @@ class TestExtend:
             label_to_extend_values=[2, 4, 7],
             params="extend_param",
         )
-
-        assert sorted(params.extend_param, key=lambda vo: vo["d0"]) == [
+        params.sort_values()
+        assert params.extend_param == [
             {"d0": 2, "d1": "c1", "value": 1},
             {"d0": 2, "d1": "c2", "value": 2},
             {"d0": 4, "d1": "c1", "value": 1, "_auto": True},
@@ -2022,7 +2022,8 @@ class TestExtend:
 
         params = ExtParams()
         params.extend(label_to_extend="d0", label_to_extend_values=[8, 9, 10])
-        assert sorted(params.extend_param, key=lambda vo: vo["d0"]) == [
+        params.sort_values()
+        assert params.extend_param == [
             {"d0": 2, "d1": "c1", "value": 1},
             {"d0": 2, "d1": "c2", "value": 2},
             {"d0": 3, "d1": "c1", "value": 3},
@@ -2043,7 +2044,8 @@ class TestExtend:
         params.extend(
             label_to_extend="d0", label_to_extend_values=[0, 8, 9, 10]
         )
-        assert sorted(params.extend_param, key=lambda vo: vo["d0"]) == [
+        params.sort_values()
+        assert params.extend_param == [
             {"d0": 0, "d1": "c1", "value": 1, "_auto": True},
             {"d0": 0, "d1": "c2", "value": 2, "_auto": True},
             {"d0": 2, "d1": "c1", "value": 1},
