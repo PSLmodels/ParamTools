@@ -219,6 +219,17 @@ class TestSchema:
             "uses_extend_func": False,
         }
 
+        class Params3(Parameters):
+            array_first = True
+            defaults = {"schema": {"operators": {"array_first": True}}}
+
+        params = Params3(array_first=False)
+        assert params.operators == {
+            "array_first": False,
+            "label_to_extend": None,
+            "uses_extend_func": False,
+        }
+
     def test_when_schema(self):
         class Params(Parameters):
             defaults = {

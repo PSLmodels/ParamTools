@@ -43,9 +43,9 @@ class Parameters:
     def __init__(
         self,
         initial_state: Optional[dict] = None,
-        array_first: Optional[bool] = False,
+        array_first: Optional[bool] = None,
         label_to_extend: str = None,
-        uses_extend_func: bool = False,
+        uses_extend_func: bool = None,
         index_rates: Optional[dict] = None,
     ):
         schemafactory = SchemaFactory(self.defaults)
@@ -82,7 +82,10 @@ class Parameters:
         ]
         schema_ops = self._schema.get("operators", {})
         for name, init_value, default in ops:
-            user_vals = [init_value, getattr(self, name), schema_ops.get(name)]
+            if init_value is not None:
+                setattr(self, name, init_value)
+                continue
+            user_vals = [getattr(self, name), schema_ops.get(name)]
             for value in user_vals:
                 if value != default and value is not None:
                     setattr(self, name, value)
