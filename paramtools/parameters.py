@@ -4,7 +4,7 @@ import json
 import itertools
 from collections import OrderedDict, defaultdict
 from functools import partial, reduce
-from typing import Optional, Dict, List, Any
+from typing import Optional, Dict, List, Any, Union, Mapping
 
 import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
@@ -107,20 +107,24 @@ class Parameters:
 
     def set_state(self, **labels):
         """
-        Sets state for the Parameters instance. The state, label_grid, and
+        Sets state for the Parameters instance. The `_state`, `label_grid`, and
         parameter attributes are all updated with the new state.
 
-        Raises:
-            ValidationError if the labels kwargs contain labels that are not
-                specified in schema.json or if the label values fail the
-                validator set for the corresponding label in schema.json.
+        Use the `view_state` method to inspect the current state of the instance,
+        and use the `clear_state` method to revert to the default state.
+
+        **Raises**
+
+          - `ValidationError` if the labels kwargs contain labels that are not
+            specified in schema.json or if the label values fail the
+            validator set for the corresponding label in schema.json.
         """
 
         self._set_state(**labels)
 
     def clear_state(self):
         """
-        Reset the state of the Parameters instance.
+        Reset the state of the `Parameters` instance.
         """
         self._state = {}
         self.label_grid = copy.deepcopy(self._stateless_label_grid)
@@ -145,11 +149,11 @@ class Parameters:
 
     def adjust(
         self,
-        params_or_path,
-        ignore_warnings=False,
-        raise_errors=True,
-        extend_adj=True,
-        clobber=True,
+        params_or_path: Union[str, Mapping[str, List[ValueObject]]],
+        ignore_warnings: bool = False,
+        raise_errors: bool = True,
+        extend_adj: bool = True,
+        clobber: bool = True,
     ):
         """
         Deserialize and validate parameter adjustments. `params_or_path`
@@ -164,16 +168,31 @@ class Parameters:
         were added automatically via the extend method will be updated.
 
         This simply calls a private method `_adjust` to do the upate. Creating
-        this layer on top of `_adjust` makes it easy to subclass Parameters and
+        this layer on top of `_adjust` makes it easy to subclass `Parameters` and
         implement custom `adjust` methods.
 
-        Returns: parsed, validated parameters.
+        **Parameters**
 
-        Raises:
-            marshmallow.exceptions.ValidationError if data is not valid.
+          - `params_or_path`: Adjustment that is either a `dict`, file path, or
+            JSON string.
+          - `ignore_warnings`: Whether to raise an error on warnings or ignore them.
+          - `raise_errors`: Either raise errors or simply store the error messages.
+          - `extend_adj`: If in extend mode, this is a flag indicating whether to
+            extend the adjustment values or not.
+          - `clobber`: If in extend mode, this is a flag indicating whether to
+            override all values, including user-defined values, or to only
+            override automatically created values.
 
-            ParameterUpdateException if label values do not match at
-                least one existing value item's corresponding label values.
+        **Returns**
+
+          - `params`: Parsed, validated parameters.
+
+        **Raises**
+
+          - `marshmallow.exceptions.ValidationError` if data is not valid.
+
+          - `ParameterUpdateException` if label values do not match at
+            least one existing value item's corresponding label values.
         """
         return self._adjust(
             params_or_path,
@@ -429,11 +448,11 @@ class Parameters:
 
     def specification(
         self,
-        use_state=True,
-        meta_data=False,
-        include_empty=False,
-        serializable=False,
-        sort_values=False,
+        use_state: bool = True,
+        meta_data: bool = False,
+        include_empty: bool = False,
+        serializable: bool = False,
+        sort_values: bool = False,
         **labels,
     ):
         """
@@ -441,14 +460,14 @@ class Parameters:
         `labels`.
 
         Parameters:
-            - use_state: If true, use the instance's state for the select operation.
-            - meta_data: If true, include information like the parameter
-                description and title.
-            - include_empty: If true, include parameters that do not meet the label query.
-            - serializable: If true, return data that is compatible with `json.dumps`.
 
-        Returns: serialized data of shape
-            {"param_name": [{"value": val, "label0": ..., }], ...}
+          - `use_state`: Use the instance's state for the select operation.
+          - `meta_data`: Include information like the parameter
+            `description` and title.
+          - `include_empty`: Include parameters that do not meet the label query.
+          - `serializable`: Return data that is compatible with `json.dumps`.
+          - `sort_values`: Sort values by the `label` order.
+
         """
         if use_state:
             labels.update(self._state)
@@ -482,15 +501,18 @@ class Parameters:
         is defined by inspecting the label validators in schema.json
         and the state attribute of the Parameters instance.
 
-        Returns: n-labelal NumPy array.
+        **Returns**
 
-        Raises:
-            InconsistentLabelsException: Value objects do not have consistent
-                labels.
-            SparseValueObjectsException: Value object does not span the
-                entire space specified by the Order object.
-            ParamToolsError: Parameter is an array type and has labels.
-                This is not supported by ParamTools when using array_first.
+          - `arr`: NumPy array created from list of value objects.
+
+        **Raises**
+
+          - `InconsistentLabelsException`: Value objects do not have consistent
+            labels.
+          - `SparseValueObjectsException`: Value object does not span the
+            entire space specified by the Order object.
+          - `ParamToolsError`: Parameter is an array type and has labels.
+            This is not supported by ParamTools when using array_first.
         """
         value_items = self.select_eq(param, False, **self._state)
         if not value_items:
@@ -563,12 +585,21 @@ class Parameters:
         """
         Convert NumPy array to a Value object.
 
-        Returns:
-            Value object (shape: [{"value": val, labels:...}])
+        **Parameters**
 
-        Raises:
-            InconsistentLabelsException: Value objects do not have consistent
-                labels.
+          - `param`: Name of parameter to convert to a list of value objects.
+          - `array`: Optionally, provide a NumPy array to convert into a list
+            of value objects. If not specified, the value at `self.param` will
+            be used.
+
+        **Returns**
+
+          - List of `ValueObjects`
+
+        **Raises**
+
+          - `InconsistentLabelsException`: Value objects do not have consistent
+            labels.
         """
         if array is None:
             array = getattr(self, param)
@@ -603,11 +634,13 @@ class Parameters:
 
         **Parameters**
 
-        - `label`: label to extend values along.
-        - `label_values`: values of `label` to extend.
-        - `params`: parameters to extend.
-        - `raise_errors`: whether `adjust` should raise or store errors.
-        - `ignore_warnings`: whether `adjust` should raise or ignore warnings.
+        - `label`: Label to extend values along. By default, `label_to_extend`
+          is used.
+        - `label_values`: values of `label` to extend. By default, this is a grid
+          created from the valid values of `label_to_extend`.
+        - `params`: Parameters to extend. By default, all parameters are extended.
+        - `raise_errors`: Whether `adjust` should raise or store errors.
+        - `ignore_warnings`: Whether `adjust` should raise or ignore warnings.
 
         **Raises**
 
@@ -762,7 +795,9 @@ class Parameters:
         method for returning the correct indexing rate for a given parameter
         and value of `label`.
 
-        returns: extended_vo
+        **Returns**
+
+          - `extend_vo`: New `ValueObject`.
         """
         if not self.uses_extend_func or not self._data[param].get(
             "indexed", False
@@ -807,8 +842,9 @@ class Parameters:
         """
         Parse and validate labels.
 
-        Returns:
-        - parsed and validated labels.
+        **Returns**
+
+        - Parsed and validated labels.
         """
         parsed = defaultdict(list)
         messages = {}
@@ -1092,11 +1128,16 @@ class Parameters:
         to the order specified in schema. If data is not specified,
         the existing value objects are used. User specified data
         can be:
-            {param: [...value objects]}
 
-            or
+        ```
+        {param: [...value objects]}
+        ```
 
-            {param: {"value": [...value objects]}}
+         or
+
+        ```
+        {param: {"value": [...value objects]}}
+        ```
         """
 
         def keyfunc(vo, label, label_values):
