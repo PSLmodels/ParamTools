@@ -240,13 +240,6 @@ class Parameters:
                                 labels=query_args,
                                 tree=tree,
                             )
-                            # gt = select_gt_ix(
-                            #     queryset,
-                            #     strict=False,
-                            #     labels=query_args,
-                            #     cmp_list=extend_grid,
-                            #     tree=tree,
-                            # )
                             to_delete[param] += select_eq(
                                 gt,
                                 strict=False,
