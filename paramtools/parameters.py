@@ -13,13 +13,14 @@ from paramtools import utils
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
 from paramtools.select import (
+    select,
     select_eq,
     select_ne,
-    select_gt_ix,
     select_gt,
     select_gte,
     select_lt,
     select_lte,
+    make_cmp_func,
 )
 from paramtools.tree import Tree
 from paramtools.typing import ValueObject
@@ -66,7 +67,7 @@ class Parameters:
         self._validator_schema.context["spec"] = self
         self._warnings = {}
         self._errors = {}
-        self._state = initial_state or {}
+        self._state = self.parse_labels(**(initial_state or {}))
         self._search_trees = {}
         self.index_rates = index_rates or self.index_rates
 
@@ -211,6 +212,10 @@ class Parameters:
                 extend_grid = self._stateless_label_grid[self.label_to_extend]
                 to_delete = defaultdict(list)
                 backup = {}
+                cmp_funcs = self.label_validators[
+                    self.label_to_extend
+                ].cmp_funcs()
+                gt_cmp_func = make_cmp_func(cmp_funcs["gt"], all_or_any=all)
                 for param, vos in parsed_params.items():
                     for vo in utils.grid_sort(
                         vos, self.label_to_extend, extend_grid
@@ -228,13 +233,20 @@ class Parameters:
                                     param, strict=True, _auto=True
                                 )
                                 tree = None
-                            gt = select_gt_ix(
+                            gt = select(
                                 queryset,
                                 strict=False,
+                                cmp_func=gt_cmp_func,
                                 labels=query_args,
-                                cmp_list=extend_grid,
                                 tree=tree,
                             )
+                            # gt = select_gt_ix(
+                            #     queryset,
+                            #     strict=False,
+                            #     labels=query_args,
+                            #     cmp_list=extend_grid,
+                            #     tree=tree,
+                            # )
                             to_delete[param] += select_eq(
                                 gt,
                                 strict=False,
@@ -518,7 +530,8 @@ class Parameters:
             else:
                 return data_type(value)
         exp_full_shape = reduce(lambda x, y: x * y, shape)
-        if len(value_items) != exp_full_shape:
+        act_full_shape = len(value_items)
+        if act_full_shape != exp_full_shape:
             # maintains label value order over value objects.
             exp_grid = list(itertools.product(*value_order.values()))
             # preserve label value order for each value object by
@@ -608,10 +621,20 @@ class Parameters:
                 for param, data in spec.items()
                 if param in params
             }
-        extend_grid = (
-            label_to_extend_values
-            or self._stateless_label_grid[label_to_extend]
+        full_extend_grid = self._stateless_label_grid[label_to_extend]
+        if label_to_extend_values is not None:
+            labels = self.parse_labels(
+                **{label_to_extend: label_to_extend_values}
+            )
+            extend_grid = labels[label_to_extend]
+        else:
+            extend_grid = self._stateless_label_grid[label_to_extend]
+
+        cmp_funcs = self.label_validators[label_to_extend].cmp_funcs(
+            choices=extend_grid
         )
+        gt_cmp_func = make_cmp_func(cmp_funcs["gt"], all_or_any=all)
+
         adjustment = defaultdict(list)
         for param, data in spec.items():
             if not any(label_to_extend in vo for vo in data["value"]):
@@ -619,18 +642,18 @@ class Parameters:
             extended_vos = set()
             for vo in sorted(
                 data["value"],
-                key=lambda val: extend_grid.index(val[label_to_extend]),
+                key=lambda val: cmp_funcs["key"](val[label_to_extend]),
             ):
                 hashable_vo = utils.hashable_value_object(vo)
                 if hashable_vo in extended_vos:
                     continue
                 else:
                     extended_vos.add(hashable_vo)
-                gt = select_gt_ix(
+                gt = select(
                     self._data[param]["value"],
                     False,
+                    gt_cmp_func,
                     {label_to_extend: vo[label_to_extend]},
-                    extend_grid,
                     tree=self._search_trees.get(param),
                 )
                 eq = select_eq(
@@ -646,24 +669,30 @@ class Parameters:
                 defined_vals = {eq_vo[label_to_extend] for eq_vo in eq}
 
                 missing_vals = sorted(
-                    set(extend_grid) - defined_vals,
-                    key=lambda val: extend_grid.index(val),
+                    set(extend_grid) - defined_vals, key=cmp_funcs["key"]
                 )
 
                 if not missing_vals:
                     continue
 
                 extended = defaultdict(list)
-
                 for val in missing_vals:
+                    full_eg_ix = full_extend_grid.index(val)
                     eg_ix = extend_grid.index(val)
-                    if eg_ix == 0:
+                    if eg_ix == 0 and full_eg_ix == 0:
                         first_defined_value = min(
-                            defined_vals,
-                            key=lambda val: extend_grid.index(val),
+                            defined_vals, key=cmp_funcs["key"]
                         )
                         value_objects = select_eq(
                             eq, False, {label_to_extend: first_defined_value}
+                        )
+                    elif eg_ix == 0:
+                        closest_defined_value = min(
+                            defined_vals,
+                            key=lambda defined_val: abs(val - defined_val),
+                        )
+                        value_objects = select_eq(
+                            eq, False, {label_to_extend: closest_defined_value}
                         )
                     elif extend_grid[eg_ix - 1] in extended:
                         value_objects = extended.pop(extend_grid[eg_ix - 1])
@@ -682,7 +711,7 @@ class Parameters:
                             param,
                             ext,
                             value_object,
-                            extend_grid,
+                            full_extend_grid,
                             label_to_extend,
                         )
                         extended_vos.add(
@@ -730,10 +759,11 @@ class Parameters:
         if toext_ix > known_ix:
             # grow value according to the index rate supplied by the user defined
             # self.indexing_rate method.
-            v = extend_vo["value"] * (
-                1 + self.get_index_rate(param, known_val)
-            )
-            extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
+            for ix in range(known_ix, toext_ix):
+                v = extend_vo["value"] * (
+                    1 + self.get_index_rate(param, extend_grid[ix])
+                )
+                extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
         else:
             # shrink value according to the index rate supplied by the user defined
             # self.indexing_rate method.
@@ -754,30 +784,45 @@ class Parameters:
         """
         return self.index_rates[lte_val]
 
-    def _set_state(self, params=None, **labels):
+    def parse_labels(self, **labels):
         """
-        Private method for setting the state on a Parameters instance. Internal
-        methods can set which params will be updated. This is helpful when a set
-        of parameters are adjusted and only their attributes need to be updated.
+        Parse and validate labels.
+
+        Returns:
+        - parsed and validated labels.
         """
+        parsed = defaultdict(list)
         messages = {}
         for name, values in labels.items():
             if name not in self.label_validators:
                 messages[name] = f"{name} is not a valid label."
                 continue
             if not isinstance(values, list):
-                values = [values]
-            for value in values:
+                list_values = [values]
+            else:
+                list_values = values
+            assert isinstance(list_values, list)
+            for value in list_values:
                 try:
-                    self.label_validators[name].deserialize(value)
+                    parsed[name].append(
+                        self.label_validators[name].deserialize(value)
+                    )
                 except MarshmallowValidationError as ve:
                     messages[name] = str(ve)
         if messages:
             raise ValidationError({"errors": messages}, labels=None)
+        return parsed
+
+    def _set_state(self, params=None, **labels):
+        """
+        Private method for setting the state on a Parameters instance. Internal
+        methods can set which params will be updated. This is helpful when a set
+        of parameters are adjusted and only their attributes need to be updated.
+        """
+        labels = self.parse_labels(**labels)
         self._state.update(labels)
         for label_name, label_value in self._state.items():
-            if not isinstance(label_value, list):
-                label_value = [label_value]
+            assert isinstance(label_value, list)
             self.label_grid[label_name] = label_value
         spec = self.specification(include_empty=True, **self._state)
         if params is not None:

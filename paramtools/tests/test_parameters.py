@@ -1267,32 +1267,32 @@ class TestState:
         params = TestParams()
         assert params.view_state() == {}
         params.set_state(label0="zero")
-        assert params.view_state() == {"label0": "zero"}
+        assert params.view_state() == {"label0": ["zero"]}
         params.set_state(label1=0)
-        assert params.view_state() == {"label0": "zero", "label1": 0}
+        assert params.view_state() == {"label0": ["zero"], "label1": [0]}
         params.set_state(label0="one", label2=1)
         assert params.view_state() == {
-            "label0": "one",
-            "label1": 0,
-            "label2": 1,
+            "label0": ["one"],
+            "label1": [0],
+            "label2": [1],
         }
         params.set_state(**{})
         assert params.view_state() == {
-            "label0": "one",
-            "label1": 0,
-            "label2": 1,
+            "label0": ["one"],
+            "label1": [0],
+            "label2": [1],
         }
         params.set_state()
         assert params.view_state() == {
-            "label0": "one",
-            "label1": 0,
-            "label2": 1,
+            "label0": ["one"],
+            "label1": [0],
+            "label2": [1],
         }
         params.set_state(label1=[1, 2, 3])
         assert params.view_state() == {
-            "label0": "one",
+            "label0": ["one"],
             "label1": [1, 2, 3],
-            "label2": 1,
+            "label2": [1],
         }
 
     def test_label_grid(self, TestParams):
@@ -1984,7 +1984,7 @@ class TestExtend:
             [-1, -1],
         ]
 
-    def test_custom_extend(self, extend_ex_path):
+    def test_extend_method(self, extend_ex_path):
         class ExtParams(Parameters):
             defaults = extend_ex_path
             # label_to_extend = "d0"
@@ -2013,6 +2013,51 @@ class TestExtend:
             {"d0": 4, "d1": "c2", "value": 2, "_auto": True},
             {"d0": 7, "d1": "c1", "value": 1, "_auto": True},
             {"d0": 7, "d1": "c2", "value": 2, "_auto": True},
+        ]
+
+        params = ExtParams()
+        init = params.select_eq("extend_param")
+        params.extend(label_to_extend="d0", label_to_extend_values=[])
+        assert init == params.select_eq("extend_param")
+
+        params.extend(label_to_extend="d0", label_to_extend_values=[8, 9, 10])
+        assert sorted(params.extend_param, key=lambda vo: vo["d0"]) == [
+            {"d0": 2, "d1": "c1", "value": 1},
+            {"d0": 2, "d1": "c2", "value": 2},
+            {"d0": 3, "d1": "c1", "value": 3},
+            {"d0": 3, "d1": "c2", "value": 4},
+            {"d0": 5, "d1": "c1", "value": 5},
+            {"d0": 5, "d1": "c2", "value": 6},
+            {"d0": 7, "d1": "c1", "value": 7},
+            {"d0": 7, "d1": "c2", "value": 8},
+            {"d0": 8, "d1": "c1", "value": 7, "_auto": True},
+            {"d0": 8, "d1": "c2", "value": 8, "_auto": True},
+            {"d0": 9, "d1": "c1", "value": 7, "_auto": True},
+            {"d0": 9, "d1": "c2", "value": 8, "_auto": True},
+            {"d0": 10, "d1": "c1", "value": 7, "_auto": True},
+            {"d0": 10, "d1": "c2", "value": 8, "_auto": True},
+        ]
+
+        params.extend(
+            label_to_extend="d0", label_to_extend_values=[0, 8, 9, 10]
+        )
+        assert sorted(params.extend_param, key=lambda vo: vo["d0"]) == [
+            {"d0": 0, "d1": "c1", "value": 1, "_auto": True},
+            {"d0": 0, "d1": "c2", "value": 2, "_auto": True},
+            {"d0": 2, "d1": "c1", "value": 1},
+            {"d0": 2, "d1": "c2", "value": 2},
+            {"d0": 3, "d1": "c1", "value": 3},
+            {"d0": 3, "d1": "c2", "value": 4},
+            {"d0": 5, "d1": "c1", "value": 5},
+            {"d0": 5, "d1": "c2", "value": 6},
+            {"d0": 7, "d1": "c1", "value": 7},
+            {"d0": 7, "d1": "c2", "value": 8},
+            {"d0": 8, "d1": "c1", "value": 7, "_auto": True},
+            {"d0": 8, "d1": "c2", "value": 8, "_auto": True},
+            {"d0": 9, "d1": "c1", "value": 7, "_auto": True},
+            {"d0": 9, "d1": "c2", "value": 8, "_auto": True},
+            {"d0": 10, "d1": "c1", "value": 7, "_auto": True},
+            {"d0": 10, "d1": "c2", "value": 8, "_auto": True},
         ]
 
 

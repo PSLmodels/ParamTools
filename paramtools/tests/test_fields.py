@@ -48,3 +48,31 @@ def test_contrib_fields():
 
     s = fields.Date()
     assert s._deserialize(datetime.date(2015, 1, 1), None, None)
+
+
+def test_cmp_funcs():
+    range_validator = validate.Range(0, 10)
+    daterange_validator = validate.DateRange(
+        "2019-01-01", "2019-01-05", step={"days": 2}
+    )
+    choice_validator = validate.OneOf(choices=["one", "two"])
+
+    cases = [
+        ("one", "two", fields.Str(validate=[choice_validator])),
+        (
+            datetime.date(2019, 1, 2),
+            datetime.date(2019, 1, 3),
+            fields.Date(validate=[daterange_validator]),
+        ),
+        (2, 5, fields.Integer(validate=[range_validator])),
+    ]
+
+    for (min_, max_, field) in cases:
+        cmp_funcs = field.cmp_funcs()
+        assert cmp_funcs["gt"](min_, max_) is False
+        assert cmp_funcs["lt"](min_, max_) is True
+        assert cmp_funcs["eq"](min_, max_) is False
+        assert cmp_funcs["eq"](max_, max_) is True
+        assert cmp_funcs["lte"](max_, max_) is True
+        assert cmp_funcs["lte"](min_, max_) is True
+        assert cmp_funcs["gte"](max_, min_) is True

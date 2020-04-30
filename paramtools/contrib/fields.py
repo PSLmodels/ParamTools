@@ -58,6 +58,25 @@ class MeshFieldMixin:
         assert len(self.validators) == 1
         return self.validators[0].grid()
 
+    def cmp_funcs(self, **kwargs):
+        default_cmps = {
+            "key": lambda x: x,
+            "gt": lambda x, y: x > y,
+            "gte": lambda x, y: x >= y,
+            "lt": lambda x, y: x < y,
+            "lte": lambda x, y: x <= y,
+            "ne": lambda x, y: x != y,
+            "eq": lambda x, y: x == y,
+        }
+        if not self.validators:
+            return default_cmps
+        assert len(self.validators) == 1
+        cmp_funcs = self.validators[0].cmp_funcs(**kwargs)
+        if cmp_funcs is None:
+            return default_cmps
+        else:
+            return cmp_funcs
+
 
 class Str(MeshFieldMixin, marshmallow_fields.Str):
     """
