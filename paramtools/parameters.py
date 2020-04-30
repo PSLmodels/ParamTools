@@ -43,7 +43,6 @@ class Parameters:
     def __init__(
         self,
         initial_state: Optional[dict] = None,
-        uses_extend_func: bool = None,
         index_rates: Optional[dict] = None,
         **ops,
     ):
