@@ -2020,6 +2020,7 @@ class TestExtend:
         params.extend(label_to_extend="d0", label_to_extend_values=[])
         assert init == params.select_eq("extend_param")
 
+        params = ExtParams()
         params.extend(label_to_extend="d0", label_to_extend_values=[8, 9, 10])
         assert sorted(params.extend_param, key=lambda vo: vo["d0"]) == [
             {"d0": 2, "d1": "c1", "value": 1},
@@ -2038,6 +2039,7 @@ class TestExtend:
             {"d0": 10, "d1": "c2", "value": 8, "_auto": True},
         ]
 
+        params = ExtParams()
         params.extend(
             label_to_extend="d0", label_to_extend_values=[0, 8, 9, 10]
         )

@@ -604,6 +604,26 @@ class Parameters:
             InconsistentLabelsException: Value objects do not have consistent
                 labels.
         """
+
+        def get_closest_val(search_value, values, keyfunc):
+            """
+            Find value in values closest to search_value with a preference
+            towards the closest value being less than search_value.
+            """
+            pos_closest, neg_closest = (9e99, None), (9e99, None)
+            sv_key = keyfunc(search_value)
+            for val in values:
+                val_key = keyfunc(val)
+                diff = sv_key - val_key
+                if diff >= 0 and diff < pos_closest[0]:
+                    pos_closest = (diff, val)
+                elif -diff < neg_closest[0]:
+                    neg_closest = (-diff, val)
+            if pos_closest[1] is not None:
+                return pos_closest[1]
+            else:
+                return neg_closest[1]
+
         if label_to_extend is None:
             label_to_extend = self.label_to_extend
 
@@ -669,6 +689,9 @@ class Parameters:
                     continue
 
                 extended = defaultdict(list)
+                for vo in eq:
+                    extended[vo[label_to_extend]].append(vo)
+
                 for val in missing_vals:
                     full_eg_ix = full_extend_grid.index(val)
                     eg_ix = extend_grid.index(val)
@@ -680,20 +703,22 @@ class Parameters:
                             eq, False, {label_to_extend: first_defined_value}
                         )
                     elif eg_ix == 0:
-                        closest_defined_value = min(
-                            defined_vals,
-                            key=lambda defined_val: abs(val - defined_val),
+                        closest_val = get_closest_val(
+                            val, extended.keys(), cmp_funcs["key"]
                         )
                         value_objects = select_eq(
-                            eq, False, {label_to_extend: closest_defined_value}
+                            eq, False, {label_to_extend: closest_val}
                         )
-                    elif extend_grid[eg_ix - 1] in extended:
-                        value_objects = extended.pop(extend_grid[eg_ix - 1])
                     else:
-                        prev_defined_value = extend_grid[eg_ix - 1]
-                        value_objects = select_eq(
-                            eq, False, {label_to_extend: prev_defined_value}
+                        closest_val = get_closest_val(
+                            val, extended.keys(), cmp_funcs["key"]
                         )
+                        if closest_val in extended:
+                            value_objects = extended.pop(closest_val)
+                        else:
+                            value_objects = select_eq(
+                                eq, False, {label_to_extend: closest_val}
+                            )
                     # In practice, value_objects has length one.
                     # Theoretically, there could be multiple if the inital value
                     # object had less labels than later value objects and thus
