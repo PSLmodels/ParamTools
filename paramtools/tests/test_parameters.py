@@ -221,9 +221,10 @@ class TestSchema:
 
         class Params3(Parameters):
             array_first = True
+            label_to_extend = "hello"
             defaults = {"schema": {"operators": {"array_first": True}}}
 
-        params = Params3(array_first=False)
+        params = Params3(array_first=False, label_to_extend=None)
         assert params.operators == {
             "array_first": False,
             "label_to_extend": None,

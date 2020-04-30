@@ -43,10 +43,9 @@ class Parameters:
     def __init__(
         self,
         initial_state: Optional[dict] = None,
-        array_first: Optional[bool] = None,
-        label_to_extend: str = None,
         uses_extend_func: bool = None,
         index_rates: Optional[dict] = None,
+        **ops,
     ):
         schemafactory = SchemaFactory(self.defaults)
         (
@@ -75,21 +74,21 @@ class Parameters:
         # class attribute: middle importance
         # schema action: least important
         # default value if three above are not specified.
-        ops = [
-            ("array_first", array_first, False),
-            ("label_to_extend", label_to_extend, None),
-            ("uses_extend_func", uses_extend_func, False),
+        default_ops = [
+            ("array_first", False),
+            ("label_to_extend", None),
+            ("uses_extend_func", False),
         ]
         schema_ops = self._schema.get("operators", {})
-        for name, init_value, default in ops:
-            if init_value is not None:
-                setattr(self, name, init_value)
-                continue
-            user_vals = [getattr(self, name), schema_ops.get(name)]
-            for value in user_vals:
-                if value != default and value is not None:
-                    setattr(self, name, value)
-                    break
+        for name, default in default_ops:
+            if name in ops:
+                setattr(self, name, ops.get(name))
+            elif getattr(self, name, None) != default:
+                setattr(self, name, getattr(self, name))
+            elif name in schema_ops:
+                setattr(self, name, schema_ops[name])
+            else:
+                setattr(self, name, default)
 
         if self.label_to_extend:
             prev_array_first = self.array_first
