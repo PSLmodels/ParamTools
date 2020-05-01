@@ -4,7 +4,7 @@ import json
 import itertools
 from collections import OrderedDict, defaultdict
 from functools import partial, reduce
-from typing import Optional, Dict, List, Any
+from typing import Optional, Dict, List, Any, Union, Mapping
 
 import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
@@ -13,13 +13,14 @@ from paramtools import utils
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
 from paramtools.select import (
+    select,
     select_eq,
     select_ne,
-    select_gt_ix,
     select_gt,
     select_gte,
     select_lt,
     select_lte,
+    make_cmp_func,
 )
 from paramtools.tree import Tree
 from paramtools.typing import ValueObject
@@ -64,7 +65,7 @@ class Parameters:
         self._validator_schema.context["spec"] = self
         self._warnings = {}
         self._errors = {}
-        self._state = initial_state or {}
+        self._state = self.parse_labels(**(initial_state or {}))
         self._search_trees = {}
         self.index_rates = index_rates or self.index_rates
 
@@ -106,20 +107,24 @@ class Parameters:
 
     def set_state(self, **labels):
         """
-        Sets state for the Parameters instance. The state, label_grid, and
+        Sets state for the Parameters instance. The `_state`, `label_grid`, and
         parameter attributes are all updated with the new state.
 
-        Raises:
-            ValidationError if the labels kwargs contain labels that are not
-                specified in schema.json or if the label values fail the
-                validator set for the corresponding label in schema.json.
+        Use the `view_state` method to inspect the current state of the instance,
+        and use the `clear_state` method to revert to the default state.
+
+        **Raises**
+
+          - `ValidationError` if the labels kwargs contain labels that are not
+            specified in schema.json or if the label values fail the
+            validator set for the corresponding label in schema.json.
         """
 
         self._set_state(**labels)
 
     def clear_state(self):
         """
-        Reset the state of the Parameters instance.
+        Reset the state of the `Parameters` instance.
         """
         self._state = {}
         self.label_grid = copy.deepcopy(self._stateless_label_grid)
@@ -144,11 +149,11 @@ class Parameters:
 
     def adjust(
         self,
-        params_or_path,
-        ignore_warnings=False,
-        raise_errors=True,
-        extend_adj=True,
-        clobber=True,
+        params_or_path: Union[str, Mapping[str, List[ValueObject]]],
+        ignore_warnings: bool = False,
+        raise_errors: bool = True,
+        extend_adj: bool = True,
+        clobber: bool = True,
     ):
         """
         Deserialize and validate parameter adjustments. `params_or_path`
@@ -163,16 +168,31 @@ class Parameters:
         were added automatically via the extend method will be updated.
 
         This simply calls a private method `_adjust` to do the upate. Creating
-        this layer on top of `_adjust` makes it easy to subclass Parameters and
+        this layer on top of `_adjust` makes it easy to subclass `Parameters` and
         implement custom `adjust` methods.
 
-        Returns: parsed, validated parameters.
+        **Parameters**
 
-        Raises:
-            marshmallow.exceptions.ValidationError if data is not valid.
+          - `params_or_path`: Adjustment that is either a `dict`, file path, or
+            JSON string.
+          - `ignore_warnings`: Whether to raise an error on warnings or ignore them.
+          - `raise_errors`: Either raise errors or simply store the error messages.
+          - `extend_adj`: If in extend mode, this is a flag indicating whether to
+            extend the adjustment values or not.
+          - `clobber`: If in extend mode, this is a flag indicating whether to
+            override all values, including user-defined values, or to only
+            override automatically created values.
 
-            ParameterUpdateException if label values do not match at
-                least one existing value item's corresponding label values.
+        **Returns**
+
+          - `params`: Parsed, validated parameters.
+
+        **Raises**
+
+          - `marshmallow.exceptions.ValidationError` if data is not valid.
+
+          - `ParameterUpdateException` if label values do not match at
+            least one existing value item's corresponding label values.
         """
         return self._adjust(
             params_or_path,
@@ -212,6 +232,10 @@ class Parameters:
                 extend_grid = self._stateless_label_grid[self.label_to_extend]
                 to_delete = defaultdict(list)
                 backup = {}
+                cmp_funcs = self.label_validators[
+                    self.label_to_extend
+                ].cmp_funcs()
+                gt_cmp_func = make_cmp_func(cmp_funcs["gt"], all_or_any=all)
                 for param, vos in parsed_params.items():
                     for vo in utils.grid_sort(
                         vos, self.label_to_extend, extend_grid
@@ -229,11 +253,11 @@ class Parameters:
                                     param, strict=True, _auto=True
                                 )
                                 tree = None
-                            gt = select_gt_ix(
+                            gt = select(
                                 queryset,
                                 strict=False,
+                                cmp_func=gt_cmp_func,
                                 labels=query_args,
-                                cmp_list=extend_grid,
                                 tree=tree,
                             )
                             to_delete[param] += select_eq(
@@ -424,26 +448,29 @@ class Parameters:
 
     def specification(
         self,
-        use_state=True,
-        meta_data=False,
-        include_empty=False,
-        serializable=False,
-        sort_values=False,
+        use_state: bool = True,
+        meta_data: bool = False,
+        include_empty: bool = False,
+        serializable: bool = False,
+        sort_values: bool = False,
         **labels,
     ):
         """
         Query value(s) of all parameters along labels specified in
         `labels`.
 
-        Parameters:
-            - use_state: If true, use the instance's state for the select operation.
-            - meta_data: If true, include information like the parameter
-                description and title.
-            - include_empty: If true, include parameters that do not meet the label query.
-            - serializable: If true, return data that is compatible with `json.dumps`.
+        **Parameters**
 
-        Returns: serialized data of shape
-            {"param_name": [{"value": val, "label0": ..., }], ...}
+          - `use_state`: Use the instance's state for the select operation.
+          - `meta_data`: Include information like the parameter
+            `description` and title.
+          - `include_empty`: Include parameters that do not meet the label query.
+          - `serializable`: Return data that is compatible with `json.dumps`.
+          - `sort_values`: Sort values by the `label` order.
+
+        **Returns**
+
+          - `dict` of parameter names and data.
         """
         if use_state:
             labels.update(self._state)
@@ -477,15 +504,18 @@ class Parameters:
         is defined by inspecting the label validators in schema.json
         and the state attribute of the Parameters instance.
 
-        Returns: n-labelal NumPy array.
+        **Returns**
 
-        Raises:
-            InconsistentLabelsException: Value objects do not have consistent
-                labels.
-            SparseValueObjectsException: Value object does not span the
-                entire space specified by the Order object.
-            ParamToolsError: Parameter is an array type and has labels.
-                This is not supported by ParamTools when using array_first.
+          - `arr`: NumPy array created from list of value objects.
+
+        **Raises**
+
+          - `InconsistentLabelsException`: Value objects do not have consistent
+            labels.
+          - `SparseValueObjectsException`: Value object does not span the
+            entire space specified by the Order object.
+          - `ParamToolsError`: Parameter is an array type and has labels.
+            This is not supported by ParamTools when using array_first.
         """
         value_items = self.select_eq(param, False, **self._state)
         if not value_items:
@@ -519,7 +549,8 @@ class Parameters:
             else:
                 return data_type(value)
         exp_full_shape = reduce(lambda x, y: x * y, shape)
-        if len(value_items) != exp_full_shape:
+        act_full_shape = len(value_items)
+        if act_full_shape != exp_full_shape:
             # maintains label value order over value objects.
             exp_grid = list(itertools.product(*value_order.values()))
             # preserve label value order for each value object by
@@ -557,12 +588,21 @@ class Parameters:
         """
         Convert NumPy array to a Value object.
 
-        Returns:
-            Value object (shape: [{"value": val, labels:...}])
+        **Parameters**
 
-        Raises:
-            InconsistentLabelsException: Value objects do not have consistent
-                labels.
+          - `param`: Name of parameter to convert to a list of value objects.
+          - `array`: Optionally, provide a NumPy array to convert into a list
+            of value objects. If not specified, the value at `self.param` will
+            be used.
+
+        **Returns**
+
+          - List of `ValueObjects`
+
+        **Raises**
+
+          - `InconsistentLabelsException`: Value objects do not have consistent
+            labels.
         """
         if array is None:
             array = getattr(self, param)
@@ -586,21 +626,54 @@ class Parameters:
 
     def extend(
         self,
-        label_to_extend=None,
-        label_to_extend_values=None,
-        params=None,
-        raise_errors=True,
-        ignore_warnings=False,
+        label: Optional[str] = None,
+        label_values: Optional[List[Any]] = None,
+        params: Optional[List[str]] = None,
+        raise_errors: bool = True,
+        ignore_warnings: bool = False,
     ):
         """
-        Extend parameters along label_to_extend.
+        Extend parameters along `label`.
 
-        Raises:
-            InconsistentLabelsException: Value objects do not have consistent
-                labels.
+        **Parameters**
+
+        - `label`: Label to extend values along. By default, `label_to_extend`
+          is used.
+        - `label_values`: values of `label` to extend. By default, this is a grid
+          created from the valid values of `label_to_extend`.
+        - `params`: Parameters to extend. By default, all parameters are extended.
+        - `raise_errors`: Whether `adjust` should raise or store errors.
+        - `ignore_warnings`: Whether `adjust` should raise or ignore warnings.
+
+        **Raises**
+
+          - `InconsistentLabelsException`: Value objects do not have consistent
+            labels.
         """
-        if label_to_extend is None:
-            label_to_extend = self.label_to_extend
+
+        def get_closest_val(search_value, values, keyfunc):
+            """
+            Find value in values closest to search_value with a preference
+            towards the closest value being less than search_value.
+            """
+            pos_closest, neg_closest = (9e99, None), (9e99, None)
+            sv_key = keyfunc(search_value)
+            for val in values:
+                val_key = keyfunc(val)
+                diff = sv_key - val_key
+                if diff >= 0 and diff < pos_closest[0]:
+                    pos_closest = (diff, val)
+                elif -diff < neg_closest[0]:
+                    neg_closest = (-diff, val)
+            if pos_closest[1] is not None:
+                return pos_closest[1]
+            else:
+                return neg_closest[1]
+
+        if label is None:
+            label = self.label_to_extend
+        else:
+            label = label
 
         spec = self.specification(meta_data=True)
         if params is not None:
@@ -609,82 +682,92 @@ class Parameters:
                 for param, data in spec.items()
                 if param in params
             }
-        extend_grid = (
-            label_to_extend_values
-            or self._stateless_label_grid[label_to_extend]
-        )
+        full_extend_grid = self._stateless_label_grid[label]
+        if label_values is not None:
+            labels = self.parse_labels(**{label: label_values})
+            extend_grid = labels[label]
+        else:
+            extend_grid = self._stateless_label_grid[label]
+
+        cmp_funcs = self.label_validators[label].cmp_funcs(choices=extend_grid)
+        gt_cmp_func = make_cmp_func(cmp_funcs["gt"], all_or_any=all)
+
         adjustment = defaultdict(list)
         for param, data in spec.items():
-            if not any(label_to_extend in vo for vo in data["value"]):
+            if not any(label in vo for vo in data["value"]):
                 continue
             extended_vos = set()
             for vo in sorted(
-                data["value"],
-                key=lambda val: extend_grid.index(val[label_to_extend]),
+                data["value"], key=lambda val: cmp_funcs["key"](val[label])
             ):
                 hashable_vo = utils.hashable_value_object(vo)
                 if hashable_vo in extended_vos:
                     continue
                 else:
                     extended_vos.add(hashable_vo)
-                gt = select_gt_ix(
+                gt = select(
                     self._data[param]["value"],
                     False,
-                    {label_to_extend: vo[label_to_extend]},
-                    extend_grid,
+                    gt_cmp_func,
+                    {label: vo[label]},
                     tree=self._search_trees.get(param),
                 )
                 eq = select_eq(
                     gt,
                     False,
-                    utils.filter_labels(
-                        vo, drop=["value", label_to_extend, "_auto"]
-                    ),
+                    utils.filter_labels(vo, drop=["value", label, "_auto"]),
                 )
                 extended_vos.update(map(utils.hashable_value_object, eq))
                 eq += [vo]
 
-                defined_vals = {eq_vo[label_to_extend] for eq_vo in eq}
+                defined_vals = {eq_vo[label] for eq_vo in eq}
 
                 missing_vals = sorted(
-                    set(extend_grid) - defined_vals,
-                    key=lambda val: extend_grid.index(val),
+                    set(extend_grid) - defined_vals, key=cmp_funcs["key"]
                 )
 
                 if not missing_vals:
                     continue
 
                 extended = defaultdict(list)
+                for vo in eq:
+                    extended[vo[label]].append(vo)
 
                 for val in missing_vals:
+                    full_eg_ix = full_extend_grid.index(val)
                     eg_ix = extend_grid.index(val)
-                    if eg_ix == 0:
+                    if eg_ix == 0 and full_eg_ix == 0:
                         first_defined_value = min(
-                            defined_vals,
-                            key=lambda val: extend_grid.index(val),
+                            defined_vals, key=cmp_funcs["key"]
                         )
                         value_objects = select_eq(
-                            eq, False, {label_to_extend: first_defined_value}
+                            eq, False, {label: first_defined_value}
                         )
-                    elif extend_grid[eg_ix - 1] in extended:
-                        value_objects = extended.pop(extend_grid[eg_ix - 1])
+                    elif eg_ix == 0:
+                        closest_val = get_closest_val(
+                            val, extended.keys(), cmp_funcs["key"]
+                        )
+                        value_objects = select_eq(
+                            eq, False, {label: closest_val}
+                        )
                     else:
-                        prev_defined_value = extend_grid[eg_ix - 1]
-                        value_objects = select_eq(
-                            eq, False, {label_to_extend: prev_defined_value}
+                        closest_val = get_closest_val(
+                            val, extended.keys(), cmp_funcs["key"]
                         )
+                        if closest_val in extended:
+                            value_objects = extended.pop(closest_val)
+                        else:
+                            value_objects = select_eq(
+                                eq, False, {label: closest_val}
+                            )
                     # In practice, value_objects has length one.
                     # Theoretically, there could be multiple if the inital value
                     # object had less labels than later value objects and thus
                     # matched multiple value objects.
                     for value_object in value_objects:
-                        ext = dict(value_object, **{label_to_extend: val})
+                        ext = dict(value_object, **{label: val})
                         ext = self.extend_func(
-                            param,
-                            ext,
-                            value_object,
-                            extend_grid,
-                            label_to_extend,
+                            param, ext, value_object, full_extend_grid, label
                         )
                         extended_vos.add(
                             utils.hashable_value_object(value_object)
@@ -706,35 +789,38 @@ class Parameters:
         extend_vo: ValueObject,
         known_vo: ValueObject,
         extend_grid: List,
-        label_to_extend: str,
+        label: str,
     ):
         """
         Function for applying indexing rates to parameter values as they
-        are extended. Projects may implement their own extend_func by
-        overriding this one. Projects need to write their own indexing_rate
+        are extended. Projects may implement their own `extend_func` by
+        overriding this one. Projects need to write their own `indexing_rate`
         method for returning the correct indexing rate for a given parameter
-        and value of label_to_extend (abbreviated to lte_val).
+        and value of `label`.
 
-        returns: extended_vo
+        **Returns**
+
+          - `extend_vo`: New `ValueObject`.
         """
         if not self.uses_extend_func or not self._data[param].get(
             "indexed", False
         ):
             return extend_vo
 
-        known_val = known_vo[label_to_extend]
+        known_val = known_vo[label]
         known_ix = extend_grid.index(known_val)
 
-        toext_val = extend_vo[label_to_extend]
+        toext_val = extend_vo[label]
         toext_ix = extend_grid.index(toext_val)
 
         if toext_ix > known_ix:
             # grow value according to the index rate supplied by the user defined
             # self.indexing_rate method.
-            v = extend_vo["value"] * (
-                1 + self.get_index_rate(param, known_val)
-            )
-            extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
+            for ix in range(known_ix, toext_ix):
+                v = extend_vo["value"] * (
+                    1 + self.get_index_rate(param, extend_grid[ix])
+                )
+                extend_vo["value"] = np.round(v, 2) if v < 9e99 else 9e99
         else:
             # shrink value according to the index rate supplied by the user defined
             # self.indexing_rate method.
@@ -755,30 +841,46 @@ class Parameters:
         """
         return self.index_rates[lte_val]
 
-    def _set_state(self, params=None, **labels):
+    def parse_labels(self, **labels):
         """
-        Private method for setting the state on a Parameters instance. Internal
-        methods can set which params will be updated. This is helpful when a set
-        of parameters are adjusted and only their attributes need to be updated.
+        Parse and validate labels.
+
+        **Returns**
+
+        - Parsed and validated labels.
         """
+        parsed = defaultdict(list)
         messages = {}
         for name, values in labels.items():
             if name not in self.label_validators:
                 messages[name] = f"{name} is not a valid label."
                 continue
             if not isinstance(values, list):
-                values = [values]
-            for value in values:
+                list_values = [values]
+            else:
+                list_values = values
+            assert isinstance(list_values, list)
+            for value in list_values:
                 try:
-                    self.label_validators[name].deserialize(value)
+                    parsed[name].append(
+                        self.label_validators[name].deserialize(value)
+                    )
                 except MarshmallowValidationError as ve:
                     messages[name] = str(ve)
         if messages:
             raise ValidationError({"errors": messages}, labels=None)
+        return parsed
+
+    def _set_state(self, params=None, **labels):
+        """
+        Private method for setting the state on a Parameters instance. Internal
+        methods can set which params will be updated. This is helpful when a set
+        of parameters are adjusted and only their attributes need to be updated.
+        """
+        labels = self.parse_labels(**labels)
         self._state.update(labels)
         for label_name, label_value in self._state.items():
-            if not isinstance(label_value, list):
-                label_value = [label_value]
+            assert isinstance(label_value, list)
             self.label_grid[label_name] = label_value
         spec = self.specification(include_empty=True, **self._state)
         if params is not None:
@@ -1029,11 +1131,16 @@ class Parameters:
         to the order specified in schema. If data is not specified,
         the existing value objects are used. User specified data
         can be:
-            {param: [...value objects]}
 
-            or
+        ```
+        {param: [...value objects]}
+        ```
 
-            {param: {"value": [...value objects]}}
+         or
+
+        ```
+        {param: {"value": [...value objects]}}
+        ```
         """
 
         def keyfunc(vo, label, label_values):

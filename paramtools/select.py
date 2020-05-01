@@ -1,4 +1,4 @@
-from typing import Any, Iterable, List
+from typing import Any, Iterable, List, Callable
 
 
 from paramtools.tree import Tree
@@ -55,6 +55,13 @@ def lt_func(x, y) -> bool:
 
 def lte_func(x, y) -> bool:
     return all(x <= item for item in y)
+
+
+def make_cmp_func(
+    cmp: Callable[[Any, Iterable], bool],
+    all_or_any: Callable[[Iterable], bool],
+) -> CmpFunc:
+    return lambda x, y: all_or_any(cmp(x, item) for item in y)
 
 
 def select_eq(

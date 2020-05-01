@@ -72,6 +72,7 @@ collision_list = [
     "errors",
     "warnings",
     "from_array",
+    "parse_labels",
     "read_params",
     "set_state",
     "specification",

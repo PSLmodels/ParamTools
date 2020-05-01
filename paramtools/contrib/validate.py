@@ -133,6 +133,9 @@ class When(ma.validate.Validator):
         """
         return self.then_validators[0].grid()
 
+    def cmp_funcs(self, **kwargs):
+        return None
+
 
 class Range(ma.validate.Range):
     """
@@ -221,6 +224,9 @@ class Range(ma.validate.Range):
         max_ = self.max[0]["value"] + self.step
         arr = np.arange(self.min[0]["value"], max_, self.step)
         return arr[arr <= self.max[0]["value"]].tolist()
+
+    def cmp_funcs(self, **kwargs):
+        return None
 
 
 class DateRange(Range):
@@ -334,3 +340,16 @@ class OneOf(ma.validate.OneOf):
 
     def grid(self):
         return self.choices
+
+    def cmp_funcs(self, choices=None, **kwargs):
+        if choices is None:
+            choices = self.choices
+        return {
+            "key": lambda x: choices.index(x),
+            "gt": lambda x, y: choices.index(x) > choices.index(y),
+            "gte": lambda x, y: choices.index(x) >= choices.index(y),
+            "lt": lambda x, y: choices.index(x) < choices.index(y),
+            "lte": lambda x, y: choices.index(x) <= choices.index(y),
+            "ne": lambda x, y: x != y,
+            "eq": lambda x, y: x == y,
+        }
