@@ -1202,24 +1202,22 @@ class TestArray:
         params.madeup = vi
         params._data["madeup"] = {"value": vi}
         value_items = params.select_eq("madeup", False, **params._state)
-        assert params._resolve_order("madeup", value_items) == (
-            exp_label_order,
-            exp_value_order,
-        )
+        assert params._resolve_order(
+            "madeup", value_items, params.label_grid
+        ) == (exp_label_order, exp_value_order)
 
         # test with specified state.
         exp_value_order = {"label0": ["zero", "one"], "label2": [0, 1]}
         params.set_state(label2=[0, 1])
         value_items = params.select_eq("madeup", False, **params._state)
-        assert params._resolve_order("madeup", value_items) == (
-            exp_label_order,
-            exp_value_order,
-        )
+        assert params._resolve_order(
+            "madeup", value_items, params.label_grid
+        ) == (exp_label_order, exp_value_order)
 
         params.madeup[0]["label1"] = 0
         value_items = params.select_eq("madeup", False, **params._state)
         with pytest.raises(InconsistentLabelsException):
-            params._resolve_order("madeup", value_items)
+            params._resolve_order("madeup", value_items, params.label_grid)
 
     def test_to_array_with_state1(self, TestParams):
         params = TestParams()
@@ -1239,8 +1237,21 @@ class TestArray:
 
         assert res.tolist() == exp
 
-        exp = params.int_dense_array_param
-        assert params.from_array("int_dense_array_param", res) == exp
+        assert (
+            params.from_array("int_dense_array_param", res)
+            == params.int_dense_array_param
+        )
+
+        params = TestParams()
+        res = params.to_array("int_dense_array_param", label0="zero")
+
+        assert res.tolist() == exp
+
+        act = copy.deepcopy(
+            params.from_array("int_dense_array_param", res, label0="zero")
+        )
+        params.set_state(label0="zero")
+        assert act == params.int_dense_array_param
 
     def test_to_array_with_state2(self, TestParams):
         params = TestParams()
@@ -1270,8 +1281,23 @@ class TestArray:
 
         assert res.tolist() == exp
 
-        exp = params.int_dense_array_param
-        assert params.from_array("int_dense_array_param", res) == exp
+        assert (
+            params.from_array("int_dense_array_param", res)
+            == params.int_dense_array_param
+        )
+
+        params = TestParams()
+        res = params.to_array("int_dense_array_param", label1=[0, 1, 2, 5])
+
+        assert res.tolist() == exp
+
+        act = copy.deepcopy(
+            params.from_array(
+                "int_dense_array_param", res, label1=[0, 1, 2, 5]
+            )
+        )
+        params.set_state(label1=[0, 1, 2, 5])
+        assert act == params.int_dense_array_param
 
 
 class TestState:
@@ -1617,7 +1643,6 @@ class TestExtend:
 
         params = AFParams()
         assert params.int_dense_array_param.tolist()
-        params.set_state(label0="one")
         exp = [
             {"label0": "one", "label1": 0, "label2": 0, "value": 1},
             {"label0": "one", "label1": 0, "label2": 1, "value": 2},
@@ -1638,7 +1663,7 @@ class TestExtend:
             {"label0": "one", "label1": 5, "label2": 1, "value": 17},
             {"label0": "one", "label1": 5, "label2": 2, "value": 18},
         ]
-        assert params.from_array("int_dense_array_param") == exp
+        assert params.from_array("int_dense_array_param", label0="one") == exp
 
         for val in params._data["int_dense_array_param"]["value"]:
             if val["label0"] == "zero":

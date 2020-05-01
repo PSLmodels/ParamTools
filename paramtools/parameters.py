@@ -497,12 +497,16 @@ class Parameters:
         else:
             return all_params
 
-    def to_array(self, param):
+    def to_array(self, param, **labels):
         """
         Convert a Value object to an n-labelal array. The list of Value
         objects must span the specified parameter space. The parameter space
         is defined by inspecting the label validators in schema.json
         and the state attribute of the Parameters instance.
+
+        **Parameters**
+          - `param`: Name of parameter that will be used to create array.
+          - `labels`: Optionally, override instance state.
 
         **Returns**
 
@@ -517,10 +521,19 @@ class Parameters:
           - `ParamToolsError`: Parameter is an array type and has labels.
             This is not supported by ParamTools when using array_first.
         """
-        value_items = self.select_eq(param, False, **self._state)
+        label_grid = copy.deepcopy(self.label_grid)
+        state = copy.deepcopy(self._state)
+        if labels:
+            parsed_labels = self.parse_labels(**labels)
+            label_grid.update(parsed_labels)
+            state.update(parsed_labels)
+        value_items = self.select_eq(param, False, **state)
         if not value_items:
             return np.array([])
-        label_order, value_order = self._resolve_order(param, value_items)
+
+        label_order, value_order = self._resolve_order(
+            param, value_items, label_grid
+        )
         shape = []
         for label in label_order:
             shape.append(len(value_order[label]))
@@ -584,7 +597,7 @@ class Parameters:
             arr[ix] = vi["value"]
         return arr
 
-    def from_array(self, param, array=None):
+    def from_array(self, param, array=None, **labels):
         """
         Convert NumPy array to a Value object.
 
@@ -594,6 +607,8 @@ class Parameters:
           - `array`: Optionally, provide a NumPy array to convert into a list
             of value objects. If not specified, the value at `self.param` will
             be used.
+          - `labels`: Optionally, override instance state.
+
 
         **Returns**
 
@@ -611,8 +626,18 @@ class Parameters:
                     "A NumPy Ndarray should be passed to this method "
                     "or the instance attribute should be an array."
                 )
-        value_items = self.select_eq(param, False, **self._state)
-        label_order, value_order = self._resolve_order(param, value_items)
+
+        label_grid = copy.deepcopy(self.label_grid)
+        state = copy.deepcopy(self._state)
+        if labels:
+            parsed_labels = self.parse_labels(**labels)
+            label_grid.update(parsed_labels)
+            state.update(parsed_labels)
+
+        value_items = self.select_eq(param, False, **state)
+        label_order, value_order = self._resolve_order(
+            param, value_items, label_grid
+        )
         label_values = itertools.product(*value_order.values())
         label_indices = itertools.product(
             *map(lambda x: range(len(x)), value_order.values())
@@ -895,23 +920,24 @@ class Parameters:
             else:
                 setattr(self, name, value)
 
-    def _resolve_order(self, param, value_items):
+    def _resolve_order(self, param, value_items, label_grid):
         """
         Resolve the order of the labels and their values by
         inspecting data in the label grid values.
 
-        The label grid for all labels is stored in the label_grid
-        attribute. The labels to be used are the ones that are specified
+        The labels to be used are the ones that are specified
         for each value object. Note that the labels must be specified
         _consistently_ for all value objects, i.e. none can be added or omitted
         for any value object in the list.
 
-        Returns:
-            label_order: The label order.
-            value_order: The values, in order, for each label.
+        **Returns**
 
-        Raises:
-            InconsistentLabelsException: Value objects do not have consistent
+            - `label_order`: The label order.
+            - `value_order`: The values, in order, for each label.
+
+        **Raises**
+
+            - `InconsistentLabelsException`: Value objects do not have consistent
                 labels.
         """
         used = utils.consistent_labels(value_items)
@@ -920,7 +946,7 @@ class Parameters:
                 f"were added or omitted for some value object(s)."
             )
         label_order, value_order = [], {}
-        for label_name, label_values in self.label_grid.items():
+        for label_name, label_values in label_grid.items():
             if label_name in used:
                 label_order.append(label_name)
                 value_order[label_name] = label_values
