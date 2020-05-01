@@ -463,17 +463,20 @@ and the state attribute of the Parameters instance.</p>
 <li>Parsed and validated labels.</li>
 </ul></div>
 <div class="autodoc-signature"><code><strong>sort_values</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">data=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">has_meta_data=True</em><span class="autodoc-punctuation">)</span></div>
-<div class="autodoc-docstring"><p>Sort value objects for all parameters in data according
-to the order specified in schema. If data is not specified,
-the existing value objects are used. User specified data
-can be:</p>
-<div class="codehilite"><pre><span></span><code><span class="err">{param: [...value objects]}</span>
-</code></pre></div>
-
-
-<p>or</p>
-<div class="codehilite"><pre><span></span><code><span class="err">{param: {&quot;value&quot;: [...value objects]}}</span>
-</code></pre></div></div>
+<div class="autodoc-docstring"><p>Sort value objects for all parameters in <code>data</code> according
+to the order specified in <code>schema</code>.</p>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>data</code>: Parameter data to be sorted. This should be a
+    <code>dict</code> of parameter names and values. If <code>data</code> is <code>None</code>,
+    the current values will be sorted.</li>
+<li><code>has_meta_data</code>: Whether parameter values should be accessed
+    directly or through the "value" attribute.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li>Sorted data.</li>
+</ul></div>
 </div>
 </div>
                 
