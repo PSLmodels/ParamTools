@@ -416,11 +416,14 @@ and value of <code>label</code>.</p>
 <ul>
 <li><code>extend_vo</code>: New <code>ValueObject</code>.</li>
 </ul></div>
-<div class="autodoc-signature"><code><strong>to_array</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-signature"><code><strong>to_array</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Convert a Value object to an n-labelal array. The list of Value
 objects must span the specified parameter space. The parameter space
 is defined by inspecting the label validators in schema.json
 and the state attribute of the Parameters instance.</p>
+<p><strong>Parameters</strong>
+  - <code>param</code>: Name of parameter that will be used to create array.
+  - <code>labels</code>: Optionally, override instance state.</p>
 <p><strong>Returns</strong></p>
 <ul>
 <li><code>arr</code>: NumPy array created from list of value objects.</li>
@@ -434,7 +437,7 @@ and the state attribute of the Parameters instance.</p>
 <li><code>ParamToolsError</code>: Parameter is an array type and has labels.
     This is not supported by ParamTools when using array_first.</li>
 </ul></div>
-<div class="autodoc-signature"><code><strong>from_array</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">array=None</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-signature"><code><strong>from_array</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">param</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">array=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Convert NumPy array to a Value object.</p>
 <p><strong>Parameters</strong></p>
 <ul>
@@ -442,6 +445,7 @@ and the state attribute of the Parameters instance.</p>
 <li><code>array</code>: Optionally, provide a NumPy array to convert into a list
     of value objects. If not specified, the value at <code>self.param</code> will
     be used.</li>
+<li><code>labels</code>: Optionally, override instance state.</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
