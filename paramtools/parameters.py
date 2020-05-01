@@ -479,7 +479,9 @@ class Parameters:
         for param in self._validator_schema.fields:
             result = self.select_eq(param, False, **labels)
             if sort_values and result:
-                self.sort_values(data={param: result}, has_meta_data=False)
+                result = self.sort_values(
+                    data={param: result}, has_meta_data=False
+                )[param]
             if result or include_empty:
                 if meta_data:
                     param_data = self._data[param]
@@ -1153,20 +1155,21 @@ class Parameters:
 
     def sort_values(self, data=None, has_meta_data=True):
         """
-        Sort value objects for all parameters in data according
-        to the order specified in schema. If data is not specified,
-        the existing value objects are used. User specified data
-        can be:
+        Sort value objects for all parameters in `data` according
+        to the order specified in `schema`.
 
-        ```
-        {param: [...value objects]}
-        ```
 
-         or
+        **Parameters**
 
-        ```
-        {param: {"value": [...value objects]}}
-        ```
+          - `data`: Parameter data to be sorted. This should be a
+            `dict` of parameter names and values. If `data` is `None`,
+            the current values will be sorted.
+          - `has_meta_data`: Whether parameter values should be accessed
+            directly or through the "value" attribute.
+
+        **Returns**
+
+          - Sorted data.
         """
 
         def keyfunc(vo, label, label_values):
@@ -1194,18 +1197,27 @@ class Parameters:
         else:
             update_attrs = False
 
-        for param, param_data in data.items():
+        for param in data:
             for label in order:
                 label_values = label_grid[label]
                 pfunc = partial(
                     keyfunc, label=label, label_values=label_values
                 )
                 if has_meta_data:
-                    param_data["value"].sort(key=pfunc)
+                    data[param]["value"] = sorted(
+                        data[param]["value"], key=pfunc
+                    )
                 else:
-                    param_data.sort(key=pfunc)
+                    data[param] = sorted(data[param], key=pfunc)
 
             # Only update attributes when array first is off, since
             # value order will not affect how arrays are constructed.
             if update_attrs and has_meta_data and not self.array_first:
-                setattr(self, param, param_data["value"])
+                attr_vals = select_eq(
+                    data[param]["value"], strict=True, labels=self._state
+                )
+                sorted_values = self.sort_values(
+                    {param: attr_vals}, has_meta_data=False
+                )[param]
+                setattr(self, param, sorted_values)
+        return data

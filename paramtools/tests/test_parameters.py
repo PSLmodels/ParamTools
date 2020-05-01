@@ -549,6 +549,26 @@ class TestAccess:
         params.sort_values()
         assert params.extend_param == "don't update me"
 
+    def test_sort_values_with_state(self, extend_ex_path):
+        class ExtParams(Parameters):
+            defaults = extend_ex_path
+            label_to_extend = "d0"
+            array_first = False
+
+        params = ExtParams()
+        params.set_state(d0=[6, 7, 8, 9])
+        params.sort_values()
+        assert params.extend_param == [
+            {"d0": 6, "d1": "c1", "value": 5, "_auto": True},
+            {"d0": 6, "d1": "c2", "value": 6, "_auto": True},
+            {"d0": 7, "d1": "c1", "value": 7},
+            {"d0": 7, "d1": "c2", "value": 8},
+            {"d0": 8, "d1": "c1", "value": 7, "_auto": True},
+            {"d0": 8, "d1": "c2", "value": 8, "_auto": True},
+            {"d0": 9, "d1": "c1", "value": 7, "_auto": True},
+            {"d0": 9, "d1": "c2", "value": 8, "_auto": True},
+        ]
+
 
 class TestAdjust:
     def test_adjust_int_param(self, TestParams):
