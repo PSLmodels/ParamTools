@@ -51,7 +51,7 @@ from paramtools.utils import (
 
 
 name = "paramtools"
-__version__ = "0.13.1-track-extend-vals"
+__version__ = "0.14.0"
 
 __all__ = [
     "SchemaFactory",
