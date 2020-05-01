@@ -459,7 +459,7 @@ class Parameters:
         Query value(s) of all parameters along labels specified in
         `labels`.
 
-        Parameters:
+        **Parameters**
 
           - `use_state`: Use the instance's state for the select operation.
           - `meta_data`: Include information like the parameter
@@ -468,6 +468,9 @@ class Parameters:
           - `serializable`: Return data that is compatible with `json.dumps`.
           - `sort_values`: Sort values by the `label` order.
 
+        **Returns**
+
+          - `dict` of parameter names and data.
         """
         if use_state:
             labels.update(self._state)
