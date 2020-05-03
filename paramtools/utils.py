@@ -1,5 +1,6 @@
 import json
 import os
+from bisect import bisect_left, bisect_right
 from collections import OrderedDict
 from typing import List
 
@@ -148,3 +149,36 @@ def grid_sort(vos, label_to_extend, grid):
             return grid[0]
 
     return sorted(vos, key=key)
+
+
+class SortedKeyList:
+    """
+    Sorted key list inspired by SortedContainers and the Python docs:
+
+    - http://www.grantjenks.com/docs/sortedcontainers/
+    - https://docs.python.org/3.9/library/bisect.html
+    """
+
+    def __init__(self, values, keyfunc):
+        self.sorted_key_list = [(val, keyfunc(val)) for val in values]
+        self.sorted_key_list.sort(key=lambda r: r[1])
+        self.keys = [r[1] for r in self.sorted_key_list]
+        self.keyfunc = keyfunc
+
+    def lte(self, value):
+        i = bisect_right(self.keys, self.keyfunc(value))
+        if i:
+            return self.sorted_key_list[i - 1][0]
+        return None
+
+    def gte(self, value):
+        i = bisect_left(self.keys, self.keyfunc(value))
+        if i != len(self.keys):
+            return self.sorted_key_list[i][0]
+        return None
+
+    def insert(self, value):
+        key_value = self.keyfunc(value)
+        i = bisect_left(self.keys, key_value)
+        self.sorted_key_list.insert(i, (value, key_value))
+        self.keys.insert(i, key_value)
