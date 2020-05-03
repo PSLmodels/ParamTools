@@ -761,32 +761,15 @@ class Parameters:
                     extended[vo[label]].append(vo)
 
                 for val in missing_vals:
-                    full_eg_ix = full_extend_grid.index(val)
-                    eg_ix = extend_grid.index(val)
-                    if eg_ix == 0 and full_eg_ix == 0:
-                        first_defined_value = min(
-                            defined_vals, key=cmp_funcs["key"]
-                        )
-                        value_objects = select_eq(
-                            eq, False, {label: first_defined_value}
-                        )
-                    elif eg_ix == 0:
-                        closest_val = get_closest_val(
-                            val, extended.keys(), cmp_funcs["key"]
-                        )
+                    closest_val = get_closest_val(
+                        val, extended.keys(), cmp_funcs["key"]
+                    )
+                    if closest_val in extended:
+                        value_objects = extended.pop(closest_val)
+                    else:
                         value_objects = select_eq(
                             eq, False, {label: closest_val}
                         )
-                    else:
-                        closest_val = get_closest_val(
-                            val, extended.keys(), cmp_funcs["key"]
-                        )
-                        if closest_val in extended:
-                            value_objects = extended.pop(closest_val)
-                        else:
-                            value_objects = select_eq(
-                                eq, False, {label: closest_val}
-                            )
                     # In practice, value_objects has length one.
                     # Theoretically, there could be multiple if the inital value
                     # object had less labels than later value objects and thus
