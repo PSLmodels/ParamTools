@@ -6,7 +6,9 @@ from marshmallow import (
     validate,
     validates_schema,
     ValidationError as MarshmallowValidationError,
+    decorators,
 )
+from marshmallow.error_store import ErrorStore
 
 from paramtools.exceptions import UnknownTypeException, ParamToolsError
 from paramtools import contrib
@@ -182,10 +184,54 @@ class BaseValidatorSchema(Schema):
         "when": "_get_when_validator",
     }
 
-    def load(self, data, ignore_warnings):
+    def validate_only(self, data):
+        """
+        Bypass deserialization and just run field validators. This is taken
+        from the marshmallow _do_load function:
+        https://github.com/marshmallow-code/marshmallow/blob/3.5.2/src/marshmallow/schema.py#L807
+        """
+        error_store = ErrorStore()
+        # Run field-level validation
+        self._invoke_field_validators(
+            error_store=error_store, data=data, many=None
+        )
+        # Run schema-level validation
+        if self._has_processors(decorators.VALIDATES_SCHEMA):
+            field_errors = bool(error_store.errors)
+            self._invoke_schema_validators(
+                error_store=error_store,
+                pass_many=True,
+                data=data,
+                original_data=data,
+                many=None,
+                partial=None,
+                field_errors=field_errors,
+            )
+            self._invoke_schema_validators(
+                error_store=error_store,
+                pass_many=False,
+                data=data,
+                original_data=data,
+                many=None,
+                partial=None,
+                field_errors=field_errors,
+            )
+        errors = error_store.errors
+        if errors:
+            exc = MarshmallowValidationError(
+                errors, data=data, valid_data=data
+            )
+            self.handle_error(exc, data, many=None, partial=None)
+            raise exc
+        return data
+
+    def load(self, data, ignore_warnings, is_deserialized=False):
         self.ignore_warnings = ignore_warnings
         try:
-            return super().load(data)
+            if is_deserialized:
+                return self.validate_only(data)
+            else:
+                return super().load(data)
         finally:
             self.ignore_warnings = False
 

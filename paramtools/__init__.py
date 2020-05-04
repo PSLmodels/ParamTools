@@ -47,6 +47,7 @@ from paramtools.utils import (
     hashable_value_object,
     filter_labels,
     make_label_str,
+    SortedKeyList,
 )
 
 
@@ -95,5 +96,6 @@ __all__ = [
     "hashable_value_object",
     "filter_labels",
     "make_label_str",
+    "SortedKeyList",
     "ValueObject",
 ]

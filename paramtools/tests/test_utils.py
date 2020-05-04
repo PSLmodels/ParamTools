@@ -6,6 +6,7 @@ from paramtools import (
     hashable_value_object,
     filter_labels,
     make_label_str,
+    SortedKeyList,
 )
 
 
@@ -95,3 +96,38 @@ def test_make_label_str():
     assert make_label_str({"value": 0}) == ""
     assert make_label_str({}) == ""
     assert make_label_str({"b": 0, "c": 1, "a": 2}) == "[a=2, b=0, c=1]"
+
+
+def test_sorted_key_list():
+    [(2, 2), (3, 3), (5, 5), (7, 7)]
+    values = {
+        "red": 2,
+        "blue": 3,
+        "orange": 5,
+        "white": 6,
+        "yellow": 7,
+        "green": 9,
+        "black": 0,
+    }
+
+    to_insert = {"red": 2, "blue": 3, "orange": 5, "yellow": 7}
+
+    skl = SortedKeyList(to_insert, keyfunc=lambda x: values[x])
+
+    assert skl.gte("black") == "red"
+    assert skl.lte("black") is None
+    skl.insert("black")
+    assert skl.gte("black") == "black"
+    assert skl.lte("black") == "black"
+
+    assert skl.gte("white") == "yellow"
+    assert skl.lte("white") == "orange"
+    skl.insert("white")
+    assert skl.gte("white") == "white"
+    assert skl.lte("white") == "white"
+
+    assert skl.gte("green") is None
+    assert skl.lte("green") == "yellow"
+    skl.insert("green")
+    assert skl.gte("green") == "green"
+    assert skl.lte("green") == "green"

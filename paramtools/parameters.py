@@ -216,7 +216,13 @@ class Parameters:
         """
         # Validate user adjustments.
         if is_deserialized:
-            parsed_params = params_or_path
+            parsed_params = {}
+            try:
+                parsed_params = self._validator_schema.load(
+                    params_or_path, ignore_warnings, is_deserialized=True
+                )
+            except MarshmallowValidationError as ve:
+                self._parse_validation_messages(ve.messages, params_or_path)
         else:
             params = self.read_params(params_or_path)
             parsed_params = {}
@@ -677,26 +683,6 @@ class Parameters:
           - `InconsistentLabelsException`: Value objects do not have consistent
             labels.
         """
-
-        def get_closest_val(search_value, values, keyfunc):
-            """
-            Find value in values closest to search_value with a preference
-            towards the closest value being less than search_value.
-            """
-            pos_closest, neg_closest = (9e99, None), (9e99, None)
-            sv_key = keyfunc(search_value)
-            for val in values:
-                val_key = keyfunc(val)
-                diff = sv_key - val_key
-                if diff >= 0 and diff < pos_closest[0]:
-                    pos_closest = (diff, val)
-                elif -diff < neg_closest[0]:
-                    neg_closest = (-diff, val)
-            if pos_closest[1] is not None:
-                return pos_closest[1]
-            else:
-                return neg_closest[1]
-
         if label is None:
             label = self.label_to_extend
         else:
@@ -760,33 +746,21 @@ class Parameters:
                 for vo in eq:
                     extended[vo[label]].append(vo)
 
+                skl = utils.SortedKeyList(extended.keys(), cmp_funcs["key"])
+
                 for val in missing_vals:
-                    full_eg_ix = full_extend_grid.index(val)
-                    eg_ix = extend_grid.index(val)
-                    if eg_ix == 0 and full_eg_ix == 0:
-                        first_defined_value = min(
-                            defined_vals, key=cmp_funcs["key"]
-                        )
-                        value_objects = select_eq(
-                            eq, False, {label: first_defined_value}
-                        )
-                    elif eg_ix == 0:
-                        closest_val = get_closest_val(
-                            val, extended.keys(), cmp_funcs["key"]
-                        )
+                    lte_val = skl.lte(val)
+                    if lte_val is not None:
+                        closest_val = lte_val
+                    else:
+                        closest_val = skl.gte(val)
+
+                    if closest_val in extended:
+                        value_objects = extended.pop(closest_val)
+                    else:
                         value_objects = select_eq(
                             eq, False, {label: closest_val}
                         )
-                    else:
-                        closest_val = get_closest_val(
-                            val, extended.keys(), cmp_funcs["key"]
-                        )
-                        if closest_val in extended:
-                            value_objects = extended.pop(closest_val)
-                        else:
-                            value_objects = select_eq(
-                                eq, False, {label: closest_val}
-                            )
                     # In practice, value_objects has length one.
                     # Theoretically, there could be multiple if the inital value
                     # object had less labels than later value objects and thus
@@ -800,6 +774,7 @@ class Parameters:
                             utils.hashable_value_object(value_object)
                         )
                         extended[val].append(ext)
+                        skl.insert(val)
                         adjustment[param].append(dict(ext, _auto=True))
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
@@ -808,6 +783,7 @@ class Parameters:
             extend_adj=False,
             ignore_warnings=ignore_warnings,
             raise_errors=raise_errors,
+            is_deserialized=True,
         )
 
     def extend_func(
