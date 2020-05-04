@@ -1178,15 +1178,6 @@ class Parameters:
             else:
                 return -1
 
-        # nothing to do if labels aren't specified
-        if not self._stateless_label_grid:
-            return
-
-        # iterate over labels so that the first label's order
-        # takes precedence.
-        label_grid = self._stateless_label_grid
-        order = list(reversed(label_grid))
-
         if data is None:
             data = self._data
             update_attrs = True
@@ -1196,6 +1187,15 @@ class Parameters:
                 )
         else:
             update_attrs = False
+
+        # nothing to do if labels aren't specified
+        if not self._stateless_label_grid:
+            return data
+
+        # iterate over labels so that the first label's order
+        # takes precedence.
+        label_grid = self._stateless_label_grid
+        order = list(reversed(label_grid))
 
         for param in data:
             for label in order:
