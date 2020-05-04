@@ -216,7 +216,13 @@ class Parameters:
         """
         # Validate user adjustments.
         if is_deserialized:
-            parsed_params = params_or_path
+            parsed_params = {}
+            try:
+                parsed_params = self._validator_schema.load(
+                    params_or_path, ignore_warnings, is_deserialized=True
+                )
+            except MarshmallowValidationError as ve:
+                self._parse_validation_messages(ve.messages, params_or_path)
         else:
             params = self.read_params(params_or_path)
             parsed_params = {}
@@ -777,6 +783,7 @@ class Parameters:
             extend_adj=False,
             ignore_warnings=ignore_warnings,
             raise_errors=raise_errors,
+            is_deserialized=True,
         )
 
     def extend_func(
