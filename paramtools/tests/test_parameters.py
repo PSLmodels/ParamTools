@@ -438,6 +438,22 @@ class TestAccess:
         for param in sorted_tp:
             assert getattr(sorted_tp, param) == getattr(shuffled_tp, param)
 
+    def test_sort_values_no_labels(self):
+        class Params(Parameters):
+            defaults = {
+                "test": {
+                    "title": "test",
+                    "description": "",
+                    "type": "int",
+                    "value": 2,
+                }
+            }
+
+        params = Params()
+        assert params.sort_values() == params._data
+        assert params.sort_values({"test": params.test})
+        assert params.dump()
+
     def test_sort_values_correctness(self):
         """Ensure sort is correct"""
         exp = [
