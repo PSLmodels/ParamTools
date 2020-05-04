@@ -52,7 +52,7 @@ from paramtools.utils import (
 
 
 name = "paramtools"
-__version__ = "0.14.0"
+__version__ = "0.14.1"
 
 __all__ = [
     "SchemaFactory",
