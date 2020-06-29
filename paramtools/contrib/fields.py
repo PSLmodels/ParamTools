@@ -6,7 +6,10 @@ from marshmallow import fields as marshmallow_fields
 
 class NumPySerializeMixin:
     def _serialize(self, value, attr, obj, **kwargs):
-        return value.tolist()
+        if hasattr(value, "tolist"):
+            return value.tolist()
+        else:
+            return value
 
     def _validated(self, value):
         value = super()._validated(value)
