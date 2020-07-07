@@ -139,7 +139,7 @@ class Parameters:
         params_or_path: FileDictStringLike,
         storage_options: Optional[Dict[str, Any]] = None,
     ):
-        return utils.read(params_or_path, storage_options)
+        return utils.read_json(params_or_path, storage_options)
 
     def adjust(
         self,

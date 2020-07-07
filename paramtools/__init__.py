@@ -38,7 +38,6 @@ from paramtools.select import (
 from paramtools.typing import ValueObject
 from paramtools.utils import (
     read_json,
-    read,
     get_example_paths,
     LeafGetter,
     get_leaves,
@@ -87,7 +86,6 @@ __all__ = [
     "select_lt",
     "select_lte",
     "select_ne",
-    "read",
     "read_json",
     "get_example_paths",
     "LeafGetter",

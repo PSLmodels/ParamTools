@@ -10,17 +10,17 @@ from paramtools import (
     filter_labels,
     make_label_str,
     SortedKeyList,
-    read,
+    read_json,
 )
 
 
 class TestRead:
     def test_read_s3(self):
-        res = read("s3://paramtools-test/defaults.json", {"anon": True})
+        res = read_json("s3://paramtools-test/defaults.json", {"anon": True})
         assert isinstance(res, dict)
 
     def test_read_gcp(self):
-        res = read("gs://cs-inputs-dev/defaults.json", {"token": "anon"})
+        res = read_json("gs://cs-inputs-dev/defaults.json", {"token": "anon"})
         assert isinstance(res, dict)
 
     def test_read_http(self):
@@ -28,35 +28,36 @@ class TestRead:
             "https://raw.githubusercontent.com/PSLmodels/ParamTools/master/"
             "paramtools/tests/defaults.json"
         )
-        res = read(http_path)
+        res = read_json(http_path)
         assert isinstance(res, dict)
 
     def test_read_github(self):
         gh_path = "github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json"
-        res = read(gh_path)
+        res = read_json(gh_path)
         assert isinstance(res, dict)
 
     def test_read_file_path(self):
         CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
         defaults_path = os.path.join(CURRENT_PATH, "defaults.json")
-        res = read(defaults_path)
+        res = read_json(defaults_path)
         assert isinstance(res, dict)
 
     def test_read_string(self):
-        res = read('{"hello": "world"}')
+        res = read_json('{"hello": "world"}')
         assert isinstance(res, dict)
 
+    def test_read_invalid(self):
         with pytest.raises(ValueError):
-            read('{"hello": "world"')
+            read_json('{"hello": "world"')
 
         with pytest.raises(ValueError):
-            read(f":{['a'] * 200}")
+            read_json(f":{['a'] * 200}")
 
         with pytest.raises(ValueError):
-            read(("hello", "world"))
+            read_json(("hello", "world"))
 
         with pytest.raises(ValueError):
-            read(None)
+            read_json(None)
 
 
 def test_get_leaves():
