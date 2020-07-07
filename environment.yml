@@ -6,7 +6,8 @@ dependencies:
   - "numpy>=1.13"
   - "python-dateutil>=2.8.0"
   - pytest
+  - s3fs # required for tests, but not for most usage.
   - pip:
-    - pre-commit
-    - black
-    - flake8
+      - pre-commit
+      - black
+      - flake8

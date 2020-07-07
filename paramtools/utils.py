@@ -2,23 +2,63 @@ import json
 import os
 from bisect import bisect_left, bisect_right
 from collections import OrderedDict
-from typing import List
+from typing import Optional, List, Dict, Any
 
-from paramtools.typing import ValueObject
+import fsspec
+
+from paramtools.typing import ValueObject, FileDictStringLike
+
+
+def read(
+    params_or_path: FileDictStringLike,
+    storage_options: Optional[Dict[str, Any]] = None,
+):
+    """
+    Read JSON files of the form:
+    - Local file path.
+
+    - Any URL readable by fsspec. For example:
+      - s3: s3://paramtools-test/defaults.json
+      - gcs: gs://cs-inputs-dev/defaults.json
+      - http: https://somedomain.com/defaults.json
+      - github: github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json
+
+    """
+    if isinstance(params_or_path, str) and os.path.exists(params_or_path):
+        with open(params_or_path, "r") as f:
+            params = json.loads(f.read(), object_pairs_hook=OrderedDict)
+    elif isinstance(params_or_path, str) and "://" in params_or_path:
+        with fsspec.open(params_or_path, "r", **(storage_options or {})) as f:
+            params = json.loads(f.read(), object_pairs_hook=OrderedDict)
+    elif isinstance(params_or_path, str):
+        try:
+            params = json.loads(params_or_path)
+        except json.JSONDecodeError as je:
+            if len(params_or_path) > 100:
+                params_or_path = (
+                    params_or_path[:100] + "..." + params_or_path[-10:]
+                )
+            raise ValueError(
+                f"Unable to decode JSON string: {params_or_path}"
+            ) from je
+    elif isinstance(params_or_path, dict):
+        params = params_or_path
+    else:
+        raise ValueError(
+            f"ParamTools is unable to read data of type: {type(params_or_path)}\n"
+            "It must be a File Path, URL, String, or Dict."
+        )
+
+    return params
 
 
 def read_json(path):
     """
-    Read JSON file shortcut
+    Read JSON data.
+
+    Legacy method for read function.
     """
-    if isinstance(path, str) and os.path.exists(path):
-        with open(path, "r") as f:
-            r = json.loads(f.read(), object_pairs_hook=OrderedDict)
-        return r
-    elif isinstance(path, dict):
-        return path
-    else:
-        return json.loads(path)
+    return read(path)
 
 
 def get_example_paths(name):

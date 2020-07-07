@@ -17,7 +17,12 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/hdoupe/ParamTools",
     packages=setuptools.find_packages(),
-    install_requires=["marshmallow>=3.0.0", "numpy", "python-dateutil>=2.8.0"],
+    install_requires=[
+        "marshmallow>=3.0.0",
+        "numpy",
+        "python-dateutil>=2.8.0",
+        "fsspec",
+    ],
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -1,6 +1,4 @@
 import copy
-import os
-import json
 import itertools
 from collections import OrderedDict, defaultdict
 from functools import partial, reduce
@@ -23,7 +21,7 @@ from paramtools.select import (
     make_cmp_func,
 )
 from paramtools.tree import Tree
-from paramtools.typing import ValueObject
+from paramtools.typing import ValueObject, FileDictStringLike
 from paramtools.exceptions import (
     ParamToolsError,
     SparseValueObjectsException,
@@ -136,16 +134,12 @@ class Parameters:
         """
         return self._state
 
-    def read_params(self, params_or_path):
-        if isinstance(params_or_path, str) and os.path.exists(params_or_path):
-            params = utils.read_json(params_or_path)
-        elif isinstance(params_or_path, str):
-            params = json.loads(params_or_path)
-        elif isinstance(params_or_path, dict):
-            params = params_or_path
-        else:
-            raise ValueError("params_or_path is not dict or file path")
-        return params
+    def read_params(
+        self,
+        params_or_path: FileDictStringLike,
+        storage_options: Optional[Dict[str, Any]] = None,
+    ):
+        return utils.read(params_or_path, storage_options)
 
     def adjust(
         self,
