@@ -53,10 +53,10 @@ class TestRead:
         with pytest.raises(ValueError):
             read_json(f":{['a'] * 200}")
 
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             read_json(("hello", "world"))
 
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             read_json(None)
 
 

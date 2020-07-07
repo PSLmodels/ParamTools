@@ -34,7 +34,7 @@ def _read(
     elif isinstance(params_or_path, dict):
         return params_or_path
     else:
-        raise ValueError(
+        raise TypeError(
             f"ParamTools is unable to read data of type: {type(params_or_path)}\n"
             "It must be a File Path, URL, String, or Dict."
         )
@@ -57,7 +57,7 @@ def read_json(
 
     """
     res = _read(params_or_path, storage_options)
-    print(res)
+
     if isinstance(res, str):
         try:
             return json.loads(res, object_pairs_hook=OrderedDict)
