@@ -99,7 +99,6 @@ def test_make_label_str():
 
 
 def test_sorted_key_list():
-    [(2, 2), (3, 3), (5, 5), (7, 7)]
     values = {
         "red": 2,
         "blue": 3,
@@ -110,24 +109,31 @@ def test_sorted_key_list():
         "black": 0,
     }
 
-    to_insert = {"red": 2, "blue": 3, "orange": 5, "yellow": 7}
+    to_insert = ["red", "blue", "orange", "yellow"]
 
     skl = SortedKeyList(to_insert, keyfunc=lambda x: values[x])
 
-    assert skl.gte("black")[0] == "red"
+    assert skl.eq("black") == None
+    assert skl.gte("black").values[0] == "red"
     assert skl.lte("black") is None
     skl.insert("black")
-    assert skl.gte("black")[0] == "black"
-    assert skl.lte("black")[-1] == "black"
+    assert skl.gte("black").values[0] == "black"
+    assert skl.lte("black").values[-1] == "black"
+    assert skl.eq("black").values == ["black"]
 
-    assert skl.gte("white")[0] == "yellow"
-    assert skl.lte("white")[-1] == "orange"
+    assert skl.gte("white").values[0] == "yellow"
+    assert skl.lte("white").values[-1] == "orange"
     skl.insert("white")
-    assert skl.gte("white")[0] == "white"
-    assert skl.lte("white")[-1] == "white"
+    assert skl.gte("white").values[0] == "white"
+    assert skl.gt("white").values[0] == "yellow"
+    assert skl.lte("white").values[-1] == "white"
+    assert skl.lt("yellow").values[-1] == "white"
 
     assert skl.gte("green") is None
-    assert skl.lte("green")[-1] == "yellow"
+    assert skl.lte("green").values[-1] == "yellow"
     skl.insert("green")
-    assert skl.gte("green")[0] == "green"
-    assert skl.lte("green")[-1] == "green"
+    assert skl.gte("green").values[0] == "green"
+    assert skl.lte("green").values[-1] == "green"
+
+    skl.insert("green")
+    assert skl.eq("green").values == ["green", "green"]
