@@ -114,20 +114,20 @@ def test_sorted_key_list():
 
     skl = SortedKeyList(to_insert, keyfunc=lambda x: values[x])
 
-    assert skl.gte("black") == "red"
+    assert skl.gte("black")[0] == "red"
     assert skl.lte("black") is None
     skl.insert("black")
-    assert skl.gte("black") == "black"
-    assert skl.lte("black") == "black"
+    assert skl.gte("black")[0] == "black"
+    assert skl.lte("black")[-1] == "black"
 
-    assert skl.gte("white") == "yellow"
-    assert skl.lte("white") == "orange"
+    assert skl.gte("white")[0] == "yellow"
+    assert skl.lte("white")[-1] == "orange"
     skl.insert("white")
-    assert skl.gte("white") == "white"
-    assert skl.lte("white") == "white"
+    assert skl.gte("white")[0] == "white"
+    assert skl.lte("white")[-1] == "white"
 
     assert skl.gte("green") is None
-    assert skl.lte("green") == "yellow"
+    assert skl.lte("green")[-1] == "yellow"
     skl.insert("green")
-    assert skl.gte("green") == "green"
-    assert skl.lte("green") == "green"
+    assert skl.gte("green")[0] == "green"
+    assert skl.lte("green")[-1] == "green"

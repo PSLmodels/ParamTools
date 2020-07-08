@@ -168,13 +168,13 @@ class SortedKeyList:
     def lte(self, value):
         i = bisect_right(self.keys, self.keyfunc(value))
         if i:
-            return self.sorted_key_list[i - 1][0]
+            return [item[0] for item in self.sorted_key_list[:i - 1 + 1]]
         return None
 
     def gte(self, value):
         i = bisect_left(self.keys, self.keyfunc(value))
         if i != len(self.keys):
-            return self.sorted_key_list[i][0]
+            return [item[0] for item in self.sorted_key_list[i:]]
         return None
 
     def insert(self, value):

@@ -751,9 +751,9 @@ class Parameters:
                 for val in missing_vals:
                     lte_val = skl.lte(val)
                     if lte_val is not None:
-                        closest_val = lte_val
+                        closest_val = lte_val[-1]
                     else:
-                        closest_val = skl.gte(val)
+                        closest_val = skl.gte(val)[0]
 
                     if closest_val in extended:
                         value_objects = extended.pop(closest_val)
