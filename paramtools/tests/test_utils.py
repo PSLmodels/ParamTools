@@ -1,3 +1,6 @@
+import os
+import pytest
+
 from paramtools import (
     get_leaves,
     ravel,
@@ -7,7 +10,54 @@ from paramtools import (
     filter_labels,
     make_label_str,
     SortedKeyList,
+    read_json,
 )
+
+
+class TestRead:
+    def test_read_s3(self):
+        res = read_json("s3://paramtools-test/defaults.json", {"anon": True})
+        assert isinstance(res, dict)
+
+    def test_read_gcp(self):
+        res = read_json("gs://cs-inputs-dev/defaults.json", {"token": "anon"})
+        assert isinstance(res, dict)
+
+    def test_read_http(self):
+        http_path = (
+            "https://raw.githubusercontent.com/PSLmodels/ParamTools/master/"
+            "paramtools/tests/defaults.json"
+        )
+        res = read_json(http_path)
+        assert isinstance(res, dict)
+
+    def test_read_github(self):
+        gh_path = "github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json"
+        res = read_json(gh_path)
+        assert isinstance(res, dict)
+
+    def test_read_file_path(self):
+        CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
+        defaults_path = os.path.join(CURRENT_PATH, "defaults.json")
+        res = read_json(defaults_path)
+        assert isinstance(res, dict)
+
+    def test_read_string(self):
+        res = read_json('{"hello": "world"}')
+        assert isinstance(res, dict)
+
+    def test_read_invalid(self):
+        with pytest.raises(ValueError):
+            read_json('{"hello": "world"')
+
+        with pytest.raises(ValueError):
+            read_json(f":{['a'] * 200}")
+
+        with pytest.raises(TypeError):
+            read_json(("hello", "world"))
+
+        with pytest.raises(TypeError):
+            read_json(None)
 
 
 def test_get_leaves():

@@ -2,23 +2,75 @@ import json
 import os
 from bisect import bisect_left, bisect_right
 from collections import OrderedDict
-from typing import List
+from typing import Optional, List, Dict, Any
 
-from paramtools.typing import ValueObject
+import fsspec
+
+from paramtools.typing import ValueObject, FileDictStringLike
 
 
-def read_json(path):
+def _read(
+    params_or_path: FileDictStringLike,
+    storage_options: Optional[Dict[str, Any]] = None,
+):
     """
-    Read JSON file shortcut
+    Read files of the form:
+    - Local file path.
+    - Any URL readable by fsspec. For example:
+      - s3: s3://paramtools-test/defaults.json
+      - gcs: gs://cs-inputs-dev/defaults.json
+      - http: https://somedomain.com/defaults.json
+      - github: github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json
+
     """
-    if isinstance(path, str) and os.path.exists(path):
-        with open(path, "r") as f:
-            r = json.loads(f.read(), object_pairs_hook=OrderedDict)
-        return r
-    elif isinstance(path, dict):
-        return path
+    if isinstance(params_or_path, str) and os.path.exists(params_or_path):
+        with open(params_or_path, "r") as f:
+            return f.read()
+    elif isinstance(params_or_path, str) and "://" in params_or_path:
+        with fsspec.open(params_or_path, "r", **(storage_options or {})) as f:
+            return f.read()
+    elif isinstance(params_or_path, str):
+        return params_or_path
+    elif isinstance(params_or_path, dict):
+        return params_or_path
     else:
-        return json.loads(path)
+        raise TypeError(
+            f"Unable to read data of type: {type(params_or_path)}\n"
+            "           Data must be a File Path, URL, String, or Dict."
+        )
+
+
+def read_json(
+    params_or_path: FileDictStringLike,
+    storage_options: Optional[Dict[str, Any]] = None,
+):
+    """
+    Read JSON data of the form:
+    - Dict.
+    - JSON string.
+    - Local file path.
+    - Any URL readable by fsspec. For example:
+      - s3: s3://paramtools-test/defaults.json
+      - gcs: gs://cs-inputs-dev/defaults.json
+      - http: https://somedomain.com/defaults.json
+      - github: github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json
+
+    """
+    res = _read(params_or_path, storage_options)
+
+    if isinstance(res, str):
+        try:
+            return json.loads(res, object_pairs_hook=OrderedDict)
+        except json.JSONDecodeError as je:
+            if len(res) > 100:
+                res = res[:100] + "..." + res[-10:]
+            raise ValueError(f"Unable to decode JSON string: {res}") from je
+
+    if isinstance(res, dict):
+        return res
+
+    # Error should be thrown in `_read`
+    raise TypeError(f"Unknown type: {type(res)}")
 
 
 def get_example_paths(name):
