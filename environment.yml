@@ -6,6 +6,7 @@ dependencies:
   - "numpy>=1.13"
   - "python-dateutil>=2.8.0"
   - pytest
+  - pip
   - pip:
     - pre-commit
     - black
