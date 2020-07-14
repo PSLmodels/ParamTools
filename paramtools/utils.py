@@ -35,8 +35,8 @@ def _read(
         return params_or_path
     else:
         raise TypeError(
-            f"ParamTools is unable to read data of type: {type(params_or_path)}\n"
-            "It must be a File Path, URL, String, or Dict."
+            f"Unable to read data of type: {type(params_or_path)}\n"
+            "           Data must be a File Path, URL, String, or Dict."
         )
 
 
