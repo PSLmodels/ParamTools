@@ -139,6 +139,22 @@ class Parameters:
         params_or_path: FileDictStringLike,
         storage_options: Optional[Dict[str, Any]] = None,
     ):
+        """
+        Read JSON data of the form:
+
+        - Python `dict`.
+        - JSON string.
+        - Local file path.
+        - Any URL readable by fsspec. For example:
+            - s3: `s3://paramtools-test/defaults.json`
+            - gcs: `gs://paramtools-dev/defaults.json`
+            - http: `https://somedomain.com/defaults.json`
+            - github: `github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json`
+
+        **Returns**
+        - `params`: Python Dict created from JSON file.
+        """
+
         return utils.read_json(params_or_path, storage_options)
 
     def adjust(

@@ -18,7 +18,7 @@ def _read(
     - Local file path.
     - Any URL readable by fsspec. For example:
       - s3: s3://paramtools-test/defaults.json
-      - gcs: gs://cs-inputs-dev/defaults.json
+      - gcs: gs://paramtools-dev/defaults.json
       - http: https://somedomain.com/defaults.json
       - github: github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json
 
@@ -51,7 +51,7 @@ def read_json(
     - Local file path.
     - Any URL readable by fsspec. For example:
       - s3: s3://paramtools-test/defaults.json
-      - gcs: gs://cs-inputs-dev/defaults.json
+      - gcs: gs://paramtools-dev/defaults.json
       - http: https://somedomain.com/defaults.json
       - github: github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json
 
