@@ -319,17 +319,6 @@
 <div class="autodoc-signature"><em>class </em><code>paramtools.<strong>Parameters</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">initial_state=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">index_rates=None</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**ops</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"></div>
 <div class="autodoc-members">
-<div class="autodoc-signature"><code><strong>set_state</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
-<div class="autodoc-docstring"><p>Sets state for the Parameters instance. The <code>_state</code>, <code>label_grid</code>, and
-parameter attributes are all updated with the new state.</p>
-<p>Use the <code>view_state</code> method to inspect the current state of the instance,
-and use the <code>clear_state</code> method to revert to the default state.</p>
-<p><strong>Raises</strong></p>
-<ul>
-<li><code>ValidationError</code> if the labels kwargs contain labels that are not
-    specified in schema.json or if the label values fail the
-    validator set for the corresponding label in schema.json.</li>
-</ul></div>
 <div class="autodoc-signature"><code><strong>adjust</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params_or_path</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">ignore_warnings=False</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">raise_errors=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">extend_adj=True</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">clobber=True</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Deserialize and validate parameter adjustments. <code>params_or_path</code>
 can be a file path or a <code>dict</code> that has not been fully deserialized.
@@ -368,6 +357,33 @@ implement custom <code>adjust</code> methods.</p>
 <p><code>ParameterUpdateException</code> if label values do not match at
     least one existing value item's corresponding label values.</p>
 </li>
+</ul></div>
+<div class="autodoc-signature"><code><strong>read_params</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">params_or_path</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">storage_options=None</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Read JSON data of the form:</p>
+<ul>
+<li>Python <code>dict</code>.</li>
+<li>JSON string.</li>
+<li>Local file path.</li>
+<li>Any URL readable by fsspec. For example:<ul>
+<li>s3: <code>s3://paramtools-test/defaults.json</code></li>
+<li>gcs: <code>gs://paramtools-dev/defaults.json</code></li>
+<li>http: <code>https://somedomain.com/defaults.json</code></li>
+<li>github: <code>github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json</code></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>
+- <code>params</code>: Python Dict created from JSON file.</p></div>
+<div class="autodoc-signature"><code><strong>set_state</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">, </span><em class="autodoc-param">**labels</em><span class="autodoc-punctuation">)</span></div>
+<div class="autodoc-docstring"><p>Sets state for the Parameters instance. The <code>_state</code>, <code>label_grid</code>, and
+parameter attributes are all updated with the new state.</p>
+<p>Use the <code>view_state</code> method to inspect the current state of the instance,
+and use the <code>clear_state</code> method to revert to the default state.</p>
+<p><strong>Raises</strong></p>
+<ul>
+<li><code>ValidationError</code> if the labels kwargs contain labels that are not
+    specified in schema.json or if the label values fail the
+    validator set for the corresponding label in schema.json.</li>
 </ul></div>
 <div class="autodoc-signature"><code><strong>view_state</strong></code><span class="autodoc-punctuation">(</span><em class="autodoc-param">self</em><span class="autodoc-punctuation">)</span></div>
 <div class="autodoc-docstring"><p>Access the label state of the <code>Parameters</code> instance.</p></div>
