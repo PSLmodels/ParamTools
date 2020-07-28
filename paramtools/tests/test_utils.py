@@ -20,7 +20,7 @@ class TestRead:
         assert isinstance(res, dict)
 
     def test_read_gcp(self):
-        res = read_json("gs://cs-inputs-dev/defaults.json", {"token": "anon"})
+        res = read_json("gs://paramtools-dev/defaults.json", {"token": "anon"})
         assert isinstance(res, dict)
 
     def test_read_http(self):
