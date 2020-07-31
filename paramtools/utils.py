@@ -215,6 +215,10 @@ class SortedKeyListResult:
     def original_indices(self):
         return [item[2] for item in self.key_list_values]
 
+    def __iter__(self):
+        for value in self.values:
+            yield value
+
 
 class SortedKeyList:
     """
