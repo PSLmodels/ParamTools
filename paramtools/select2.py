@@ -5,35 +5,30 @@ from paramtools import SortedKeyList
 
 
 class QueryResult:
-    def __init__(self, original_vos, skl_result):
-        self.skl_result = skl_result
-        self.original_vos = original_vos
+    def __init__(self, value_objects, indices):
+        self.value_objects = value_objects
+        self.indices = indices
 
     def __and__(self, queryresult: "QueryResult"):
-        res = set(self.skl_result.original_indices) & set(
-            queryresult.skl_result.original_indices
-        )
+        res = set(self.indices) & set(queryresult.indices)
 
-        return [self.original_vos[i] for i in sorted(res)]
+        return QueryResult(self.value_objects, res)
 
     def __or__(self, queryresult: "QueryResult"):
-        res = set(self.skl_result.original_indices) | set(
-            queryresult.skl_result.original_indices
-        )
+        res = set(self.indices) | set(queryresult.indices)
 
-        return [self.original_vos[i] for i in sorted(res)]
+        return QueryResult(self.value_objects, res)
 
     def __repr__(self):
-        return str(
-            [
-                self.original_vos[i]
-                for i in (self.skl_result.original_indices or [])
-            ]
-        )
+        return str([self.value_objects[i] for i in (self.indices or [])])
+
+    def __iter__(self):
+        for i in self.indices:
+            yield self.value_objects[i]
 
 
 class ValueObjects:
-    def __init__(self, value_objects, label_validators):
+    def __init__(self, value_objects, label_validators=None, skls=None):
         self.value_objects = value_objects
         label_values = defaultdict(list)
         for vo in value_objects:
@@ -47,7 +42,12 @@ class ValueObjects:
             for label, values in label_values.items()
         }
 
-    def eq(self, label, value):
+    def eq(self, **labels):
+        label, value = list(labels.items())[0]
         skl_result = self.skls[label].eq(value)
-        # return [self.value_objects[i] for i in (res.original_indices or [])]
-        return QueryResult(self.value_objects, skl_result)
+        return QueryResult(self.value_objects, skl_result.original_indices)
+
+    def gt(self, **labels):
+        label, value = list(labels.items())[0]
+        skl_result = self.skls[label].gt(value)
+        return QueryResult(self.value_objects, skl_result.original_indices)
