@@ -31,6 +31,8 @@ from paramtools.exceptions import (
     ParameterNameCollisionException,
 )
 
+from paramtools import select2
+
 
 class Parameters:
     defaults = None
@@ -102,6 +104,12 @@ class Parameters:
         if "operators" not in self._schema:
             self._schema["operators"] = {}
         self._schema["operators"].update(self.operators)
+
+    def __getitem__(self, parameter):
+        data = self._data.get(parameter)
+        if data is None:
+            raise ValueError(f"Unknown parameter: {parameter}.")
+        return select2.ValueObjects(data["value"], self.label_validators)
 
     def set_state(self, **labels):
         """

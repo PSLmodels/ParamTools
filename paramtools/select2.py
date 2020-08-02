@@ -1,8 +1,7 @@
 from collections import defaultdict
 from typing import List, Dict, Any
 
-from paramtools import filter_labels
-from paramtools import SortedKeyList
+from paramtools.utils import filter_labels, SortedKeyList
 from paramtools.typing import ValueObject
 
 
