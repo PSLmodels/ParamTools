@@ -32,6 +32,35 @@ class QueryResult:
         for i in self.index:
             yield self.value_objects[i]
 
+    def tolist(self):
+        return [self.value_objects[i] for i in self.index]
+
+
+class Slice:
+    __slots__ = ("value_objects", "label")
+
+    def __init__(self, value_objects, label):
+        self.value_objects = value_objects
+        self.label = label
+
+    def __eq__(self, value):
+        return self.value_objects.eq(**{self.label: value})
+
+    def __ne__(self, value):
+        return self.value_objects.ne(**{self.label: value})
+
+    def __gt__(self, value):
+        return self.value_objects.gt(**{self.label: value})
+
+    def __ge__(self, value):
+        return self.value_objects.gte(**{self.label: value})
+
+    def __lt__(self, value):
+        return self.value_objects.lt(**{self.label: value})
+
+    def __le__(self, value):
+        return self.value_objects.lte(**{self.label: value})
+
 
 class ValueObjects:
     def __init__(
@@ -59,22 +88,28 @@ class ValueObjects:
         if "_auto" not in self.skls:
             self.skls["_auto"] = SortedKeyList([], default_cmp_func)
 
-    def _handle_strict(self, label: str, match_index: List[int]):
-        for ix, vo in enumerate(self.value_objects):
-            if label not in vo and ix not in match_index:
-                match_index.append(ix)
-
     def _cmp(self, op, strict, **labels):
         label, value = list(labels.items())[0]
         skl_result = getattr(self.skls[label], op)(value)
         if not strict:
             match_index = skl_result.index if skl_result else []
-            self._handle_strict(label, match_index)
+            missing = self.missing(label)
+            match_index = set(match_index + missing.index)
         elif skl_result is None:
             match_index = []
         else:
             match_index = skl_result.index
         return QueryResult(self.value_objects, match_index)
+
+    def __getitem__(self, label):
+        return Slice(self, label)
+
+    def missing(self, label: str):
+        index = []
+        for ix, vo in enumerate(self.value_objects):
+            if label not in vo:
+                index.append(ix)
+        return QueryResult(self.value_objects, index)
 
     def eq(self, strict=True, **labels):
         return self._cmp("eq", strict, **labels)
