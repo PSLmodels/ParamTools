@@ -212,7 +212,7 @@ class SortedKeyListResult:
         return [item[0] for item in self.key_list_values]
 
     @property
-    def original_indices(self):
+    def indices(self):
         return [item[2] for item in self.key_list_values]
 
     def __iter__(self):
@@ -245,6 +245,17 @@ class SortedKeyList:
             right_i = bisect_right(self.keys, self.keyfunc(value))
             return SortedKeyListResult(self.sorted_key_list[left_i:right_i])
         return None
+
+    def ne(self, value):
+        result = []
+        lt = self.lt(value)
+        if lt is not None:
+            result += lt.key_list_values
+        gt = self.gt(value)
+        if gt is not None:
+            result += gt.key_list_values
+
+        return SortedKeyListResult(result)
 
     def lt(self, value):
         i = bisect_left(self.keys, self.keyfunc(value))

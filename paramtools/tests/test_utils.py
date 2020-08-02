@@ -163,7 +163,7 @@ def test_sorted_key_list():
 
     skl = SortedKeyList(to_insert, keyfunc=lambda x: values[x])
 
-    assert skl.eq("black") == None
+    assert skl.eq("black") is None
     assert skl.gte("black").values[0] == "red"
     assert skl.lte("black") is None
     skl.insert("black")
@@ -187,3 +187,9 @@ def test_sorted_key_list():
 
     skl.insert("green")
     assert skl.eq("green").values == ["green", "green"]
+
+    assert set(skl.ne("green").values) == set(list(values.keys())) - {"green"}
+    values["pokadot"] = -1
+    assert set(skl.ne("pokadot").values) == set(list(values.keys())) - {
+        "pokadot"
+    }
