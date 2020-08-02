@@ -212,7 +212,7 @@ class SortedKeyListResult:
         return [item[0] for item in self.key_list_values]
 
     @property
-    def indices(self):
+    def index(self):
         return [item[2] for item in self.key_list_values]
 
     def __iter__(self):
@@ -228,13 +228,20 @@ class SortedKeyList:
     - https://docs.python.org/3.9/library/bisect.html
     """
 
-    def __init__(self, values, keyfunc):
+    def __init__(self, values, keyfunc, index=None):
+        if index:
+            assert len(values) == len(index)
+        if index is None:
+            index = range(len(values))
         self.sorted_key_list = [
-            (val, keyfunc(val), ix) for ix, val in enumerate(values)
+            (val, keyfunc(val), ix) for ix, val in zip(index, values)
         ]
         self.sorted_key_list.sort(key=lambda r: r[1])
         self.keys = [r[1] for r in self.sorted_key_list]
         self.keyfunc = keyfunc
+
+    def __repr__(self):
+        return str(self.sorted_key_list)
 
     def eq(self, value):
         left_i = bisect_left(self.keys, self.keyfunc(value))
