@@ -25,7 +25,10 @@ class QueryResult:
         return QueryResult(self.value_objects, res)
 
     def __repr__(self):
-        return str([self.value_objects[i] for i in (self.index or [])])
+        vo_repr = "\n  ".join(
+            str(self.value_objects[i]) for i in (self.index or [])
+        )
+        return f"QueryResult([\n  {vo_repr}\n])"
 
     def __iter__(self):
         for i in self.index:
@@ -127,3 +130,7 @@ class ValueObjects:
 
     def lte(self, strict=True, **labels):
         return self._cmp("lte", strict, **labels)
+
+    def __repr__(self):
+        vo_repr = "\n  ".join(str(vo) for vo in self.value_objects)
+        return f"ValueObjects([\n  {vo_repr}\n])"

@@ -34,6 +34,21 @@ from paramtools.exceptions import (
 from paramtools import select2
 
 
+class ParameterSlice:
+    __slots__ = ("parameters",)
+
+    def __init__(self, parameters):
+        self.parameters = parameters
+
+    def __getitem__(self, parameter):
+        data = self.parameters._data.get(parameter)
+        if data is None:
+            raise ValueError(f"Unknown parameter: {parameter}.")
+        return select2.ValueObjects(
+            data["value"], self.parameters.label_validators
+        )
+
+
 class Parameters:
     defaults = None
     array_first: bool = False
@@ -104,6 +119,8 @@ class Parameters:
         if "operators" not in self._schema:
             self._schema["operators"] = {}
         self._schema["operators"].update(self.operators)
+
+        self.sel = ParameterSlice(self)
 
     def __getitem__(self, parameter):
         data = self._data.get(parameter)

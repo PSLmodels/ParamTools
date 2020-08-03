@@ -50,6 +50,8 @@ from paramtools.utils import (
     SortedKeyList,
 )
 
+from paramtools.select2 import ValueObjects
+
 
 name = "paramtools"
 __version__ = "0.15.0"
@@ -98,4 +100,5 @@ __all__ = [
     "make_label_str",
     "SortedKeyList",
     "ValueObject",
+    "ValueObjects",
 ]
