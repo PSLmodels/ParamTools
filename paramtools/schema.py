@@ -14,6 +14,7 @@ from paramtools.exceptions import UnknownTypeException, ParamToolsError
 from paramtools import contrib
 from paramtools import utils
 
+fields.Nested = contrib.fields.Nested
 
 ALLOWED_TYPES = ["str", "float", "int", "bool", "date"]
 
@@ -262,16 +263,7 @@ class BaseValidatorSchema(Schema):
         """
         Do range validation for a parameter.
         """
-        param_info = self.context["spec"]._data[param_name]
-        # sort keys to guarantee order.
-        validator_spec = param_info["validators"]
-        validators = []
-        for vname, vdata in validator_spec.items():
-            validator = getattr(self, self.WRAPPER_MAP[vname])(
-                vname, vdata, param_name, param_spec, raw_data
-            )
-            validators.append(validator)
-
+        validators = self.validators(param_name, param_spec, raw_data)
         warnings = []
         errors = []
         for validator in validators:
@@ -284,6 +276,27 @@ class BaseValidatorSchema(Schema):
                     errors += ve.messages
 
         return warnings, errors
+
+    def field(self, param_name):
+        data = self.context["spec"]._data[param_name]
+        return get_type(data, self.validators(param_name))
+
+    def validators(self, param_name, param_spec=None, raw_data=None):
+        if param_spec is None:
+            param_spec = {}
+        if raw_data is None:
+            raw_data = {}
+
+        param_info = self.context["spec"]._data[param_name]
+        # sort keys to guarantee order.
+        validator_spec = param_info["validators"]
+        validators = []
+        for vname, vdata in validator_spec.items():
+            validator = getattr(self, self.WRAPPER_MAP[vname])(
+                vname, vdata, param_name, param_spec, raw_data
+            )
+            validators.append(validator)
+        return validators
 
     def _get_when_validator(
         self,
@@ -649,7 +662,7 @@ VALIDATOR_MAP = {
 }
 
 
-def get_type(data):
+def get_type(data, validators=None):
     numeric_types = {
         "int": contrib.fields.Int64(
             allow_none=True, error_messages=INVALID_INTEGER, strict=True
@@ -665,7 +678,7 @@ def get_type(data):
     try:
         _fieldtype = types[data["type"]]
         if is_field_class_like(_fieldtype):
-            fieldtype = _fieldtype()
+            fieldtype = _fieldtype(validate=validators)
         elif is_field_instance_like(_fieldtype):
             fieldtype = _fieldtype
         else:

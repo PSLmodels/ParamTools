@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import List, Dict, Any
 
-from paramtools.utils import filter_labels, SortedKeyList
+from paramtools.utils import SortedKeyList
 from paramtools.typing import ValueObject
 
 
@@ -74,12 +74,14 @@ class ValueObjects:
         label_values = defaultdict(list)
         label_index = defaultdict(list)
         for ix, vo in enumerate(value_objects):
-            for label, value in filter_labels(vo, drop=["value"]).items():
+            for label, value in vo.items():
                 label_values[label].append(value)
                 label_index[label].append(ix)
         self.skls = {}
         for label in label_values:
-            if label in label_validators:
+            if label in label_validators and hasattr(
+                label_validators[label], "cmp_funcs"
+            ):
                 cmp_func = label_validators[label].cmp_funcs()["key"]
             else:
                 cmp_func = default_cmp_func

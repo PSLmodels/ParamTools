@@ -4,6 +4,17 @@ import datetime
 from marshmallow import fields as marshmallow_fields
 
 
+default_cmps = {
+    "key": lambda x: x,
+    "gt": lambda x, y: x > y,
+    "gte": lambda x, y: x >= y,
+    "lt": lambda x, y: x < y,
+    "lte": lambda x, y: x <= y,
+    "ne": lambda x, y: x != y,
+    "eq": lambda x, y: x == y,
+}
+
+
 class NumPySerializeMixin:
     def _serialize(self, value, attr, obj, **kwargs):
         if hasattr(value, "tolist"):
@@ -16,6 +27,16 @@ class NumPySerializeMixin:
         if value.shape != tuple():
             raise self.make_error("invalid", input=value)
         return value
+
+    def cmp_funcs(self, **kwargs):
+        if not self.validators:
+            return default_cmps
+        assert len(self.validators) == 1
+        cmp_funcs = self.validators[0].cmp_funcs(**kwargs)
+        if cmp_funcs is None:
+            return default_cmps
+        else:
+            return cmp_funcs
 
 
 class Float64(NumPySerializeMixin, marshmallow_fields.Number):
@@ -62,15 +83,6 @@ class MeshFieldMixin:
         return self.validators[0].grid()
 
     def cmp_funcs(self, **kwargs):
-        default_cmps = {
-            "key": lambda x: x,
-            "gt": lambda x, y: x > y,
-            "gte": lambda x, y: x >= y,
-            "lt": lambda x, y: x < y,
-            "lte": lambda x, y: x <= y,
-            "ne": lambda x, y: x != y,
-            "eq": lambda x, y: x == y,
-        }
         if not self.validators:
             return default_cmps
         assert len(self.validators) == 1
@@ -131,3 +143,8 @@ class Date(MeshFieldMixin, marshmallow_fields.Date):
         if isinstance(value, (datetime.datetime, datetime.date)):
             return value
         return super()._deserialize(value, attr, data, **kwargs)
+
+
+class Nested(marshmallow_fields.Nested):
+    def cmp_funcs(self, **kwargs):
+        return self.nested.cmp_funcs(**kwargs)

@@ -88,6 +88,7 @@ collision_list = [
     "index_rates",
     "to_dict",
     "_parse_validation_messages",
+    "sel",
 ]
 
 

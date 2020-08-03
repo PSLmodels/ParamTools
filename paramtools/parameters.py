@@ -44,9 +44,11 @@ class ParameterSlice:
         data = self.parameters._data.get(parameter)
         if data is None:
             raise ValueError(f"Unknown parameter: {parameter}.")
-        return select2.ValueObjects(
-            data["value"], self.parameters.label_validators
+        label_validators = dict(
+            value=self.parameters._validator_schema.field(parameter),
+            **self.parameters.label_validators,
         )
+        return select2.ValueObjects(data["value"], label_validators)
 
 
 class Parameters:
