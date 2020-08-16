@@ -289,7 +289,7 @@ class BaseValidatorSchema(Schema):
 
         param_info = self.context["spec"]._data[param_name]
         # sort keys to guarantee order.
-        validator_spec = param_info["validators"]
+        validator_spec = param_info.get("validators", {})
         validators = []
         for vname, vdata in validator_spec.items():
             validator = getattr(self, self.WRAPPER_MAP[vname])(

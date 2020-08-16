@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 
 from paramtools.utils import SortedKeyList
 from paramtools.typing import ValueObject
@@ -67,15 +67,29 @@ class Values:
         self,
         values: List[ValueObject],
         label_validators: Dict[str, Any] = None,
+        skls: Dict[str, SortedKeyList] = None,
+        index: List[Any] = None,
     ):
         self.values = values
+        self.index = index or list(range(len(values)))
+
+        if skls is not None:
+            self.skls = skls
+        else:
+            self.skls = self.build_skls(label_validators or {})
+
+        if "_auto" not in self.skls:
+            self.skls["_auto"] = SortedKeyList([], default_cmp_func)
+
+    def build_skls(self, label_validators):
         label_values = defaultdict(list)
         label_index = defaultdict(list)
-        for ix, vo in enumerate(values):
+        for ix, vo in enumerate(self.values):
             for label, value in vo.items():
                 label_values[label].append(value)
                 label_index[label].append(ix)
-        self.skls = {}
+
+        skls = {}
         for label in label_values:
             if label in label_validators and hasattr(
                 label_validators[label], "cmp_funcs"
@@ -83,15 +97,21 @@ class Values:
                 cmp_func = label_validators[label].cmp_funcs()["key"]
             else:
                 cmp_func = default_cmp_func
-            self.skls[label] = SortedKeyList(
+            skls[label] = SortedKeyList(
                 label_values[label], cmp_func, label_index[label]
             )
 
-        if "_auto" not in self.skls:
-            self.skls["_auto"] = SortedKeyList([], default_cmp_func)
+        return skls
 
     def _cmp(self, op, strict, **labels):
         label, value = list(labels.items())[0]
+        skl = self.skls.get(label, None)
+
+        if skl is None and strict:
+            raise KeyError(f"Unknown label: {label}.")
+        elif skl is None and not strict:
+            return QueryResult(self.values, list(self.index))
+
         skl_result = getattr(self.skls[label], op)(value)
         if not strict:
             match_index = skl_result.index if skl_result else []
@@ -131,6 +151,60 @@ class Values:
     def lte(self, strict=True, **labels):
         return self._cmp("lte", strict, **labels)
 
+    def __and__(self, queryresult: "QueryResult"):
+        res = set(self.index) & set(queryresult.index)
+
+        return QueryResult(self.values, res)
+
+    def __or__(self, queryresult: "QueryResult"):
+        res = set(self.index) | set(queryresult.index)
+
+        return QueryResult(self.values, res)
+
+    def __iter__(self):
+        return iter(self.values)
+
     def __repr__(self):
         vo_repr = "\n  ".join(str(vo) for vo in self.values)
         return f"ValueObjects([\n  {vo_repr}\n])"
+
+
+def _check(valuelike):
+    if len(valuelike) == 0:
+        return []
+
+    res = valuelike[0]
+
+    if len(valuelike) == 1 and isinstance(res, Values):
+        return QueryResult(res.values, res.index)
+    elif len(valuelike) == 1 and isinstance(res, QueryResult):
+        return res
+    elif len(valuelike) == 1:
+        raise TypeError(
+            f"any requires a list of Values or QueryResults. "
+            f"Got {type(res)}."
+        )
+
+
+def union(*valuelike: Union[Values, QueryResult]):
+    checked = _check(valuelike)
+    if checked is not None:
+        return checked
+
+    res = valuelike[0]
+    for value in valuelike[1:]:
+        res |= value
+
+    return res
+
+
+def intersection(*valuelike: Union[Values, QueryResult]):
+    checked = _check(valuelike)
+    if checked is not None:
+        return checked
+
+    res = valuelike[0]
+    for value in valuelike[1:]:
+        res &= value
+
+    return res

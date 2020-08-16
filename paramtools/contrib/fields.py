@@ -147,4 +147,8 @@ class Date(MeshFieldMixin, marshmallow_fields.Date):
 
 class Nested(marshmallow_fields.Nested):
     def cmp_funcs(self, **kwargs):
-        return self.nested.cmp_funcs(**kwargs)
+        cmp_funcs = getattr(self.nested, "cmp_funcs", None)
+        if cmp_funcs is None:
+            return default_cmps
+        else:
+            return cmp_funcs(**kwargs)

@@ -42,6 +42,7 @@ def array_first_defaults(defaults_spec_path):
     r.pop("float_list_param")
     r.pop("simple_int_list_param")
     r.pop("float_list_when_param")
+    r.pop("when_array_param")
     return r
 
 
@@ -399,11 +400,15 @@ class TestAccess:
     def test_dump_with_labels(self, TestParams, defaults_spec_path):
         params1 = TestParams()
         spec = params1.specification(
-            serializable=True, include_empty=True, meta_data=True, label0="one"
+            serializable=True,
+            include_empty=True,
+            meta_data=True,
+            label0="one",
+            sort_values=True,
         )
         schema = params1._schema
         params1.set_state(label0="one")
-        dumped = params1.dump()
+        dumped = params1.dump(sort_values=True)
         assert dumped == {**spec, **{"schema": schema}}
 
         class TestParams2(Parameters):
@@ -1049,7 +1054,7 @@ class TestValidationMessages:
 
     def test_when_validation_limitations(self):
         """
-        When validation prohibits child validators from doing referential violation
+        When validation prohibits child validators from doing referential validation
         when the other parameter is an array type (number_dims > 0).
         """
 
@@ -1082,17 +1087,15 @@ class TestValidationMessages:
                 },
             }
 
-        params = Params(array_first=True)
-        with pytest.raises(ValidationError) as excinfo:
-            params.adjust({"param": [4, 6]})
+        with pytest.raises(ParamToolsError) as excinfo:
+            Params(array_first=True)
 
-        msg = json.loads(excinfo.value.args[0])["errors"]
-        assert msg == {
-            "schema": [
-                "Data format error: ['param is validated against "
-                "when_param in an invalid context.']"
-            ]
-        }
+        cause = excinfo.value.__cause__
+        msg = cause.args[0]
+        assert (
+            msg
+            == "param is validated against when_param in an invalid context."
+        )
 
         class Params(Parameters):
             defaults = {
@@ -1116,16 +1119,14 @@ class TestValidationMessages:
                 }
             }
 
-        params = Params(array_first=True)
-        with pytest.raises(ValidationError) as excinfo:
-            params.adjust({"param": [4, 6]})
+        with pytest.raises(ParamToolsError) as excinfo:
+            Params(array_first=True)
 
-        msg = json.loads(excinfo.value.args[0])["errors"]
-        assert msg == {
-            "schema": [
-                "Data format error: ['param is validated against default in an invalid context.']"
-            ]
-        }
+        cause = excinfo.value.__cause__
+        msg = cause.args[0]
+        assert (
+            msg == "param is validated against default in an invalid context."
+        )
 
     def test_when_validation_examples(self, TestParams):
         params = TestParams()
@@ -1254,17 +1255,17 @@ class TestArray:
         exp_label_order = ["label0", "label2"]
         exp_value_order = {"label0": ["zero", "one"], "label2": [0, 1, 2]}
         vi = [
-            {"label0": "zero", "label2": 0, "value": None},
-            {"label0": "zero", "label2": 1, "value": None},
-            {"label0": "zero", "label2": 2, "value": None},
-            {"label0": "one", "label2": 0, "value": None},
-            {"label0": "one", "label2": 1, "value": None},
-            {"label0": "one", "label2": 2, "value": None},
+            {"label0": "zero", "label2": 0, "value": 1},
+            {"label0": "zero", "label2": 1, "value": 1},
+            {"label0": "zero", "label2": 2, "value": 1},
+            {"label0": "one", "label2": 0, "value": 1},
+            {"label0": "one", "label2": 1, "value": 1},
+            {"label0": "one", "label2": 2, "value": 1},
         ]
 
         params = TestParams()
         params.madeup = vi
-        params._data["madeup"] = {"value": vi}
+        params._data["madeup"] = {"value": vi, "type": "int"}
         value_items = params.select_eq("madeup", False, **params._state)
         assert params._resolve_order(
             "madeup", value_items, params.label_grid

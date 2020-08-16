@@ -14,6 +14,7 @@ from paramtools import (
 )
 
 
+@pytest.mark.network_bound
 class TestRead:
     def test_read_s3(self):
         res = read_json("s3://paramtools-test/defaults.json", {"anon": True})

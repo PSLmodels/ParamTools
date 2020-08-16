@@ -8,18 +8,10 @@ import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools import utils
+from paramtools import contrib
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
-from paramtools.select import (
-    select,
-    select_eq,
-    select_ne,
-    select_gt,
-    select_gte,
-    select_lt,
-    select_lte,
-    make_cmp_func,
-)
+from paramtools.select import select, select_eq, make_cmp_func
 from paramtools.tree import Tree
 from paramtools.typing import ValueObject, FileDictStringLike
 from paramtools.exceptions import (
@@ -31,7 +23,7 @@ from paramtools.exceptions import (
     ParameterNameCollisionException,
 )
 
-from paramtools.values import Values
+from paramtools.values import Values, union
 
 
 class ParameterSlice:
@@ -44,10 +36,15 @@ class ParameterSlice:
         data = self.parameters._data.get(parameter)
         if data is None:
             raise ValueError(f"Unknown parameter: {parameter}.")
-        label_validators = dict(
-            value=self.parameters._validator_schema.field(parameter),
-            **self.parameters.label_validators,
-        )
+        try:
+            label_validators = dict(
+                value=self.parameters._validator_schema.field(parameter),
+                **self.parameters.label_validators,
+            )
+        except contrib.validate.ValidationError as ve:
+            raise ParamToolsError(
+                f"There was an error retrieving the field for {parameter}", {}
+            ) from ve
         return Values(data["value"], label_validators)
 
 
@@ -85,6 +82,7 @@ class Parameters:
         self._state = self.parse_labels(**(initial_state or {}))
         self._search_trees = {}
         self.index_rates = index_rates or self.index_rates
+        self.sel = ParameterSlice(self)
 
         # set operators in order of importance:
         # __init__ arg: most important
@@ -121,8 +119,6 @@ class Parameters:
         if "operators" not in self._schema:
             self._schema["operators"] = {}
         self._schema["operators"].update(self.operators)
-
-        self.sel = ParameterSlice(self)
 
     def __getitem__(self, parameter):
         raise AttributeError(
@@ -974,53 +970,37 @@ class Parameters:
             self._validator_schema.fields[param].schema.fields["value"].np_type
         )
 
+    def _select(self, param, op, strict, **labels):
+        res = self.sel[param]
+        for label, value in labels.items():
+            if isinstance(value, list):
+                res &= union(
+                    *tuple(
+                        self.sel[param]._cmp(op, strict, **{label: element})
+                        for element in value
+                    )
+                )
+            else:
+                res &= self.sel[param]._cmp(op, strict, **{label: value})
+        return list(res)
+
     def select_eq(self, param, strict=True, **labels):
-        return select_eq(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "eq", strict, **labels)
 
     def select_ne(self, param, strict=True, **labels):
-        return select_ne(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "ne", strict, **labels)
 
     def select_gt(self, param, strict=True, **labels):
-        return select_gt(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "gt", strict, **labels)
 
     def select_gte(self, param, strict=True, **labels):
-        return select_gte(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "gte", strict, **labels)
 
     def select_lt(self, param, strict=True, **labels):
-        return select_lt(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "lt", strict, **labels)
 
     def select_lte(self, param, strict=True, **labels):
-        return select_lte(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "lte", strict, **labels)
 
     def _update_param(self, param, new_values):
         """

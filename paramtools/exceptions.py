@@ -58,6 +58,7 @@ collision_list = [
     "_update_param",
     "_validator_schema",
     "_defaults_schema",
+    "_select",
     "operators",
     "adjust",
     "delete",
