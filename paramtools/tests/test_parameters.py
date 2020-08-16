@@ -18,6 +18,8 @@ from paramtools import (
     ParameterNameCollisionException,
     register_custom_type,
     Parameters,
+    Values,
+    Slice,
 )
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -299,6 +301,16 @@ class TestSchema:
 
         with pytest.raises(ma.ValidationError):
             BadSpec()
+
+
+class TestValues:
+    def test(self, TestParams, defaults_spec_path):
+        params = TestParams()
+        assert isinstance(params.sel["min_int_param"], Values)
+        assert isinstance(params.sel["min_int_param"]["d0"], Slice)
+
+        with pytest.raises(AttributeError):
+            params["min_int_param"]
 
 
 class TestAccess:
@@ -2231,39 +2243,3 @@ class TestIndex:
                     "indexed_param": [{"d0": 3, "value": 8}],
                 }
             )
-
-
-class TestSelect:
-    def test_select_lt(self):
-        class Params(Parameters):
-            defaults = {
-                "schema": {
-                    "labels": {
-                        "d0": {"type": "int"},
-                        "d1": {
-                            "type": "str",
-                            "validators": {
-                                "choice": {"choices": ["hello", "world"]}
-                            },
-                        },
-                    }
-                },
-                "param": {
-                    "title": "",
-                    "description": "",
-                    "type": "int",
-                    "value": [
-                        {"d0": 1, "d1": "hello", "value": 1},
-                        {"d0": 1, "d1": "world", "value": 1},
-                        {"d0": 2, "d1": "hello", "value": 1},
-                        {"d0": 3, "d1": "world", "value": 1},
-                    ],
-                },
-            }
-
-        params = Params()
-        assert list(params.select_lt("param", False, d0=3)) == [
-            {"d0": 1, "d1": "hello", "value": 1},
-            {"d0": 1, "d1": "world", "value": 1},
-            {"d0": 2, "d1": "hello", "value": 1},
-        ]

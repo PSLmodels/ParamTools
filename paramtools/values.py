@@ -10,70 +10,68 @@ def default_cmp_func(x):
 
 
 class QueryResult:
-    def __init__(self, value_objects: List[ValueObject], index: List[int]):
-        self.value_objects = value_objects
+    def __init__(self, values: List[ValueObject], index: List[int]):
+        self.values = values
         self.index = index
 
     def __and__(self, queryresult: "QueryResult"):
         res = set(self.index) & set(queryresult.index)
 
-        return QueryResult(self.value_objects, res)
+        return QueryResult(self.values, res)
 
     def __or__(self, queryresult: "QueryResult"):
         res = set(self.index) | set(queryresult.index)
 
-        return QueryResult(self.value_objects, res)
+        return QueryResult(self.values, res)
 
     def __repr__(self):
-        vo_repr = "\n  ".join(
-            str(self.value_objects[i]) for i in (self.index or [])
-        )
+        vo_repr = "\n  ".join(str(self.values[i]) for i in (self.index or []))
         return f"QueryResult([\n  {vo_repr}\n])"
 
     def __iter__(self):
         for i in self.index:
-            yield self.value_objects[i]
+            yield self.values[i]
 
     def tolist(self):
-        return [self.value_objects[i] for i in self.index]
+        return [self.values[i] for i in self.index]
 
 
 class Slice:
-    __slots__ = ("value_objects", "label")
+    __slots__ = ("values", "label")
 
-    def __init__(self, value_objects, label):
-        self.value_objects = value_objects
+    def __init__(self, values, label):
+        self.values = values
         self.label = label
 
     def __eq__(self, value):
-        return self.value_objects.eq(**{self.label: value})
+        return self.values.eq(**{self.label: value})
 
     def __ne__(self, value):
-        return self.value_objects.ne(**{self.label: value})
+        return self.values.ne(**{self.label: value})
 
     def __gt__(self, value):
-        return self.value_objects.gt(**{self.label: value})
+        return self.values.gt(**{self.label: value})
 
     def __ge__(self, value):
-        return self.value_objects.gte(**{self.label: value})
+        return self.values.gte(**{self.label: value})
 
     def __lt__(self, value):
-        return self.value_objects.lt(**{self.label: value})
+        return self.values.lt(**{self.label: value})
 
     def __le__(self, value):
-        return self.value_objects.lte(**{self.label: value})
+        return self.values.lte(**{self.label: value})
 
 
-class ValueObjects:
+class Values:
     def __init__(
         self,
-        value_objects: List[ValueObject],
+        values: List[ValueObject],
         label_validators: Dict[str, Any] = None,
     ):
-        self.value_objects = value_objects
+        self.values = values
         label_values = defaultdict(list)
         label_index = defaultdict(list)
-        for ix, vo in enumerate(value_objects):
+        for ix, vo in enumerate(values):
             for label, value in vo.items():
                 label_values[label].append(value)
                 label_index[label].append(ix)
@@ -103,17 +101,17 @@ class ValueObjects:
             match_index = []
         else:
             match_index = skl_result.index
-        return QueryResult(self.value_objects, match_index)
+        return QueryResult(self.values, match_index)
 
     def __getitem__(self, label):
         return Slice(self, label)
 
     def missing(self, label: str):
         index = []
-        for ix, vo in enumerate(self.value_objects):
+        for ix, vo in enumerate(self.values):
             if label not in vo:
                 index.append(ix)
-        return QueryResult(self.value_objects, index)
+        return QueryResult(self.values, index)
 
     def eq(self, strict=True, **labels):
         return self._cmp("eq", strict, **labels)
@@ -134,5 +132,5 @@ class ValueObjects:
         return self._cmp("lte", strict, **labels)
 
     def __repr__(self):
-        vo_repr = "\n  ".join(str(vo) for vo in self.value_objects)
+        vo_repr = "\n  ".join(str(vo) for vo in self.values)
         return f"ValueObjects([\n  {vo_repr}\n])"

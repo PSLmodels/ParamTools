@@ -1,6 +1,6 @@
 import pytest
 
-from paramtools.select2 import ValueObjects
+from paramtools.values import Values
 from paramtools import Parameters
 
 
@@ -26,7 +26,7 @@ def label_validators():
 
 
 @pytest.fixture
-def _vos():
+def _values():
     return [
         {"d0": 1, "d1": "hello", "value": 1},
         {"d0": 1, "d1": "world", "value": 1},
@@ -36,67 +36,70 @@ def _vos():
 
 
 @pytest.fixture
-def vos(_vos, label_validators):
-    return ValueObjects(_vos, label_validators)
+def values(_values, label_validators):
+    return Values(_values, label_validators)
 
 
-def test_select_eq(vos):
-    assert list((vos["d0"] == 1) & (vos["d1"] == "hello")) == [
+def test_select_eq(values):
+    assert list((values["d0"] == 1) & (values["d1"] == "hello")) == [
         {"d0": 1, "d1": "hello", "value": 1}
     ]
     assert list(
-        ((vos["d0"] == 1) | (vos["d0"] == 2)) & (vos["d1"] == "hello")
+        ((values["d0"] == 1) | (values["d0"] == 2)) & (values["d1"] == "hello")
     ) == [
         {"d0": 1, "d1": "hello", "value": 1},
         {"d0": 2, "d1": "hello", "value": 1},
     ]
 
 
-def test_select_eq_strict(_vos, label_validators):
-    _vos[2]["_auto"] = True
-    _vos[3]["_auto"] = True
-    vos = ValueObjects(_vos, label_validators)
-    assert list((vos["_auto"] == False) | (vos.missing("_auto"))) == [
+def test_select_eq_strict(_values, label_validators):
+    _values[2]["_auto"] = True
+    _values[3]["_auto"] = True
+    values = Values(_values, label_validators)
+
+    assert list(
+        (values["_auto"] == False) | (values.missing("_auto"))  # noqa: E712
+    ) == [
         {"d0": 1, "d1": "hello", "value": 1},
         {"d0": 1, "d1": "world", "value": 1},
     ]
 
 
-def test_select_ne(vos):
-    assert list((vos["d0"] != 1) & (vos["d1"] != "hello")) == [
+def test_select_ne(values):
+    assert list((values["d0"] != 1) & (values["d1"] != "hello")) == [
         {"d0": 3, "d1": "world", "value": 1}
     ]
 
-    assert list((vos["d0"] != 2) & (vos["d0"] != 3)) == [
+    assert list((values["d0"] != 2) & (values["d0"] != 3)) == [
         {"d0": 1, "d1": "hello", "value": 1},
         {"d0": 1, "d1": "world", "value": 1},
     ]
 
 
-def test_select_gt(vos):
-    assert list(vos["d0"] > 1) == [
+def test_select_gt(values):
+    assert list(values["d0"] > 1) == [
         {"d0": 2, "d1": "hello", "value": 1},
         {"d0": 3, "d1": "world", "value": 1},
     ]
 
 
-def test_select_gte(vos):
-    assert list(vos["d0"] >= 2) == [
+def test_select_gte(values):
+    assert list(values["d0"] >= 2) == [
         {"d0": 2, "d1": "hello", "value": 1},
         {"d0": 3, "d1": "world", "value": 1},
     ]
 
 
-def test_select_lt(vos):
-    assert list(vos["d0"] < 3) == [
+def test_select_lt(values):
+    assert list(values["d0"] < 3) == [
         {"d0": 1, "d1": "hello", "value": 1},
         {"d0": 1, "d1": "world", "value": 1},
         {"d0": 2, "d1": "hello", "value": 1},
     ]
 
 
-def test_select_lte(vos):
-    assert list(vos["d0"] <= 2) == [
+def test_select_lte(values):
+    assert list(values["d0"] <= 2) == [
         {"d0": 1, "d1": "hello", "value": 1},
         {"d0": 1, "d1": "world", "value": 1},
         {"d0": 2, "d1": "hello", "value": 1},

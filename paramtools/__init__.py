@@ -50,7 +50,7 @@ from paramtools.utils import (
     SortedKeyList,
 )
 
-from paramtools.select2 import ValueObjects
+from paramtools.values import Values, Slice, QueryResult
 
 
 name = "paramtools"
@@ -100,5 +100,7 @@ __all__ = [
     "make_label_str",
     "SortedKeyList",
     "ValueObject",
-    "ValueObjects",
+    "Values",
+    "Slice",
+    "QueryResult",
 ]

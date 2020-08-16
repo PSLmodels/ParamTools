@@ -31,7 +31,7 @@ from paramtools.exceptions import (
     ParameterNameCollisionException,
 )
 
-from paramtools import select2
+from paramtools.values import Values
 
 
 class ParameterSlice:
@@ -48,7 +48,7 @@ class ParameterSlice:
             value=self.parameters._validator_schema.field(parameter),
             **self.parameters.label_validators,
         )
-        return select2.ValueObjects(data["value"], label_validators)
+        return Values(data["value"], label_validators)
 
 
 class Parameters:
@@ -125,10 +125,9 @@ class Parameters:
         self.sel = ParameterSlice(self)
 
     def __getitem__(self, parameter):
-        data = self._data.get(parameter)
-        if data is None:
-            raise ValueError(f"Unknown parameter: {parameter}.")
-        return select2.ValueObjects(data["value"], self.label_validators)
+        raise AttributeError(
+            f'Use params.sel["{parameter}"] instead of params["{parameter}"].'
+        )
 
     def set_state(self, **labels):
         """
