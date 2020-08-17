@@ -292,12 +292,8 @@ class Parameters:
                             )
                             if other_labels:
                                 queryset &= intersection(
-                                    *(
-                                        queryset.eq(
-                                            strict=False, **{label: value}
-                                        )
-                                        for label, value in other_labels.items()
-                                    )
+                                    queryset.eq(strict=False, **{label: value})
+                                    for label, value in other_labels.items()
                                 )
 
                             to_delete[param] += list(queryset)
@@ -561,10 +557,8 @@ class Parameters:
         if state:
             value_items = list(
                 intersection(
-                    *(
-                        self.sel[param].isin(strict=False, **{label: values})
-                        for label, values in state.items()
-                    )
+                    self.sel[param].isin(strict=False, **{label: values})
+                    for label, values in state.items()
                 )
             )
         else:
@@ -694,10 +688,8 @@ class Parameters:
         if state:
             value_items = list(
                 intersection(
-                    *(
-                        self.sel[param].isin(strict=False, **{label: value})
-                        for label, value in state.items()
-                    )
+                    self.sel[param].isin(strict=False, **{label: value})
+                    for label, value in state.items()
                 )
             )
         else:
@@ -786,10 +778,8 @@ class Parameters:
                 )
                 if other_labels:
                     queryset &= intersection(
-                        *(
-                            queryset.eq(strict=False, **{oth_label: value})
-                            for oth_label, value in other_labels.items()
-                        )
+                        queryset.eq(strict=False, **{oth_label: value})
+                        for oth_label, value in other_labels.items()
                     )
                 extended_vos.update(
                     map(utils.hashable_value_object, list(queryset))
@@ -1006,10 +996,8 @@ class Parameters:
         for label, value in labels.items():
             if isinstance(value, list):
                 res &= union(
-                    *tuple(
-                        self.sel[param]._cmp(op, strict, **{label: element})
-                        for element in value
-                    )
+                    self.sel[param]._cmp(op, strict, **{label: element})
+                    for element in value
                 )
             else:
                 res &= self.sel[param]._cmp(op, strict, **{label: value})
@@ -1067,11 +1055,9 @@ class Parameters:
                 continue
 
             to_update = intersection(
-                *(
-                    param_values.eq(strict=True, **{label: value})
-                    for label, value in labels.items()
-                    if label in param_values.labels and label != "_auto"
-                )
+                param_values.eq(strict=True, **{label: value})
+                for label, value in labels.items()
+                if label in param_values.labels and label != "_auto"
             )
 
             if len(list(to_update)) > 0:
@@ -1268,11 +1254,9 @@ class Parameters:
                 )
                 if self._state:
                     active = intersection(
-                        *(
-                            attr_vals[label].isin(value)
-                            for label, value in self._state.items()
-                            if label in attr_vals.labels
-                        )
+                        attr_vals[label].isin(value)
+                        for label, value in self._state.items()
+                        if label in attr_vals.labels
                     )
                 else:
                     active = list(attr_vals)

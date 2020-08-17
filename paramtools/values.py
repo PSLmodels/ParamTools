@@ -1,7 +1,6 @@
 import copy
 from collections import defaultdict
-from typing import List, Dict, Any, Union
-import types
+from typing import List, Dict, Any, Union, Generator
 
 from paramtools.utils import SortedKeyList
 from paramtools.typing import ValueObject
@@ -11,7 +10,11 @@ def default_cmp_func(x):
     return x
 
 
-class QueryResult:
+class ValueBase:
+    pass
+
+
+class QueryResult(ValueBase):
     def __init__(self, values: "Values", index: List[Any]):
         self.values = values
         self.index = index
@@ -71,7 +74,7 @@ class QueryResult:
         self.values.delete(*self.index, inplace=True)
 
 
-class Slice:
+class Slice(ValueBase):
     def __init__(self, values: "Values", label: str):
         self.values = values
         self.label = label
@@ -116,7 +119,7 @@ class Slice:
         return self.values.isin(strict, **{self.label: value})
 
 
-class Values:
+class Values(ValueBase):
     def __init__(
         self,
         values: List[ValueObject],
@@ -209,7 +212,7 @@ class Values:
     def isin(self, strict=True, **labels):
         label, values = list(labels.items())[0]
         return union(
-            *(self.eq(strict=strict, **{label: value}) for value in values)
+            self.eq(strict=strict, **{label: value}) for value in values
         )
 
     def insert(
@@ -236,7 +239,7 @@ class Values:
         else:
             current_index = list(self.index)
             return Values(
-                list(combined_values.values()),
+                combined_values.values(),
                 skls=skls,
                 index=current_index + new_index,
             )
@@ -258,7 +261,7 @@ class Values:
                 new_index.remove(ix)
 
             return Values(
-                list(new_values.values()),
+                new_values.values(),
                 label_validators=self.label_validators,
                 index=new_index,
             )
@@ -286,46 +289,27 @@ class Values:
         return f"ValueObjects([\n  {vo_repr}\n])"
 
 
-def _check(valuelike):
-    if len(valuelike) == 0:
-        return []
+def union(
+    queryresults: Union[List[ValueBase], Generator[ValueBase, None, None]]
+):
+    result = None
+    for queryresult in queryresults:
+        if result is None:
+            result = queryresult
+        else:
+            result |= queryresult
 
-    res = valuelike[0]
-
-    if len(valuelike) == 1 and isinstance(res, Values):
-        return QueryResult(res.values, res.index)
-    elif len(valuelike) == 1 and isinstance(res, QueryResult):
-        return res
-    elif len(valuelike) == 1:
-        raise TypeError(
-            f"any requires a list of Values or QueryResults. "
-            f"Got {type(res)}."
-        )
+    return result or []
 
 
-def union(*valuelike: Union[Values, QueryResult]):
-    if isinstance(valuelike, types.GeneratorType):
-        valuelike = list(valuelike)
-    checked = _check(valuelike)
-    if checked is not None:
-        return checked
+def intersection(
+    queryresults: Union[List[ValueBase], Generator[ValueBase, None, None]]
+):
+    result = None
+    for queryresult in queryresults:
+        if result is None:
+            result = queryresult
+        else:
+            result &= queryresult
 
-    res = valuelike[0]
-    for value in valuelike[1:]:
-        res |= value
-
-    return res
-
-
-def intersection(*valuelike: Union[Values, QueryResult]):
-    if isinstance(valuelike, types.GeneratorType):
-        valuelike = list(valuelike)
-    checked = _check(valuelike)
-    if checked is not None:
-        return checked
-
-    res = valuelike[0]
-    for value in valuelike[1:]:
-        res &= value
-
-    return res
+    return result or []

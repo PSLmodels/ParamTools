@@ -29,15 +29,13 @@ def select(
                 agg_func = values.union
             res.append(
                 agg_func(
-                    *tuple(
-                        values_._cmp(op, strict, **{label: element})
-                        for element in value
-                    )
+                    values_._cmp(op, strict, **{label: element})
+                    for element in value
                 )
             )
         else:
             res.append(values_._cmp(op, strict, **{label: value}))
-    return list(values.intersection(*res))
+    return list(values.intersection(res))
 
 
 def eq_func(x: Any, y: Iterable) -> bool:
