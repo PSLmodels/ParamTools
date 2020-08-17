@@ -11,7 +11,6 @@ from paramtools import utils
 from paramtools import contrib
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
-from paramtools.select import select, select_eq, make_cmp_func
 from paramtools.tree import Tree
 from paramtools.typing import ValueObject, FileDictStringLike
 from paramtools.exceptions import (
@@ -279,9 +278,7 @@ class Parameters:
                             if clobber:
                                 queryset = self.sel[param]
                             else:
-                                queryset = (
-                                    self.sel[param]["_auto"] == True
-                                )  # noqa: E712
+                                queryset = self.sel[param]["_auto"] == True
 
                             queryset &= queryset.gt(
                                 strict=False,
@@ -291,17 +288,17 @@ class Parameters:
                                     ]
                                 },
                             )
-                            filter_args = utils.filter_labels(
+                            other_labels = utils.filter_labels(
                                 vo,
                                 drop=[self.label_to_extend, "value", "_auto"],
                             )
-                            if filter_args:
+                            if other_labels:
                                 queryset &= intersection(
                                     *(
                                         queryset.eq(
                                             strict=False, **{label: value}
                                         )
-                                        for label, value in filter_args.items()
+                                        for label, value in other_labels.items()
                                     )
                                 )
 
@@ -563,7 +560,17 @@ class Parameters:
             parsed_labels = self.parse_labels(**labels)
             label_grid.update(parsed_labels)
             state.update(parsed_labels)
-        value_items = self.select_eq(param, False, **state)
+        if state:
+            value_items = list(
+                intersection(
+                    *(
+                        self.sel[param].isin(strict=False, **{label: values})
+                        for label, values in state.items()
+                    )
+                )
+            )
+        else:
+            value_items = list(self.sel[param])
         if not value_items:
             return np.array([])
 
@@ -604,15 +611,31 @@ class Parameters:
             exp_grid = list(itertools.product(*value_order.values()))
             # preserve label value order for each value object by
             # iterating over label_order.
-            actual = set(
+            actual = list(
                 [tuple(vo[d] for d in label_order) for vo in value_items]
             )
             missing = "\n\t".join(
                 [str(d) for d in exp_grid if d not in actual]
             )
+            counter = defaultdict(int)
+            extra = []
+            duplicates = []
+            for comb in actual:
+                counter[comb] += 1
+                if counter[comb] > 1:
+                    duplicates.append((comb, counter[comb]))
+                if comb not in exp_grid:
+                    extra.append(comb)
+            msg = ""
+            if missing:
+                msg += f"Missing combinations:\n\t{missing}"
+            if extra:
+                msg += f"Extra combinations:\n\t{extra}"
+            if duplicates:
+                msg += f"Duplicate combinations:\n\t{duplicates}"
             raise SparseValueObjectsException(
                 f"The Value objects for {param} do not span the specified "
-                f"parameter space. Missing combinations:\n\t{missing}"
+                f"parameter space. {msg}"
             )
 
         def list_2_tuple(x):
@@ -670,7 +693,17 @@ class Parameters:
             label_grid.update(parsed_labels)
             state.update(parsed_labels)
 
-        value_items = self.select_eq(param, False, **state)
+        if state:
+            value_items = list(
+                intersection(
+                    *(
+                        self.sel[param].isin(strict=False, **{label: value})
+                        for label, value in state.items()
+                    )
+                )
+            )
+        else:
+            value_items = list(self.sel[param])
         label_order, value_order = self._resolve_order(
             param, value_items, label_grid
         )
@@ -731,7 +764,6 @@ class Parameters:
             extend_grid = self._stateless_label_grid[label]
 
         cmp_funcs = self.label_validators[label].cmp_funcs(choices=extend_grid)
-        gt_cmp_func = make_cmp_func(cmp_funcs["gt"], all_or_any=all)
 
         adjustment = defaultdict(list)
         for param, data in spec.items():
@@ -746,22 +778,27 @@ class Parameters:
                     continue
                 else:
                     extended_vos.add(hashable_vo)
-                gt = select(
-                    self._data[param]["value"],
-                    False,
-                    gt_cmp_func,
-                    {label: vo[label]},
-                    tree=self._search_trees.get(param),
-                )
-                eq = select_eq(
-                    gt,
-                    False,
-                    utils.filter_labels(vo, drop=["value", label, "_auto"]),
-                )
-                extended_vos.update(map(utils.hashable_value_object, eq))
-                eq += [vo]
 
-                defined_vals = {eq_vo[label] for eq_vo in eq}
+                queryset = self.sel[param].gt(
+                    strict=False, **{label: vo[label]}
+                )
+
+                other_labels = utils.filter_labels(
+                    vo, drop=["value", label, "_auto"]
+                )
+                if other_labels:
+                    queryset &= intersection(
+                        *(
+                            queryset.eq(strict=False, **{oth_label: value})
+                            for oth_label, value in other_labels.items()
+                        )
+                    )
+                extended_vos.update(
+                    map(utils.hashable_value_object, list(queryset))
+                )
+                values = queryset.as_values().insert(values=[vo])
+
+                defined_vals = {eq_vo[label] for eq_vo in queryset}
 
                 missing_vals = sorted(
                     set(extend_grid) - defined_vals, key=cmp_funcs["key"]
@@ -771,7 +808,7 @@ class Parameters:
                     continue
 
                 extended = defaultdict(list)
-                for vo in eq:
+                for vo in values:
                     extended[vo[label]].append(vo)
 
                 skl = utils.SortedKeyList(extended.keys(), cmp_funcs["key"])
@@ -786,8 +823,8 @@ class Parameters:
                     if closest_val in extended:
                         value_objects = extended.pop(closest_val)
                     else:
-                        value_objects = select_eq(
-                            eq, False, {label: closest_val}
+                        value_objects = values.eq(
+                            strict=False, **{label: closest_val}
                         )
                     # In practice, value_objects has length one.
                     # Theoretically, there could be multiple if the inital value
@@ -949,7 +986,7 @@ class Parameters:
         used = utils.consistent_labels(value_items)
         if used is None:
             raise InconsistentLabelsException(
-                f"were added or omitted for some value object(s)."
+                "Labels were added or omitted for some value object(s)."
             )
         label_order, value_order = [], {}
         for label_name, label_values in label_grid.items():
@@ -1201,11 +1238,22 @@ class Parameters:
             # Only update attributes when array first is off, since
             # value order will not affect how arrays are constructed.
             if update_attrs and has_meta_data and not self.array_first:
-                attr_vals = select_eq(
-                    data[param]["value"], strict=True, labels=self._state
+                attr_vals = Values(
+                    data[param]["value"],
+                    label_validators=self.label_validators,
                 )
+                if self._state:
+                    active = intersection(
+                        *(
+                            attr_vals[label].isin(value)
+                            for label, value in self._state.items()
+                            if label in attr_vals.labels
+                        )
+                    )
+                else:
+                    active = list(attr_vals)
                 sorted_values = self.sort_values(
-                    {param: attr_vals}, has_meta_data=False
+                    {param: list(active)}, has_meta_data=False
                 )[param]
                 setattr(self, param, sorted_values)
         return data
