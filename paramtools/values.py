@@ -9,41 +9,8 @@ def default_cmp_func(x):
     return x
 
 
-class QueryResult:
-    def __init__(self, values: List[ValueObject], index: List[int]):
-        self.values = values
-        self.index = index
-
-    def __and__(self, queryresult: "QueryResult"):
-        res = set(self.index) & set(queryresult.index)
-
-        return QueryResult(self.values, res)
-
-    def __or__(self, queryresult: "QueryResult"):
-        res = set(self.index) | set(queryresult.index)
-
-        return QueryResult(self.values, res)
-
-    def __repr__(self):
-        vo_repr = "\n  ".join(str(self.values[i]) for i in (self.index or []))
-        return f"QueryResult([\n  {vo_repr}\n])"
-
-    def __iter__(self):
-        for i in self.index:
-            yield self.values[i]
-
-    def tolist(self):
-        return [self.values[i] for i in self.index]
-
-
-class Slice:
-    __slots__ = ("values", "label")
-
-    def __init__(self, values, label):
-        self.values = values
-        self.label = label
-
-    def __eq__(self, value):
+class Base:
+    def __eq__(self, value=None, **labels):
         return self.values.eq(**{self.label: value})
 
     def __ne__(self, value):
@@ -60,6 +27,113 @@ class Slice:
 
     def __le__(self, value):
         return self.values.lte(**{self.label: value})
+
+    def eq(self, value, strict=True):
+        return self.values.eq(strict, **{self.label: value})
+
+    def ne(self, value, strict=True):
+        return self.values.ne(strict, **{self.label: value})
+
+    def gt(self, value, strict=True):
+        return self.values.gt(strict, **{self.label: value})
+
+    def gte(self, value, strict=True):
+        return self.values.gte(strict, **{self.label: value})
+
+    def lt(self, value, strict=True):
+        return self.values.lt(strict, **{self.label: value})
+
+    def lte(self, value, strict=True):
+        return self.values.lte(strict, **{self.label: value})
+
+
+class QueryResult(Base):
+    def __init__(self, values: "Values", index: List[Any]):
+        self.values = values
+        self.index = index
+
+    def __and__(self, queryresult: "QueryResult"):
+        res = set(self.index) & set(queryresult.index)
+
+        return QueryResult(self.values, res)
+
+    def __or__(self, queryresult: "QueryResult"):
+        res = set(self.index) | set(queryresult.index)
+
+        return QueryResult(self.values, res)
+
+    def __repr__(self):
+        vo_repr = "\n  ".join(
+            str(self.values.values[i]) for i in (self.index or [])
+        )
+        return f"QueryResult([\n  {vo_repr}\n])"
+
+    def __iter__(self):
+        for i in self.index:
+            yield self.values.values[i]
+
+    def tolist(self):
+        return [self.values.values[i] for i in self.index]
+
+    def eq(self, strict=True, **labels):
+        return self.values.eq(strict, **labels)
+
+    def ne(self, strict=True, **labels):
+        return self.values.ne(strict, **labels)
+
+    def gt(self, strict=True, **labels):
+        return self.values.gt(strict, **labels)
+
+    def gte(self, strict=True, **labels):
+        return self.values.gte(strict, **labels)
+
+    def lt(self, strict=True, **labels):
+        return self.values.lt(strict, **labels)
+
+    def lte(self, strict=True, **labels):
+        return self.values.lte(strict, **labels)
+
+
+class Slice:
+    def __init__(self, values: "Values", label: str):
+        self.values = values
+        self.label = label
+
+    def __eq__(self, value=None, **labels):
+        return self.values.eq(**{self.label: value})
+
+    def __ne__(self, value):
+        return self.values.ne(**{self.label: value})
+
+    def __gt__(self, value):
+        return self.values.gt(**{self.label: value})
+
+    def __ge__(self, value):
+        return self.values.gte(**{self.label: value})
+
+    def __lt__(self, value):
+        return self.values.lt(**{self.label: value})
+
+    def __le__(self, value):
+        return self.values.lte(**{self.label: value})
+
+    def eq(self, value, strict=True):
+        return self.values.eq(strict, **{self.label: value})
+
+    def ne(self, value, strict=True):
+        return self.values.ne(strict, **{self.label: value})
+
+    def gt(self, value, strict=True):
+        return self.values.gt(strict, **{self.label: value})
+
+    def gte(self, value, strict=True):
+        return self.values.gte(strict, **{self.label: value})
+
+    def lt(self, value, strict=True):
+        return self.values.lt(strict, **{self.label: value})
+
+    def lte(self, value, strict=True):
+        return self.values.lte(strict, **{self.label: value})
 
 
 class Values:
@@ -110,7 +184,7 @@ class Values:
         if skl is None and strict:
             raise KeyError(f"Unknown label: {label}.")
         elif skl is None and not strict:
-            return QueryResult(self.values, list(self.index))
+            return QueryResult(self, list(self.index))
 
         skl_result = getattr(self.skls[label], op)(value)
         if not strict:
@@ -121,7 +195,7 @@ class Values:
             match_index = []
         else:
             match_index = skl_result.index
-        return QueryResult(self.values, match_index)
+        return QueryResult(self, match_index)
 
     def __getitem__(self, label):
         return Slice(self, label)
@@ -131,7 +205,7 @@ class Values:
         for ix, vo in enumerate(self.values):
             if label not in vo:
                 index.append(ix)
-        return QueryResult(self.values, index)
+        return QueryResult(self, index)
 
     def eq(self, strict=True, **labels):
         return self._cmp("eq", strict, **labels)
@@ -154,12 +228,12 @@ class Values:
     def __and__(self, queryresult: "QueryResult"):
         res = set(self.index) & set(queryresult.index)
 
-        return QueryResult(self.values, res)
+        return QueryResult(self, res)
 
     def __or__(self, queryresult: "QueryResult"):
         res = set(self.index) | set(queryresult.index)
 
-        return QueryResult(self.values, res)
+        return QueryResult(self, res)
 
     def __iter__(self):
         return iter(self.values)

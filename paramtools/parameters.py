@@ -23,7 +23,7 @@ from paramtools.exceptions import (
     ParameterNameCollisionException,
 )
 
-from paramtools.values import Values, union
+from paramtools.values import Values, union, intersection
 
 
 class ParameterSlice:
@@ -270,46 +270,42 @@ class Parameters:
                 extend_grid = self._stateless_label_grid[self.label_to_extend]
                 to_delete = defaultdict(list)
                 backup = {}
-                cmp_funcs = self.label_validators[
-                    self.label_to_extend
-                ].cmp_funcs()
-                gt_cmp_func = make_cmp_func(cmp_funcs["gt"], all_or_any=all)
                 for param, vos in parsed_params.items():
                     for vo in utils.grid_sort(
                         vos, self.label_to_extend, extend_grid
                     ):
 
                         if self.label_to_extend in vo:
-                            query_args = {
-                                self.label_to_extend: vo[self.label_to_extend]
-                            }
                             if clobber:
-                                queryset = self._data[param]["value"]
-                                tree = self._search_trees.get(param)
+                                queryset = self.sel[param]
                             else:
-                                queryset = self.select_eq(
-                                    param, strict=True, _auto=True
+                                queryset = (
+                                    self.sel[param]["_auto"] == True
+                                )  # noqa: E712
+
+                            queryset &= queryset.gt(
+                                strict=False,
+                                **{
+                                    self.label_to_extend: vo[
+                                        self.label_to_extend
+                                    ]
+                                },
+                            )
+                            filter_args = utils.filter_labels(
+                                vo,
+                                drop=[self.label_to_extend, "value", "_auto"],
+                            )
+                            if filter_args:
+                                queryset &= intersection(
+                                    *(
+                                        queryset.eq(
+                                            strict=False, **{label: value}
+                                        )
+                                        for label, value in filter_args.items()
+                                    )
                                 )
-                                tree = None
-                            gt = select(
-                                queryset,
-                                strict=False,
-                                cmp_func=gt_cmp_func,
-                                labels=query_args,
-                                tree=tree,
-                            )
-                            to_delete[param] += select_eq(
-                                gt,
-                                strict=False,
-                                labels=utils.filter_labels(
-                                    vo,
-                                    drop=[
-                                        self.label_to_extend,
-                                        "value",
-                                        "_auto",
-                                    ],
-                                ),
-                            )
+
+                            to_delete[param] += list(queryset)
                     # make copy of value objects since they
                     # are about to be modified
                     backup[param] = copy.deepcopy(self._data[param]["value"])
