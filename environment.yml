@@ -9,9 +9,10 @@ dependencies:
   - fsspec
   - s3fs # required for tests but not most usage.
   - gcsfs # required for tests but not most usage.
+  - requests
+  - aiohttp
   - pip
   - pip:
       - pre-commit
       - black
       - flake8
-      - requests
