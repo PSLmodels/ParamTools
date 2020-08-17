@@ -10,6 +10,7 @@ dependencies:
   - s3fs # required for tests but not most usage.
   - gcsfs # required for tests but not most usage.
   - pip
+  - requests
   - pip:
       - pre-commit
       - black
