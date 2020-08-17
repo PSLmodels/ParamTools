@@ -67,6 +67,9 @@ class QueryResult:
             label_validators=self.values.label_validators,
         )
 
+    def delete(self):
+        self.values.delete(*self.index, inplace=True)
+
 
 class Slice:
     def __init__(self, values: "Values", label: str):
@@ -228,7 +231,7 @@ class Values:
         skls = self.build_skls(combined_values, self.label_validators)
         if inplace:
             self.skls = skls
-            self.values = combined_values
+            self.values.update(combined_values)
             self.index += new_index
         else:
             current_index = list(self.index)
@@ -236,6 +239,28 @@ class Values:
                 list(combined_values.values()),
                 skls=skls,
                 index=current_index + new_index,
+            )
+
+    def delete(self, *index, inplace=False):
+        if not index:
+            index = list(self.index)
+        if inplace:
+            for ix in index:
+                self.values.pop(ix)
+                self.index.remove(ix)
+
+            self.skls = self.build_skls(self.values, self.label_validators)
+        else:
+            new_index = list(self.index)
+            new_values = copy.deepcopy(self.values)
+            for ix in index:
+                new_values.pop(ix)
+                new_index.remove(ix)
+
+            return Values(
+                list(new_values.values()),
+                label_validators=self.label_validators,
+                index=new_index,
             )
 
     @property
@@ -257,7 +282,7 @@ class Values:
             yield value
 
     def __repr__(self):
-        vo_repr = "\n  ".join(str(vo) for vo in self.values)
+        vo_repr = "\n  ".join(str(self.values[i]) for i in self.index)
         return f"ValueObjects([\n  {vo_repr}\n])"
 
 

@@ -50,7 +50,6 @@ collision_list = [
     "_numpy_type",
     "_parse_errors",
     "_resolve_order",
-    "_search_trees",
     "_schema",
     "_set_state",
     "_state",

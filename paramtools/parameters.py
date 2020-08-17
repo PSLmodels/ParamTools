@@ -11,7 +11,6 @@ from paramtools import utils
 from paramtools import contrib
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
-from paramtools.tree import Tree
 from paramtools.typing import ValueObject, FileDictStringLike
 from paramtools.exceptions import (
     ParamToolsError,
@@ -79,7 +78,6 @@ class Parameters:
         self._warnings = {}
         self._errors = {}
         self._state = self.parse_labels(**(initial_state or {}))
-        self._search_trees = {}
         self.index_rates = index_rates or self.index_rates
         self.sel = ParameterSlice(self)
 
@@ -1053,14 +1051,40 @@ class Parameters:
             For now, no exceptions are raised by this method.
 
         """
-        curr_values = self._data[param]["value"]
-        if param in self._search_trees:
-            curr_tree = self._search_trees[param]
-        else:
-            curr_tree = Tree(vos=curr_values, label_grid=self.label_grid)
-        new_tree = Tree(vos=new_values, label_grid=self.label_grid)
-        self._data[param]["value"] = curr_tree.update(new_tree)
-        self._search_trees[param] = curr_tree
+        param_values = self.sel[param]
+        if len(list(param_values)) == 0:
+            self._data[param]["value"] = new_values
+            return
+        for new_vo in new_values:
+            labels = utils.filter_labels(new_vo, drop=["value"])
+            if not labels:
+                if new_vo["value"] is not None:
+                    for curr_vo in self._data[param]["value"]:
+                        curr_vo["value"] = new_vo["value"]
+                else:
+                    param_values.delete(inplace=True)
+
+                continue
+
+            to_update = intersection(
+                *(
+                    param_values.eq(strict=True, **{label: value})
+                    for label, value in labels.items()
+                    if label in param_values.labels and label != "_auto"
+                )
+            )
+
+            if len(list(to_update)) > 0:
+                if new_vo["value"] is None:
+                    to_update.delete()
+                else:
+                    for curr_vo in to_update:
+                        curr_vo["value"] = new_vo["value"]
+            else:
+                if new_vo["value"] is not None:
+                    param_values.insert([new_vo], inplace=True)
+
+        self._data[param]["value"][:] = list(param_values)
 
     def _parse_validation_messages(self, messages, params):
         """Parse validation messages from marshmallow"""

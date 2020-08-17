@@ -63,10 +63,29 @@ def test_insert(values):
 
     assert len(new_vals.values) == len(copied) + 1
     assert len(new_vals.index) == len(copied) + 1
+    assert new_vals.index == [0, 1, 2, 3, 4]
 
     assert list((new_vals["d0"] == 3) & (new_vals["d1"] == "hello")) == [
         {"d0": 3, "d1": "hello", "value": 1}
     ]
+
+
+def test_delete(values):
+    copied = copy.deepcopy(values.values)
+
+    new_vals = values.delete(0, inplace=False)
+
+    assert len(values.values) == len(copied)
+    assert len(values.index) == len(copied)
+
+    assert len(new_vals.values) == len(copied) - 1
+    assert len(new_vals.index) == len(copied) - 1
+    assert new_vals.index == [1, 2, 3]
+
+    new_vals.delete(1, inplace=True)
+    assert len(new_vals.index) == len(copied) - 2
+    assert len(new_vals.values) == len(copied) - 2
+    assert new_vals.index == [2, 3]
 
 
 def test_as_values(values):

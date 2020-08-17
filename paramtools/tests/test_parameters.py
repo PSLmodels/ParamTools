@@ -674,7 +674,7 @@ class TestAdjust:
             "str_choice_param": [{"value": None}],
         }
         params.adjust(adj)
-
+        print(params.str_choice_param)
         assert len(params.min_int_param) == 1
         assert len(params.str_choice_param) == 0
 
@@ -994,7 +994,7 @@ class TestValidationMessages:
         assert params.warnings
         assert not params.errors
 
-        msg = [f"int_warn_param -1 < min 0 "]
+        msg = ["int_warn_param -1 < min 0 "]
         assert (
             json.loads(excinfo.value.args[0])["warnings"]["int_warn_param"]
             == msg
