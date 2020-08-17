@@ -5,12 +5,12 @@ dependencies:
   - "marshmallow>=3.0.0"
   - "numpy>=1.13"
   - "python-dateutil>=2.8.0"
-  - pytest
+  - "pytest>=6.0.0"
   - fsspec
   - s3fs # required for tests but not most usage.
   - gcsfs # required for tests but not most usage.
   - pip
   - pip:
-    - pre-commit
-    - black
-    - flake8
+      - pre-commit
+      - black
+      - flake8
