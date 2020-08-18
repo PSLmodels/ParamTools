@@ -30,20 +30,30 @@ class ParameterSlice:
     def __init__(self, parameters):
         self.parameters = parameters
 
-    def __getitem__(self, parameter):
-        data = self.parameters._data.get(parameter)
-        if data is None:
-            raise ValueError(f"Unknown parameter: {parameter}.")
-        try:
-            label_validators = dict(
-                value=self.parameters._validator_schema.field(parameter),
-                **self.parameters.label_validators,
-            )
-        except contrib.validate.ValidationError as ve:
-            raise ParamToolsError(
-                f"There was an error retrieving the field for {parameter}", {}
-            ) from ve
-        return Values(data["value"], label_validators)
+    def __getitem__(self, parameter_or_values):
+        fields = dict(self.parameters.label_validators)
+        if isinstance(parameter_or_values, str):
+            data = self.parameters._data.get(parameter_or_values)
+            if data is None:
+                raise ValueError(f"Unknown parameter: {parameter_or_values}.")
+            try:
+                fields.update(
+                    {
+                        "value": self.parameters._validator_schema.field(
+                            parameter_or_values
+                        )
+                    }
+                )
+            except contrib.validate.ValidationError as ve:
+                raise ParamToolsError(
+                    f"There was an error retrieving the field for {parameter_or_values}",
+                    {},
+                ) from ve
+
+        else:
+            data = {"value": parameter_or_values}
+
+        return Values(data["value"], label_validators=fields)
 
 
 class Parameters:
@@ -1248,10 +1258,7 @@ class Parameters:
             # Only update attributes when array first is off, since
             # value order will not affect how arrays are constructed.
             if update_attrs and has_meta_data and not self.array_first:
-                attr_vals = Values(
-                    data[param]["value"],
-                    label_validators=self.label_validators,
-                )
+                attr_vals = self.sel[data[param]["value"]]
                 if self._state:
                     active = intersection(
                         attr_vals[label].isin(value)

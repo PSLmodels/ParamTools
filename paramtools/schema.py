@@ -13,6 +13,7 @@ from marshmallow.error_store import ErrorStore
 from paramtools.exceptions import UnknownTypeException, ParamToolsError
 from paramtools import contrib
 from paramtools import utils
+from paramtools import values
 
 fields.Nested = contrib.fields.Nested
 
@@ -145,6 +146,8 @@ class ValueObject(fields.Nested):
     def _deserialize(
         self, value, attr, data, partial=None, many=False, **kwargs
     ):
+        if isinstance(value, values.ValueBase):
+            value = list(value)
         if not isinstance(value, list) or (
             isinstance(value, list)
             and value
