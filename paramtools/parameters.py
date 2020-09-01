@@ -446,7 +446,7 @@ class Parameters:
             "uses_extend_func": self.uses_extend_func,
         }
 
-    def dump(self, sort_values=True):
+    def dump(self, sort_values: bool = True, use_state: bool = True):
         """
         Dump a representation of this instance to JSON. This makes it
         possible to load this instance's data after sending the data
@@ -458,9 +458,12 @@ class Parameters:
             include_empty=True,
             serializable=True,
             sort_values=sort_values,
+            use_state=use_state,
         )
         schema = ParamToolsSchema().dump(self._schema)
-        return {**spec, **{"schema": schema}}
+        result = {"schema": schema}
+        result.update(spec)
+        return result
 
     def specification(
         self,
@@ -931,7 +934,7 @@ class Parameters:
         used = utils.consistent_labels(value_items)
         if used is None:
             raise InconsistentLabelsException(
-                f"were added or omitted for some value object(s)."
+                "Labels were added or omitted for some value object(s)."
             )
         label_order, value_order = [], {}
         for label_name, label_values in label_grid.items():
@@ -1193,6 +1196,7 @@ class Parameters:
                     data[param]["value"] = sorted(
                         data[param]["value"], key=pfunc
                     )
+
                 else:
                     data[param] = sorted(data[param], key=pfunc)
 
