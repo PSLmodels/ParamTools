@@ -1196,16 +1196,9 @@ class Parameters:
                     data[param]["value"] = sorted(
                         data[param]["value"], key=pfunc
                     )
-                    for value in data[param]["value"]:
-                        v = value.pop("value")
-                        value["value"] = v
 
                 else:
                     data[param] = sorted(data[param], key=pfunc)
-
-                    for value in data[param]:
-                        v = value.pop("value")
-                        value["value"] = v
 
             # Only update attributes when array first is off, since
             # value order will not affect how arrays are constructed.
