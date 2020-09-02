@@ -74,6 +74,7 @@ collision_list = [
     "from_array",
     "parse_labels",
     "read_params",
+    "schema",
     "set_state",
     "specification",
     "sort_values",

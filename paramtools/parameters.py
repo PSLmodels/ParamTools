@@ -439,6 +439,12 @@ class Parameters:
         return ValidationError(messages=messages, labels=labels)
 
     @property
+    def schema(self):
+        pre = dict(self._schema)
+        pre["operators"] = self.operators
+        return ParamToolsSchema().dump(pre)
+
+    @property
     def operators(self):
         return {
             "array_first": self.array_first,
@@ -460,8 +466,7 @@ class Parameters:
             sort_values=sort_values,
             use_state=use_state,
         )
-        schema = ParamToolsSchema().dump(self._schema)
-        result = {"schema": schema}
+        result = {"schema": self.schema}
         result.update(spec)
         return result
 
