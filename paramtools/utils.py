@@ -238,9 +238,7 @@ class SortedKeyList:
         ]
         self.sorted_key_list.sort(key=lambda r: r[1])
         self.keys = [r[1] for r in self.sorted_key_list]
-        self.index_map = {
-            item[2]: place for place, item in enumerate(self.sorted_key_list)
-        }
+        self.index = set(index)
         self.keyfunc = keyfunc
 
     def __repr__(self):
@@ -295,24 +293,7 @@ class SortedKeyList:
         key_value = self.keyfunc(value)
         i = bisect_left(self.keys, key_value)
         if index is None:
-            index = max(self.index_map) + 1
+            index = max(self.index) + 1
         self.sorted_key_list.insert(i, (value, key_value, index))
         self.keys.insert(i, key_value)
-        self.index_map.update(
-            {
-                item[2]: place + i
-                for place, item in enumerate(self.sorted_key_list[i:])
-            }
-        )
-
-    def remove_index(self, index):
-        i = self.index_map[index]
-        del self.sorted_key_list[i]
-        del self.keys[i]
-        self.index_map.pop(index)
-        self.index_map.update(
-            {
-                item[2]: place + i
-                for place, item in enumerate(self.sorted_key_list[i:])
-            }
-        )
+        self.index.add(index)

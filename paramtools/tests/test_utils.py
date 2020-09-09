@@ -198,13 +198,3 @@ def test_sorted_key_list():
     assert set(skl.ne("pokadot").values) == set(list(values.keys())) - {
         "pokadot"
     }
-
-    skl.remove_index(0)
-    assert skl.eq("red") is None
-    assert 0 not in skl.index_map
-    assert skl.eq("yellow").values[0] == "yellow"
-
-    skl.remove_index(3)  # yellow has index 3!
-    assert skl.eq("yellow") is None
-    assert skl.eq("blue").values[0] == "blue"
-    assert skl.eq("white").values[0] == "white"

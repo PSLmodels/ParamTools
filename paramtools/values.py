@@ -201,7 +201,7 @@ class Values(ValueBase):
         return Slice(self, label)
 
     def missing(self, label: str):
-        index = list(set(self.index) - self.skls[label].index_map.keys())
+        index = list(set(self.index) - self.skls[label].index)
         return QueryResult(self, index)
 
     def eq(self, strict=True, **labels):
