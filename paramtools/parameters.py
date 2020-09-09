@@ -458,6 +458,12 @@ class Parameters:
         return ValidationError(messages=messages, labels=labels)
 
     @property
+    def schema(self):
+        pre = dict(self._schema)
+        pre["operators"] = self.operators
+        return ParamToolsSchema().dump(pre)
+
+    @property
     def operators(self):
         return {
             "array_first": self.array_first,
@@ -465,7 +471,7 @@ class Parameters:
             "uses_extend_func": self.uses_extend_func,
         }
 
-    def dump(self, sort_values=True):
+    def dump(self, sort_values: bool = True, use_state: bool = True):
         """
         Dump a representation of this instance to JSON. This makes it
         possible to load this instance's data after sending the data
@@ -477,9 +483,11 @@ class Parameters:
             include_empty=True,
             serializable=True,
             sort_values=sort_values,
+            use_state=use_state,
         )
-        schema = ParamToolsSchema().dump(self._schema)
-        return {**spec, **{"schema": schema}}
+        result = {"schema": self.schema}
+        result.update(spec)
+        return result
 
     def specification(
         self,
@@ -1252,6 +1260,7 @@ class Parameters:
                     data[param]["value"] = sorted(
                         data[param]["value"], key=pfunc
                     )
+
                 else:
                     data[param] = sorted(data[param], key=pfunc)
 

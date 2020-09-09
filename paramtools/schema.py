@@ -112,6 +112,9 @@ class BaseParamSchema(Schema):
     )
     indexed = fields.Boolean(required=False)
 
+    class Meta:
+        ordered = True
+
 
 class EmptySchema(Schema):
     """

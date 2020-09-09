@@ -199,6 +199,7 @@ class TestSchema:
             "label_to_extend": "mylabel",
             "uses_extend_func": False,
         }
+        assert params.dump()["schema"]["operators"] == params.operators
 
         Params1.array_first = True
         params = Params1()
@@ -209,6 +210,7 @@ class TestSchema:
             "label_to_extend": "somelabel",
             "uses_extend_func": False,
         }
+        assert params.dump()["schema"]["operators"] == params.operators
 
         class Params2(Parameters):
             defaults = {"schema": {"operators": {"array_first": True}}}
@@ -221,6 +223,7 @@ class TestSchema:
             "label_to_extend": None,
             "uses_extend_func": False,
         }
+        assert params.dump()["schema"]["operators"] == params.operators
 
         class Params3(Parameters):
             array_first = True
@@ -233,6 +236,10 @@ class TestSchema:
             "label_to_extend": None,
             "uses_extend_func": False,
         }
+        assert params.dump()["schema"]["operators"] == params.operators
+
+        params.array_first = True
+        assert params.dump()["schema"]["operators"] == params.operators
 
     def test_when_schema(self):
         class Params(Parameters):

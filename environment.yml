@@ -9,8 +9,8 @@ dependencies:
   - fsspec
   - s3fs # required for tests but not most usage.
   - gcsfs # required for tests but not most usage.
-  - requests
-  - aiohttp
+  - requests # required for tests but not most usage.
+  - aiohttp # required for tests but not most usage.
   - pip
   - pip:
       - pre-commit

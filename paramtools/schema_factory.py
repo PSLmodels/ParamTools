@@ -1,7 +1,6 @@
 from marshmallow import fields
 
 from paramtools.schema import (
-    EmptySchema,
     OrderedSchema,
     BaseValidatorSchema,
     ValueObject,
@@ -71,7 +70,7 @@ class SchemaFactory:
             #     v["value"] = [{"value": v["value"]}]
 
             validator_dict[k] = type(
-                "ValidatorItem", (EmptySchema,), classattrs
+                "ValidatorItem", (OrderedSchema,), classattrs
             )
 
             classattrs = {"value": ValueObject(validator_dict[k], many=True)}
