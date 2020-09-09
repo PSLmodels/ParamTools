@@ -170,9 +170,9 @@ def filter_labels(vo: ValueObject, drop=None, keep=None) -> ValueObject:
     drop = drop or ()
     keep = keep or ()
     return {
-        l: lv
-        for l, lv in vo.items()
-        if (l not in drop) and (not keep or l in keep)
+        lab: lv
+        for lab, lv in vo.items()
+        if (lab not in drop) and (not keep or lab in keep)
     }
 
 
@@ -238,6 +238,9 @@ class SortedKeyList:
         ]
         self.sorted_key_list.sort(key=lambda r: r[1])
         self.keys = [r[1] for r in self.sorted_key_list]
+        self.index_map = {
+            item[2]: place for place, item in enumerate(self.sorted_key_list)
+        }
         self.keyfunc = keyfunc
 
     def __repr__(self):
@@ -288,8 +291,28 @@ class SortedKeyList:
             return SortedKeyListResult(self.sorted_key_list[i:])
         return None
 
-    def insert(self, value):
+    def insert(self, value, index=None):
         key_value = self.keyfunc(value)
         i = bisect_left(self.keys, key_value)
-        self.sorted_key_list.insert(i, (value, key_value, None))
+        if index is None:
+            index = max(self.index_map) + 1
+        self.sorted_key_list.insert(i, (value, key_value, index))
         self.keys.insert(i, key_value)
+        self.index_map.update(
+            {
+                item[2]: place + i
+                for place, item in enumerate(self.sorted_key_list[i:])
+            }
+        )
+
+    def remove_index(self, index):
+        i = self.index_map[index]
+        del self.sorted_key_list[i]
+        del self.keys[i]
+        self.index_map.pop(index)
+        self.index_map.update(
+            {
+                item[2]: place + i
+                for place, item in enumerate(self.sorted_key_list[i:])
+            }
+        )

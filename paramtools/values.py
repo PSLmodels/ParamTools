@@ -149,17 +149,33 @@ class Values(ValueBase):
 
         skls = {}
         for label in label_values:
-            if label in label_validators and hasattr(
-                label_validators[label], "cmp_funcs"
-            ):
-                cmp_func = label_validators[label].cmp_funcs()["key"]
-            else:
-                cmp_func = default_cmp_func
+            keyfunc = self.get_keyfunc(label, label_validators)
             skls[label] = SortedKeyList(
-                label_values[label], cmp_func, label_index[label]
+                label_values[label], keyfunc, label_index[label]
             )
 
         return skls
+
+    def update_skls(self, values):
+        # TODO: remove existing values with clashing index
+        for ix, vo in values.items():
+            for label, value in vo.items():
+                if label in self.skls:
+                    self.skls[label].insert(value, index=ix)
+                else:
+                    self.skls[label] = SortedKeyList(
+                        [vo],
+                        keyfunc=self.get_keyfunc(label, self.label_validators),
+                        index=[ix],
+                    )
+
+    def get_keyfunc(self, label, label_validators):
+        if label in label_validators and hasattr(
+            label_validators[label], "cmp_funcs"
+        ):
+            return label_validators[label].cmp_funcs()["key"]
+        else:
+            return default_cmp_func
 
     def _cmp(self, op, strict, **labels):
         label, value = list(labels.items())[0]
@@ -185,10 +201,7 @@ class Values(ValueBase):
         return Slice(self, label)
 
     def missing(self, label: str):
-        index = []
-        for ix, vo in self.values.items():
-            if label not in vo:
-                index.append(ix)
+        index = list(set(self.index) - self.skls[label].index_map.keys())
         return QueryResult(self, index)
 
     def eq(self, strict=True, **labels):
@@ -228,8 +241,8 @@ class Values(ValueBase):
         new_values = {ix: value for ix, value in zip(new_index, values)}
 
         if inplace:
+            self.update_skls(new_values)
             self.values.update(new_values)
-            self.skls = self.build_skls(self.values, self.label_validators)
             self.index += new_index
         else:
             current_index = list(self.index)
