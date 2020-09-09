@@ -218,8 +218,6 @@ class Values(ValueBase):
     def insert(
         self, values: List[ValueObject], index: List[Any] = None, inplace=False
     ):
-        curr_values = copy.deepcopy(self.values)
-
         if index is not None:
             assert len(index) == len(values)
             new_index = index
@@ -229,18 +227,17 @@ class Values(ValueBase):
 
         new_values = {ix: value for ix, value in zip(new_index, values)}
 
-        combined_values = curr_values
-        combined_values.update(new_values)
-        skls = self.build_skls(combined_values, self.label_validators)
         if inplace:
-            self.skls = skls
-            self.values.update(combined_values)
+            self.values.update(new_values)
+            self.skls = self.build_skls(self.values, self.label_validators)
             self.index += new_index
         else:
             current_index = list(self.index)
+            updated_values = dict(self.values)
+            updated_values.update(new_values)
             return Values(
-                combined_values.values(),
-                skls=skls,
+                updated_values.values(),
+                skls=self.build_skls(updated_values, self.label_validators),
                 index=current_index + new_index,
             )
 
