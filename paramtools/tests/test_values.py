@@ -2,28 +2,11 @@ import pytest
 import copy
 
 from paramtools.values import Values
-from paramtools import Parameters
 
 
 @pytest.fixture
-def label_validators():
-    schema = {
-        "labels": {
-            "d0": {
-                "type": "int",
-                "validators": {"range": {"min": 10, "max": 10}},
-            },
-            "d1": {
-                "type": "str",
-                "validators": {"choice": {"choices": ["hello", "world"]}},
-            },
-        }
-    }
-
-    class P(Parameters):
-        defaults = {"schema": schema}
-
-    return P().label_validators
+def keyfuncs():
+    return {"d0": lambda x: x, "d1": lambda x: ["hello", "world"].index(x)}
 
 
 @pytest.fixture
@@ -37,8 +20,8 @@ def _values():
 
 
 @pytest.fixture
-def values(_values, label_validators):
-    return Values(_values, label_validators)
+def values(_values, keyfuncs):
+    return Values(_values, keyfuncs)
 
 
 def test_select_eq(values):
@@ -106,10 +89,10 @@ def test_as_values(values):
     ]
 
 
-def test_select_eq_strict(_values, label_validators):
+def test_select_eq_strict(_values, keyfuncs):
     _values[2]["_auto"] = True
     _values[3]["_auto"] = True
-    values = Values(_values, label_validators)
+    values = Values(_values, keyfuncs)
 
     assert list((values["_auto"] == False) | (values.missing("_auto"))) == [
         {"d0": 1, "d1": "hello", "value": 1},

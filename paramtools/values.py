@@ -65,9 +65,7 @@ class QueryResult(ValueBase):
 
     def as_values(self):
         return Values(
-            values=list(self),
-            index=self.index,
-            label_validators=self.values.label_validators,
+            values=list(self), index=self.index, keyfuncs=self.values.keyfuncs
         )
 
     def delete(self):
@@ -123,23 +121,23 @@ class Values(ValueBase):
     def __init__(
         self,
         values: List[ValueObject],
-        label_validators: Dict[str, Any] = None,
+        keyfuncs: Dict[str, Any] = None,
         skls: Dict[str, SortedKeyList] = None,
         index: List[Any] = None,
     ):
         self.index = index or list(range(len(values)))
         self.values = {ix: value for ix, value in zip(self.index, values)}
-        self.label_validators = label_validators
+        self.keyfuncs = keyfuncs
 
         if skls is not None:
             self.skls = skls
         else:
-            self.skls = self.build_skls(self.values, label_validators or {})
+            self.skls = self.build_skls(self.values, keyfuncs or {})
 
         if "_auto" not in self.skls:
             self.skls["_auto"] = SortedKeyList([], default_cmp_func)
 
-    def build_skls(self, values, label_validators):
+    def build_skls(self, values, keyfuncs):
         label_values = defaultdict(list)
         label_index = defaultdict(list)
         for ix, vo in values.items():
@@ -149,7 +147,7 @@ class Values(ValueBase):
 
         skls = {}
         for label in label_values:
-            keyfunc = self.get_keyfunc(label, label_validators)
+            keyfunc = self.get_keyfunc(label, keyfuncs)
             skls[label] = SortedKeyList(
                 label_values[label], keyfunc, label_index[label]
             )
@@ -165,17 +163,13 @@ class Values(ValueBase):
                 else:
                     self.skls[label] = SortedKeyList(
                         [vo],
-                        keyfunc=self.get_keyfunc(label, self.label_validators),
+                        keyfunc=self.get_keyfunc(label, self.keyfuncs),
                         index=[ix],
                     )
 
-    def get_keyfunc(self, label, label_validators):
-        if label in label_validators and hasattr(
-            label_validators[label], "cmp_funcs"
-        ):
-            return label_validators[label].cmp_funcs()["key"]
-        else:
-            return default_cmp_func
+    def get_keyfunc(self, label, keyfuncs):
+        keyfunc = keyfuncs.get(label)
+        return keyfunc or default_cmp_func
 
     def _cmp(self, op, strict, **labels):
         label, value = list(labels.items())[0]
@@ -250,7 +244,7 @@ class Values(ValueBase):
             updated_values.update(new_values)
             return Values(
                 updated_values.values(),
-                skls=self.build_skls(updated_values, self.label_validators),
+                skls=self.build_skls(updated_values, self.keyfuncs),
                 index=current_index + new_index,
             )
 
@@ -262,7 +256,7 @@ class Values(ValueBase):
                 self.values.pop(ix)
                 self.index.remove(ix)
 
-            self.skls = self.build_skls(self.values, self.label_validators)
+            self.skls = self.build_skls(self.values, self.keyfuncs)
         else:
             new_index = list(self.index)
             new_values = copy.deepcopy(self.values)
@@ -271,9 +265,7 @@ class Values(ValueBase):
                 new_index.remove(ix)
 
             return Values(
-                new_values.values(),
-                label_validators=self.label_validators,
-                index=new_index,
+                new_values.values(), keyfuncs=self.keyfuncs, index=new_index
             )
 
     @property

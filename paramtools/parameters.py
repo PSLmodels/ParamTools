@@ -25,35 +25,36 @@ from paramtools.values import Values, union, intersection
 
 
 class ParameterSlice:
-    __slots__ = ("parameters",)
+    __slots__ = ("parameters", "_cache")
 
     def __init__(self, parameters):
         self.parameters = parameters
+        self._cache = {}
 
     def __getitem__(self, parameter_or_values):
-        fields = dict(self.parameters.label_validators)
+        keyfuncs = dict(self.parameters.keyfuncs)
         if isinstance(parameter_or_values, str):
             data = self.parameters._data.get(parameter_or_values)
             if data is None:
                 raise ValueError(f"Unknown parameter: {parameter_or_values}.")
             try:
-                fields.update(
-                    {
-                        "value": self.parameters._validator_schema.field(
-                            parameter_or_values
-                        )
-                    }
-                )
+                if parameter_or_values in self._cache:
+                    keyfuncs["value"] = self._cache[parameter_or_values]
+                else:
+                    keyfunc = self.parameters._validator_schema.field_keyfunc(
+                        parameter_or_values
+                    )
+                    self._cache[parameter_or_values] = keyfunc
+                    keyfuncs["value"] = keyfunc
             except contrib.validate.ValidationError as ve:
                 raise ParamToolsError(
                     f"There was an error retrieving the field for {parameter_or_values}",
                     {},
                 ) from ve
-
         else:
             data = {"value": parameter_or_values}
 
-        return Values(data["value"], label_validators=fields)
+        return Values(data["value"], keyfuncs=keyfuncs)
 
 
 class Parameters:
@@ -77,6 +78,12 @@ class Parameters:
             self._data,
         ) = schemafactory.schemas()
         self.label_validators = schemafactory.label_validators
+        self.keyfuncs = {}
+        for label, lv in self.label_validators.items():
+            cmp_funcs = getattr(lv, "cmp_funcs", None)
+            if cmp_funcs is not None:
+                self.keyfuncs[label] = cmp_funcs()["key"]
+
         self._stateless_label_grid = OrderedDict()
         for name, v in self.label_validators.items():
             if hasattr(v, "grid"):

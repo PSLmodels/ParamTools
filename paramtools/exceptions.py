@@ -69,6 +69,7 @@ collision_list = [
     "keys",
     "label_grid",
     "label_validators",
+    "keyfuncs",
     "errors",
     "warnings",
     "from_array",

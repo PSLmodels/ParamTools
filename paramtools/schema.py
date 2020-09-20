@@ -283,6 +283,14 @@ class BaseValidatorSchema(Schema):
 
         return warnings, errors
 
+    def field_keyfunc(self, param_name):
+        data = self.context["spec"]._data[param_name]
+        field = get_type(data, self.validators(param_name))
+        try:
+            return field.cmp_funcs()["key"]
+        except AttributeError:
+            return None
+
     def field(self, param_name):
         data = self.context["spec"]._data[param_name]
         return get_type(data, self.validators(param_name))
