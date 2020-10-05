@@ -35,6 +35,7 @@ from paramtools.select import (
     select_lt,
     select_lte,
 )
+from paramtools.sorted_key_list import SortedKeyList, SortedKeyListResult
 from paramtools.typing import ValueObject
 from paramtools.utils import (
     read_json,
@@ -47,9 +48,7 @@ from paramtools.utils import (
     hashable_value_object,
     filter_labels,
     make_label_str,
-    SortedKeyList,
 )
-
 from paramtools.values import Values, Slice, QueryResult
 
 
@@ -99,6 +98,7 @@ __all__ = [
     "filter_labels",
     "make_label_str",
     "SortedKeyList",
+    "SortedKeyListResult",
     "ValueObject",
     "Values",
     "Slice",

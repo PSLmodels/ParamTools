@@ -11,6 +11,7 @@ from paramtools import utils
 from paramtools import contrib
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
+from paramtools.sorted_key_list import SortedKeyList
 from paramtools.typing import ValueObject, FileDictStringLike
 from paramtools.exceptions import (
     ParamToolsError,
@@ -20,7 +21,6 @@ from paramtools.exceptions import (
     collision_list,
     ParameterNameCollisionException,
 )
-
 from paramtools.values import Values, union, intersection
 
 
@@ -824,7 +824,7 @@ class Parameters:
                 for vo in values:
                     extended[vo[label]].append(vo)
 
-                skl = utils.SortedKeyList(extended.keys(), cmp_funcs["key"])
+                skl = SortedKeyList(extended.keys(), cmp_funcs["key"])
 
                 for val in missing_vals:
                     lte_val = skl.lte(val)

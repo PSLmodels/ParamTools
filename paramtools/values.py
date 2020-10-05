@@ -2,7 +2,7 @@ import copy
 from collections import defaultdict
 from typing import List, Dict, Any, Union, Generator
 
-from paramtools.utils import SortedKeyList
+from paramtools.sorted_key_list import SortedKeyList
 from paramtools.typing import ValueObject
 
 
