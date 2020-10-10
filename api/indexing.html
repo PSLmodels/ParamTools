@@ -1,0 +1,515 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extend with Indexing &#8212; ParamTools</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.2d2078699c18a0efb88233928e1cf6ed.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/togglebutton.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Custom Adjustments" href="custom-adjust.html" />
+    <link rel="prev" title="Extend" href="extend.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">ParamTools</h1>
+  
+</a>
+</div>
+
+<form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../intro.html">
+   ParamTools
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Parameters
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../parameters.html">
+   Parameters
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  API
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="guide.html">
+   Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="extend.html">
+   Extend
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Extend with Indexing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="custom-adjust.html">
+   Custom Adjustments
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="custom-types.html">
+   Custom Types
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="reference.html">
+   API documentation
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+ <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        <div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/api/indexing.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+    
+</div>
+        <!-- Source interaction buttons -->
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#example">
+   Example
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#code-for-getting-tax-calculator-index-rates">
+     Code for getting Tax-Calculator index rates
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="extend-with-indexing">
+<h1>Extend with Indexing<a class="headerlink" href="#extend-with-indexing" title="Permalink to this headline">¶</a></h1>
+<p>ParamTools provides out-of-the-box parameter indexing. This is helpful for projects that have parameters that change at some rate over time. For example, tax parameters like the standard deduction are often indexed to price inflation. So, the value of the standard deduction actually increases every year by 1 or 2% depending on that year’s inflation rate.</p>
+<p>The <a class="reference internal" href="extend.html"><span class="doc std std-doc">extend documentation</span></a> may be useful for gaining a better understanding of how ParamTools extends parameter values along <code class="docutils literal notranslate"><span class="pre">label_to_extend</span></code>.</p>
+<p>To use the indexing feature:</p>
+<ul class="simple">
+<li><p>Set the <code class="docutils literal notranslate"><span class="pre">label_to_extend</span></code> class attribute to the label that should be extended</p></li>
+<li><p>Set the <code class="docutils literal notranslate"><span class="pre">indexing_rates</span></code> class attribute to a dictionary of inflation rates where the keys correspond to the value of <code class="docutils literal notranslate"><span class="pre">label_to_extend</span></code> and the values are the indexing rates.</p></li>
+<li><p>Set the <code class="docutils literal notranslate"><span class="pre">uses_extend_func</span></code> class attribute to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">defaults</span></code> or <code class="docutils literal notranslate"><span class="pre">defaults.json</span></code>, set <code class="docutils literal notranslate"><span class="pre">indexed</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> for each parameter that needs to be indexed.</p></li>
+</ul>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>This is a continuation of the tax parameters example from the <a class="reference internal" href="extend.html"><span class="doc std std-doc">extend documentation</span></a>. The differences are <code class="docutils literal notranslate"><span class="pre">indexed</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> for the <code class="docutils literal notranslate"><span class="pre">standard_deducation</span></code> parameter, <code class="docutils literal notranslate"><span class="pre">uses_extend_func</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, and <code class="docutils literal notranslate"><span class="pre">index_rates</span></code> is specified with inflation rates obtained from the open-source tax modeling package, <a class="reference external" href="https://github.com/PSLmodels/Tax-Calculator/">Tax-Calculator</a>, using version 2.5.0.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span>
+
+
+<span class="k">class</span> <span class="nc">TaxParams</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">2013</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">2027</span><span class="p">}}</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;choice&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;joint&quot;</span><span class="p">]}}</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Standard deduction amount&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Amount filing unit can use as a standard deduction.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+
+            <span class="c1"># Set indexed to True to extend standard_deduction with the built-in</span>
+            <span class="c1"># extension logic.</span>
+            <span class="s2">&quot;indexed&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">6350</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">12700</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2018</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">12000</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2018</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">24000</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">7685</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15369</span><span class="p">}],</span>
+            <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">9e+99</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+    <span class="n">array_first</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">label_to_extend</span> <span class="o">=</span> <span class="s2">&quot;year&quot;</span>
+    <span class="c1"># Activate use of extend_func method.</span>
+    <span class="n">uses_extend_func</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># inflation rates from Tax-Calculator v2.5.0</span>
+    <span class="n">index_rates</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">2013</span><span class="p">:</span> <span class="mf">0.0148</span><span class="p">,</span>
+        <span class="mi">2014</span><span class="p">:</span> <span class="mf">0.0159</span><span class="p">,</span>
+        <span class="mi">2015</span><span class="p">:</span> <span class="mf">0.0012</span><span class="p">,</span>
+        <span class="mi">2016</span><span class="p">:</span> <span class="mf">0.0127</span><span class="p">,</span>
+        <span class="mi">2017</span><span class="p">:</span> <span class="mf">0.0187</span><span class="p">,</span>
+        <span class="mi">2018</span><span class="p">:</span> <span class="mf">0.0224</span><span class="p">,</span>
+        <span class="mi">2019</span><span class="p">:</span> <span class="mf">0.0186</span><span class="p">,</span>
+        <span class="mi">2020</span><span class="p">:</span> <span class="mf">0.0233</span><span class="p">,</span>
+        <span class="mi">2021</span><span class="p">:</span> <span class="mf">0.0229</span><span class="p">,</span>
+        <span class="mi">2022</span><span class="p">:</span> <span class="mf">0.0228</span><span class="p">,</span>
+        <span class="mi">2023</span><span class="p">:</span> <span class="mf">0.0221</span><span class="p">,</span>
+        <span class="mi">2024</span><span class="p">:</span> <span class="mf">0.0211</span><span class="p">,</span>
+        <span class="mi">2025</span><span class="p">:</span> <span class="mf">0.0209</span><span class="p">,</span>
+        <span class="mi">2026</span><span class="p">:</span> <span class="mf">0.0211</span><span class="p">,</span>
+        <span class="mi">2027</span><span class="p">:</span> <span class="mf">0.0208</span><span class="p">,</span>
+        <span class="mi">2028</span><span class="p">:</span> <span class="mf">0.021</span><span class="p">,</span>
+        <span class="mi">2029</span><span class="p">:</span> <span class="mf">0.021</span>
+    <span class="p">}</span>
+
+
+<span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
+<span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
+
+<span class="c1"># output:</span>
+<span class="c1"># array([[ 6074.92, 12149.84],</span>
+<span class="c1">#        [ 6164.83, 12329.66],</span>
+<span class="c1">#        [ 6262.85, 12525.7 ],</span>
+<span class="c1">#        [ 6270.37, 12540.73],</span>
+<span class="c1">#        [ 6350.  , 12700.  ],</span>
+<span class="c1">#        [12000.  , 24000.  ],</span>
+<span class="c1">#        [12268.8 , 24537.6 ],</span>
+<span class="c1">#        [12497.  , 24994.  ],</span>
+<span class="c1">#        [12788.18, 25576.36],</span>
+<span class="c1">#        [13081.03, 26162.06],</span>
+<span class="c1">#        [13379.28, 26758.55],</span>
+<span class="c1">#        [13674.96, 27349.91],</span>
+<span class="c1">#        [13963.5 , 27926.99],</span>
+<span class="c1">#        [ 7685.  , 15369.  ],</span>
+<span class="c1">#        [ 7847.15, 15693.29]])</span>
+</pre></div>
+</div>
+<p>Adjustments are also indexed. In the example below, <code class="docutils literal notranslate"><span class="pre">standard_deduction</span></code> is set to 10,000 in 2017, increased to 15,000 for single tax units in 2020, and increased to 20,000 for joint tax units in 2021:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2020</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15000</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2021</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">20000</span><span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
+
+<span class="c1"># output:</span>
+<span class="c1"># array([[ 6074.92, 12149.84],</span>
+<span class="c1">#        [ 6164.83, 12329.66],</span>
+<span class="c1">#        [ 6262.85, 12525.7 ],</span>
+<span class="c1">#        [ 6270.37, 12540.73],</span>
+<span class="c1">#        [10000.  , 10000.  ],</span>
+<span class="c1">#        [10187.  , 10187.  ],</span>
+<span class="c1">#        [10415.19, 10415.19],</span>
+<span class="c1">#        [15000.  , 10608.91],</span>
+<span class="c1">#        [15349.5 , 20000.  ],</span>
+<span class="c1">#        [15701.  , 20458.  ],</span>
+<span class="c1">#        [16058.98, 20924.44],</span>
+<span class="c1">#        [16413.88, 21386.87],</span>
+<span class="c1">#        [16760.21, 21838.13],</span>
+<span class="c1">#        [17110.5 , 22294.55],</span>
+<span class="c1">#        [17471.53, 22764.97]])</span>
+
+</pre></div>
+</div>
+<p>All values that are added automatically via the <code class="docutils literal notranslate"><span class="pre">extend</span></code> method are given an <code class="docutils literal notranslate"><span class="pre">_auto</span></code> attribute. You can select them like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">select_eq</span><span class="p">(</span>
+    <span class="s2">&quot;standard_deduction&quot;</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_auto</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># [{&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2013, &#39;value&#39;: 5840.42},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2014, &#39;value&#39;: 5985.26},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2015, &#39;value&#39;: 6140.28},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2016, &#39;value&#39;: 6209.05},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2019, &#39;value&#39;: 12388.8},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2020, &#39;value&#39;: 12743.12},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2021, &#39;value&#39;: 13167.47},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2022, &#39;value&#39;: 13600.68},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2023, &#39;value&#39;: 14046.78},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2024, &#39;value&#39;: 14497.68},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2025, &#39;value&#39;: 14948.56},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2027, &#39;value&#39;: 7924.0},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2013, &#39;value&#39;: 11680.85},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2014, &#39;value&#39;: 11970.54},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2015, &#39;value&#39;: 12280.58},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2016, &#39;value&#39;: 12418.12},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2019, &#39;value&#39;: 24777.6},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2020, &#39;value&#39;: 25486.24},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2021, &#39;value&#39;: 26334.93},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2022, &#39;value&#39;: 27201.35},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2023, &#39;value&#39;: 28093.55},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2024, &#39;value&#39;: 28995.35},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2025, &#39;value&#39;: 29897.11},</span>
+<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2027, &#39;value&#39;: 15846.98}]</span>
+
+
+</pre></div>
+</div>
+<p>If you want to update the index rates and apply them to your existing values, then all you need to do is remove the values that were added automatically. ParamTools will fill in the missing values using the updated index rates:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
+
+<span class="n">offset</span> <span class="o">=</span> <span class="mf">0.0025</span>
+<span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">index_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">index_rates</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">=</span> <span class="n">rate</span> <span class="o">+</span> <span class="n">offset</span>
+
+<span class="n">automatically_added</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">select_eq</span><span class="p">(</span>
+    <span class="s2">&quot;standard_deduction&quot;</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_auto</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="n">automatically_added</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
+
+<span class="c1"># array([[ 5783.57, 11567.15],</span>
+<span class="c1">#        [ 5941.46, 11882.93],</span>
+<span class="c1">#        [ 6110.2 , 12220.41],</span>
+<span class="c1">#        [ 6193.91, 12387.83],</span>
+<span class="c1">#        [ 6350.  , 12700.  ],</span>
+<span class="c1">#        [12000.  , 24000.  ],</span>
+<span class="c1">#        [12418.8 , 24837.6 ],</span>
+<span class="c1">#        [12805.02, 25610.05],</span>
+<span class="c1">#        [13263.44, 26526.89],</span>
+<span class="c1">#        [13732.97, 27465.94],</span>
+<span class="c1">#        [14217.74, 28435.49],</span>
+<span class="c1">#        [14709.67, 29419.36],</span>
+<span class="c1">#        [15203.91, 30407.85],</span>
+<span class="c1">#        [ 7685.  , 15369.  ],</span>
+<span class="c1">#        [ 7943.22, 15885.4 ]])</span>
+</pre></div>
+</div>
+<div class="section" id="code-for-getting-tax-calculator-index-rates">
+<h3>Code for getting Tax-Calculator index rates<a class="headerlink" href="#code-for-getting-tax-calculator-index-rates" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">taxcalc</span>
+<span class="n">pol</span> <span class="o">=</span> <span class="n">taxcalc</span><span class="o">.</span><span class="n">Policy</span><span class="p">()</span>
+<span class="n">index_rates</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">year</span><span class="p">:</span> <span class="n">value</span>
+    <span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span> <span class="mi">2029</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">pol</span><span class="o">.</span><span class="n">inflation_rates</span><span class="p">())</span>
+<span class="p">}</span>
+
+</pre></div>
+</div>
+<p>Note that there are some subtle details that are implemented in Tax-Calculator’s indexing logic that are not implemented in this example. Tax-Calculator has a parameter called <code class="docutils literal notranslate"><span class="pre">CPI_offset</span></code> that adjusts inflation rates up or down by a fixed amount. The <code class="docutils literal notranslate"><span class="pre">indexed</span></code> property can also be turned on and off for each parameter. Implementing these nuanced features is left as the proverbial “trivial exercise to the reader.”</p>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./api"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="extend.html" title="previous page">Extend</a>
+    <a class='right-next' id="next-link" href="custom-adjust.html" title="next page">Custom Adjustments</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Hank Doupe<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

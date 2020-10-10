@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parameters &#8212; ParamTools</title>
+    
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/sphinx-book-theme.2d2078699c18a0efb88233928e1cf6ed.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/togglebutton.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
+    <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
+    <script >
+        const thebe_selector = ".thebe"
+        const thebe_selector_input = "pre"
+        const thebe_selector_output = ".output"
+    </script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Guide" href="api/guide.html" />
+    <link rel="prev" title="ParamTools" href="intro.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">ParamTools</h1>
+  
+</a>
+</div>
+
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form>
+
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="intro.html">
+   ParamTools
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Parameters
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Parameters
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  API
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/guide.html">
+   Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/extend.html">
+   Extend
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/indexing.html">
+   Extend with Indexing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/custom-adjust.html">
+   Custom Adjustments
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/custom-types.html">
+   Custom Types
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="api/reference.html">
+   API documentation
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+ <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        <div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/parameters.md"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.md</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+    
+</div>
+        <!-- Source interaction buttons -->
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#parameters-schema">
+   Parameters Schema
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#default-parameters">
+   Default Parameters
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#members">
+     Members:
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="parameters">
+<h1>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h1>
+<p>Define your default parameters and let ParamTools handle the rest.</p>
+<p>The ParamTools JSON file is split into two components: a component that defines the structure of your default inputs and a component that defines the variables that are used in your model. The first component is a top level member named <code class="docutils literal notranslate"><span class="pre">schema</span></code>. The second component consists of key-value pairs where the key is the parameter’s name and the value is its data.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;labels&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">2013</span><span class="p">,</span> <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">2027</span><span class="p">}}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;choice&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;separate&quot;</span><span class="p">,</span>
+                                                     <span class="s2">&quot;headhousehold&quot;</span><span class="p">,</span> <span class="s2">&quot;widow&quot;</span><span class="p">]}}</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;additional_members&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;cpi_inflatable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">},</span>
+            <span class="nt">&quot;cpi_inflated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;operators&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;array_first&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nt">&quot;label_to_extend&quot;</span><span class="p">:</span> <span class="s2">&quot;year&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;uses_extend_func&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;personal_exemption&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Personal Exemption&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A simple version of the personal exemption.&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;cpi_inflatable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;cpi_inflated&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Standard deduction amount&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Amount filing unit can use as a standard deduction.&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;cpi_inflatable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;cpi_inflated&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13673.68</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27347.36</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;separate&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13673.68</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;headhousehold&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">20510.52</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;widow&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27347.36</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13967.66</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27935.33</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;separate&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13967.66</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;headhousehold&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">20951.49</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;widow&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27935.33</span><span class="p">}],</span>
+        <span class="nt">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nt">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="parameters-schema">
+<h2>Parameters Schema<a class="headerlink" href="#parameters-schema" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;labels&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">2013</span><span class="p">,</span> <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mi">2027</span><span class="p">}}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;additional_members&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;cpi_inflatable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">},</span>
+            <span class="nt">&quot;cpi_inflated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nt">&quot;operators&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;array_first&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;label_to_extend&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;uses_extend_func&quot;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">labels</span></code>: Labels are used for defining, accessing, and updating a parameter’s values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">additional_members</span></code>: Additional Members are parameter level members that are specific to your model. For example, “title” is a parameter level member that is required by ParamTools, but “cpi_inflated” is not. Therefore, “cpi_inflated” needs to be defined in <code class="docutils literal notranslate"><span class="pre">additional_members</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">operators</span></code>: Operators affect how the data is read into and handled by the <code class="docutils literal notranslate"><span class="pre">Parameters</span></code> class:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">array_first</span></code>: If value is <code class="docutils literal notranslate"><span class="pre">true</span></code>, parameters’ values will be accessed as arrays by default.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">label_to_extend</span></code>: The name of the label along which the missing values of the parameters will be extended. For more information, check out the <a class="reference internal" href="api/extend.html"><span class="doc std std-doc">extend docs</span></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">uses_extend_func</span></code>: If value is <code class="docutils literal notranslate"><span class="pre">true</span></code>, special logic is applied to the values of the parameters as they are extended. For more information, check out the <a class="reference internal" href="api/indexing.html"><span class="doc std std-doc">indexing docs</span></a>.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="default-parameters">
+<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+	<span class="nt">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Standard deduction amount&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Amount filing unit can use as a standard deduction.&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;cpi_inflatable&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;cpi_inflated&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;number_dims&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13673.68</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27347.36</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;separate&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13673.68</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;headhousehold&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">20510.52</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;widow&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27347.36</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13967.66</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27935.33</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;separate&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13967.66</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;headhousehold&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">20951.49</span><span class="p">},</span>
+            <span class="p">{</span><span class="nt">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="nt">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;widow&quot;</span><span class="p">,</span> <span class="nt">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27935.33</span><span class="p">}],</span>
+        <span class="nt">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="mf">9e+99</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="members">
+<h3>Members:<a class="headerlink" href="#members" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">title</span></code>: A human readable name for the parameter.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">description</span></code>: Describe the parameter.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">notes</span></code>: (<em>optional</em>) Additional advice or information.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: Data type of the parameter. Allowed types are <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">bool</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code> and <code class="docutils literal notranslate"><span class="pre">date</span></code> (YYYY-MM-DD).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">number_dims</span></code>: (<em>optional, default is 0</em>) Number of dimensions for the value, as defined by <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.ndim.html"><code class="docutils literal notranslate"><span class="pre">np.ndim</span></code></a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code>: Value of the parameter and optionally, the corresponding labels. It can be written in two ways:</p>
+<ul>
+<li><p>if labels are used: <code class="docutils literal notranslate"><span class="pre">{&quot;value&quot;:</span> <span class="pre">[{&quot;value&quot;:</span> <span class="pre">&quot;my</span> <span class="pre">value&quot;,</span> <span class="pre">**labels}]}</span></code></p></li>
+<li><p>if labels are not used: <code class="docutils literal notranslate"><span class="pre">{&quot;value&quot;:</span> <span class="pre">&quot;my</span> <span class="pre">value&quot;}</span></code></p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validators</span></code>: Key-value pairs of the validator objects (<em>the ranges are inclusive</em>):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">level</span></code>: All validators take a <code class="docutils literal notranslate"><span class="pre">level</span></code> argument which is either “error” or “warn”. By default it is set to “error”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">when</span></code>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">is</span></code> is set to <code class="docutils literal notranslate"><span class="pre">equal_to</span></code> by default but can also be <code class="docutils literal notranslate"><span class="pre">greater_than</span></code> or <code class="docutils literal notranslate"><span class="pre">less_than</span></code>.</p>
+<ul>
+<li><p>e.g: <code class="docutils literal notranslate"><span class="pre">&quot;is&quot;:</span> <span class="pre">{&quot;greater_than&quot;:</span> <span class="pre">0}</span></code></p></li>
+</ul>
+</li>
+<li><p>If the sub-validators refer to the value of another parameter, then the other parameter
+must have <code class="docutils literal notranslate"><span class="pre">number_dims</span></code> equal to 0, i.e. be a scalar value and not an array value.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="s2">&quot;min value&quot;</span><span class="p">,</span> <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="s2">&quot;max value&quot;</span><span class="p">,</span> <span class="nt">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;warn&quot;</span><span class="p">},</span>
+        <span class="nt">&quot;choice&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;of&quot;</span><span class="p">,</span> <span class="s2">&quot;allowed&quot;</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">]},</span>
+        <span class="nt">&quot;date_range&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-01-01&quot;</span><span class="p">,</span> <span class="nt">&quot;max&quot;</span><span class="p">:</span> <span class="s2">&quot;2018-06-01&quot;</span><span class="p">},</span>
+        <span class="nt">&quot;when&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;param&quot;</span><span class="p">:</span> <span class="s2">&quot;other parameter&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;is&quot;</span><span class="p">:</span> <span class="s2">&quot;equal_value&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;then&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="s2">&quot;min value if other parameter is &#39;equal_value&#39;&quot;</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;otherwise&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="nt">&quot;min&quot;</span><span class="p">:</span> <span class="s2">&quot;min value if other parameter is not &#39;equal_value&#39;&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="intro.html" title="previous page">ParamTools</a>
+    <a class='right-next' id="next-link" href="api/guide.html" title="next page">Guide</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Hank Doupe<br/>
+        
+            &copy; Copyright 2020.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
