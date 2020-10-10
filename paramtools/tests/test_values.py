@@ -24,6 +24,10 @@ def values(_values, keyfuncs):
     return Values(_values, keyfuncs)
 
 
+def test_values(values):
+    assert len(values == 1)
+
+
 def test_select_eq(values):
     assert list((values["d0"] == 1) & (values["d1"] == "hello")) == [
         {"d0": 1, "d1": "hello", "value": 1}

@@ -11,7 +11,54 @@ def default_cmp_func(x):
 
 
 class ValueBase:
-    pass
+    @property
+    def cmp_attr(self):
+        return self
+
+    def __eq__(self, value=None, **labels):
+        return self.cmp_attr.eq(**{self.label: value})
+
+    def __ne__(self, value):
+        return self.cmp_attr.ne(**{self.label: value})
+
+    def __gt__(self, value):
+        return self.cmp_attr.gt(**{self.label: value})
+
+    def __ge__(self, value):
+        return self.cmp_attr.gte(**{self.label: value})
+
+    def __lt__(self, value):
+        return self.cmp_attr.lt(**{self.label: value})
+
+    def __le__(self, value):
+        return self.cmp_attr.lte(**{self.label: value})
+
+    def __len__(self):
+        return len([item for item in iter(self.cmp_attr)])
+
+    def __iter__(self):
+        raise iter(self.cmp_attr)
+
+    def eq(self, value, strict=True):
+        return self.cmp_attr.eq(strict, **{self.label: value})
+
+    def ne(self, value, strict=True):
+        return self.cmp_attr.ne(strict, **{self.label: value})
+
+    def gt(self, value, strict=True):
+        return self.cmp_attr.gt(strict, **{self.label: value})
+
+    def gte(self, value, strict=True):
+        return self.cmp_attr.gte(strict, **{self.label: value})
+
+    def lt(self, value, strict=True):
+        return self.cmp_attr.lt(strict, **{self.label: value})
+
+    def lte(self, value, strict=True):
+        return self.cmp_attr.lte(strict, **{self.label: value})
+
+    def isin(self, value, strict=True):
+        return self.cmp_attr.isin(strict, **{self.label: value})
 
 
 class QueryResult(ValueBase):
@@ -31,7 +78,7 @@ class QueryResult(ValueBase):
 
     def __repr__(self):
         vo_repr = "\n  ".join(
-            str(self.values.values[i]) for i in (self.index or [])
+            str(dict(self.values.values[i])) for i in (self.index or [])
         )
         return f"QueryResult([\n  {vo_repr}\n])"
 
@@ -43,25 +90,43 @@ class QueryResult(ValueBase):
         return [self.values.values[i] for i in self.index]
 
     def eq(self, strict=True, **labels):
-        return self.values.eq(strict, **labels)
+        return self.cmp_attr.eq(strict, **labels)
 
     def ne(self, strict=True, **labels):
-        return self.values.ne(strict, **labels)
+        return self.cmp_attr.ne(strict, **labels)
 
     def gt(self, strict=True, **labels):
-        return self.values.gt(strict, **labels)
+        return self.cmp_attr.gt(strict, **labels)
 
     def gte(self, strict=True, **labels):
-        return self.values.gte(strict, **labels)
+        return self.cmp_attr.gte(strict, **labels)
 
     def lt(self, strict=True, **labels):
-        return self.values.lt(strict, **labels)
+        return self.cmp_attr.lt(strict, **labels)
 
     def lte(self, strict=True, **labels):
-        return self.values.lte(strict, **labels)
+        return self.cmp_attr.lte(strict, **labels)
 
     def isin(self, strict=True, **labels):
-        return self.values.isin(strict, **labels)
+        return self.cmp_attr.isin(strict, **labels)
+
+    def __eq__(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def __ne__(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def __gt__(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def __ge__(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def __lt__(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def __le__(self, *args, **kwargs):
+        raise NotImplementedError()
 
     def as_values(self):
         return Values(
@@ -71,50 +136,19 @@ class QueryResult(ValueBase):
     def delete(self):
         self.values.delete(*self.index, inplace=True)
 
+    @property
+    def cmp_attr(self):
+        return self.values
+
 
 class Slice(ValueBase):
     def __init__(self, values: "Values", label: str):
         self.values = values
         self.label = label
 
-    def __eq__(self, value=None, **labels):
-        return self.values.eq(**{self.label: value})
-
-    def __ne__(self, value):
-        return self.values.ne(**{self.label: value})
-
-    def __gt__(self, value):
-        return self.values.gt(**{self.label: value})
-
-    def __ge__(self, value):
-        return self.values.gte(**{self.label: value})
-
-    def __lt__(self, value):
-        return self.values.lt(**{self.label: value})
-
-    def __le__(self, value):
-        return self.values.lte(**{self.label: value})
-
-    def eq(self, value, strict=True):
-        return self.values.eq(strict, **{self.label: value})
-
-    def ne(self, value, strict=True):
-        return self.values.ne(strict, **{self.label: value})
-
-    def gt(self, value, strict=True):
-        return self.values.gt(strict, **{self.label: value})
-
-    def gte(self, value, strict=True):
-        return self.values.gte(strict, **{self.label: value})
-
-    def lt(self, value, strict=True):
-        return self.values.lt(strict, **{self.label: value})
-
-    def lte(self, value, strict=True):
-        return self.values.lte(strict, **{self.label: value})
-
-    def isin(self, value, strict=True):
-        return self.values.isin(strict, **{self.label: value})
+    @property
+    def cmp_attr(self):
+        return self.values
 
 
 class Values(ValueBase):
@@ -128,6 +162,7 @@ class Values(ValueBase):
         self.index = index or list(range(len(values)))
         self.values = {ix: value for ix, value in zip(self.index, values)}
         self.keyfuncs = keyfuncs
+        self.label = "value"
 
         if skls is not None:
             self.skls = skls
@@ -287,8 +322,10 @@ class Values(ValueBase):
             yield value
 
     def __repr__(self):
-        vo_repr = "\n  ".join(str(self.values[i]) for i in self.index)
-        return f"ValueObjects([\n  {vo_repr}\n])"
+        vo_repr = (
+            ",\n  ".join(str(dict(self.values[i])) for i in self.index) + ","
+        )
+        return f"Values([\n  {vo_repr}\n])"
 
 
 def union(
@@ -301,7 +338,7 @@ def union(
         else:
             result |= queryresult
 
-    return result or []
+    return result or QueryResult(None, [])
 
 
 def intersection(
@@ -314,4 +351,4 @@ def intersection(
         else:
             result &= queryresult
 
-    return result or []
+    return result or QueryResult(None, [])
