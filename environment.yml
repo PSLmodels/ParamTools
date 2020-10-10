@@ -16,3 +16,7 @@ dependencies:
     - pre-commit
     - black
     - flake8
+    - jupyter-book
+    - sphinx
+    - autodoc
+    - ghp-import
