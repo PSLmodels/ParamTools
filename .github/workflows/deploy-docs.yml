@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-      - jupyter-docs
+
 jobs:
   build-and-deploy:
     if: github.repository == 'PSLmodels/ParamTools'
