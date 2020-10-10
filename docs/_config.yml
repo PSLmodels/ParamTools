@@ -1,0 +1,14 @@
+title: ParamTools
+author: Hank Doupe
+copyright: "2020"
+# logo: "logo.png"
+
+repository:
+  url: https://github.com/PSLmodels/ParamTools
+  path_to_book: "docs"
+
+sphinx:
+  extra_extensions: ["sphinx.ext.autodoc", "sphinx.ext.viewcode"]
+
+execute:
+  allow_errors: true

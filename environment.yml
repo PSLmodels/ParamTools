@@ -13,6 +13,10 @@ dependencies:
   - aiohttp # required for tests but not most usage.
   - pip
   - pip:
-      - pre-commit
-      - black
-      - flake8
+    - pre-commit
+    - black
+    - flake8
+    - jupyter-book
+    - sphinx
+    - autodoc
+    - ghp-import
