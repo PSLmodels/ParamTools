@@ -23,8 +23,8 @@ jobs:
           auto-activate-base: false
 
       - name: Build # Build Jupyter Book
+        shell: bash -l {0}
         run: |
-          conda activate paramtools-dev
           jupyter-book build ./docs
 
       - name: Deploy
