@@ -25,6 +25,7 @@ jobs:
       - name: Build # Build Jupyter Book
         shell: bash -l {0}
         run: |
+          pip install -e .
           jupyter-book build ./docs
 
       - name: Deploy
