@@ -30,6 +30,7 @@ class RangeSchema(Schema):
 
     _min = fields.Field(attribute="min", data_key="min")
     _max = fields.Field(attribute="max", data_key="max")
+    step = fields.Field()
     level = fields.String(validate=[validate.OneOf(["warn", "error"])])
 
 
