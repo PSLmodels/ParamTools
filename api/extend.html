@@ -184,9 +184,9 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/api/extend.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/api/extend.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -203,6 +203,28 @@
                     class="fas fa-expand"></i></button></a>
 
         <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/PSLmodels/ParamTools/master?urlpath=tree/docs/api/extend.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        <a class="colab-button" href="https://colab.research.google.com/github/PSLmodels/ParamTools/blob/master/docs/api/extend.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
+                title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
+                    src="../_static/images/logo_colab.png"
+                    alt="Interact on Colab">Colab</button></a>
+        
+        
+    </div>
+</div>
 
     </div>
 
@@ -261,7 +283,9 @@
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>The standard deduction parameter’s values only need to be specified when there is a change in the tax law. For the other years, it does not change (unless its indexed to inflation). It would be annoying to have to manually write out each of its values. Instead, we can more concisely write its values in 2017, its new values in 2018 after the TCJA tax reform was passed, and its values after provisions of the TCJA are phased out in 2026.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span>
 
 
 <span class="k">class</span> <span class="nc">TaxParams</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
@@ -303,27 +327,33 @@
 
 <span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
 <span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
-
-<span class="c1"># output:</span>
-<span class="c1"># array([[ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [ 7685., 15369.],</span>
-<span class="c1">#        [ 7685., 15369.]])</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 6350., 12700.],
+       [ 6350., 12700.],
+       [ 6350., 12700.],
+       [ 6350., 12700.],
+       [ 6350., 12700.],
+       [12000., 24000.],
+       [12000., 24000.],
+       [12000., 24000.],
+       [12000., 24000.],
+       [12000., 24000.],
+       [12000., 24000.],
+       [12000., 24000.],
+       [12000., 24000.],
+       [ 7685., 15369.],
+       [ 7685., 15369.]])
+</pre></div>
+</div>
+</div>
+</div>
 <p>Adjustments are also extended along <code class="docutils literal notranslate"><span class="pre">label_to_extend</span></code>. In the example below, <code class="docutils literal notranslate"><span class="pre">standard_deduction</span></code> is set to 10,000 in 2017, increased to 15,000 for single tax units in 2020, and increased to 20,000 for joint tax units in 2021:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span>
     <span class="p">{</span>
         <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
@@ -334,30 +364,35 @@
 <span class="p">)</span>
 
 <span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
-
-<span class="c1"># output</span>
-<span class="c1"># array([[ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [10000., 10000.],</span>
-<span class="c1">#        [10000., 10000.],</span>
-<span class="c1">#        [10000., 10000.],</span>
-<span class="c1">#        [15000., 10000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.]])</span>
-
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 6350., 12700.],
+       [ 6350., 12700.],
+       [ 6350., 12700.],
+       [ 6350., 12700.],
+       [10000., 10000.],
+       [10000., 10000.],
+       [10000., 10000.],
+       [15000., 10000.],
+       [15000., 20000.],
+       [15000., 20000.],
+       [15000., 20000.],
+       [15000., 20000.],
+       [15000., 20000.],
+       [15000., 20000.],
+       [15000., 20000.]])
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="clobber">
 <h3>Clobber<a class="headerlink" href="#clobber" title="Permalink to this headline">¶</a></h3>
 <p>In the previous example, the new values <em>clobber</em> the existing values in years after they are specified. By setting <code class="docutils literal notranslate"><span class="pre">clobber</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code>, only values that were added automatically will be replaced by the new ones. User defined values such as those in 2026 will not be over-written by the new values:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
 <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span>
     <span class="p">{</span>
         <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -370,23 +405,28 @@
 <span class="p">)</span>
 
 <span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
-
-<span class="c1"># array([[ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [ 6350., 12700.],</span>
-<span class="c1">#        [10000., 10000.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [12000., 24000.],</span>
-<span class="c1">#        [15000., 24000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [15000., 20000.],</span>
-<span class="c1">#        [ 7685., 15369.],</span>
-<span class="c1">#        [ 7685., 15369.]])</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 6350., 12700.],
+       [ 6350., 12700.],
+       [ 6350., 12700.],
+       [ 6350., 12700.],
+       [10000., 10000.],
+       [12000., 24000.],
+       [12000., 24000.],
+       [15000., 24000.],
+       [15000., 20000.],
+       [15000., 20000.],
+       [15000., 20000.],
+       [15000., 20000.],
+       [15000., 20000.],
+       [ 7685., 15369.],
+       [ 7685., 15369.]])
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -467,13 +507,13 @@
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            kernelName: "python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a",
             path: "./api"
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'python3'</script>
+    <script>kernelName = 'python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a'</script>
 
               </div>
               

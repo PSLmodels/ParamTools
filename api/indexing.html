@@ -184,9 +184,9 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/api/indexing.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/api/indexing.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -203,6 +203,28 @@
                     class="fas fa-expand"></i></button></a>
 
         <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/PSLmodels/ParamTools/master?urlpath=tree/docs/api/indexing.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        <a class="colab-button" href="https://colab.research.google.com/github/PSLmodels/ParamTools/blob/master/docs/api/indexing.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
+                title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
+                    src="../_static/images/logo_colab.png"
+                    alt="Interact on Colab">Colab</button></a>
+        
+        
+    </div>
+</div>
 
     </div>
 
@@ -251,7 +273,9 @@
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>This is a continuation of the tax parameters example from the <a class="reference internal" href="extend.html"><span class="doc std std-doc">extend documentation</span></a>. The differences are <code class="docutils literal notranslate"><span class="pre">indexed</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> for the <code class="docutils literal notranslate"><span class="pre">standard_deducation</span></code> parameter, <code class="docutils literal notranslate"><span class="pre">uses_extend_func</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, and <code class="docutils literal notranslate"><span class="pre">index_rates</span></code> is specified with inflation rates obtained from the open-source tax modeling package, <a class="reference external" href="https://github.com/PSLmodels/Tax-Calculator/">Tax-Calculator</a>, using version 2.5.0.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span>
 
 
 <span class="k">class</span> <span class="nc">TaxParams</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
@@ -320,27 +344,33 @@
 
 <span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
 <span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
-
-<span class="c1"># output:</span>
-<span class="c1"># array([[ 6074.92, 12149.84],</span>
-<span class="c1">#        [ 6164.83, 12329.66],</span>
-<span class="c1">#        [ 6262.85, 12525.7 ],</span>
-<span class="c1">#        [ 6270.37, 12540.73],</span>
-<span class="c1">#        [ 6350.  , 12700.  ],</span>
-<span class="c1">#        [12000.  , 24000.  ],</span>
-<span class="c1">#        [12268.8 , 24537.6 ],</span>
-<span class="c1">#        [12497.  , 24994.  ],</span>
-<span class="c1">#        [12788.18, 25576.36],</span>
-<span class="c1">#        [13081.03, 26162.06],</span>
-<span class="c1">#        [13379.28, 26758.55],</span>
-<span class="c1">#        [13674.96, 27349.91],</span>
-<span class="c1">#        [13963.5 , 27926.99],</span>
-<span class="c1">#        [ 7685.  , 15369.  ],</span>
-<span class="c1">#        [ 7847.15, 15693.29]])</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 6074.92, 12149.84],
+       [ 6164.83, 12329.66],
+       [ 6262.85, 12525.7 ],
+       [ 6270.37, 12540.73],
+       [ 6350.  , 12700.  ],
+       [12000.  , 24000.  ],
+       [12268.8 , 24537.6 ],
+       [12497.  , 24994.  ],
+       [12788.18, 25576.36],
+       [13081.03, 26162.06],
+       [13379.28, 26758.55],
+       [13674.96, 27349.91],
+       [13963.5 , 27926.99],
+       [ 7685.  , 15369.  ],
+       [ 7847.15, 15693.29]])
+</pre></div>
+</div>
+</div>
+</div>
 <p>Adjustments are also indexed. In the example below, <code class="docutils literal notranslate"><span class="pre">standard_deduction</span></code> is set to 10,000 in 2017, increased to 15,000 for single tax units in 2020, and increased to 20,000 for joint tax units in 2021:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span>
     <span class="p">{</span>
         <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
@@ -351,63 +381,73 @@
 <span class="p">)</span>
 
 <span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
-
-<span class="c1"># output:</span>
-<span class="c1"># array([[ 6074.92, 12149.84],</span>
-<span class="c1">#        [ 6164.83, 12329.66],</span>
-<span class="c1">#        [ 6262.85, 12525.7 ],</span>
-<span class="c1">#        [ 6270.37, 12540.73],</span>
-<span class="c1">#        [10000.  , 10000.  ],</span>
-<span class="c1">#        [10187.  , 10187.  ],</span>
-<span class="c1">#        [10415.19, 10415.19],</span>
-<span class="c1">#        [15000.  , 10608.91],</span>
-<span class="c1">#        [15349.5 , 20000.  ],</span>
-<span class="c1">#        [15701.  , 20458.  ],</span>
-<span class="c1">#        [16058.98, 20924.44],</span>
-<span class="c1">#        [16413.88, 21386.87],</span>
-<span class="c1">#        [16760.21, 21838.13],</span>
-<span class="c1">#        [17110.5 , 22294.55],</span>
-<span class="c1">#        [17471.53, 22764.97]])</span>
-
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 6074.92, 12149.84],
+       [ 6164.83, 12329.66],
+       [ 6262.85, 12525.7 ],
+       [ 6270.37, 12540.73],
+       [10000.  , 10000.  ],
+       [10187.  , 10187.  ],
+       [10415.19, 10415.19],
+       [15000.  , 10608.91],
+       [15349.5 , 20000.  ],
+       [15701.  , 20458.  ],
+       [16058.98, 20924.44],
+       [16413.88, 21386.87],
+       [16760.21, 21838.13],
+       [17110.5 , 22294.55],
+       [17471.53, 22764.97]])
+</pre></div>
+</div>
+</div>
+</div>
 <p>All values that are added automatically via the <code class="docutils literal notranslate"><span class="pre">extend</span></code> method are given an <code class="docutils literal notranslate"><span class="pre">_auto</span></code> attribute. You can select them like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
 
 <span class="n">params</span><span class="o">.</span><span class="n">select_eq</span><span class="p">(</span>
     <span class="s2">&quot;standard_deduction&quot;</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_auto</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
-
-<span class="c1"># [{&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2013, &#39;value&#39;: 5840.42},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2014, &#39;value&#39;: 5985.26},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2015, &#39;value&#39;: 6140.28},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2016, &#39;value&#39;: 6209.05},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2019, &#39;value&#39;: 12388.8},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2020, &#39;value&#39;: 12743.12},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2021, &#39;value&#39;: 13167.47},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2022, &#39;value&#39;: 13600.68},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2023, &#39;value&#39;: 14046.78},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2024, &#39;value&#39;: 14497.68},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2025, &#39;value&#39;: 14948.56},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;single&#39;, &#39;year&#39;: 2027, &#39;value&#39;: 7924.0},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2013, &#39;value&#39;: 11680.85},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2014, &#39;value&#39;: 11970.54},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2015, &#39;value&#39;: 12280.58},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2016, &#39;value&#39;: 12418.12},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2019, &#39;value&#39;: 24777.6},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2020, &#39;value&#39;: 25486.24},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2021, &#39;value&#39;: 26334.93},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2022, &#39;value&#39;: 27201.35},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2023, &#39;value&#39;: 28093.55},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2024, &#39;value&#39;: 28995.35},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2025, &#39;value&#39;: 29897.11},</span>
-<span class="c1">#  {&#39;_auto&#39;: True, &#39;marital_status&#39;: &#39;joint&#39;, &#39;year&#39;: 2027, &#39;value&#39;: 15846.98}]</span>
-
-
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[{&#39;year&#39;: 2013, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6074.92, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2014, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6164.83, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2015, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6262.85, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2016, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6270.37, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2019, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 12268.8, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2020, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 12497.0, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2021, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 12788.18, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2022, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13081.03, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2023, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13379.28, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13674.96, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13963.5, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2027, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 7847.15, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2013, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12149.84, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2014, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12329.66, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2015, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12525.7, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2016, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12540.73, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2019, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 24537.6, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2020, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 24994.0, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2021, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 25576.36, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2022, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 26162.06, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2023, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 26758.55, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27349.91, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27926.99, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2027, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 15693.29, &#39;_auto&#39;: True}]
+</pre></div>
+</div>
+</div>
+</div>
 <p>If you want to update the index rates and apply them to your existing values, then all you need to do is remove the values that were added automatically. ParamTools will fill in the missing values using the updated index rates:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
 
 <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.0025</span>
 <span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">index_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -424,23 +464,28 @@
 <span class="p">)</span>
 
 <span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
-
-<span class="c1"># array([[ 5783.57, 11567.15],</span>
-<span class="c1">#        [ 5941.46, 11882.93],</span>
-<span class="c1">#        [ 6110.2 , 12220.41],</span>
-<span class="c1">#        [ 6193.91, 12387.83],</span>
-<span class="c1">#        [ 6350.  , 12700.  ],</span>
-<span class="c1">#        [12000.  , 24000.  ],</span>
-<span class="c1">#        [12418.8 , 24837.6 ],</span>
-<span class="c1">#        [12805.02, 25610.05],</span>
-<span class="c1">#        [13263.44, 26526.89],</span>
-<span class="c1">#        [13732.97, 27465.94],</span>
-<span class="c1">#        [14217.74, 28435.49],</span>
-<span class="c1">#        [14709.67, 29419.36],</span>
-<span class="c1">#        [15203.91, 30407.85],</span>
-<span class="c1">#        [ 7685.  , 15369.  ],</span>
-<span class="c1">#        [ 7943.22, 15885.4 ]])</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 6015.22, 12030.41],
+       [ 6119.28, 12238.54],
+       [ 6231.87, 12463.73],
+       [ 6254.93, 12509.85],
+       [ 6350.  , 12700.  ],
+       [12000.  , 24000.  ],
+       [12298.8 , 24597.6 ],
+       [12558.3 , 25116.61],
+       [12882.3 , 25764.62],
+       [13209.51, 26419.04],
+       [13543.71, 27087.44],
+       [13876.89, 27753.79],
+       [14204.38, 28408.78],
+       [ 7685.  , 15369.  ],
+       [ 7866.37, 15731.71]])
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="code-for-getting-tax-calculator-index-rates">
 <h3>Code for getting Tax-Calculator index rates<a class="headerlink" href="#code-for-getting-tax-calculator-index-rates" title="Permalink to this headline">¶</a></h3>
@@ -450,7 +495,6 @@
     <span class="n">year</span><span class="p">:</span> <span class="n">value</span>
     <span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2013</span><span class="p">,</span> <span class="mi">2029</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">pol</span><span class="o">.</span><span class="n">inflation_rates</span><span class="p">())</span>
 <span class="p">}</span>
-
 </pre></div>
 </div>
 <p>Note that there are some subtle details that are implemented in Tax-Calculator’s indexing logic that are not implemented in this example. Tax-Calculator has a parameter called <code class="docutils literal notranslate"><span class="pre">CPI_offset</span></code> that adjusts inflation rates up or down by a fixed amount. The <code class="docutils literal notranslate"><span class="pre">indexed</span></code> property can also be turned on and off for each parameter. Implementing these nuanced features is left as the proverbial “trivial exercise to the reader.”</p>

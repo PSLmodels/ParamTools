@@ -184,9 +184,9 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/api/custom-adjust.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/api/custom-adjust.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -203,6 +203,28 @@
                     class="fas fa-expand"></i></button></a>
 
         <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/PSLmodels/ParamTools/master?urlpath=tree/docs/api/custom-adjust.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        <a class="colab-button" href="https://colab.research.google.com/github/PSLmodels/ParamTools/blob/master/docs/api/custom-adjust.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
+                title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
+                    src="../_static/images/logo_colab.png"
+                    alt="Interact on Colab">Colab</button></a>
+        
+        
+    </div>
+</div>
 
     </div>
 
@@ -233,7 +255,11 @@
   <div class="section" id="custom-adjustments">
 <h1>Custom Adjustments<a class="headerlink" href="#custom-adjustments" title="Permalink to this headline">¶</a></h1>
 <p>The ParamTools adjustment format and logic can be augmented significantly. This is helpful for projects that need to support a pre-existing data format or require custom adjustment logic. Projects should customize their adjustments by writing their own <code class="docutils literal notranslate"><span class="pre">adjust</span></code> method and then calling the default <code class="docutils literal notranslate"><span class="pre">adjust</span></code> method from there:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span>
+
+
 <span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">adjust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params_or_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_params</span><span class="p">(</span><span class="n">params_or_path</span><span class="p">)</span>
@@ -242,13 +268,16 @@
 
         <span class="c1"># call default adjust method.</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
 </pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>Some projects may find it convenient to use CSVs for their adjustment format. That’s no problem for ParamTools as long as the CSV is converted to a JSON file or Python dictionary that meets the ParamTools criteria.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -305,12 +334,14 @@
         <span class="c1"># call adjust method on paramtools.Parameters which will</span>
         <span class="c1"># call _adjust to actually do the update.</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
 </pre></div>
 </div>
+</div>
+</div>
 <p>Now we create an example CSV file. To keep the example self-contained, the CSV is just a string, but this example works with CSV files, too. The values of “A” are updated to 5 in 2000 and 6 in 2001, and the values of “B” are updated to 6 in 2000 and 7 in 2001.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
-<span class="c1"># this could also be a path to a CSV file.</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this could also be a path to a CSV file.</span>
 <span class="n">csv_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">year,a,b</span>
 <span class="s2">2000,5,6</span><span class="se">\n</span><span class="s2"></span>
@@ -319,26 +350,51 @@
 
 <span class="n">params</span> <span class="o">=</span> <span class="n">CSVParams</span><span class="p">()</span>
 <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">csv_string</span><span class="p">)</span>
-
-<span class="c1"># output</span>
-<span class="c1"># OrderedDict([(&#39;a&#39;, [{&#39;year&#39;: 2000, &#39;value&#39;: 5}, {&#39;year&#39;: 2001, &#39;value&#39;: 6}]),</span>
-<span class="c1">#              (&#39;b&#39;, [{&#39;year&#39;: 2000, &#39;value&#39;: 6}, {&#39;year&#39;: 2001, &#39;value&#39;: 7}])])</span>
-
-<span class="n">params</span><span class="o">.</span><span class="n">a</span>
-
-<span class="c1"># output:</span>
-<span class="c1"># [{&#39;year&#39;: 2000, &#39;value&#39;: 5}, {&#39;year&#39;: 2001, &#39;value&#39;: 6}]</span>
-
-<span class="n">params</span><span class="o">.</span><span class="n">b</span>
-
-<span class="c1"># output</span>
-<span class="c1"># [{&#39;year&#39;: 2000, &#39;value&#39;: 6}, {&#39;year&#39;: 2001, &#39;value&#39;: 7}]</span>
-
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>OrderedDict([(&#39;a&#39;,
+              [OrderedDict([(&#39;year&#39;, 2000), (&#39;value&#39;, 5)]),
+               OrderedDict([(&#39;year&#39;, 2001), (&#39;value&#39;, 6)])]),
+             (&#39;b&#39;,
+              [OrderedDict([(&#39;year&#39;, 2000), (&#39;value&#39;, 6)]),
+               OrderedDict([(&#39;year&#39;, 2001), (&#39;value&#39;, 7)])])])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">a</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[OrderedDict([(&#39;year&#39;, 2000), (&#39;value&#39;, 5)]),
+ OrderedDict([(&#39;year&#39;, 2001), (&#39;value&#39;, 6)])]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">b</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[OrderedDict([(&#39;year&#39;, 2000), (&#39;value&#39;, 6)]),
+ OrderedDict([(&#39;year&#39;, 2001), (&#39;value&#39;, 7)])]
+</pre></div>
+</div>
+</div>
 </div>
 <p>Now, if we use <code class="docutils literal notranslate"><span class="pre">array_first</span></code> and <a class="reference internal" href="extend.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">label_to_extend</span></code></span></a>, the params instance can be loaded into a Pandas
 DataFrame like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">csv_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">csv_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">year,a,b</span>
 <span class="s2">2000,5,6</span><span class="se">\n</span><span class="s2"></span>
 <span class="s2">2001,6,7</span><span class="se">\n</span><span class="s2"></span>
@@ -347,35 +403,138 @@ DataFrame like this:</p>
 <span class="n">params</span> <span class="o">=</span> <span class="n">CSVParams</span><span class="p">(</span><span class="n">array_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label_to_extend</span><span class="o">=</span><span class="s2">&quot;year&quot;</span><span class="p">)</span>
 <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">csv_string</span><span class="p">)</span>
 
-<span class="c1"># OrderedDict([(&#39;a&#39;, [{&#39;value&#39;: 5, &#39;year&#39;: 2000}, {&#39;value&#39;: 6, &#39;year&#39;: 2001}]),</span>
-<span class="c1">#              (&#39;b&#39;, [{&#39;value&#39;: 6, &#39;year&#39;: 2000}, {&#39;value&#39;: 7, &#39;year&#39;: 2001}])])</span>
-
 <span class="n">params_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 <span class="n">params_df</span>
-
-<span class="c1"># output:</span>
-<span class="c1">#    a  b</span>
-<span class="c1"># 0  5  6</span>
-<span class="c1"># 1  6  7</span>
-<span class="c1"># 2  6  7</span>
-<span class="c1"># 3  6  7</span>
-<span class="c1"># 4  6  7</span>
-<span class="c1"># 5  6  7</span>
-
-<span class="n">params_df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">label_grid</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span>
-<span class="n">params_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span>
-
-<span class="c1"># output:</span>
-<span class="c1">#       a  b</span>
-<span class="c1"># year</span>
-<span class="c1"># 2000  5  6</span>
-<span class="c1"># 2001  6  7</span>
-<span class="c1"># 2002  6  7</span>
-<span class="c1"># 2003  6  7</span>
-<span class="c1"># 2004  6  7</span>
-<span class="c1"># 2005  6  7</span>
-
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>5</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params_df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">label_grid</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span>
+<span class="n">params_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>a</th>
+      <th>b</th>
+    </tr>
+    <tr>
+      <th>year</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2000</th>
+      <td>5</td>
+      <td>6</td>
+    </tr>
+    <tr>
+      <th>2001</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2002</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2003</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2004</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>2005</th>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
 </div>
 </div>
@@ -392,13 +551,13 @@ DataFrame like this:</p>
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            kernelName: "python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a",
             path: "./api"
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'python3'</script>
+    <script>kernelName = 'python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a'</script>
 
               </div>
               

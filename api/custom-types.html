@@ -184,9 +184,9 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/api/custom-types.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/api/custom-types.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -203,6 +203,28 @@
                     class="fas fa-expand"></i></button></a>
 
         <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/PSLmodels/ParamTools/master?urlpath=tree/docs/api/custom-types.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="../_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        <a class="colab-button" href="https://colab.research.google.com/github/PSLmodels/ParamTools/blob/master/docs/api/custom-types.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
+                title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
+                    src="../_static/images/logo_colab.png"
+                    alt="Interact on Colab">Colab</button></a>
+        
+        
+    </div>
+</div>
 
     </div>
 
@@ -229,11 +251,6 @@
      ParamTools Validator
     </a>
    </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#complete-int32-field">
-     Complete Int32 field
-    </a>
-   </li>
   </ul>
  </li>
 </ul>
@@ -255,7 +272,9 @@
 <h2>32 Bit Integer Example<a class="headerlink" href="#bit-integer-example" title="Permalink to this headline">¶</a></h2>
 <p>ParamTools’s default integer field uses NumPy’s <code class="docutils literal notranslate"><span class="pre">int64</span></code> type. This example shows you how to define an <code class="docutils literal notranslate"><span class="pre">int32</span></code> type and reference it in your <code class="docutils literal notranslate"><span class="pre">defaults</span></code>.</p>
 <p>First, let’s define the Marshmallow class:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">marshmallow</span> <span class="k">as</span> <span class="nn">ma</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">marshmallow</span> <span class="k">as</span> <span class="nn">ma</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="k">class</span> <span class="nc">Int32</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
@@ -274,11 +293,14 @@
         <span class="sd">&quot;&quot;&quot;Cast value from JSON to NumPy Int32.&quot;&quot;&quot;</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">converted</span>
-
 </pre></div>
 </div>
+</div>
+</div>
 <p>Now, reference it in our defaults JSON/dict object:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span> <span class="k">as</span> <span class="nn">pt</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span> <span class="k">as</span> <span class="nn">pt</span>
 
 
 <span class="c1"># add int32 type to the paramtools type registry</span>
@@ -300,24 +322,48 @@
 
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;value: </span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">small_int</span><span class="si">}</span><span class="s2">, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">small_int</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="c1"># value: 2, type: &lt;class &#39;numpy.int32&#39;&gt;</span>
-
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>value: 2, type: &lt;class &#39;numpy.int32&#39;&gt;
+</pre></div>
+</div>
+</div>
+</div>
 <p>One problem with this is that we could run into some deserialization issues. Due to integer overflow, our deserialized result is not the number that we passed in–it’s negative!</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
     <span class="c1"># this number wasn&#39;t chosen randomly.</span>
     <span class="n">small_int</span><span class="o">=</span><span class="mi">2147483647</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="p">))</span>
-
-<span class="c1"># OrderedDict([(&#39;small_int&#39;, [{&#39;value&#39;: -2147483648}])])</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>OrderedDict([(&#39;small_int&#39;, [OrderedDict([(&#39;value&#39;, -2147483648)])])])
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="marshmallow-validator">
 <h3>Marshmallow Validator<a class="headerlink" href="#marshmallow-validator" title="Permalink to this headline">¶</a></h3>
 <p>Fortunately, you can specify a custom validator with <code class="docutils literal notranslate"><span class="pre">marshmallow</span></code> or ParamTools. Making this works requires modifying the <code class="docutils literal notranslate"><span class="pre">_deserialize</span></code> method to check for overflow like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># check out the full example at the bottom of this page.</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Int32</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A custom type for np.int32.</span>
+<span class="sd">    https://numpy.org/devdocs/reference/arrays.dtypes.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># minor detail that makes this play nice with array_first</span>
+    <span class="n">np_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+
+    <span class="k">def</span> <span class="nf">_serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert np.int32 to basic Python int.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="nf">_deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Cast value from JSON to NumPy Int32.&quot;&quot;&quot;</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -330,8 +376,12 @@
         <span class="k">return</span> <span class="n">converted</span>
 </pre></div>
 </div>
+</div>
+</div>
 <p>Now, let’s see how to use <code class="docutils literal notranslate"><span class="pre">marshmallow</span></code> to fix this problem:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">marshmallow</span> <span class="k">as</span> <span class="nn">ma</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">marshmallow</span> <span class="k">as</span> <span class="nn">ma</span>
 <span class="kn">import</span> <span class="nn">paramtools</span> <span class="k">as</span> <span class="nn">pt</span>
 
 
@@ -364,22 +414,51 @@
 <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
     <span class="n">small_int</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">max_int32</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="p">))</span>
-
-<span class="c1"># ValidationError: {</span>
-<span class="c1">#     &quot;errors&quot;: {</span>
-<span class="c1">#         &quot;small_int&quot;: [</span>
-<span class="c1">#             &quot;Must be greater than or equal to -2147483648 and less than or equal to 2147483647.&quot;</span>
-<span class="c1">#         ]</span>
-<span class="c1">#     }</span>
-<span class="c1"># }</span>
-
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValidationError</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">8</span><span class="n">b43bf1245f0</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span><span class="n">array_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">30</span> 
+<span class="ne">---&gt; </span><span class="mi">31</span> <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">32</span>     <span class="n">small_int</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">max_int32</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="p">))</span>
+
+<span class="nn">~/ParamTools/paramtools/parameters.py</span> in <span class="ni">adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">205</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
+<span class="g g-Whitespace">    </span><span class="mi">206</span>         <span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">207</span><span class="s2">         return self._adjust(</span>
+<span class="g g-Whitespace">    </span><span class="mi">208</span><span class="s2">             params_or_path,</span>
+<span class="g g-Whitespace">    </span><span class="mi">209</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
+
+<span class="nn">~/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">333</span><span class="s2">             not ignore_warnings and has_warnings</span>
+<span class="g g-Whitespace">    </span><span class="mi">334</span><span class="s2">         ):</span>
+<span class="ne">--&gt; </span><span class="mi">335</span><span class="s2">             raise self.validation_error</span>
+<span class="g g-Whitespace">    </span><span class="mi">336</span><span class="s2"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">337</span><span class="s2">         # Update attrs for params that were adjusted.</span>
+
+<span class="ne">ValidationError</span>: {
+<span class="s2">    &quot;errors&quot;: {</span>
+<span class="s2">        &quot;small_int&quot;: [</span>
+<span class="s2">            &quot;Must be greater than or equal to -2147483648 and less than or equal to 2147483647.&quot;</span>
+<span class="s2">        ]</span>
+<span class="s2">    }</span>
+<span class="s2">}</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="paramtools-validator">
 <h3>ParamTools Validator<a class="headerlink" href="#paramtools-validator" title="Permalink to this headline">¶</a></h3>
 <p>Finally, we will use ParamTools to solve this problem. We need to modify how we create our custom <code class="docutils literal notranslate"><span class="pre">marshmallow</span></code> field so that it’s wrapped by ParamTools’s <code class="docutils literal notranslate"><span class="pre">PartialField</span></code>. This makes it clear that your field still needs to be initialized, and that your custom field is able to receive validation information from the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> configuration:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span> <span class="k">as</span> <span class="nn">pt</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span> <span class="k">as</span> <span class="nn">pt</span>
 
 
 <span class="c1"># add int32 type to the paramtools type registry</span>
@@ -408,47 +487,43 @@
 <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
     <span class="n">small_int</span><span class="o">=</span><span class="mi">2147483647</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="p">))</span>
-
-<span class="c1"># ValidationError: {</span>
-<span class="c1">#     &quot;errors&quot;: {</span>
-<span class="c1">#         &quot;small_int&quot;: [</span>
-<span class="c1">#             &quot;small_int 2147483648 &gt; max 2147483647 &quot;</span>
-<span class="c1">#         ]</span>
-<span class="c1">#     }</span>
-<span class="c1"># }</span>
-
 </pre></div>
 </div>
 </div>
-<div class="section" id="complete-int32-field">
-<h3>Complete Int32 field<a class="headerlink" href="#complete-int32-field" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">marshmallow</span> <span class="k">as</span> <span class="nn">ma</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValidationError</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="n">ab39daa3a668</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">     </span><span class="mi">25</span> <span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span><span class="n">array_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">26</span> 
+<span class="ne">---&gt; </span><span class="mi">27</span> <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">28</span>     <span class="n">small_int</span><span class="o">=</span><span class="mi">2147483647</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="p">))</span>
 
-<span class="k">class</span> <span class="nc">Int32</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">Field</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A custom type for np.int32.</span>
-<span class="sd">    https://numpy.org/devdocs/reference/arrays.dtypes.html</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># minor detail that makes this play nice with array_first</span>
-    <span class="n">np_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+<span class="nn">~/ParamTools/paramtools/parameters.py</span> in <span class="ni">adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">205</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
+<span class="g g-Whitespace">    </span><span class="mi">206</span>         <span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">207</span><span class="s2">         return self._adjust(</span>
+<span class="g g-Whitespace">    </span><span class="mi">208</span><span class="s2">             params_or_path,</span>
+<span class="g g-Whitespace">    </span><span class="mi">209</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
 
-    <span class="k">def</span> <span class="nf">_serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Convert np.int32 to basic Python int.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="nn">~/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">333</span><span class="s2">             not ignore_warnings and has_warnings</span>
+<span class="g g-Whitespace">    </span><span class="mi">334</span><span class="s2">         ):</span>
+<span class="ne">--&gt; </span><span class="mi">335</span><span class="s2">             raise self.validation_error</span>
+<span class="g g-Whitespace">    </span><span class="mi">336</span><span class="s2"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">337</span><span class="s2">         # Update attrs for params that were adjusted.</span>
 
-    <span class="k">def</span> <span class="nf">_deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Cast value from JSON to NumPy Int32.&quot;&quot;&quot;</span>
-        <span class="n">converted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-
-        <span class="c1"># check for overflow and let range validator</span>
-        <span class="c1"># display the error message.</span>
-        <span class="k">if</span> <span class="n">converted</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">converted</span>
-
+<span class="ne">ValidationError</span>: {
+<span class="s2">    &quot;errors&quot;: {</span>
+<span class="s2">        &quot;small_int&quot;: [</span>
+<span class="s2">            &quot;small_int 2147483648 &gt; max 2147483647 &quot;</span>
+<span class="s2">        ]</span>
+<span class="s2">    }</span>
+<span class="s2">}</span>
 </pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -466,13 +541,13 @@
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            kernelName: "python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a",
             path: "./api"
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'python3'</script>
+    <script>kernelName = 'python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a'</script>
 
               </div>
               
