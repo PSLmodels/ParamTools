@@ -271,6 +271,20 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">aa2a7fe2ea8c</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">paramtools</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="k">def</span> <span class="nf">adjust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params_or_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;paramtools&#39;
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
@@ -337,6 +351,20 @@
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="mi">6</span><span class="n">fac400c72eb</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">os</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> 
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="kn">import</span> <span class="nn">paramtools</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;pandas&#39;
+</pre></div>
+</div>
+</div>
 </div>
 <p>Now we create an example CSV file. To keep the example self-contained, the CSV is just a string, but this example works with CSV files, too. The values of “A” are updated to 5 in 2000 and 6 in 2001, and the values of “B” are updated to 6 in 2000 and 7 in 2001.</p>
 <div class="cell docutils container">
@@ -354,12 +382,15 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>OrderedDict([(&#39;a&#39;,
-              [OrderedDict([(&#39;year&#39;, 2000), (&#39;value&#39;, 5)]),
-               OrderedDict([(&#39;year&#39;, 2001), (&#39;value&#39;, 6)])]),
-             (&#39;b&#39;,
-              [OrderedDict([(&#39;year&#39;, 2000), (&#39;value&#39;, 6)]),
-               OrderedDict([(&#39;year&#39;, 2001), (&#39;value&#39;, 7)])])])
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="n">de7138517d54</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span><span class="s2"> </span>
+<span class="ne">----&gt; </span><span class="mi">8</span><span class="s2"> params = CSVParams()</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span><span class="s2"> params.adjust(csv_string)</span>
+
+<span class="ne">NameError</span>: name &#39;CSVParams&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -371,8 +402,12 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[OrderedDict([(&#39;year&#39;, 2000), (&#39;value&#39;, 5)]),
- OrderedDict([(&#39;year&#39;, 2001), (&#39;value&#39;, 6)])]
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">4</span><span class="o">-</span><span class="mi">829196</span><span class="n">f2bdc4</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">params</span><span class="o">.</span><span class="n">a</span>
+
+<span class="ne">NameError</span>: name &#39;params&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -384,8 +419,12 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[OrderedDict([(&#39;year&#39;, 2000), (&#39;value&#39;, 6)]),
- OrderedDict([(&#39;year&#39;, 2001), (&#39;value&#39;, 7)])]
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">1674</span><span class="n">dad78846</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">params</span><span class="o">.</span><span class="n">b</span>
+
+<span class="ne">NameError</span>: name &#39;params&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -409,62 +448,19 @@ DataFrame like this:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="n">e074ed78210a</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span><span class="s2"> </span>
+<span class="ne">----&gt; </span><span class="mi">7</span><span class="s2"> params = CSVParams(array_first=True, label_to_extend=&quot;year&quot;)</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span><span class="s2"> params.adjust(csv_string)</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span><span class="s2"> </span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>a</th>
-      <th>b</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>5</td>
-      <td>6</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
+<span class="ne">NameError</span>: name &#39;CSVParams&#39; is not defined
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -474,67 +470,16 @@ DataFrame like this:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">b0580184607a</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">params_df</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">label_grid</span><span class="p">[</span><span class="s2">&quot;year&quot;</span><span class="p">]</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">params_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;year&quot;</span><span class="p">)</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>a</th>
-      <th>b</th>
-    </tr>
-    <tr>
-      <th>year</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2000</th>
-      <td>5</td>
-      <td>6</td>
-    </tr>
-    <tr>
-      <th>2001</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>2002</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>2003</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>2004</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <th>2005</th>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
+<span class="ne">NameError</span>: name &#39;params&#39; is not defined
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -551,13 +496,13 @@ DataFrame like this:</p>
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a",
+            kernelName: "python3",
             path: "./api"
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a'</script>
+    <script>kernelName = 'python3'</script>
 
               </div>
               

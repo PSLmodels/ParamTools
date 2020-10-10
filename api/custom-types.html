@@ -326,7 +326,16 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>value: 2, type: &lt;class &#39;numpy.int32&#39;&gt;
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="n">a3e2bca3511e</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">paramtools</span> <span class="k">as</span> <span class="nn">pt</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># add int32 type to the paramtools type registry</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">pt</span><span class="o">.</span><span class="n">register_custom_type</span><span class="p">(</span><span class="s2">&quot;int32&quot;</span><span class="p">,</span> <span class="n">Int32</span><span class="p">())</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;paramtools&#39;
 </pre></div>
 </div>
 </div>
@@ -342,7 +351,15 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>OrderedDict([(&#39;small_int&#39;, [OrderedDict([(&#39;value&#39;, -2147483648)])])])
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">3</span><span class="n">b1a22bdd2bf</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span>     <span class="c1"># this number wasn&#39;t chosen randomly.</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span>     <span class="n">small_int</span><span class="o">=</span><span class="mi">2147483647</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="p">))</span>
+
+<span class="ne">NameError</span>: name &#39;params&#39; is not defined
 </pre></div>
 </div>
 </div>
@@ -419,35 +436,15 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValidationError</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
 <span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="mi">8</span><span class="n">b43bf1245f0</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span><span class="n">array_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">30</span> 
-<span class="ne">---&gt; </span><span class="mi">31</span> <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">32</span>     <span class="n">small_int</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">max_int32</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="p">))</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">marshmallow</span> <span class="k">as</span> <span class="nn">ma</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">paramtools</span> <span class="k">as</span> <span class="nn">pt</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="g g-Whitespace">      </span><span class="mi">4</span> 
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="c1"># get the minimum and maxium values for 32 bit integers.</span>
 
-<span class="nn">~/ParamTools/paramtools/parameters.py</span> in <span class="ni">adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)</span>
-<span class="g g-Whitespace">    </span><span class="mi">205</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
-<span class="g g-Whitespace">    </span><span class="mi">206</span>         <span class="s2">&quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">207</span><span class="s2">         return self._adjust(</span>
-<span class="g g-Whitespace">    </span><span class="mi">208</span><span class="s2">             params_or_path,</span>
-<span class="g g-Whitespace">    </span><span class="mi">209</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
-
-<span class="nn">~/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)</span>
-<span class="g g-Whitespace">    </span><span class="mi">333</span><span class="s2">             not ignore_warnings and has_warnings</span>
-<span class="g g-Whitespace">    </span><span class="mi">334</span><span class="s2">         ):</span>
-<span class="ne">--&gt; </span><span class="mi">335</span><span class="s2">             raise self.validation_error</span>
-<span class="g g-Whitespace">    </span><span class="mi">336</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">337</span><span class="s2">         # Update attrs for params that were adjusted.</span>
-
-<span class="ne">ValidationError</span>: {
-<span class="s2">    &quot;errors&quot;: {</span>
-<span class="s2">        &quot;small_int&quot;: [</span>
-<span class="s2">            &quot;Must be greater than or equal to -2147483648 and less than or equal to 2147483647.&quot;</span>
-<span class="s2">        ]</span>
-<span class="s2">    }</span>
-<span class="s2">}</span>
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;paramtools&#39;
 </pre></div>
 </div>
 </div>
@@ -492,35 +489,15 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValidationError</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
 <span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="n">ab39daa3a668</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">     </span><span class="mi">25</span> <span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span><span class="n">array_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">26</span> 
-<span class="ne">---&gt; </span><span class="mi">27</span> <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">28</span>     <span class="n">small_int</span><span class="o">=</span><span class="mi">2147483647</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="p">))</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">paramtools</span> <span class="k">as</span> <span class="nn">pt</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># add int32 type to the paramtools type registry</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">pt</span><span class="o">.</span><span class="n">register_custom_type</span><span class="p">(</span>
 
-<span class="nn">~/ParamTools/paramtools/parameters.py</span> in <span class="ni">adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)</span>
-<span class="g g-Whitespace">    </span><span class="mi">205</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
-<span class="g g-Whitespace">    </span><span class="mi">206</span>         <span class="s2">&quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">207</span><span class="s2">         return self._adjust(</span>
-<span class="g g-Whitespace">    </span><span class="mi">208</span><span class="s2">             params_or_path,</span>
-<span class="g g-Whitespace">    </span><span class="mi">209</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
-
-<span class="nn">~/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)</span>
-<span class="g g-Whitespace">    </span><span class="mi">333</span><span class="s2">             not ignore_warnings and has_warnings</span>
-<span class="g g-Whitespace">    </span><span class="mi">334</span><span class="s2">         ):</span>
-<span class="ne">--&gt; </span><span class="mi">335</span><span class="s2">             raise self.validation_error</span>
-<span class="g g-Whitespace">    </span><span class="mi">336</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">337</span><span class="s2">         # Update attrs for params that were adjusted.</span>
-
-<span class="ne">ValidationError</span>: {
-<span class="s2">    &quot;errors&quot;: {</span>
-<span class="s2">        &quot;small_int&quot;: [</span>
-<span class="s2">            &quot;small_int 2147483648 &gt; max 2147483647 &quot;</span>
-<span class="s2">        ]</span>
-<span class="s2">    }</span>
-<span class="s2">}</span>
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;paramtools&#39;
 </pre></div>
 </div>
 </div>
@@ -541,13 +518,13 @@
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a",
+            kernelName: "python3",
             path: "./api"
         },
         predefinedOutput: true
     }
     </script>
-    <script>kernelName = 'python38564bitparamtoolsdevconda341be77cec4f45a084d938a069ed7d6a'</script>
+    <script>kernelName = 'python3'</script>
 
               </div>
               
