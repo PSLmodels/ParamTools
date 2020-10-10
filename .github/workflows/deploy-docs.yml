@@ -26,6 +26,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pip install -e .
+          conda install pandas --yes
           jupyter-book build ./docs
 
       - name: Deploy
