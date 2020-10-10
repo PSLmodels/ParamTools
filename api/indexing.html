@@ -348,16 +348,21 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">8</span><span class="n">b2da612d325</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">paramtools</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="g g-Whitespace">      </span><span class="mi">3</span> 
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="k">class</span> <span class="nc">TaxParams</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;paramtools&#39;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 6074.92, 12149.84],
+       [ 6164.83, 12329.66],
+       [ 6262.85, 12525.7 ],
+       [ 6270.37, 12540.73],
+       [ 6350.  , 12700.  ],
+       [12000.  , 24000.  ],
+       [12268.8 , 24537.6 ],
+       [12497.  , 24994.  ],
+       [12788.18, 25576.36],
+       [13081.03, 26162.06],
+       [13379.28, 26758.55],
+       [13674.96, 27349.91],
+       [13963.5 , 27926.99],
+       [ 7685.  , 15369.  ],
+       [ 7847.15, 15693.29]])
 </pre></div>
 </div>
 </div>
@@ -380,16 +385,21 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="mi">5</span><span class="n">d9c08287125</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span>     <span class="p">{</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span>         <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">[</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span>             <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2017</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span>             <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2020</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">15000</span><span class="p">},</span>
-
-<span class="ne">NameError</span>: name &#39;params&#39; is not defined
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 6074.92, 12149.84],
+       [ 6164.83, 12329.66],
+       [ 6262.85, 12525.7 ],
+       [ 6270.37, 12540.73],
+       [10000.  , 10000.  ],
+       [10187.  , 10187.  ],
+       [10415.19, 10415.19],
+       [15000.  , 10608.91],
+       [15349.5 , 20000.  ],
+       [15701.  , 20458.  ],
+       [16058.98, 20924.44],
+       [16413.88, 21386.87],
+       [16760.21, 21838.13],
+       [17110.5 , 22294.55],
+       [17471.53, 22764.97]])
 </pre></div>
 </div>
 </div>
@@ -406,16 +416,30 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">11</span><span class="n">d2232371ed</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">params</span><span class="o">.</span><span class="n">select_eq</span><span class="p">(</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span>     <span class="s2">&quot;standard_deduction&quot;</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">_auto</span><span class="o">=</span><span class="kc">True</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;TaxParams&#39; is not defined
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[{&#39;year&#39;: 2013, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6074.92, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2014, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6164.83, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2015, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6262.85, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2016, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6270.37, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2019, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 12268.8, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2020, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 12497.0, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2021, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 12788.18, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2022, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13081.03, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2023, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13379.28, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13674.96, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13963.5, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2027, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 7847.15, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2013, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12149.84, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2014, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12329.66, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2015, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12525.7, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2016, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12540.73, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2019, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 24537.6, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2020, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 24994.0, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2021, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 25576.36, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2022, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 26162.06, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2023, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 26758.55, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27349.91, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27926.99, &#39;_auto&#39;: True},
+ {&#39;year&#39;: 2027, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 15693.29, &#39;_auto&#39;: True}]
 </pre></div>
 </div>
 </div>
@@ -444,16 +468,21 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">4</span><span class="o">-</span><span class="mi">1</span><span class="n">ece69d5cb7d</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">offset</span> <span class="o">=</span> <span class="mf">0.0025</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="k">for</span> <span class="n">year</span><span class="p">,</span> <span class="n">rate</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">index_rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="n">params</span><span class="o">.</span><span class="n">index_rates</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">=</span> <span class="n">rate</span> <span class="o">+</span> <span class="n">offset</span>
-
-<span class="ne">NameError</span>: name &#39;TaxParams&#39; is not defined
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 6015.22, 12030.41],
+       [ 6119.28, 12238.54],
+       [ 6231.87, 12463.73],
+       [ 6254.93, 12509.85],
+       [ 6350.  , 12700.  ],
+       [12000.  , 24000.  ],
+       [12298.8 , 24597.6 ],
+       [12558.3 , 25116.61],
+       [12882.3 , 25764.62],
+       [13209.51, 26419.04],
+       [13543.71, 27087.44],
+       [13876.89, 27753.79],
+       [14204.38, 28408.78],
+       [ 7685.  , 15369.  ],
+       [ 7866.37, 15731.71]])
 </pre></div>
 </div>
 </div>
