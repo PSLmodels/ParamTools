@@ -24,7 +24,8 @@ jobs:
 
       - name: Build # Build Jupyter Book
         run: |
-          jb build ./docs
+          conda activate paramtools-dev
+          jupyter-book build ./docs
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
