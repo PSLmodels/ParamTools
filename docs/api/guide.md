@@ -8,6 +8,8 @@ Check out the [parameters spec](/parameters/) to learn more about what types of 
 
 ## API
 
+[**Viewing data**](/api/viewing-data/) Working with parameter values.
+
 [**Extend:**](/api/extend/) Write more concise JSON schemas with the extend capability.
 
 [**Extend with Indexing:**](/api/indexing/) Index parameter values.
@@ -15,9 +17,3 @@ Check out the [parameters spec](/parameters/) to learn more about what types of 
 [**Custom Adjustment Formats and Logic**](/api/custom-adjust/) Customize the adjustment format and logic to meet your project's needs.
 
 [**Custom types**](/api/custom-types/) Add custom types for your parameters' values, labels, and members.
-
-_Documentation on these parts of the API coming soon:_
-
-**Array access:** Access parameter values as NumPy arrays.
-
-**Query:** Powerful query language for selecting parameter values based on their associated labels.

@@ -5,6 +5,7 @@
 - part: API
   chapters:
     - file: api/guide
+    - file: api/viewing-data
     - file: api/extend
     - file: api/indexing
     - file: api/custom-adjust
