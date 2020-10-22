@@ -2,6 +2,7 @@ from typing import List
 import datetime
 import itertools
 
+from dateutil.relativedelta import relativedelta
 import numpy as np
 import marshmallow as ma
 
@@ -236,6 +237,25 @@ class DateRange(Range):
     ``datetime.date`` type and ``grid`` has special logic for dates.
     """
 
+    # check against allowed args:
+    # https://docs.python.org/3/library/datetime.html#datetime.timedelta
+    timedelta_args = {
+        "days",
+        "months",
+        "seconds",
+        "microseconds",
+        "milliseconds",
+        "minutes",
+        "hours",
+        "weeks",
+    }
+
+    step_msg = (
+        f"The step field must be a dictionary with only these keys: {', '.join(timedelta_args)}."
+        f"\n\tFor more information, check out the timedelta docs: "
+        f"\n\t\thttps://docs.python.org/3/library/datetime.html#datetime.timedelta"
+    )
+
     def __init__(
         self,
         min=None,
@@ -273,19 +293,15 @@ class DateRange(Range):
         if step is None:
             # set to to default step.
             step = {"days": 1}
-        # check against allowed args:
-        # https://docs.python.org/3/library/datetime.html#datetime.timedelta
-        timedelta_args = {
-            "days",
-            "seconds",
-            "microseconds",
-            "milliseconds",
-            "minutes",
-            "hours",
-            "weeks",
-        }
-        assert len(set(step.keys()) - timedelta_args) == 0
-        self.step = datetime.timedelta(**step)
+
+        if not isinstance(step, dict):
+            raise ValidationError(self.step_msg)
+
+        has_extra_keys = len(set(step.keys()) - self.timedelta_args)
+        if has_extra_keys:
+            raise ValidationError(self.step_msg)
+
+        self.step = relativedelta(**step)
 
         self.level = level or "error"
 
@@ -298,10 +314,14 @@ class DateRange(Range):
     def grid(self):
         # make np.arange inclusive.
         max_ = self.max[0]["value"] + self.step
-        arr = np.arange(
-            self.min[0]["value"], max_, self.step, dtype=datetime.date
-        )
-        return arr[arr <= self.max[0]["value"]].tolist()
+
+        current = self.min[0]["value"]
+        result = []
+        while current < max_:
+            result.append(current)
+            current += self.step
+
+        return result
 
 
 class OneOf(ma.validate.OneOf):

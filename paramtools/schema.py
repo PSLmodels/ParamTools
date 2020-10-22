@@ -98,7 +98,7 @@ class BaseParamSchema(Schema):
     """
 
     title = fields.Str(required=True)
-    description = fields.Str(required=True)
+    description = fields.Str(required=False)
     notes = fields.Str(required=False)
     _type = fields.Str(
         required=True,
@@ -307,6 +307,8 @@ class BaseValidatorSchema(Schema):
         validator_spec = param_info.get("validators", {})
         validators = []
         for vname, vdata in validator_spec.items():
+            if vname == "range" and param_info.get("type", None) in ("date",):
+                vname = "date_range"
             validator = getattr(self, self.WRAPPER_MAP[vname])(
                 vname, vdata, param_name, param_spec, raw_data
             )
@@ -750,6 +752,9 @@ def get_param_schema(base_spec):
     for name, label in base_spec["labels"].items():
         validators = []
         for vname, kwargs in label.get("validators", {}).items():
+            if vname == "range" and label.get("type", None) in ("date",):
+                vname = "date_range"
+
             validator_class = VALIDATOR_MAP[vname]
             validators.append(validator_class(**kwargs))
         try:
