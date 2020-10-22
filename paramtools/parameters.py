@@ -1091,6 +1091,8 @@ class Parameters:
                 else:
                     for curr_vo in to_update:
                         curr_vo["value"] = new_vo["value"]
+                        if new_vo.get("_auto") is None:
+                            curr_vo.pop("_auto", None)
             else:
                 if new_vo["value"] is not None:
                     param_values.insert([new_vo], inplace=True)
