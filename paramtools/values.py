@@ -10,6 +10,18 @@ def default_cmp_func(x):
     return x
 
 
+class ValueItem:
+    """
+    Handles index-based look-ups on the Values class.
+    """
+
+    def __init__(self, values: "Values"):
+        self.values = values
+
+    def __getitem__(self, item):
+        return self.values.values[item]
+
+
 class ValueBase:
     @property
     def cmp_attr(self):
@@ -63,6 +75,10 @@ class ValueBase:
     def isin(self, value, strict=True):
         return self.cmp_attr.isin(strict, **{self.label: value})
 
+    @property
+    def isel(self):
+        return ValueItem(self.cmp_attr)
+
 
 class QueryResult(ValueBase):
     def __init__(self, values: "Values", index: List[Any]):
@@ -90,6 +106,8 @@ class QueryResult(ValueBase):
             yield self.values.values[i]
 
     def __getitem__(self, item):
+        if isinstance(self.index, set):
+            self.index = list(self.index)
         return self.values.values[self.index[item]]
 
     def tolist(self):
@@ -326,9 +344,6 @@ class Values(ValueBase):
     def __iter__(self):
         for value in self.values.values():
             yield value
-
-    def iloc(self, ix):
-        return self.values[ix]
 
     def __repr__(self):
         vo_repr = (
