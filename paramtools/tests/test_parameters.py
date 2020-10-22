@@ -315,7 +315,7 @@ class TestValues:
     def test(self, TestParams, defaults_spec_path):
         params = TestParams()
         assert isinstance(params.sel["min_int_param"], Values)
-        assert isinstance(params.sel["min_int_param"]["d0"], Slice)
+        assert isinstance(params.sel["min_int_param"]["label0"], Slice)
 
         with pytest.raises(AttributeError):
             params["min_int_param"]
@@ -515,7 +515,7 @@ class TestAccess:
                 },
             }
 
-        params = Params()
+        params = Params(sort_values=False)
 
         assert params.param != exp and params.param == shuffled
 
@@ -523,7 +523,7 @@ class TestAccess:
         assert params.param == exp
 
         # test passing in a data object
-        params = Params()
+        params = Params(sort_values=False)
         assert params.param != exp and params.param == shuffled
 
         data1 = {"param": params.param}
@@ -565,7 +565,7 @@ class TestAccess:
         class NoStateParams(Parameters):
             defaults = state_dump
 
-        nostate_tp = NoStateParams()
+        nostate_tp = NoStateParams(sort_values=False)
         assert nostate_tp.dump(sort_values=False) == state_dump
         assert not nostate_tp.view_state()
         assert state_tp.view_state()

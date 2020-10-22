@@ -68,6 +68,7 @@ class Parameters:
         self,
         initial_state: Optional[dict] = None,
         index_rates: Optional[dict] = None,
+        sort_values: bool = True,
         **ops,
     ):
         schemafactory = SchemaFactory(self.defaults)
@@ -133,6 +134,9 @@ class Parameters:
         if "operators" not in self._schema:
             self._schema["operators"] = {}
         self._schema["operators"].update(self.operators)
+
+        if sort_values:
+            self.sort_values()
 
     def __getitem__(self, parameter):
         raise AttributeError(
@@ -853,7 +857,7 @@ class Parameters:
                         )
                         extended[val].append(ext)
                         skl.insert(val)
-                        adjustment[param].append(dict(ext, _auto=True))
+                        adjustment[param].append(OrderedDict(ext, _auto=True))
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
         self._adjust(
@@ -1235,7 +1239,7 @@ class Parameters:
         """
 
         def keyfunc(vo, label, label_values):
-            if label in vo:
+            if label in vo and label_values:
                 return label_values.index(vo[label])
             else:
                 return -1
