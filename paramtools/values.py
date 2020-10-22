@@ -15,17 +15,31 @@ class ValueItem:
     Handles index-based look-ups on the Values class.
     """
 
-    def __init__(self, values: "Values"):
+    def __init__(self, values: "Values", index: List[int] = None):
         self.values = values
+        self.index = list(index) if index is not None else index
 
     def __getitem__(self, item):
-        return self.values.values[item]
+        if isinstance(item, slice):
+            if self.index is not None:
+                indices = item.indices(len(self.index))
+                return [
+                    dict(self.values.values[self.index[ix]])
+                    for ix in range(*indices)
+                ]
+            else:
+                indices = item.indices(len(self.values))
+                return [dict(self.values.values[ix]) for ix in range(*indices)]
+        elif self.index is not None:
+            return dict(self.values.values[self.index[item]])
+        else:
+            return dict(self.values.values[item])
 
 
 class ValueBase:
     @property
     def cmp_attr(self):
-        return self
+        raise NotImplementedError()
 
     def __eq__(self, value=None, **labels):
         return self.cmp_attr.eq(**{self.label: value})
@@ -49,7 +63,7 @@ class ValueBase:
         return len([item for item in iter(self.cmp_attr)])
 
     def __iter__(self):
-        raise iter(self.cmp_attr)
+        return iter(self.cmp_attr)
 
     def __getitem__(self, item):
         return self.cmp_attr[item]
@@ -74,10 +88,6 @@ class ValueBase:
 
     def isin(self, value, strict=True):
         return self.cmp_attr.isin(strict, **{self.label: value})
-
-    @property
-    def isel(self):
-        return ValueItem(self.cmp_attr)
 
 
 class QueryResult(ValueBase):
@@ -106,9 +116,13 @@ class QueryResult(ValueBase):
             yield self.values.values[i]
 
     def __getitem__(self, item):
-        if isinstance(self.index, set):
-            self.index = list(self.index)
-        return self.values.values[self.index[item]]
+        raise NotImplementedError(
+            "Use .isel to do index-based look ups or as_values to chain queries."
+        )
+
+    @property
+    def isel(self):
+        return ValueItem(self.values, self.index)
 
     def tolist(self):
         return [self.values.values[i] for i in self.index]
@@ -173,6 +187,28 @@ class Slice(ValueBase):
     @property
     def cmp_attr(self):
         return self.values
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            indices = item.indices(len(self))
+            return [
+                self.values.values[ix].get(self.label, None)
+                for ix in range(*indices)
+            ]
+        else:
+            return self.values.values[item][self.label]
+
+    @property
+    def isel(self):
+        raise NotImplementedError(
+            "Access values of a Slice object directly: parameters['label'][1]"
+        )
+
+    def __repr__(self):
+        vo_repr = "\n  ".join(
+            str(dict(self.values.values[i])) for i in self.values.values
+        )
+        return f"Slice([\n  {vo_repr}\n], \nlabel={self.label})"
 
 
 class Values(ValueBase):
@@ -251,6 +287,8 @@ class Values(ValueBase):
         return QueryResult(self, match_index)
 
     def __getitem__(self, label):
+        if label not in self.skls:
+            raise KeyError(f"Unknown label: {label}")
         return Slice(self, label)
 
     def missing(self, label: str):
@@ -326,6 +364,14 @@ class Values(ValueBase):
             return Values(
                 new_values.values(), keyfuncs=self.keyfuncs, index=new_index
             )
+
+    @property
+    def cmp_attr(self):
+        return self
+
+    @property
+    def isel(self):
+        return ValueItem(self, self.index)
 
     @property
     def labels(self):

@@ -1,7 +1,7 @@
 import pytest
 import copy
 
-from paramtools.values import Values
+from paramtools.values import Values, Slice, QueryResult, ValueItem
 
 
 @pytest.fixture
@@ -24,8 +24,26 @@ def values(_values, keyfuncs):
     return Values(_values, keyfuncs)
 
 
-def test_values(values):
-    assert len(values == 1)
+class TestValues:
+    def test_values(self, values):
+        assert len(values == 1)
+
+    def test_key_error(self, values):
+        with pytest.raises(KeyError):
+            values["heyo"]
+
+    def test_types(self, values):
+        assert isinstance(values["d0"], Slice)
+
+        assert isinstance(values["d0"] > 1, QueryResult)
+
+        qr = values["d0"] > 1
+        assert isinstance(qr.isel[0], dict)
+        assert isinstance(qr.isel[:], list)
+
+        assert isinstance(values.isel, ValueItem)
+
+        assert isinstance(qr.as_values(), Values)
 
 
 class TestQuery:
@@ -159,20 +177,27 @@ class TestIndexing:
 
     def test_Slice(self, values, _values):
         for ix, value in enumerate(_values):
-            assert values["d0"].isel[ix] == _values[ix]
+            assert values["d0"][ix] == _values[ix]["d0"]
 
     def test_QueryResult(self, values):
         res1 = (values["d0"] == 1) & (values["d1"] == "hello")
 
-        assert res1[0] == {"d0": 1, "d1": "hello", "value": 1}
+        assert res1.isel[0] == {"d0": 1, "d1": "hello", "value": 1}
 
         res2 = ((values["d0"] == 1) | (values["d0"] == 2)) & (
             values["d1"] == "hello"
         )
-
-        assert list(res2) == [
+        assert list(res2) == res2.isel[:2]
+        assert res2.isel[:2] == [
             {"d0": 1, "d1": "hello", "value": 1},
             {"d0": 2, "d1": "hello", "value": 1},
         ]
-        assert res2[0] == {"d0": 1, "d1": "hello", "value": 1}
-        assert res2[1] == {"d0": 2, "d1": "hello", "value": 1}
+        assert res2.isel[0] == {"d0": 1, "d1": "hello", "value": 1}
+        assert res2.isel[1] == {"d0": 2, "d1": "hello", "value": 1}
+
+    def test_not_implemented(self, values):
+        with pytest.raises(NotImplementedError):
+            values["d0"].isel[0]
+
+        with pytest.raises(NotImplementedError):
+            (values["d0"] == 1)[0]
