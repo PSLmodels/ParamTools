@@ -39,6 +39,9 @@ class ValueBase:
     def __iter__(self):
         raise iter(self.cmp_attr)
 
+    def __getitem__(self, item):
+        return self.cmp_attr[item]
+
     def eq(self, value, strict=True):
         return self.cmp_attr.eq(strict, **{self.label: value})
 
@@ -85,6 +88,9 @@ class QueryResult(ValueBase):
     def __iter__(self):
         for i in self.index:
             yield self.values.values[i]
+
+    def __getitem__(self, item):
+        return self.values.values[self.index[item]]
 
     def tolist(self):
         return [self.values.values[i] for i in self.index]
@@ -320,6 +326,9 @@ class Values(ValueBase):
     def __iter__(self):
         for value in self.values.values():
             yield value
+
+    def iloc(self, ix):
+        return self.values[ix]
 
     def __repr__(self):
         vo_repr = (
