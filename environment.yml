@@ -21,3 +21,4 @@ dependencies:
       - sphinx
       - autodoc
       - ghp-import
+      - sortedcontainers

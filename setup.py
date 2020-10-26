@@ -22,6 +22,7 @@ setuptools.setup(
         "numpy",
         "python-dateutil>=2.8.0",
         "fsspec",
+        "sortedcontainers",
     ],
     include_package_data=True,
     classifiers=[
