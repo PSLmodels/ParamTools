@@ -1,4 +1,3 @@
-import functools
 import sortedcontainers
 
 
@@ -34,7 +33,7 @@ class SortedKeyList:
             index = range(len(values))
         sorted_key_list = [(val, ix) for ix, val in zip(index, values)]
         self.index = set(index)
-        self.keyfunc = functools.lru_cache(maxsize=None)(keyfunc)
+        self.keyfunc = keyfunc
 
         self.sorted_key_list_2 = sortedcontainers.SortedKeyList(
             sorted_key_list, key=lambda t: keyfunc(t[0])
