@@ -1269,10 +1269,9 @@ class Parameters:
         # iterate over labels so that the first label's order
         # takes precedence.
         label_grid = self._stateless_label_grid
-        order = list(reversed(label_grid))
 
         for param in data:
-            for label in order:
+            for label in reversed(label_grid):
                 label_values = label_grid[label]
                 pfunc = partial(
                     keyfunc, label=label, label_values=label_values
@@ -1287,17 +1286,17 @@ class Parameters:
 
             # Only update attributes when array first is off, since
             # value order will not affect how arrays are constructed.
-            if update_attrs and has_meta_data and not self.array_first:
+            if update_attrs and not self.array_first:
                 self.sel._cache.pop(param, None)
-                attr_vals = self.sel[data[param]["value"]]
                 if self._state:
+                    attr_vals = self.sel[param]
                     active = intersection(
                         attr_vals[label].isin(value)
                         for label, value in self._state.items()
                         if label in attr_vals.labels
                     )
                 else:
-                    active = list(attr_vals)
+                    active = data[param]["value"]
                 sorted_values = self.sort_values(
                     {param: list(active)}, has_meta_data=False
                 )[param]
