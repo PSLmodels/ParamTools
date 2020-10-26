@@ -229,9 +229,6 @@ class Values(ValueBase):
         else:
             self.skls = self.build_skls(self.values, keyfuncs or {})
 
-        if "_auto" not in self.skls:
-            self.skls["_auto"] = SortedKeyList([], default_cmp_func)
-
     def build_skls(self, values, keyfuncs):
         label_values = defaultdict(list)
         label_index = defaultdict(list)
@@ -253,11 +250,11 @@ class Values(ValueBase):
         # TODO: remove existing values with clashing index
         for ix, vo in values.items():
             for label, value in vo.items():
-                if label in self.skls:
-                    self.skls[label].insert(value, index=ix)
+                if self.skls.get(label, None) is not None:
+                    self.skls[label].add(value, index=ix)
                 else:
                     self.skls[label] = SortedKeyList(
-                        [vo],
+                        [value],
                         keyfunc=self.get_keyfunc(label, self.keyfuncs),
                         index=[ix],
                     )
@@ -319,7 +316,7 @@ class Values(ValueBase):
             self.eq(strict=strict, **{label: value}) for value in values
         )
 
-    def insert(
+    def add(
         self, values: List[ValueObject], index: List[Any] = None, inplace=False
     ):
         if index is not None:
@@ -340,7 +337,7 @@ class Values(ValueBase):
             updated_values = dict(self.values)
             updated_values.update(new_values)
             return Values(
-                updated_values.values(),
+                [value for value in updated_values.values()],
                 skls=self.build_skls(updated_values, self.keyfuncs),
                 index=current_index + new_index,
             )
@@ -352,7 +349,6 @@ class Values(ValueBase):
             for ix in index:
                 self.values.pop(ix)
                 self.index.remove(ix)
-
             self.skls = self.build_skls(self.values, self.keyfuncs)
         else:
             new_index = list(self.index)
@@ -362,7 +358,9 @@ class Values(ValueBase):
                 new_index.remove(ix)
 
             return Values(
-                new_values.values(), keyfuncs=self.keyfuncs, index=new_index
+                [value for value in new_values.values()],
+                keyfuncs=self.keyfuncs,
+                index=new_index,
             )
 
     @property
@@ -376,6 +374,14 @@ class Values(ValueBase):
     @property
     def labels(self):
         return list(self.skls.keys())
+
+    def __eq__(self, other):
+        if isinstance(other, ValueBase):
+            return list(self) == list(other)
+        elif isinstance(other, list):
+            return list(self) == other
+        else:
+            raise TypeError(f"Unable to compare Values against {type(other)}")
 
     def __and__(self, queryresult: "QueryResult"):
         res = set(self.index) & set(queryresult.index)

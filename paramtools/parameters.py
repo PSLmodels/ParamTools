@@ -25,36 +25,43 @@ from paramtools.values import Values, union, intersection
 
 
 class ParameterSlice:
-    __slots__ = ("parameters", "_cache")
+    __slots__ = ("parameters", "_cache", "_key_cache")
 
     def __init__(self, parameters):
         self.parameters = parameters
         self._cache = {}
+        self._key_cache = {}
 
     def __getitem__(self, parameter_or_values):
         keyfuncs = dict(self.parameters.keyfuncs)
-        if isinstance(parameter_or_values, str):
+        if (
+            isinstance(parameter_or_values, str)
+            and parameter_or_values in self._cache
+        ):
+            return self._cache[parameter_or_values]
+        elif isinstance(parameter_or_values, str):
             data = self.parameters._data.get(parameter_or_values)
             if data is None:
                 raise ValueError(f"Unknown parameter: {parameter_or_values}.")
             try:
-                if parameter_or_values in self._cache:
-                    keyfuncs["value"] = self._cache[parameter_or_values]
-                else:
+                keyfunc = self._key_cache.get(parameter_or_values, None)
+                if keyfunc is None:
                     keyfunc = self.parameters._validator_schema.field_keyfunc(
                         parameter_or_values
                     )
-                    self._cache[parameter_or_values] = keyfunc
-                    keyfuncs["value"] = keyfunc
+                    self._key_cache[parameter_or_values] = keyfunc
+                self._cache[parameter_or_values] = keyfunc
+                keyfuncs["value"] = keyfunc
+                values = Values(data["value"], keyfuncs=keyfuncs)
+                self._cache[parameter_or_values] = values
+                return values
             except contrib.validate.ValidationError as ve:
                 raise ParamToolsError(
                     f"There was an error retrieving the field for {parameter_or_values}",
                     {},
                 ) from ve
         else:
-            data = {"value": parameter_or_values}
-
-        return Values(data["value"], keyfuncs=keyfuncs)
+            return Values(parameter_or_values, keyfuncs=keyfuncs)
 
 
 class Parameters:
@@ -813,7 +820,7 @@ class Parameters:
                 extended_vos.update(
                     map(utils.hashable_value_object, list(queryset))
                 )
-                values = queryset.as_values().insert(values=[vo])
+                values = queryset.as_values().add(values=[vo])
 
                 defined_vals = {eq_vo[label] for eq_vo in queryset}
 
@@ -856,7 +863,7 @@ class Parameters:
                             utils.hashable_value_object(value_object)
                         )
                         extended[val].append(ext)
-                        skl.insert(val)
+                        skl.add(val)
                         adjustment[param].append(OrderedDict(ext, _auto=True))
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
@@ -971,6 +978,7 @@ class Parameters:
         if params is not None:
             spec = {param: spec[param] for param in params}
         for name, value in spec.items():
+            self.sel._cache.pop(name, None)
             if name in collision_list:
                 raise ParameterNameCollisionException(
                     f"The paramter name, '{name}', is already used by the Parameters object."
@@ -1099,8 +1107,8 @@ class Parameters:
                             curr_vo.pop("_auto", None)
             else:
                 if new_vo["value"] is not None:
-                    param_values.insert([new_vo], inplace=True)
-
+                    param_values.add([new_vo], inplace=True)
+        self.sel._cache[param] = param_values
         self._data[param]["value"][:] = list(param_values)
 
     def _parse_validation_messages(self, messages, params):
@@ -1280,6 +1288,7 @@ class Parameters:
             # Only update attributes when array first is off, since
             # value order will not affect how arrays are constructed.
             if update_attrs and has_meta_data and not self.array_first:
+                self.sel._cache.pop(param, None)
                 attr_vals = self.sel[data[param]["value"]]
                 if self._state:
                     active = intersection(

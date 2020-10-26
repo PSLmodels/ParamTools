@@ -26,7 +26,7 @@ def values(_values, keyfuncs):
 
 class TestValues:
     def test_values(self, values):
-        assert len(values == 1)
+        assert len(values) == 4
 
     def test_key_error(self, values):
         with pytest.raises(KeyError):
@@ -117,10 +117,10 @@ class TestQuery:
 
 
 class TestOperations:
-    def test_insert(self, values):
+    def test_add(self, values):
         copied = copy.deepcopy(values.values)
 
-        new_vals = values.insert([{"d0": 3, "d1": "hello", "value": 1}])
+        new_vals = values.add([{"d0": 3, "d1": "hello", "value": 1}])
 
         assert len(values.values) == len(copied)
         assert len(values.index) == len(copied)

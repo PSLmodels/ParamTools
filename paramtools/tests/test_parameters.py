@@ -365,7 +365,7 @@ class TestAccess:
             if all("label0" not in val_item for val_item in data):
                 assert spec2[param] == data
 
-        params._data["str_choice_param"]["value"] = []
+        params.delete({"str_choice_param": None})
         assert "str_choice_param" not in params.specification()
         assert "str_choice_param" in params.specification(include_empty=True)
 
@@ -449,6 +449,8 @@ class TestAccess:
         shuffled_tp = TestParams()
         for param in shuffled_tp:
             shuffle(shuffled_tp._data[param]["value"])
+
+        shuffled_tp.sel._cache = {}
 
         assert sorted_tp.dump(sort_values=False) != shuffled_tp.dump(
             sort_values=False
@@ -545,6 +547,7 @@ class TestAccess:
         tp = TestParams()
         for param in tp:
             shuffle(tp._data[param]["value"])
+        tp.sel._cache = {}
 
         shuffled_dump = tp.dump(sort_values=False)
         sorted_dump = tp.dump(sort_values=True)
@@ -1248,7 +1251,9 @@ class TestArray:
         exp = params.int_dense_array_param
         assert params.from_array("int_dense_array_param", res) == exp
 
-        params._data["int_dense_array_param"]["value"].pop(0)
+        val = params.sel["int_dense_array_param"].isel[0]
+        labels = {lab: val for lab, val in val.items() if lab != "value"}
+        params.delete({"int_dense_array_param": [dict(labels, value=None)]})
 
         with pytest.raises(SparseValueObjectsException):
             params.to_array("int_dense_array_param")
