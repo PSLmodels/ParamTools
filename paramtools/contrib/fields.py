@@ -1,7 +1,8 @@
 import numpy as np
 import datetime
+import json
 
-from marshmallow import fields as marshmallow_fields
+import marshmallow as ma
 
 
 default_cmps = {
@@ -39,7 +40,7 @@ class NumPySerializeMixin:
             return cmp_funcs
 
 
-class Float64(NumPySerializeMixin, marshmallow_fields.Number):
+class Float64(NumPySerializeMixin, ma.fields.Number):
     """
     Implements "float" :ref:`spec:Type property` for parameter values.
     Defined as
@@ -49,7 +50,7 @@ class Float64(NumPySerializeMixin, marshmallow_fields.Number):
     num_type = np_type = np.float64
 
 
-class Int64(NumPySerializeMixin, marshmallow_fields.Integer):
+class Int64(NumPySerializeMixin, ma.fields.Integer):
     """
     Implements "int" :ref:`spec:Type property` for parameter values.
     Defined as `numpy.int64 <https://docs.scipy.org/doc/numpy-1.15.0/user/basics.types.html>`__ type
@@ -58,7 +59,7 @@ class Int64(NumPySerializeMixin, marshmallow_fields.Integer):
     num_type = np_type = np.int64
 
 
-class Bool_(NumPySerializeMixin, marshmallow_fields.Boolean):
+class Bool_(NumPySerializeMixin, ma.fields.Boolean):
     """
     Implements "bool" :ref:`spec:Type property` for parameter values.
     Defined as `numpy.bool_ <https://docs.scipy.org/doc/numpy-1.15.0/user/basics.types.html>`__ type
@@ -93,7 +94,7 @@ class MeshFieldMixin:
             return cmp_funcs
 
 
-class Str(MeshFieldMixin, marshmallow_fields.Str):
+class Str(MeshFieldMixin, ma.fields.Str):
     """
     Implements "str" :ref:`spec:Type property`.
     """
@@ -101,7 +102,7 @@ class Str(MeshFieldMixin, marshmallow_fields.Str):
     np_type = object
 
 
-class Integer(MeshFieldMixin, marshmallow_fields.Integer):
+class Integer(MeshFieldMixin, ma.fields.Integer):
     """
     Implements "int" :ref:`spec:Type property` for properties
     except for parameter values.
@@ -110,7 +111,7 @@ class Integer(MeshFieldMixin, marshmallow_fields.Integer):
     np_type = int
 
 
-class Float(MeshFieldMixin, marshmallow_fields.Float):
+class Float(MeshFieldMixin, ma.fields.Float):
     """
     Implements "float" :ref:`spec:Type property` for properties
     except for parameter values.
@@ -119,7 +120,7 @@ class Float(MeshFieldMixin, marshmallow_fields.Float):
     np_type = float
 
 
-class Boolean(MeshFieldMixin, marshmallow_fields.Boolean):
+class Boolean(MeshFieldMixin, ma.fields.Boolean):
     """
     Implements "bool" :ref:`spec:Type property` for properties
     except for parameter values.
@@ -128,7 +129,7 @@ class Boolean(MeshFieldMixin, marshmallow_fields.Boolean):
     np_type = bool
 
 
-class Date(MeshFieldMixin, marshmallow_fields.Date):
+class Date(MeshFieldMixin, ma.fields.Date):
     """
     Implements "date" :ref:`spec:Type property`.
     """
@@ -145,10 +146,22 @@ class Date(MeshFieldMixin, marshmallow_fields.Date):
         return super()._deserialize(value, attr, data, **kwargs)
 
 
-class Nested(marshmallow_fields.Nested):
+class Nested(ma.fields.Nested):
+    def json_cmp_func(self, data):
+        try:
+            return json.dumps(self._serialize(data, None, None))
+        except ma.ValidationError as ve:
+            try:
+                return json.dumps(data)
+            except json.JSONDecodeError:
+                raise ve
+
     def cmp_funcs(self, **kwargs):
         cmp_funcs = getattr(self.nested, "cmp_funcs", None)
         if cmp_funcs is None:
-            return default_cmps
+            # This is not a good comparison function but it's the
+            # best we can do if the cmp_funcs method is not
+            # defined.
+            return {"key": self.json_cmp_func}
         else:
             return cmp_funcs(**kwargs)

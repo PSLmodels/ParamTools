@@ -21,6 +21,7 @@ from paramtools import (
     Values,
     Slice,
 )
+from paramtools.contrib import Bool_
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -266,7 +267,7 @@ class TestSchema:
     def test_custom_fields(self):
         class Custom(ma.Schema):
             hello = ma.fields.Boolean()
-            world = ma.fields.Boolean()
+            world = Bool_()  # Tests data is serialized.
 
         register_custom_type("custom_type", ma.fields.Nested(Custom()))
 
@@ -291,6 +292,20 @@ class TestSchema:
             "hello": True,
             "world": True,
         }
+        assert params.adjust(
+            {
+                "param": [
+                    {
+                        "custom_label": {"hello": True, "world": True},
+                        "value": 1,
+                    }
+                ]
+            }
+        )
+        assert params.sel["param"].isel[:] == [
+            {"custom_label": {"hello": True}, "value": 0},
+            {"custom_label": {"hello": True, "world": True}, "value": 1},
+        ]
 
         class BadSpec(Parameters):
             field_map = {"custom_type": ma.fields.Nested(Custom)}
