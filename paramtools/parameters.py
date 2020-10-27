@@ -3,24 +3,16 @@ import itertools
 from collections import OrderedDict, defaultdict
 from functools import partial, reduce
 from typing import Optional, Dict, List, Any, Union, Mapping
+import warnings
 
 import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
 
 from paramtools import utils
+from paramtools import contrib
 from paramtools.schema import ParamToolsSchema
 from paramtools.schema_factory import SchemaFactory
-from paramtools.select import (
-    select,
-    select_eq,
-    select_ne,
-    select_gt,
-    select_gte,
-    select_lt,
-    select_lte,
-    make_cmp_func,
-)
-from paramtools.tree import Tree
+from paramtools.sorted_key_list import SortedKeyList
 from paramtools.typing import ValueObject, FileDictStringLike
 from paramtools.exceptions import (
     ParamToolsError,
@@ -30,6 +22,47 @@ from paramtools.exceptions import (
     collision_list,
     ParameterNameCollisionException,
 )
+from paramtools.values import Values, union, intersection
+
+
+class ParameterSlice:
+    __slots__ = ("parameters", "_cache", "_key_cache")
+
+    def __init__(self, parameters):
+        self.parameters = parameters
+        self._cache = {}
+        self._key_cache = {}
+
+    def __getitem__(self, parameter_or_values):
+        keyfuncs = dict(self.parameters.keyfuncs)
+        if (
+            isinstance(parameter_or_values, str)
+            and parameter_or_values in self._cache
+        ):
+            return self._cache[parameter_or_values]
+        elif isinstance(parameter_or_values, str):
+            data = self.parameters._data.get(parameter_or_values)
+            if data is None:
+                raise ValueError(f"Unknown parameter: {parameter_or_values}.")
+            try:
+                keyfunc = self._key_cache.get(parameter_or_values, None)
+                if keyfunc is None:
+                    keyfunc = self.parameters._validator_schema.field_keyfunc(
+                        parameter_or_values
+                    )
+                    self._key_cache[parameter_or_values] = keyfunc
+                self._cache[parameter_or_values] = keyfunc
+                keyfuncs["value"] = keyfunc
+                values = Values(data["value"], keyfuncs=keyfuncs)
+                self._cache[parameter_or_values] = values
+                return values
+            except contrib.validate.ValidationError as ve:
+                raise ParamToolsError(
+                    f"There was an error retrieving the field for {parameter_or_values}",
+                    {},
+                ) from ve
+        else:
+            return Values(parameter_or_values, keyfuncs=keyfuncs)
 
 
 class Parameters:
@@ -43,6 +76,7 @@ class Parameters:
         self,
         initial_state: Optional[dict] = None,
         index_rates: Optional[dict] = None,
+        sort_values: bool = True,
         **ops,
     ):
         schemafactory = SchemaFactory(self.defaults)
@@ -53,6 +87,12 @@ class Parameters:
             self._data,
         ) = schemafactory.schemas()
         self.label_validators = schemafactory.label_validators
+        self.keyfuncs = {}
+        for label, lv in self.label_validators.items():
+            cmp_funcs = getattr(lv, "cmp_funcs", None)
+            if cmp_funcs is not None:
+                self.keyfuncs[label] = cmp_funcs()["key"]
+
         self._stateless_label_grid = OrderedDict()
         for name, v in self.label_validators.items():
             if hasattr(v, "grid"):
@@ -64,8 +104,8 @@ class Parameters:
         self._warnings = {}
         self._errors = {}
         self._state = self.parse_labels(**(initial_state or {}))
-        self._search_trees = {}
         self.index_rates = index_rates or self.index_rates
+        self.sel = ParameterSlice(self)
 
         # set operators in order of importance:
         # __init__ arg: most important
@@ -102,6 +142,14 @@ class Parameters:
         if "operators" not in self._schema:
             self._schema["operators"] = {}
         self._schema["operators"].update(self.operators)
+
+        if sort_values:
+            self.sort_values()
+
+    def __getitem__(self, parameter):
+        raise AttributeError(
+            f'Use params.sel["{parameter}"] instead of params["{parameter}"].'
+        )
 
     def set_state(self, **labels):
         """
@@ -248,46 +296,36 @@ class Parameters:
                 extend_grid = self._stateless_label_grid[self.label_to_extend]
                 to_delete = defaultdict(list)
                 backup = {}
-                cmp_funcs = self.label_validators[
-                    self.label_to_extend
-                ].cmp_funcs()
-                gt_cmp_func = make_cmp_func(cmp_funcs["gt"], all_or_any=all)
                 for param, vos in parsed_params.items():
                     for vo in utils.grid_sort(
                         vos, self.label_to_extend, extend_grid
                     ):
 
                         if self.label_to_extend in vo:
-                            query_args = {
-                                self.label_to_extend: vo[self.label_to_extend]
-                            }
                             if clobber:
-                                queryset = self._data[param]["value"]
-                                tree = self._search_trees.get(param)
+                                queryset = self.sel[param]
                             else:
-                                queryset = self.select_eq(
-                                    param, strict=True, _auto=True
+                                queryset = self.sel[param]["_auto"] == True
+
+                            queryset &= queryset.gt(
+                                strict=False,
+                                **{
+                                    self.label_to_extend: vo[
+                                        self.label_to_extend
+                                    ]
+                                },
+                            )
+                            other_labels = utils.filter_labels(
+                                vo,
+                                drop=[self.label_to_extend, "value", "_auto"],
+                            )
+                            if other_labels:
+                                queryset &= intersection(
+                                    queryset.eq(strict=False, **{label: value})
+                                    for label, value in other_labels.items()
                                 )
-                                tree = None
-                            gt = select(
-                                queryset,
-                                strict=False,
-                                cmp_func=gt_cmp_func,
-                                labels=query_args,
-                                tree=tree,
-                            )
-                            to_delete[param] += select_eq(
-                                gt,
-                                strict=False,
-                                labels=utils.filter_labels(
-                                    vo,
-                                    drop=[
-                                        self.label_to_extend,
-                                        "value",
-                                        "_auto",
-                                    ],
-                                ),
-                            )
+
+                            to_delete[param] += list(queryset)
                     # make copy of value objects since they
                     # are about to be modified
                     backup[param] = copy.deepcopy(self._data[param]["value"])
@@ -553,7 +591,15 @@ class Parameters:
             parsed_labels = self.parse_labels(**labels)
             label_grid.update(parsed_labels)
             state.update(parsed_labels)
-        value_items = self.select_eq(param, False, **state)
+        if state:
+            value_items = list(
+                intersection(
+                    self.sel[param].isin(strict=False, **{label: values})
+                    for label, values in state.items()
+                )
+            )
+        else:
+            value_items = list(self.sel[param])
         if not value_items:
             return np.array([])
 
@@ -594,15 +640,31 @@ class Parameters:
             exp_grid = list(itertools.product(*value_order.values()))
             # preserve label value order for each value object by
             # iterating over label_order.
-            actual = set(
+            actual = list(
                 [tuple(vo[d] for d in label_order) for vo in value_items]
             )
             missing = "\n\t".join(
                 [str(d) for d in exp_grid if d not in actual]
             )
+            counter = defaultdict(int)
+            extra = []
+            duplicates = []
+            for comb in actual:
+                counter[comb] += 1
+                if counter[comb] > 1:
+                    duplicates.append((comb, counter[comb]))
+                if comb not in exp_grid:
+                    extra.append(comb)
+            msg = ""
+            if missing:
+                msg += f"Missing combinations:\n\t{missing}"
+            if extra:
+                msg += f"Extra combinations:\n\t{extra}"
+            if duplicates:
+                msg += f"Duplicate combinations:\n\t{duplicates}"
             raise SparseValueObjectsException(
                 f"The Value objects for {param} do not span the specified "
-                f"parameter space. Missing combinations:\n\t{missing}"
+                f"parameter space. {msg}"
             )
 
         def list_2_tuple(x):
@@ -660,7 +722,15 @@ class Parameters:
             label_grid.update(parsed_labels)
             state.update(parsed_labels)
 
-        value_items = self.select_eq(param, False, **state)
+        if state:
+            value_items = list(
+                intersection(
+                    self.sel[param].isin(strict=False, **{label: value})
+                    for label, value in state.items()
+                )
+            )
+        else:
+            value_items = list(self.sel[param])
         label_order, value_order = self._resolve_order(
             param, value_items, label_grid
         )
@@ -721,7 +791,6 @@ class Parameters:
             extend_grid = self._stateless_label_grid[label]
 
         cmp_funcs = self.label_validators[label].cmp_funcs(choices=extend_grid)
-        gt_cmp_func = make_cmp_func(cmp_funcs["gt"], all_or_any=all)
 
         adjustment = defaultdict(list)
         for param, data in spec.items():
@@ -736,22 +805,25 @@ class Parameters:
                     continue
                 else:
                     extended_vos.add(hashable_vo)
-                gt = select(
-                    self._data[param]["value"],
-                    False,
-                    gt_cmp_func,
-                    {label: vo[label]},
-                    tree=self._search_trees.get(param),
-                )
-                eq = select_eq(
-                    gt,
-                    False,
-                    utils.filter_labels(vo, drop=["value", label, "_auto"]),
-                )
-                extended_vos.update(map(utils.hashable_value_object, eq))
-                eq += [vo]
 
-                defined_vals = {eq_vo[label] for eq_vo in eq}
+                queryset = self.sel[param].gt(
+                    strict=False, **{label: vo[label]}
+                )
+
+                other_labels = utils.filter_labels(
+                    vo, drop=["value", label, "_auto"]
+                )
+                if other_labels:
+                    queryset &= intersection(
+                        queryset.eq(strict=False, **{oth_label: value})
+                        for oth_label, value in other_labels.items()
+                    )
+                extended_vos.update(
+                    map(utils.hashable_value_object, list(queryset))
+                )
+                values = queryset.as_values().add(values=[vo])
+
+                defined_vals = {eq_vo[label] for eq_vo in queryset}
 
                 missing_vals = sorted(
                     set(extend_grid) - defined_vals, key=cmp_funcs["key"]
@@ -761,23 +833,23 @@ class Parameters:
                     continue
 
                 extended = defaultdict(list)
-                for vo in eq:
+                for vo in values:
                     extended[vo[label]].append(vo)
 
-                skl = utils.SortedKeyList(extended.keys(), cmp_funcs["key"])
+                skl = SortedKeyList(extended.keys(), cmp_funcs["key"])
 
                 for val in missing_vals:
                     lte_val = skl.lte(val)
                     if lte_val is not None:
-                        closest_val = lte_val
+                        closest_val = lte_val.values[-1]
                     else:
-                        closest_val = skl.gte(val)
+                        closest_val = skl.gte(val).values[0]
 
                     if closest_val in extended:
                         value_objects = extended.pop(closest_val)
                     else:
-                        value_objects = select_eq(
-                            eq, False, {label: closest_val}
+                        value_objects = values.eq(
+                            strict=False, **{label: closest_val}
                         )
                     # In practice, value_objects has length one.
                     # Theoretically, there could be multiple if the inital value
@@ -792,8 +864,8 @@ class Parameters:
                             utils.hashable_value_object(value_object)
                         )
                         extended[val].append(ext)
-                        skl.insert(val)
-                        adjustment[param].append(dict(ext, _auto=True))
+                        skl.add(val)
+                        adjustment[param].append(OrderedDict(ext, _auto=True))
         # Ensure that the adjust method of paramtools.Parameter is used
         # in case the child class also implements adjust.
         self._adjust(
@@ -907,6 +979,7 @@ class Parameters:
         if params is not None:
             spec = {param: spec[param] for param in params}
         for name, value in spec.items():
+            self.sel._cache.pop(name, None)
             if name in collision_list:
                 raise ParameterNameCollisionException(
                     f"The paramter name, '{name}', is already used by the Parameters object."
@@ -956,53 +1029,41 @@ class Parameters:
             self._validator_schema.fields[param].schema.fields["value"].np_type
         )
 
+    def _select(self, param, op, strict, **labels):
+        if "exact_match" in labels:
+            warnings.warn(
+                "'exact_match' has been deprecated in favor of 'strict'."
+            )
+            strict = labels.pop("exact_match")
+
+        res = self.sel[param]
+        for label, value in labels.items():
+            if isinstance(value, list):
+                res &= union(
+                    self.sel[param]._cmp(op, strict, **{label: element})
+                    for element in value
+                )
+            else:
+                res &= self.sel[param]._cmp(op, strict, **{label: value})
+        return list(res)
+
     def select_eq(self, param, strict=True, **labels):
-        return select_eq(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "eq", strict, **labels)
 
     def select_ne(self, param, strict=True, **labels):
-        return select_ne(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "ne", strict, **labels)
 
     def select_gt(self, param, strict=True, **labels):
-        return select_gt(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "gt", strict, **labels)
 
     def select_gte(self, param, strict=True, **labels):
-        return select_gte(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "gte", strict, **labels)
 
     def select_lt(self, param, strict=True, **labels):
-        return select_lt(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "lt", strict, **labels)
 
     def select_lte(self, param, strict=True, **labels):
-        return select_lte(
-            self._data[param]["value"],
-            strict,
-            labels,
-            tree=self._search_trees.get(param),
-        )
+        return self._select(param, "lte", strict, **labels)
 
     def _update_param(self, param, new_values):
         """
@@ -1022,14 +1083,40 @@ class Parameters:
             For now, no exceptions are raised by this method.
 
         """
-        curr_values = self._data[param]["value"]
-        if param in self._search_trees:
-            curr_tree = self._search_trees[param]
-        else:
-            curr_tree = Tree(vos=curr_values, label_grid=self.label_grid)
-        new_tree = Tree(vos=new_values, label_grid=self.label_grid)
-        self._data[param]["value"] = curr_tree.update(new_tree)
-        self._search_trees[param] = curr_tree
+        param_values = self.sel[param]
+        if len(list(param_values)) == 0:
+            self._data[param]["value"] = new_values
+            return
+        for new_vo in new_values:
+            labels = utils.filter_labels(new_vo, drop=["value"])
+            if not labels:
+                if new_vo["value"] is not None:
+                    for curr_vo in self._data[param]["value"]:
+                        curr_vo["value"] = new_vo["value"]
+                else:
+                    param_values.delete(inplace=True)
+
+                continue
+
+            to_update = intersection(
+                param_values.eq(strict=True, **{label: value})
+                for label, value in labels.items()
+                if label in param_values.labels and label != "_auto"
+            )
+
+            if len(list(to_update)) > 0:
+                if new_vo["value"] is None:
+                    to_update.delete()
+                else:
+                    for curr_vo in to_update:
+                        curr_vo["value"] = new_vo["value"]
+                        if new_vo.get("_auto") is None:
+                            curr_vo.pop("_auto", None)
+            else:
+                if new_vo["value"] is not None:
+                    param_values.add([new_vo], inplace=True)
+        self.sel._cache[param] = param_values
+        self._data[param]["value"][:] = list(param_values)
 
     def _parse_validation_messages(self, messages, params):
         """Parse validation messages from marshmallow"""
@@ -1167,7 +1254,7 @@ class Parameters:
         """
 
         def keyfunc(vo, label, label_values):
-            if label in vo:
+            if label in vo and label_values:
                 return label_values.index(vo[label])
             else:
                 return -1
@@ -1189,10 +1276,9 @@ class Parameters:
         # iterate over labels so that the first label's order
         # takes precedence.
         label_grid = self._stateless_label_grid
-        order = list(reversed(label_grid))
 
         for param in data:
-            for label in order:
+            for label in reversed(label_grid):
                 label_values = label_grid[label]
                 pfunc = partial(
                     keyfunc, label=label, label_values=label_values
@@ -1207,12 +1293,19 @@ class Parameters:
 
             # Only update attributes when array first is off, since
             # value order will not affect how arrays are constructed.
-            if update_attrs and has_meta_data and not self.array_first:
-                attr_vals = select_eq(
-                    data[param]["value"], strict=True, labels=self._state
-                )
+            if update_attrs and not self.array_first:
+                self.sel._cache.pop(param, None)
+                if self._state:
+                    attr_vals = self.sel[param]
+                    active = intersection(
+                        attr_vals[label].isin(value)
+                        for label, value in self._state.items()
+                        if label in attr_vals.labels
+                    )
+                else:
+                    active = data[param]["value"]
                 sorted_values = self.sort_values(
-                    {param: attr_vals}, has_meta_data=False
+                    {param: list(active)}, has_meta_data=False
                 )[param]
                 setattr(self, param, sorted_values)
         return data

@@ -50,7 +50,6 @@ collision_list = [
     "_numpy_type",
     "_parse_errors",
     "_resolve_order",
-    "_search_trees",
     "_schema",
     "_set_state",
     "_state",
@@ -58,6 +57,7 @@ collision_list = [
     "_update_param",
     "_validator_schema",
     "_defaults_schema",
+    "_select",
     "operators",
     "adjust",
     "delete",
@@ -69,6 +69,7 @@ collision_list = [
     "keys",
     "label_grid",
     "label_validators",
+    "keyfuncs",
     "errors",
     "warnings",
     "from_array",
@@ -89,6 +90,7 @@ collision_list = [
     "index_rates",
     "to_dict",
     "_parse_validation_messages",
+    "sel",
 ]
 
 

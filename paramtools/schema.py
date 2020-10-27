@@ -13,7 +13,9 @@ from marshmallow.error_store import ErrorStore
 from paramtools.exceptions import UnknownTypeException, ParamToolsError
 from paramtools import contrib
 from paramtools import utils
+from paramtools import values
 
+fields.Nested = contrib.fields.Nested
 
 ALLOWED_TYPES = ["str", "float", "int", "bool", "date"]
 
@@ -28,6 +30,7 @@ class RangeSchema(Schema):
 
     _min = fields.Field(attribute="min", data_key="min")
     _max = fields.Field(attribute="max", data_key="max")
+    step = fields.Field()
     level = fields.String(validate=[validate.OneOf(["warn", "error"])])
 
 
@@ -95,7 +98,7 @@ class BaseParamSchema(Schema):
     """
 
     title = fields.Str(required=True)
-    description = fields.Str(required=True)
+    description = fields.Str(required=False)
     notes = fields.Str(required=False)
     _type = fields.Str(
         required=True,
@@ -147,6 +150,8 @@ class ValueObject(fields.Nested):
     def _deserialize(
         self, value, attr, data, partial=None, many=False, **kwargs
     ):
+        if isinstance(value, values.ValueBase):
+            value = list(value)
         if not isinstance(value, list) or (
             isinstance(value, list)
             and value
@@ -265,16 +270,7 @@ class BaseValidatorSchema(Schema):
         """
         Do range validation for a parameter.
         """
-        param_info = self.context["spec"]._data[param_name]
-        # sort keys to guarantee order.
-        validator_spec = param_info["validators"]
-        validators = []
-        for vname, vdata in validator_spec.items():
-            validator = getattr(self, self.WRAPPER_MAP[vname])(
-                vname, vdata, param_name, param_spec, raw_data
-            )
-            validators.append(validator)
-
+        validators = self.validators(param_name, param_spec, raw_data)
         warnings = []
         errors = []
         for validator in validators:
@@ -287,6 +283,37 @@ class BaseValidatorSchema(Schema):
                     errors += ve.messages
 
         return warnings, errors
+
+    def field_keyfunc(self, param_name):
+        data = self.context["spec"]._data[param_name]
+        field = get_type(data, self.validators(param_name))
+        try:
+            return field.cmp_funcs()["key"]
+        except AttributeError:
+            return None
+
+    def field(self, param_name):
+        data = self.context["spec"]._data[param_name]
+        return get_type(data, self.validators(param_name))
+
+    def validators(self, param_name, param_spec=None, raw_data=None):
+        if param_spec is None:
+            param_spec = {}
+        if raw_data is None:
+            raw_data = {}
+
+        param_info = self.context["spec"]._data[param_name]
+        # sort keys to guarantee order.
+        validator_spec = param_info.get("validators", {})
+        validators = []
+        for vname, vdata in validator_spec.items():
+            if vname == "range" and param_info.get("type", None) in ("date",):
+                vname = "date_range"
+            validator = getattr(self, self.WRAPPER_MAP[vname])(
+                vname, vdata, param_name, param_spec, raw_data
+            )
+            validators.append(validator)
+        return validators
 
     def _get_when_validator(
         self,
@@ -652,7 +679,7 @@ VALIDATOR_MAP = {
 }
 
 
-def get_type(data):
+def get_type(data, validators=None):
     numeric_types = {
         "int": contrib.fields.Int64(
             allow_none=True, error_messages=INVALID_INTEGER, strict=True
@@ -668,7 +695,7 @@ def get_type(data):
     try:
         _fieldtype = types[data["type"]]
         if is_field_class_like(_fieldtype):
-            fieldtype = _fieldtype()
+            fieldtype = _fieldtype(validate=validators)
         elif is_field_instance_like(_fieldtype):
             fieldtype = _fieldtype
         else:
@@ -725,6 +752,9 @@ def get_param_schema(base_spec):
     for name, label in base_spec["labels"].items():
         validators = []
         for vname, kwargs in label.get("validators", {}).items():
+            if vname == "range" and label.get("type", None) in ("date",):
+                vname = "date_range"
+
             validator_class = VALIDATOR_MAP[vname]
             validators.append(validator_class(**kwargs))
         try:

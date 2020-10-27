@@ -18,7 +18,10 @@ from paramtools import (
     ParameterNameCollisionException,
     register_custom_type,
     Parameters,
+    Values,
+    Slice,
 )
+from paramtools.contrib import Bool_
 
 CURRENT_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -40,6 +43,7 @@ def array_first_defaults(defaults_spec_path):
     r.pop("float_list_param")
     r.pop("simple_int_list_param")
     r.pop("float_list_when_param")
+    r.pop("when_array_param")
     return r
 
 
@@ -263,7 +267,7 @@ class TestSchema:
     def test_custom_fields(self):
         class Custom(ma.Schema):
             hello = ma.fields.Boolean()
-            world = ma.fields.Boolean()
+            world = Bool_()  # Tests data is serialized.
 
         register_custom_type("custom_type", ma.fields.Nested(Custom()))
 
@@ -288,6 +292,20 @@ class TestSchema:
             "hello": True,
             "world": True,
         }
+        assert params.adjust(
+            {
+                "param": [
+                    {
+                        "custom_label": {"hello": True, "world": True},
+                        "value": 1,
+                    }
+                ]
+            }
+        )
+        assert params.sel["param"].isel[:] == [
+            {"custom_label": {"hello": True}, "value": 0},
+            {"custom_label": {"hello": True, "world": True}, "value": 1},
+        ]
 
         class BadSpec(Parameters):
             field_map = {"custom_type": ma.fields.Nested(Custom)}
@@ -306,6 +324,16 @@ class TestSchema:
 
         with pytest.raises(ma.ValidationError):
             BadSpec()
+
+
+class TestValues:
+    def test(self, TestParams, defaults_spec_path):
+        params = TestParams()
+        assert isinstance(params.sel["min_int_param"], Values)
+        assert isinstance(params.sel["min_int_param"]["label0"], Slice)
+
+        with pytest.raises(AttributeError):
+            params["min_int_param"]
 
 
 class TestAccess:
@@ -352,7 +380,7 @@ class TestAccess:
             if all("label0" not in val_item for val_item in data):
                 assert spec2[param] == data
 
-        params._data["str_choice_param"]["value"] = []
+        params.delete({"str_choice_param": None})
         assert "str_choice_param" not in params.specification()
         assert "str_choice_param" in params.specification(include_empty=True)
 
@@ -394,11 +422,15 @@ class TestAccess:
     def test_dump_with_labels(self, TestParams, defaults_spec_path):
         params1 = TestParams()
         spec = params1.specification(
-            serializable=True, include_empty=True, meta_data=True, label0="one"
+            serializable=True,
+            include_empty=True,
+            meta_data=True,
+            label0="one",
+            sort_values=True,
         )
         schema = params1._schema
         params1.set_state(label0="one")
-        dumped = params1.dump()
+        dumped = params1.dump(sort_values=True)
         assert dumped == {**spec, **{"schema": schema}}
 
         class TestParams2(Parameters):
@@ -432,6 +464,8 @@ class TestAccess:
         shuffled_tp = TestParams()
         for param in shuffled_tp:
             shuffle(shuffled_tp._data[param]["value"])
+
+        shuffled_tp.sel._cache = {}
 
         assert sorted_tp.dump(sort_values=False) != shuffled_tp.dump(
             sort_values=False
@@ -498,7 +532,7 @@ class TestAccess:
                 },
             }
 
-        params = Params()
+        params = Params(sort_values=False)
 
         assert params.param != exp and params.param == shuffled
 
@@ -506,7 +540,7 @@ class TestAccess:
         assert params.param == exp
 
         # test passing in a data object
-        params = Params()
+        params = Params(sort_values=False)
         assert params.param != exp and params.param == shuffled
 
         data1 = {"param": params.param}
@@ -528,6 +562,7 @@ class TestAccess:
         tp = TestParams()
         for param in tp:
             shuffle(tp._data[param]["value"])
+        tp.sel._cache = {}
 
         shuffled_dump = tp.dump(sort_values=False)
         sorted_dump = tp.dump(sort_values=True)
@@ -548,7 +583,7 @@ class TestAccess:
         class NoStateParams(Parameters):
             defaults = state_dump
 
-        nostate_tp = NoStateParams()
+        nostate_tp = NoStateParams(sort_values=False)
         assert nostate_tp.dump(sort_values=False) == state_dump
         assert not nostate_tp.view_state()
         assert state_tp.view_state()
@@ -664,7 +699,7 @@ class TestAdjust:
             "str_choice_param": [{"value": None}],
         }
         params.adjust(adj)
-
+        print(params.str_choice_param)
         assert len(params.min_int_param) == 1
         assert len(params.str_choice_param) == 0
 
@@ -1044,7 +1079,7 @@ class TestValidationMessages:
 
     def test_when_validation_limitations(self):
         """
-        When validation prohibits child validators from doing referential violation
+        When validation prohibits child validators from doing referential validation
         when the other parameter is an array type (number_dims > 0).
         """
 
@@ -1077,17 +1112,15 @@ class TestValidationMessages:
                 },
             }
 
-        params = Params(array_first=True)
-        with pytest.raises(ValidationError) as excinfo:
-            params.adjust({"param": [4, 6]})
+        with pytest.raises(ParamToolsError) as excinfo:
+            Params(array_first=True)
 
-        msg = json.loads(excinfo.value.args[0])["errors"]
-        assert msg == {
-            "schema": [
-                "Data format error: ['param is validated against "
-                "when_param in an invalid context.']"
-            ]
-        }
+        cause = excinfo.value.__cause__
+        msg = cause.args[0]
+        assert (
+            msg
+            == "param is validated against when_param in an invalid context."
+        )
 
         class Params(Parameters):
             defaults = {
@@ -1111,16 +1144,14 @@ class TestValidationMessages:
                 }
             }
 
-        params = Params(array_first=True)
-        with pytest.raises(ValidationError) as excinfo:
-            params.adjust({"param": [4, 6]})
+        with pytest.raises(ParamToolsError) as excinfo:
+            Params(array_first=True)
 
-        msg = json.loads(excinfo.value.args[0])["errors"]
-        assert msg == {
-            "schema": [
-                "Data format error: ['param is validated against default in an invalid context.']"
-            ]
-        }
+        cause = excinfo.value.__cause__
+        msg = cause.args[0]
+        assert (
+            msg == "param is validated against default in an invalid context."
+        )
 
     def test_when_validation_examples(self, TestParams):
         params = TestParams()
@@ -1235,7 +1266,9 @@ class TestArray:
         exp = params.int_dense_array_param
         assert params.from_array("int_dense_array_param", res) == exp
 
-        params._data["int_dense_array_param"]["value"].pop(0)
+        val = params.sel["int_dense_array_param"].isel[0]
+        labels = {lab: val for lab, val in val.items() if lab != "value"}
+        params.delete({"int_dense_array_param": [dict(labels, value=None)]})
 
         with pytest.raises(SparseValueObjectsException):
             params.to_array("int_dense_array_param")
@@ -1249,17 +1282,17 @@ class TestArray:
         exp_label_order = ["label0", "label2"]
         exp_value_order = {"label0": ["zero", "one"], "label2": [0, 1, 2]}
         vi = [
-            {"label0": "zero", "label2": 0, "value": None},
-            {"label0": "zero", "label2": 1, "value": None},
-            {"label0": "zero", "label2": 2, "value": None},
-            {"label0": "one", "label2": 0, "value": None},
-            {"label0": "one", "label2": 1, "value": None},
-            {"label0": "one", "label2": 2, "value": None},
+            {"label0": "zero", "label2": 0, "value": 1},
+            {"label0": "zero", "label2": 1, "value": 1},
+            {"label0": "zero", "label2": 2, "value": 1},
+            {"label0": "one", "label2": 0, "value": 1},
+            {"label0": "one", "label2": 1, "value": 1},
+            {"label0": "one", "label2": 2, "value": 1},
         ]
 
         params = TestParams()
         params.madeup = vi
-        params._data["madeup"] = {"value": vi}
+        params._data["madeup"] = {"value": vi, "type": "int"}
         value_items = params.select_eq("madeup", False, **params._state)
         assert params._resolve_order(
             "madeup", value_items, params.label_grid
@@ -2238,39 +2271,3 @@ class TestIndex:
                     "indexed_param": [{"d0": 3, "value": 8}],
                 }
             )
-
-
-class TestSelect:
-    def test_select_lt(self):
-        class Params(Parameters):
-            defaults = {
-                "schema": {
-                    "labels": {
-                        "d0": {"type": "int"},
-                        "d1": {
-                            "type": "str",
-                            "validators": {
-                                "choice": {"choices": ["hello", "world"]}
-                            },
-                        },
-                    }
-                },
-                "param": {
-                    "title": "",
-                    "description": "",
-                    "type": "int",
-                    "value": [
-                        {"d0": 1, "d1": "hello", "value": 1},
-                        {"d0": 1, "d1": "world", "value": 1},
-                        {"d0": 2, "d1": "hello", "value": 1},
-                        {"d0": 3, "d1": "world", "value": 1},
-                    ],
-                },
-            }
-
-        params = Params()
-        assert list(params.select_lt("param", False, d0=3)) == [
-            {"d0": 1, "d1": "hello", "value": 1},
-            {"d0": 1, "d1": "world", "value": 1},
-            {"d0": 2, "d1": "hello", "value": 1},
-        ]

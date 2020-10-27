@@ -5,7 +5,8 @@ dependencies:
   - "marshmallow>=3.0.0"
   - "numpy>=1.13"
   - "python-dateutil>=2.8.0"
-  - pytest
+  - "pytest>=6.0.0"
+  - pandas
   - fsspec
   - s3fs # required for tests but not most usage.
   - gcsfs # required for tests but not most usage.
@@ -13,10 +14,11 @@ dependencies:
   - aiohttp # required for tests but not most usage.
   - pip
   - pip:
-    - pre-commit
-    - black
-    - flake8
-    - jupyter-book
-    - sphinx
-    - autodoc
-    - ghp-import
+      - pre-commit
+      - black
+      - flake8
+      - jupyter-book
+      - sphinx
+      - autodoc
+      - ghp-import
+      - sortedcontainers
