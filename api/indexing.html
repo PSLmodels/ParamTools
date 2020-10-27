@@ -96,18 +96,6 @@
 </ul>
 <p class="caption">
  <span class="caption-text">
-  Parameters
- </span>
-</p>
-<ul class="nav sidenav_l1">
- <li class="toctree-l1">
-  <a class="reference internal" href="../parameters.html">
-   Parameters
-  </a>
- </li>
-</ul>
-<p class="caption">
- <span class="caption-text">
   API
  </span>
 </p>
@@ -115,6 +103,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="guide.html">
    Guide
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="viewing-data.html">
+   View data
   </a>
  </li>
  <li class="toctree-l1">
@@ -139,6 +132,18 @@
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="reference.html">
+   API Reference
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Parameters
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../parameters.html">
    Parameters
   </a>
  </li>
@@ -216,11 +221,6 @@
                     alt="Interact on binder">Binder</button></a>
         
         
-        
-        <a class="colab-button" href="https://colab.research.google.com/github/PSLmodels/ParamTools/blob/master/docs/api/indexing.ipynb"><button type="button" class="btn btn-secondary topbarbtn"
-                title="Launch Colab" data-toggle="tooltip" data-placement="left"><img class="colab-button-logo"
-                    src="../_static/images/logo_colab.png"
-                    alt="Interact on Colab">Colab</button></a>
         
         
     </div>
@@ -416,30 +416,102 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[{&#39;year&#39;: 2013, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6074.92, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2014, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6164.83, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2015, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6262.85, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2016, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 6270.37, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2019, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 12268.8, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2020, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 12497.0, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2021, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 12788.18, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2022, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13081.03, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2023, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13379.28, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13674.96, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13963.5, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2027, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 7847.15, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2013, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12149.84, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2014, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12329.66, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2015, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12525.7, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2016, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 12540.73, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2019, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 24537.6, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2020, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 24994.0, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2021, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 25576.36, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2022, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 26162.06, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2023, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 26758.55, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27349.91, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27926.99, &#39;_auto&#39;: True},
- {&#39;year&#39;: 2027, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 15693.29, &#39;_auto&#39;: True}]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[OrderedDict([(&#39;year&#39;, 2013),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 6074.92),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2014),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 6164.83),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2015),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 6262.85),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2016),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 6270.37),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2019),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 12268.8),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2020),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 12497.0),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2021),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 12788.18),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2022),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 13081.03),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2023),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 13379.28),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2024),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 13674.96),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2025),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 13963.5),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2027),
+              (&#39;marital_status&#39;, &#39;single&#39;),
+              (&#39;value&#39;, 7847.15),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2013),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 12149.84),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2014),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 12329.66),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2015),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 12525.7),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2016),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 12540.73),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2019),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 24537.6),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2020),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 24994.0),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2021),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 25576.36),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2022),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 26162.06),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2023),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 26758.55),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2024),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 27349.91),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2025),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 27926.99),
+              (&#39;_auto&#39;, True)]),
+ OrderedDict([(&#39;year&#39;, 2027),
+              (&#39;marital_status&#39;, &#39;joint&#39;),
+              (&#39;value&#39;, 15693.29),
+              (&#39;_auto&#39;, True)])]
 </pre></div>
 </div>
 </div>
