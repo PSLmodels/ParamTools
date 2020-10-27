@@ -1,4 +1,5 @@
-from paramtools.sorted_key_list import SortedKeyList
+import pytest
+from paramtools.sorted_key_list import SortedKeyList, SortedKeyListException
 
 
 def test_sorted_key_list():
@@ -48,3 +49,14 @@ def test_sorted_key_list():
     assert set(skl.ne("pokadot").values) == set(list(values.keys())) - {
         "pokadot"
     }
+
+
+def test_exception():
+    with pytest.raises(SortedKeyListException):
+        SortedKeyList(
+            [
+                {"really": {"nested": {"field": True}}},
+                {"really": {"nested": {"field": False}}},
+            ],
+            keyfunc=lambda x: x,
+        )

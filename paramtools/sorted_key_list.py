@@ -1,6 +1,20 @@
 import sortedcontainers
 
 
+class SortedKeyListException(Exception):
+    default = (
+        "Unable to create SortedKeyList. It is likely that this label or "
+        "value uses a custom data type. In this case, you should define a "
+        "cmp_funcs method to make it orderable."
+    )
+
+    def __init__(self, *args, **kwargs):
+        if not args:
+            args = (self.default,)
+
+        super().__init__(*args, **kwargs)
+
+
 class SortedKeyListResult:
     def __init__(self, key_list_values):
         self.key_list_values = key_list_values
@@ -35,9 +49,12 @@ class SortedKeyList:
         self.index = set(index)
         self.keyfunc = keyfunc
 
-        self.sorted_key_list_2 = sortedcontainers.SortedKeyList(
-            sorted_key_list, key=lambda t: keyfunc(t[0])
-        )
+        try:
+            self.sorted_key_list_2 = sortedcontainers.SortedKeyList(
+                sorted_key_list, key=lambda t: keyfunc(t[0])
+            )
+        except TypeError as e:
+            raise SortedKeyListException() from e
 
     def __repr__(self):
         return str(self.sorted_key_list)
