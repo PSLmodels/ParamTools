@@ -212,6 +212,13 @@ class Slice(ValueBase):
 
 
 class Values(ValueBase):
+    """
+    The Values class is used to query and update parameter values.
+
+    For more information, checkout the
+    `Viewing Data <https://paramtools.dev/api/viewing-data.html>`_ docs.
+    """
+
     def __init__(
         self,
         values: List[ValueObject],
@@ -293,24 +300,89 @@ class Values(ValueBase):
         return QueryResult(self, index)
 
     def eq(self, strict=True, **labels):
+        """
+        Returns values that match the given label:
+
+        .. code-block:: Python
+
+            params.sel["my_param"].eq(my_label=5)
+            params.sel["my_param"]["my_label"] == 5
+        """
         return self._cmp("eq", strict, **labels)
 
     def ne(self, strict=True, **labels):
+        """
+        Returns values that do match the given label:
+
+        .. code-block:: Python
+
+            params.sel["my_param"].ne(my_label=5)
+            params.sel["my_param"]["my_label"] != 5
+        """
+
         return self._cmp("ne", strict, **labels)
 
     def gt(self, strict=True, **labels):
+        """
+        Returns values that have label values greater than the label value:
+
+        .. code-block:: Python
+
+            params.sel["my_param"].gt(my_label=5)
+            params.sel["my_param"]["my_label"] > 5
+
+        """
+
         return self._cmp("gt", strict, **labels)
 
     def gte(self, strict=True, **labels):
+        """
+        Returns values that have label values greater than or equal to the label value:
+
+        .. code-block:: Python
+
+            params.sel["my_param"].gte(my_label=5)
+            params.sel["my_param"]["my_label"] >= 5
+
+        """
         return self._cmp("gte", strict, **labels)
 
     def lt(self, strict=True, **labels):
+        """
+        Returns values that have label values less than the label value:
+
+        .. code-block:: Python
+
+            params.sel["my_param"].lt(my_label=5)
+            params.sel["my_param"]["my_label"] < 5
+
+        """
+
         return self._cmp("lt", strict, **labels)
 
     def lte(self, strict=True, **labels):
+        """
+        Returns values that have label values less than or equal to the label value:
+
+        .. code-block:: Python
+
+            params.sel["my_param"].lte(my_label=5)
+            params.sel["my_param"]["my_label"] <= 5
+
+        """
+
         return self._cmp("lte", strict, **labels)
 
     def isin(self, strict=True, **labels):
+        """
+        Returns values that have label values less than or equal to the label value:
+
+        .. code-block:: Python
+
+            params.sel["my_param"].isin(my_label=[5, 6])
+
+        """
+
         label, values = list(labels.items())[0]
         return union(
             self.eq(strict=strict, **{label: value}) for value in values
@@ -369,6 +441,16 @@ class Values(ValueBase):
 
     @property
     def isel(self):
+        """
+        Select values by their index:
+
+        .. code-block:: Python
+
+            params.sel["my_param"].isel[0]
+            params.sel["my_param"].isel[:5]
+
+        """
+
         return ValueItem(self, self.index)
 
     @property
@@ -384,11 +466,29 @@ class Values(ValueBase):
             raise TypeError(f"Unable to compare Values against {type(other)}")
 
     def __and__(self, queryresult: "QueryResult"):
+        """
+        Combine queries with logical 'and':
+
+        .. code-block:: Python
+
+            my_param = params.sel["my_param]
+            (my_param["my_label"] == 5) & (my_param["oth_label"] == "hello")
+        """
+
         res = set(self.index) & set(queryresult.index)
 
         return QueryResult(self, res)
 
     def __or__(self, queryresult: "QueryResult"):
+        """
+        Combine queries with logical 'or':
+
+        .. code-block:: Python
+
+            my_param = params.sel["my_param]
+            (my_param["my_label"] == 5) | (my_param["oth_label"] == "hello")
+        """
+
         res = set(self.index) | set(queryresult.index)
 
         return QueryResult(self, res)
