@@ -34,10 +34,9 @@ class SortedKeyListResult:
 
 class SortedKeyList:
     """
-    Sorted key list inspired by SortedContainers and the Python docs:
-
-    - http://www.grantjenks.com/docs/sortedcontainers/
-    - https://docs.python.org/3.9/library/bisect.html
+    Sorted key list built on top of sortedcontainers. This adds some
+    query methods like lt/gt/eq and keeps track of the original indices
+    for the values.
     """
 
     def __init__(self, values, keyfunc, index=None):
