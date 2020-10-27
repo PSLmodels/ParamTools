@@ -3,6 +3,7 @@ import itertools
 from collections import OrderedDict, defaultdict
 from functools import partial, reduce
 from typing import Optional, Dict, List, Any, Union, Mapping
+import warnings
 
 import numpy as np
 from marshmallow import ValidationError as MarshmallowValidationError
@@ -1029,6 +1030,12 @@ class Parameters:
         )
 
     def _select(self, param, op, strict, **labels):
+        if "exact_match" in labels:
+            warnings.warn(
+                "'exact_match' has been deprecated in favor of 'strict'."
+            )
+            strict = labels.pop("exact_match")
+
         res = self.sel[param]
         for label, value in labels.items():
             if isinstance(value, list):
