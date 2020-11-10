@@ -59,15 +59,13 @@ class Params(paramtools.Parameters):
     }
 ```
 
-```python
-params = Params()
-```
-
 ### Access parameter values
 
 Access values using `.sel`:
 
 ```python
+params = Params()
+
 params.sel["a"]
 ```
 
@@ -149,7 +147,7 @@ params.adjust({"a": -1})
 
     ValidationError                           Traceback (most recent call last)
 
-    <ipython-input-9-f8f1b7f6cd9a> in <module>
+    <ipython-input-8-f8f1b7f6cd9a> in <module>
     ----> 1 params.adjust({"a": -1})
 
 
@@ -187,7 +185,7 @@ params.adjust({"a": [{"date": "2020-01-01", "value": 11}]})
 
     ValidationError                           Traceback (most recent call last)
 
-    <ipython-input-10-cc8a21f044d8> in <module>
+    <ipython-input-9-cc8a21f044d8> in <module>
           1 params = Params()
           2
     ----> 3 params.adjust({"a": [{"date": "2020-01-01", "value": 11}]})
@@ -229,7 +227,7 @@ params.adjust({"b": "abc"})
 
     ValidationError                           Traceback (most recent call last)
 
-    <ipython-input-11-8373a2715e38> in <module>
+    <ipython-input-10-8373a2715e38> in <module>
           1 params = Params()
           2
     ----> 3 params.adjust({"b": "abc"})
