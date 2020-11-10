@@ -25,8 +25,8 @@
     href="_static/vendor/lato_latin-ext/1.44.1/index.css">
 
     
-    <link rel="stylesheet" href="_static/sphinx-book-theme.2d2078699c18a0efb88233928e1cf6ed.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
@@ -45,7 +45,7 @@
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
     <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
+    <script src="_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -78,22 +78,19 @@
   <h1 class="site-logo" id="site-title">ParamTools</h1>
   
 </a>
-</div>
-
-<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form>
-
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
-  <ul class="nav sidenav_l1">
- <li class="toctree-l1">
+    <ul class="nav sidenav_l1">
+ <li class="toctree-l1 current active">
   <a class="reference internal" href="#">
    ParamTools
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption collapsible-parent">
  <span class="caption-text">
   API
  </span>
@@ -135,7 +132,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption collapsible-parent">
  <span class="caption-text">
   Parameters
  </span>
@@ -148,9 +145,7 @@
  </li>
 </ul>
 
-</nav>
-
- <!-- To handle the deprecated key -->
+</nav> <!-- To handle the deprecated key -->
 
 <div class="navbar_extra_footer">
   Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
@@ -179,24 +174,24 @@
             <i class="fas fa-arrow-up"></i>
         </button>
         
-        <div class="dropdown-buttons-trigger">
+        
+<div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
             class="fas fa-download"></i></button>
 
-    
     <div class="dropdown-buttons">
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="_sources/intro.md"><button type="button"
+        <a class="dropdown-buttons" href="_sources/intro.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
     </div>
-    
 </div>
+
         <!-- Source interaction buttons -->
 
 
@@ -207,6 +202,23 @@
                     class="fas fa-expand"></i></button></a>
 
         <!-- Launch buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
+    <div class="dropdown-buttons">
+        
+        <a class="binder-button" href="https://mybinder.org/v2/gh/PSLmodels/ParamTools/master?urlpath=tree/docs/intro.ipynb"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
+                data-placement="left"><img class="binder-button-logo"
+                    src="_static/images/logo_binder.svg"
+                    alt="Interact on binder">Binder</button></a>
+        
+        
+        
+        
+    </div>
+</div>
 
     </div>
 
@@ -219,14 +231,31 @@
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#how-to-use-paramtools">
-   How to use ParamTools
+  <a class="reference internal nav-link" href="#usage">
+   Usage
   </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#how-to-install-paramtools">
-   How to install ParamTools
-  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#access-parameter-values">
+     Access parameter values
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#adjust-and-validate-parameter-values">
+     Adjust and validate parameter values
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#extend-parameter-values-using-label-definitions">
+     Extend parameter values using label definitions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#numpy-integration">
+     NumPy integration
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#documentation">
@@ -258,187 +287,452 @@
                 
   <div class="section" id="paramtools">
 <h1>ParamTools<a class="headerlink" href="#paramtools" title="Permalink to this headline">¶</a></h1>
-<p>Define, update, and validate your model’s parameters.</p>
-<div class="section" id="how-to-use-paramtools">
-<h2>How to use ParamTools<a class="headerlink" href="#how-to-use-paramtools" title="Permalink to this headline">¶</a></h2>
-<p>Subclass <code class="docutils literal notranslate"><span class="pre">paramtools.Parameters</span></code> and define your model’s <a class="reference external" href="https://paramtools.dev/parameters">parameters</a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span>
-
-
-<span class="k">class</span> <span class="nc">TaxParams</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
-    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">2013</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">2027</span><span class="p">}}</span>
-                <span class="p">},</span>
-                <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;str&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;choice&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;joint&quot;</span><span class="p">]}}</span>
-                <span class="p">},</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;additional_members&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;cpi_inflatable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span> <span class="s2">&quot;number_dims&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
-                <span class="s2">&quot;cpi_inflated&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span> <span class="s2">&quot;number_dims&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Standard deduction amount&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Amount filing unit can use as a standard deduction.&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;cpi_inflatable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;cpi_inflated&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13673.68</span><span class="p">},</span>
-                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2024</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27347.36</span><span class="p">},</span>
-                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">13967.66</span><span class="p">},</span>
-                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">27935.33</span><span class="p">},</span>
-                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">7690.0</span><span class="p">},</span>
-                <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;joint&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">15380.0</span><span class="p">}],</span>
-            <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mf">9e+99</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-
-<span class="n">params</span> <span class="o">=</span> <span class="n">TaxParams</span><span class="p">(</span>
-    <span class="n">initial_state</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2024</span><span class="p">,</span> <span class="mi">2025</span><span class="p">,</span> <span class="mi">2026</span><span class="p">]},</span>
-    <span class="n">array_first</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-
-
+<p><strong>Define, update, and validate your model’s parameters.</strong></p>
+<p>Install using pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">paramtools</span>
 </pre></div>
 </div>
-<p>Check out the state:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">view_state</span><span class="p">()</span>
-
-<span class="c1"># {&#39;year&#39;: [2024, 2025, 2026]}</span>
-
-</pre></div>
-</div>
-<p>Parameters are available via instance attributes:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
-
-<span class="c1"># array([[13673.68, 27347.36],</span>
-<span class="c1">#        [13967.66, 27935.33],</span>
-<span class="c1">#        [ 7690.  , 15380.  ]])</span>
-</pre></div>
-</div>
-<p>Take a look at the standard deduction parameter’s labels:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="s2">&quot;standard_deduction&quot;</span><span class="p">)</span>
-
-<span class="c1"># [{&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13673.68},</span>
-<span class="c1">#  {&#39;year&#39;: 2024, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27347.36},</span>
-<span class="c1">#  {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 13967.66},</span>
-<span class="c1">#  {&#39;year&#39;: 2025, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 27935.33},</span>
-<span class="c1">#  {&#39;year&#39;: 2026, &#39;marital_status&#39;: &#39;single&#39;, &#39;value&#39;: 7690.0},</span>
-<span class="c1">#  {&#39;year&#39;: 2026, &#39;marital_status&#39;: &#39;joint&#39;, &#39;value&#39;: 15380.0}]</span>
-</pre></div>
-</div>
-<p>Query the parameters:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">specification</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2026</span><span class="p">,</span> <span class="n">marital_status</span><span class="o">=</span><span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="n">use_state</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="c1"># OrderedDict([(&#39;standard_deduction&#39;,</span>
-<span class="c1">#               [{&#39;value&#39;: 0.0, &#39;year&#39;: 2026, &#39;marital_status&#39;: &#39;single&#39;}])])</span>
-</pre></div>
-</div>
-<p>Adjust the default values:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">adjustment</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span><span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2026</span><span class="p">,</span> <span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">10000.0</span><span class="p">}</span>
-    <span class="p">],</span>
-<span class="p">}</span>
-<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">adjustment</span><span class="p">)</span>
-<span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
-
-<span class="c1"># array([[13673.68, 27347.36],</span>
-<span class="c1">#        [13967.66, 27935.33],</span>
-<span class="c1">#        [10000.  , 15380.  ]])</span>
-
-</pre></div>
-</div>
-<p>Set all values of the standard deduction parameter to 0:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">adjustment</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;standard_deduction&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">adjustment</span><span class="p">)</span>
-<span class="n">params</span><span class="o">.</span><span class="n">standard_deduction</span>
-
-<span class="c1"># array([[0., 0.],</span>
-<span class="c1">#        [0., 0.],</span>
-<span class="c1">#        [0., 0.]])</span>
-
-</pre></div>
-</div>
-<p>Errors on invalid input:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">adjustment</span><span class="p">[</span><span class="s2">&quot;standard_deduction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;higher&quot;</span>
-<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">adjustment</span><span class="p">)</span>
-
-<span class="c1"># ---------------------------------------------------------------------------</span>
-<span class="c1"># ValidationError                           Traceback (most recent call last)</span>
-<span class="c1"># &lt;ipython-input-7-d9ad03cf54d8&gt; in &lt;module&gt;</span>
-<span class="c1">#       1 adjustment[&quot;standard_deduction&quot;] = &quot;higher&quot;</span>
-<span class="c1"># ----&gt; 2 params.adjust(adjustment)</span>
-
-<span class="c1"># ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors)</span>
-<span class="c1">#     134</span>
-<span class="c1">#     135         if raise_errors and self._errors:</span>
-<span class="c1"># --&gt; 136             raise self.validation_error</span>
-<span class="c1">#     137</span>
-<span class="c1">#     138         # Update attrs.</span>
-
-<span class="c1"># ValidationError: {&#39;standard_deduction&#39;: [&#39;Not a valid number: higher.&#39;]}</span>
-</pre></div>
-</div>
-<p>Errors on input that’s out of range:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">adjustment</span><span class="p">[</span><span class="s2">&quot;standard_deduction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;marital_status&quot;</span><span class="p">:</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="s2">&quot;year&quot;</span><span class="p">:</span> <span class="mi">2025</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>
-<span class="p">]</span>
-<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span><span class="n">adjustment</span><span class="p">)</span>
-
-<span class="c1"># output:</span>
-<span class="c1"># ---------------------------------------------------------------------------</span>
-<span class="c1"># ValidationError                           Traceback (most recent call last)</span>
-<span class="c1"># &lt;ipython-input-14-208948dfbd1d&gt; in &lt;module&gt;</span>
-<span class="c1">#       1 adjustment[&quot;standard_deduction&quot;] = [{&quot;marital_status&quot;: &quot;single&quot;, &quot;year&quot;: 2025, &quot;value&quot;: -1}]</span>
-<span class="c1"># ----&gt; 2 params.adjust(adjustment)</span>
-
-<span class="c1"># ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors, extend_adj)</span>
-<span class="c1">#     183</span>
-<span class="c1">#     184         if raise_errors and self._errors:</span>
-<span class="c1"># --&gt; 185             raise self.validation_error</span>
-<span class="c1">#     186</span>
-<span class="c1">#     187         if self.label_to_extend is not None and extend_adj:</span>
-
-<span class="c1"># ValidationError: {</span>
-<span class="c1">#     &quot;standard_deduction&quot;: [</span>
-<span class="c1">#         &quot;standard_deduction[marital_status=single, year=2025] -1.0 &lt; min 0 &quot;</span>
-<span class="c1">#     ]</span>
-<span class="c1"># }</span>
-
-</pre></div>
-</div>
-</div>
-<div class="section" id="how-to-install-paramtools">
-<h2>How to install ParamTools<a class="headerlink" href="#how-to-install-paramtools" title="Permalink to this headline">¶</a></h2>
-<p>Install with conda:</p>
+<p>Install using conda:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">paramtools</span>
 </pre></div>
 </div>
-<p>Install from source:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">PSLmodels</span><span class="o">/</span><span class="n">ParamTools</span>
-<span class="n">cd</span> <span class="n">ParamTools</span>
-<span class="n">conda</span> <span class="n">env</span> <span class="n">create</span>
-<span class="n">conda</span> <span class="n">activate</span> <span class="n">paramtools</span><span class="o">-</span><span class="n">dev</span>
-<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>Subclass <code class="docutils literal notranslate"><span class="pre">paramtools.Parameters</span></code> and define your model’s <a class="reference external" href="https://paramtools.dev/parameters">parameters</a>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span>
 
-<span class="c1"># optionally run tests:</span>
-<span class="n">py</span><span class="o">.</span><span class="n">test</span> <span class="o">-</span><span class="n">v</span>
+
+<span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="s2">&quot;2021-01-01&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;months&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-10-01&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;range&quot;</span> <span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="s2">&quot;b&quot;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">10.5</span><span class="p">}]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 </pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="access-parameter-values">
+<h3>Access parameter values<a class="headerlink" href="#access-parameter-values" title="Permalink to this headline">¶</a></h3>
+<p>Access values using <code class="docutils literal notranslate"><span class="pre">.sel</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">()</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">sel</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Values([
+  {&#39;date&#39;: datetime.date(2020, 1, 1), &#39;value&#39;: 2},
+  {&#39;date&#39;: datetime.date(2020, 10, 1), &#39;value&#39;: 8},
+])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Look up parameter values using a pandas-like api:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">sel</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">][</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">date</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">result</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>QueryResult([
+  {&#39;date&#39;: datetime.date(2020, 1, 1), &#39;value&#39;: 2}
+])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="o">.</span><span class="n">isel</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="adjust-and-validate-parameter-values">
+<h3>Adjust and validate parameter values<a class="headerlink" href="#adjust-and-validate-parameter-values" title="Permalink to this headline">¶</a></h3>
+<p>Add a new value:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-11-01&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">}]})</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">sel</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Values([
+  {&#39;date&#39;: datetime.date(2020, 1, 1), &#39;value&#39;: 2},
+  {&#39;date&#39;: datetime.date(2020, 10, 1), &#39;value&#39;: 8},
+  {&#39;date&#39;: datetime.date(2020, 11, 1), &#39;value&#39;: 22},
+])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Update an existing value:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}]})</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">sel</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Values([
+  {&#39;date&#39;: datetime.date(2020, 1, 1), &#39;value&#39;: 3},
+  {&#39;date&#39;: datetime.date(2020, 10, 1), &#39;value&#39;: 8},
+  {&#39;date&#39;: datetime.date(2020, 11, 1), &#39;value&#39;: 22},
+])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Update all values:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">})</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">sel</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Values([
+  {&#39;date&#39;: datetime.date(2020, 1, 1), &#39;value&#39;: 7},
+  {&#39;date&#39;: datetime.date(2020, 10, 1), &#39;value&#39;: 7},
+  {&#39;date&#39;: datetime.date(2020, 11, 1), &#39;value&#39;: 7},
+])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Errors on values that are out of range:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValidationError</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">8</span><span class="o">-</span><span class="n">f8f1b7f6cd9a</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span>
+
+<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">253</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
+<span class="g g-Whitespace">    </span><span class="mi">254</span>         <span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">255</span><span class="s2">         return self._adjust(</span>
+<span class="g g-Whitespace">    </span><span class="mi">256</span><span class="s2">             params_or_path,</span>
+<span class="g g-Whitespace">    </span><span class="mi">257</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
+
+<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">371</span><span class="s2">             not ignore_warnings and has_warnings</span>
+<span class="g g-Whitespace">    </span><span class="mi">372</span><span class="s2">         ):</span>
+<span class="ne">--&gt; </span><span class="mi">373</span><span class="s2">             raise self.validation_error</span>
+<span class="g g-Whitespace">    </span><span class="mi">374</span><span class="s2"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">375</span><span class="s2">         # Update attrs for params that were adjusted.</span>
+
+<span class="ne">ValidationError</span>: {
+<span class="s2">    &quot;errors&quot;: {</span>
+<span class="s2">        &quot;a&quot;: [</span>
+<span class="s2">            &quot;a -1 &lt; min 0 &quot;</span>
+<span class="s2">        ]</span>
+<span class="s2">    }</span>
+<span class="s2">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">()</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">}]})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValidationError</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">9</span><span class="o">-</span><span class="n">cc8a21f044d8</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">}]})</span>
+
+<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">253</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
+<span class="g g-Whitespace">    </span><span class="mi">254</span>         <span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">255</span><span class="s2">         return self._adjust(</span>
+<span class="g g-Whitespace">    </span><span class="mi">256</span><span class="s2">             params_or_path,</span>
+<span class="g g-Whitespace">    </span><span class="mi">257</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
+
+<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">371</span><span class="s2">             not ignore_warnings and has_warnings</span>
+<span class="g g-Whitespace">    </span><span class="mi">372</span><span class="s2">         ):</span>
+<span class="ne">--&gt; </span><span class="mi">373</span><span class="s2">             raise self.validation_error</span>
+<span class="g g-Whitespace">    </span><span class="mi">374</span><span class="s2"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">375</span><span class="s2">         # Update attrs for params that were adjusted.</span>
+
+<span class="ne">ValidationError</span>: {
+<span class="s2">    &quot;errors&quot;: {</span>
+<span class="s2">        &quot;a&quot;: [</span>
+<span class="s2">            &quot;a[date=2020-01-01] 11 &gt; max 10.5 b[date=2020-01-01]&quot;</span>
+<span class="s2">        ]</span>
+<span class="s2">    }</span>
+<span class="s2">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Errors on invalid values:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">()</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="s2">&quot;abc&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValidationError</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">8373</span><span class="n">a2715e38</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> 
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="s2">&quot;abc&quot;</span><span class="p">})</span>
+
+<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">253</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
+<span class="g g-Whitespace">    </span><span class="mi">254</span>         <span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">255</span><span class="s2">         return self._adjust(</span>
+<span class="g g-Whitespace">    </span><span class="mi">256</span><span class="s2">             params_or_path,</span>
+<span class="g g-Whitespace">    </span><span class="mi">257</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
+
+<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">371</span><span class="s2">             not ignore_warnings and has_warnings</span>
+<span class="g g-Whitespace">    </span><span class="mi">372</span><span class="s2">         ):</span>
+<span class="ne">--&gt; </span><span class="mi">373</span><span class="s2">             raise self.validation_error</span>
+<span class="g g-Whitespace">    </span><span class="mi">374</span><span class="s2"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">375</span><span class="s2">         # Update attrs for params that were adjusted.</span>
+
+<span class="ne">ValidationError</span>: {
+<span class="s2">    &quot;errors&quot;: {</span>
+<span class="s2">        &quot;b&quot;: [</span>
+<span class="s2">            &quot;Not a valid number: abc.&quot;</span>
+<span class="s2">        ]</span>
+<span class="s2">    }</span>
+<span class="s2">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="extend-parameter-values-using-label-definitions">
+<h3>Extend parameter values using label definitions<a class="headerlink" href="#extend-parameter-values-using-label-definitions" title="Permalink to this headline">¶</a></h3>
+<p>Extend values using <code class="docutils literal notranslate"><span class="pre">label_to_extend</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span><span class="n">label_to_extend</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">sel</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Values([
+  {&#39;date&#39;: datetime.date(2020, 1, 1), &#39;value&#39;: 2},
+  {&#39;date&#39;: datetime.date(2020, 2, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 3, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 4, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 5, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 6, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 7, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 8, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 9, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 10, 1), &#39;value&#39;: 8},
+  {&#39;date&#39;: datetime.date(2020, 11, 1), &#39;value&#39;: 8, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 12, 1), &#39;value&#39;: 8, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2021, 1, 1), &#39;value&#39;: 8, &#39;_auto&#39;: True},
+])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Updates to values are carried through to future dates:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-4-01&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">}]})</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">sel</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Values([
+  {&#39;date&#39;: datetime.date(2020, 1, 1), &#39;value&#39;: 2},
+  {&#39;date&#39;: datetime.date(2020, 2, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 3, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 4, 1), &#39;value&#39;: 9},
+  {&#39;date&#39;: datetime.date(2020, 5, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 6, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 7, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 8, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 9, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 10, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 11, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 12, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2021, 1, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">clobber</span></code> to only update values that were set automatically:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span><span class="n">label_to_extend</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">)</span>
+<span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="s2">&quot;2020-4-01&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">}]},</span>
+    <span class="n">clobber</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Sort parameter values by date for nicer output</span>
+<span class="n">params</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span>
+<span class="n">params</span><span class="o">.</span><span class="n">sel</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Values([
+  {&#39;date&#39;: datetime.date(2020, 1, 1), &#39;value&#39;: 2},
+  {&#39;date&#39;: datetime.date(2020, 2, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 3, 1), &#39;value&#39;: 2, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 4, 1), &#39;value&#39;: 9},
+  {&#39;date&#39;: datetime.date(2020, 5, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 6, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 7, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 8, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 9, 1), &#39;value&#39;: 9, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 10, 1), &#39;value&#39;: 8},
+  {&#39;date&#39;: datetime.date(2020, 11, 1), &#39;value&#39;: 8, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2020, 12, 1), &#39;value&#39;: 8, &#39;_auto&#39;: True},
+  {&#39;date&#39;: datetime.date(2021, 1, 1), &#39;value&#39;: 8, &#39;_auto&#39;: True},
+])
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="numpy-integration">
+<h3>NumPy integration<a class="headerlink" href="#numpy-integration" title="Permalink to this headline">¶</a></h3>
+<p>Access values as NumPy arrays with <code class="docutils literal notranslate"><span class="pre">array_first</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span><span class="n">label_to_extend</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span> <span class="n">array_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">params</span><span class="o">.</span><span class="n">a</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([2, 2, 2, 2, 2, 2, 2, 2, 2, 8, 8, 8, 8])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">params</span><span class="o">.</span><span class="n">b</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([21., 21., 21., 21., 21., 21., 21., 21., 21., 84., 84., 84., 84.])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Only get the values that you want:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">to_array</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-11-01&quot;</span><span class="p">])</span>
+<span class="n">arr</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([2, 8])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Go back to a list of dictionaries:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-11-01&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[{&#39;date&#39;: datetime.date(2020, 1, 1), &#39;value&#39;: 2},
+ {&#39;date&#39;: datetime.date(2020, 11, 1), &#39;value&#39;: 8}]
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="documentation">
