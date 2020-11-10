@@ -2,8 +2,19 @@
 
 Define, update, and validate your model's parameters.
 
-How to use ParamTools
----------------------------
+Install using pip:
+
+```
+pip install paramtools
+```
+
+Install using conda:
+
+```
+conda install -c conda-forge paramtools
+```
+
+## Usage
 
 Subclass `paramtools.Parameters` and define your model's [parameters](https://paramtools.dev/parameters):
 
@@ -11,209 +22,371 @@ Subclass `paramtools.Parameters` and define your model's [parameters](https://pa
 import paramtools
 
 
-class TaxParams(paramtools.Parameters):
+class Params(paramtools.Parameters):
     defaults = {
         "schema": {
             "labels": {
-                "year": {
-                    "type": "int",
-                    "validators": {"range": {"min": 2013, "max": 2027}}
-                },
-                "marital_status": {
-                    "type": "str",
-                    "validators": {"choice": {"choices": ["single", "joint"]}}
-                },
+                "date": {
+                    "type": "date",
+                    "validators": {
+                        "range": {
+                            "min": "2020-01-01",
+                            "max": "2021-01-01",
+                            "step": {"months": 1}
+                        }
+                    }
+                }
             },
-            "additional_members": {
-                "cpi_inflatable": {"type": "bool", "number_dims": 0},
-                "cpi_inflated": {"type": "bool", "number_dims": 0}
-            }
         },
-        "standard_deduction": {
-            "title": "Standard deduction amount",
-            "description": "Amount filing unit can use as a standard deduction.",
-            "cpi_inflatable": True,
-            "cpi_inflated": True,
-            "type": "float",
+        "a": {
+            "title": "A",
+            "type": "int",
             "value": [
-                {"year": 2024, "marital_status": "single", "value": 13673.68},
-                {"year": 2024, "marital_status": "joint", "value": 27347.36},
-                {"year": 2025, "marital_status": "single", "value": 13967.66},
-                {"year": 2025, "marital_status": "joint", "value": 27935.33},
-                {"year": 2026, "marital_status": "single", "value": 7690.0},
-                {"year": 2026, "marital_status": "joint", "value": 15380.0}],
+                {"date": "2020-01-01", "value": 2},
+                {"date": "2020-10-01", "value": 8},
+            ],
             "validators": {
-                "range": {
-                    "min": 0,
-                    "max": 9e+99
+                "range" : {
+                    "min": 0, "max": "b"
                 }
             }
         },
+        "b": {
+            "title": "B",
+            "type": "float",
+            "value": [{"date": "2020-01-01", "value": 10.5}]
+        }
+    }
+```
+
+```python
+params = Params()
+```
+
+### Access parameter values
+
+Access values using `.sel`:
+
+```python
+params.sel["a"]
+```
+
+    Values([
+      {'date': datetime.date(2020, 1, 1), 'value': 2},
+      {'date': datetime.date(2020, 10, 1), 'value': 8},
+    ])
+
+Look up parameter values using a pandas-like api:
+
+```python
+from datetime import date
+
+result = params.sel["a"]["date"] == date(2020, 1, 1)
+result
+```
+
+    QueryResult([
+      {'date': datetime.date(2020, 1, 1), 'value': 2}
+    ])
+
+```python
+result.isel[0]["value"]
+```
+
+    2
+
+### Adjust and validate parameter values
+
+Add a new value:
+
+```python
+params.adjust({"a": [{"date": "2020-11-01", "value": 22}]})
+
+params.sel["a"]
+```
+
+    Values([
+      {'date': datetime.date(2020, 1, 1), 'value': 2},
+      {'date': datetime.date(2020, 10, 1), 'value': 8},
+      {'date': datetime.date(2020, 11, 1), 'value': 22},
+    ])
+
+Update an existing value:
+
+```python
+params.adjust({"a": [{"date": "2020-01-01", "value": 3}]})
+
+params.sel["a"]
+```
+
+    Values([
+      {'date': datetime.date(2020, 1, 1), 'value': 3},
+      {'date': datetime.date(2020, 10, 1), 'value': 8},
+      {'date': datetime.date(2020, 11, 1), 'value': 22},
+    ])
+
+Update all values:
+
+```python
+params.adjust({"a": 7})
+
+params.sel["a"]
+```
+
+    Values([
+      {'date': datetime.date(2020, 1, 1), 'value': 7},
+      {'date': datetime.date(2020, 10, 1), 'value': 7},
+      {'date': datetime.date(2020, 11, 1), 'value': 7},
+    ])
+
+Errors on values that are out of range:
+
+```python
+params.adjust({"a": -1})
+```
+
+    ---------------------------------------------------------------------------
+
+    ValidationError                           Traceback (most recent call last)
+
+    <ipython-input-9-f8f1b7f6cd9a> in <module>
+    ----> 1 params.adjust({"a": -1})
+
+
+    ~/Paramtools/paramtools/parameters.py in adjust(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)
+        253             least one existing value item's corresponding label values.
+        254         """
+    --> 255         return self._adjust(
+        256             params_or_path,
+        257             ignore_warnings=ignore_warnings,
+
+
+    ~/Paramtools/paramtools/parameters.py in _adjust(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)
+        371             not ignore_warnings and has_warnings
+        372         ):
+    --> 373             raise self.validation_error
+        374
+        375         # Update attrs for params that were adjusted.
+
+
+    ValidationError: {
+        "errors": {
+            "a": [
+                "a -1 < min 0 "
+            ]
+        }
     }
 
-params = TaxParams(
-    initial_state={"year": [2024, 2025, 2026]},
-    array_first=True
+```python
+params = Params()
+
+params.adjust({"a": [{"date": "2020-01-01", "value": 11}]})
+```
+
+    ---------------------------------------------------------------------------
+
+    ValidationError                           Traceback (most recent call last)
+
+    <ipython-input-10-cc8a21f044d8> in <module>
+          1 params = Params()
+          2
+    ----> 3 params.adjust({"a": [{"date": "2020-01-01", "value": 11}]})
+
+
+    ~/Paramtools/paramtools/parameters.py in adjust(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)
+        253             least one existing value item's corresponding label values.
+        254         """
+    --> 255         return self._adjust(
+        256             params_or_path,
+        257             ignore_warnings=ignore_warnings,
+
+
+    ~/Paramtools/paramtools/parameters.py in _adjust(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)
+        371             not ignore_warnings and has_warnings
+        372         ):
+    --> 373             raise self.validation_error
+        374
+        375         # Update attrs for params that were adjusted.
+
+
+    ValidationError: {
+        "errors": {
+            "a": [
+                "a[date=2020-01-01] 11 > max 10.5 b[date=2020-01-01]"
+            ]
+        }
+    }
+
+Errors on invalid values:
+
+```python
+params = Params()
+
+params.adjust({"b": "abc"})
+```
+
+    ---------------------------------------------------------------------------
+
+    ValidationError                           Traceback (most recent call last)
+
+    <ipython-input-11-8373a2715e38> in <module>
+          1 params = Params()
+          2
+    ----> 3 params.adjust({"b": "abc"})
+
+
+    ~/Paramtools/paramtools/parameters.py in adjust(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)
+        253             least one existing value item's corresponding label values.
+        254         """
+    --> 255         return self._adjust(
+        256             params_or_path,
+        257             ignore_warnings=ignore_warnings,
+
+
+    ~/Paramtools/paramtools/parameters.py in _adjust(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)
+        371             not ignore_warnings and has_warnings
+        372         ):
+    --> 373             raise self.validation_error
+        374
+        375         # Update attrs for params that were adjusted.
+
+
+    ValidationError: {
+        "errors": {
+            "b": [
+                "Not a valid number: abc."
+            ]
+        }
+    }
+
+### Extend parameter values using label definitions
+
+Extend values using `label_to_extend`:
+
+```python
+params = Params(label_to_extend="date")
+```
+
+```python
+params.sel["a"]
+```
+
+    Values([
+      {'date': datetime.date(2020, 1, 1), 'value': 2},
+      {'date': datetime.date(2020, 2, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 3, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 4, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 5, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 6, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 7, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 8, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 9, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 10, 1), 'value': 8},
+      {'date': datetime.date(2020, 11, 1), 'value': 8, '_auto': True},
+      {'date': datetime.date(2020, 12, 1), 'value': 8, '_auto': True},
+      {'date': datetime.date(2021, 1, 1), 'value': 8, '_auto': True},
+    ])
+
+Updates to values are carried through to future dates:
+
+```python
+params.adjust({"a": [{"date": "2020-4-01", "value": 9}]})
+
+params.sel["a"]
+```
+
+    Values([
+      {'date': datetime.date(2020, 1, 1), 'value': 2},
+      {'date': datetime.date(2020, 2, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 3, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 4, 1), 'value': 9},
+      {'date': datetime.date(2020, 5, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 6, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 7, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 8, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 9, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 10, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 11, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 12, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2021, 1, 1), 'value': 9, '_auto': True},
+    ])
+
+Use `clobber` to only update values that were set automatically:
+
+```python
+params = Params(label_to_extend="date")
+params.adjust(
+    {"a": [{"date": "2020-4-01", "value": 9}]},
+    clobber=False,
 )
 
-
+# Sort parameter values by date for nicer output
+params.sort_values()
+params.sel["a"]
 ```
 
-Check out the state:
+    Values([
+      {'date': datetime.date(2020, 1, 1), 'value': 2},
+      {'date': datetime.date(2020, 2, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 3, 1), 'value': 2, '_auto': True},
+      {'date': datetime.date(2020, 4, 1), 'value': 9},
+      {'date': datetime.date(2020, 5, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 6, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 7, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 8, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 9, 1), 'value': 9, '_auto': True},
+      {'date': datetime.date(2020, 10, 1), 'value': 8},
+      {'date': datetime.date(2020, 11, 1), 'value': 8, '_auto': True},
+      {'date': datetime.date(2020, 12, 1), 'value': 8, '_auto': True},
+      {'date': datetime.date(2021, 1, 1), 'value': 8, '_auto': True},
+    ])
+
+### NumPy integration
+
+Access values as NumPy arrays with `array_first`:
 
 ```python
-params.view_state()
+params = Params(label_to_extend="date", array_first=True)
 
-# {'year': [2024, 2025, 2026]}
-
+params.a
 ```
 
-Parameters are available via instance attributes:
+    array([2, 2, 2, 2, 2, 2, 2, 2, 2, 8, 8, 8, 8])
 
 ```python
-params.standard_deduction
-
-# array([[13673.68, 27347.36],
-#        [13967.66, 27935.33],
-#        [ 7690.  , 15380.  ]])
+params.a * params.b
 ```
 
-Take a look at the standard deduction parameter's labels:
-```python
-params.from_array("standard_deduction")
+    array([21., 21., 21., 21., 21., 21., 21., 21., 21., 84., 84., 84., 84.])
 
-# [{'year': 2024, 'marital_status': 'single', 'value': 13673.68},
-#  {'year': 2024, 'marital_status': 'joint', 'value': 27347.36},
-#  {'year': 2025, 'marital_status': 'single', 'value': 13967.66},
-#  {'year': 2025, 'marital_status': 'joint', 'value': 27935.33},
-#  {'year': 2026, 'marital_status': 'single', 'value': 7690.0},
-#  {'year': 2026, 'marital_status': 'joint', 'value': 15380.0}]
-```
-
-Query the parameters:
-```python
-params.specification(year=2026, marital_status="single", use_state=False)
-
-# OrderedDict([('standard_deduction',
-#               [{'value': 0.0, 'year': 2026, 'marital_status': 'single'}])])
-```
-
-Adjust the default values:
+Only get the values that you want:
 
 ```python
-adjustment = {
-    "standard_deduction": [
-        {"year": 2026, "marital_status": "single", "value": 10000.0}
-    ],
-}
-params.adjust(adjustment)
-params.standard_deduction
-
-# array([[13673.68, 27347.36],
-#        [13967.66, 27935.33],
-#        [10000.  , 15380.  ]])
-
+arr = params.to_array("a", date=["2020-01-01", "2020-11-01"])
+arr
 ```
 
-Set all values of the standard deduction parameter to 0:
+    array([2, 8])
+
+Go back to a list of dictionaries:
 
 ```python
-adjustment = {
-    "standard_deduction": 0,
-}
-params.adjust(adjustment)
-params.standard_deduction
-
-# array([[0., 0.],
-#        [0., 0.],
-#        [0., 0.]])
-
+params.from_array("a", arr, date=["2020-01-01", "2020-11-01"])
 ```
 
+    [{'date': datetime.date(2020, 1, 1), 'value': 2},
+     {'date': datetime.date(2020, 11, 1), 'value': 8}]
 
-Errors on invalid input:
-```python
-adjustment["standard_deduction"] = "higher"
-params.adjust(adjustment)
+## Documentation
 
-# ---------------------------------------------------------------------------
-# ValidationError                           Traceback (most recent call last)
-# <ipython-input-7-d9ad03cf54d8> in <module>
-#       1 adjustment["standard_deduction"] = "higher"
-# ----> 2 params.adjust(adjustment)
-
-# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors)
-#     134
-#     135         if raise_errors and self._errors:
-# --> 136             raise self.validation_error
-#     137
-#     138         # Update attrs.
-
-# ValidationError: {'standard_deduction': ['Not a valid number: higher.']}
-```
-
-Errors on input that's out of range:
-
-```python
-adjustment["standard_deduction"] = [
-    {"marital_status": "single", "year": 2025, "value": -1}
-]
-params.adjust(adjustment)
-
-# output:
-# ---------------------------------------------------------------------------
-# ValidationError                           Traceback (most recent call last)
-# <ipython-input-14-208948dfbd1d> in <module>
-#       1 adjustment["standard_deduction"] = [{"marital_status": "single", "year": 2025, "value": -1}]
-# ----> 2 params.adjust(adjustment)
-
-# ~/Documents/ParamTools/paramtools/parameters.py in adjust(self, params_or_path, raise_errors, extend_adj)
-#     183
-#     184         if raise_errors and self._errors:
-# --> 185             raise self.validation_error
-#     186
-#     187         if self.label_to_extend is not None and extend_adj:
-
-# ValidationError: {
-#     "standard_deduction": [
-#         "standard_deduction[marital_status=single, year=2025] -1.0 < min 0 "
-#     ]
-# }
-
-```
-
-How to install ParamTools
------------------------------------------
-
-Install with conda:
-
-```
-conda install -c conda-forge paramtools
-```
-
-Install from source:
-
-```
-git clone https://github.com/PSLmodels/ParamTools
-cd ParamTools
-conda env create
-conda activate paramtools-dev
-pip install -e .
-
-# optionally run tests:
-py.test -v
-```
-
-Documentation
-----------------
 Full documentation available at [paramtools.dev](https://paramtools.dev).
 
-Contributing
--------------------------
+## Contributing
+
 Contributions are welcome! Checkout [CONTRIBUTING.md][3] to get started.
 
-Credits
----------
+## Credits
+
 ParamTools is built on top of the excellent [marshmallow][1] JSON schema and validation framework. I encourage everyone to check out their repo and documentation. ParamTools was modeled off of [Tax-Calculator's][2] parameter processing and validation engine due to its maturity and sophisticated capabilities.
 
 [1]: https://github.com/marshmallow-code/marshmallow
