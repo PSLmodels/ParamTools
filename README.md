@@ -1,6 +1,6 @@
 # ParamTools
 
-Define, update, and validate your model's parameters.
+**Define, update, and validate your model's parameters.**
 
 Install using pip:
 
