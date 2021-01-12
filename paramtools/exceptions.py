@@ -63,6 +63,7 @@ collision_list = [
     "adjust",
     "delete",
     "validate",
+    "transaction",
     "array_first",
     "clear_state",
     "defaults",

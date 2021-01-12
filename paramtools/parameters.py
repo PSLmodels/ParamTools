@@ -379,22 +379,83 @@ class Parameters:
 
         return parsed_params
 
+    @contextmanager
+    def transaction(
+        self, defer_validation=True, raise_errors=False, ignore_warnings=False
+    ):
+        """
+        Rollback any changes to parameter state after the context block closes.
+
+        .. code-block:: Python
+
+            import paramtools
+
+            class Params(paramtools.Parameters):
+                defaults = {
+                    "min_param": {
+                        "title": "Min param",
+                        "description": "Must be less than 'max_param'",
+                        "type": "int",
+                        "value": 2,
+                        "validators": {
+                            "range": {"max": "max_param"}
+                        }
+                    },
+                    "max_param": {
+                        "title": "Max param",
+                        "type": "int",
+                        "value": 3
+                    }
+                }
+
+            params = Params()
+            with params.transaction():
+                params.adjust({"min_param": 4})
+                params.adjust({"max_param": 5})
+
+
+        **Parameters:**
+            - `defer_validation`: Defer schema-level validation until the end of the block.
+            - `ignore_warnings`: Whether to raise an error on warnings or ignore them.
+            - `raise_errors`: Either raise errors or simply store the error messages.
+        """
+        _data = copy.deepcopy(self._data)
+        _ops = dict(self.operators)
+        _state = dict(self.view_state())
+
+        try:
+            self._defer_validation = defer_validation
+            yield self
+        except Exception as e:
+            self._data = _data
+            raise e
+        finally:
+            self._state = _state
+            self._ops = _ops
+            self._defer_validation = False
+        if defer_validation:
+            self.validate(
+                self.specification(use_state=False, meta_data=False),
+                ignore_warnings=ignore_warnings,
+                raise_errors=raise_errors,
+            )
+
     def validate(self, params, raise_errors=True, ignore_warnings=False):
         """
         Validate parameter adjustment without modifying existing values.
 
         For example, validate the current parameter values:
 
-        ```
-        params.validate(
-            params.specification(use_state=False)
-        )
-        ```
+        .. code-block:: Python
 
-        Parameters:
-        - `params`: Parameters to validate.
-        - `ignore_warnings`: Whether to raise an error on warnings or ignore them.
-        - `raise_errors`: Either raise errors or simply store the error messages.
+            params.validate(
+                params.specification(use_state=False)
+            )
+
+        **Parameters:**
+            - `params`: Parameters to validate.
+            - `ignore_warnings`: Whether to raise an error on warnings or ignore them.
+            - `raise_errors`: Either raise errors or simply store the error messages.
         """
         try:
             self._validator_schema.load(
@@ -1342,40 +1403,3 @@ class Parameters:
                 )[param]
                 setattr(self, param, sorted_values)
         return data
-
-
-@contextmanager
-def transaction(
-    params: Parameters,
-    defer_validation: bool = False,
-    ignore_warnings: bool = False,
-    raise_errors: bool = True,
-):
-    """
-    Rollback any changes to parameter state after the context block closes.
-
-    Parameters:
-      - `defer_validation`: Defer schema-level validation until the end of the block.
-      - `ignore_warnings`: Whether to raise an error on warnings or ignore them.
-      - `raise_errors`: Either raise errors or simply store the error messages.
-    """
-    _data = copy.deepcopy(params._data)
-    _ops = dict(params.operators)
-    _state = dict(params.view_state())
-
-    try:
-        params._defer_validation = defer_validation
-        yield params
-    except Exception as e:
-        params._data = _data
-        raise e
-    finally:
-        params._state = _state
-        params._ops = _ops
-        params._defer_validation = False
-    if defer_validation:
-        params.validate(
-            params.specification(use_state=False, meta_data=False),
-            ignore_warnings=ignore_warnings,
-            raise_errors=raise_errors,
-        )

@@ -9,7 +9,7 @@ from paramtools.exceptions import (
     ParameterNameCollisionException,
     UnknownTypeException,
 )
-from paramtools.parameters import Parameters, transaction
+from paramtools.parameters import Parameters
 from paramtools.schema import (
     RangeSchema,
     ChoiceSchema,
@@ -66,7 +66,6 @@ __all__ = [
     "ParameterNameCollisionException",
     "UnknownTypeException",
     "Parameters",
-    "transaction",
     "RangeSchema",
     "ChoiceSchema",
     "ValueValidatorSchema",

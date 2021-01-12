@@ -20,7 +20,6 @@ from paramtools import (
     Parameters,
     Values,
     Slice,
-    transaction,
 )
 from paramtools.contrib import Bool_
 
@@ -668,7 +667,7 @@ class TestAdjust:
             "min_int_param": [{"label0": "zero", "label1": 1, "value": 4}],
             "max_int_param": [{"label0": "zero", "label1": 1, "value": 5}],
         }
-        with transaction(params, defer_validation=True):
+        with params.transaction(defer_validation=True):
             params.adjust({"min_int_param": adjustment["min_int_param"]})
             params.adjust({"max_int_param": adjustment["max_int_param"]})
         assert params.min_int_param == adjustment["min_int_param"]
