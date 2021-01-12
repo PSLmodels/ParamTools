@@ -1,7 +1,11 @@
 
 name: Build Package and Test Source Code [Python 3.6, 3.7, 3.8]
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request: {}
 
 jobs:
   build:
