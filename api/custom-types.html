@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Custom Types &#8212; ParamTools</title>
     
-  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
     
   <link rel="stylesheet"
@@ -34,13 +34,12 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -423,18 +422,18 @@
 <span class="g g-Whitespace">     </span><span class="mi">33</span> <span class="p">))</span>
 
 <span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)</span>
-<span class="g g-Whitespace">    </span><span class="mi">253</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
-<span class="g g-Whitespace">    </span><span class="mi">254</span>         <span class="s2">&quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">255</span><span class="s2">         return self._adjust(</span>
-<span class="g g-Whitespace">    </span><span class="mi">256</span><span class="s2">             params_or_path,</span>
-<span class="g g-Whitespace">    </span><span class="mi">257</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
+<span class="g g-Whitespace">    </span><span class="mi">255</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
+<span class="g g-Whitespace">    </span><span class="mi">256</span>         <span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">257</span><span class="s2">         return self._adjust(</span>
+<span class="g g-Whitespace">    </span><span class="mi">258</span><span class="s2">             params_or_path,</span>
+<span class="g g-Whitespace">    </span><span class="mi">259</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
 
-<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)</span>
-<span class="g g-Whitespace">    </span><span class="mi">371</span><span class="s2">             not ignore_warnings and has_warnings</span>
-<span class="g g-Whitespace">    </span><span class="mi">372</span><span class="s2">         ):</span>
-<span class="ne">--&gt; </span><span class="mi">373</span><span class="s2">             raise self.validation_error</span>
-<span class="g g-Whitespace">    </span><span class="mi">374</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">375</span><span class="s2">         # Update attrs for params that were adjusted.</span>
+<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, deserialized, validate, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">373</span><span class="s2">             not ignore_warnings and has_warnings</span>
+<span class="g g-Whitespace">    </span><span class="mi">374</span><span class="s2">         ):</span>
+<span class="ne">--&gt; </span><span class="mi">375</span><span class="s2">             raise self.validation_error</span>
+<span class="g g-Whitespace">    </span><span class="mi">376</span><span class="s2"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">377</span><span class="s2">         # Update attrs for params that were adjusted.</span>
 
 <span class="ne">ValidationError</span>: {
 <span class="s2">    &quot;errors&quot;: {</span>
@@ -496,18 +495,18 @@
 <span class="g g-Whitespace">     </span><span class="mi">29</span> <span class="p">))</span>
 
 <span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, clobber)</span>
-<span class="g g-Whitespace">    </span><span class="mi">253</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
-<span class="g g-Whitespace">    </span><span class="mi">254</span>         <span class="s2">&quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">255</span><span class="s2">         return self._adjust(</span>
-<span class="g g-Whitespace">    </span><span class="mi">256</span><span class="s2">             params_or_path,</span>
-<span class="g g-Whitespace">    </span><span class="mi">257</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
+<span class="g g-Whitespace">    </span><span class="mi">255</span>             <span class="n">least</span> <span class="n">one</span> <span class="n">existing</span> <span class="n">value</span> <span class="n">item</span><span class="s1">&#39;s corresponding label values.</span>
+<span class="g g-Whitespace">    </span><span class="mi">256</span>         <span class="s2">&quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">257</span><span class="s2">         return self._adjust(</span>
+<span class="g g-Whitespace">    </span><span class="mi">258</span><span class="s2">             params_or_path,</span>
+<span class="g g-Whitespace">    </span><span class="mi">259</span><span class="s2">             ignore_warnings=ignore_warnings,</span>
 
-<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, is_deserialized, clobber)</span>
-<span class="g g-Whitespace">    </span><span class="mi">371</span><span class="s2">             not ignore_warnings and has_warnings</span>
-<span class="g g-Whitespace">    </span><span class="mi">372</span><span class="s2">         ):</span>
-<span class="ne">--&gt; </span><span class="mi">373</span><span class="s2">             raise self.validation_error</span>
-<span class="g g-Whitespace">    </span><span class="mi">374</span><span class="s2"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">375</span><span class="s2">         # Update attrs for params that were adjusted.</span>
+<span class="nn">~/work/ParamTools/ParamTools/paramtools/parameters.py</span> in <span class="ni">_adjust</span><span class="nt">(self, params_or_path, ignore_warnings, raise_errors, extend_adj, deserialized, validate, clobber)</span>
+<span class="g g-Whitespace">    </span><span class="mi">373</span><span class="s2">             not ignore_warnings and has_warnings</span>
+<span class="g g-Whitespace">    </span><span class="mi">374</span><span class="s2">         ):</span>
+<span class="ne">--&gt; </span><span class="mi">375</span><span class="s2">             raise self.validation_error</span>
+<span class="g g-Whitespace">    </span><span class="mi">376</span><span class="s2"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">377</span><span class="s2">         # Update attrs for params that were adjusted.</span>
 
 <span class="ne">ValidationError</span>: {
 <span class="s2">    &quot;errors&quot;: {</span>
@@ -573,7 +572,7 @@
     </div>
 
     
-  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
 
 
     

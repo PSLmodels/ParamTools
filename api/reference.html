@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>API Reference &#8212; ParamTools</title>
     
-  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+  <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
 
     
   <link rel="stylesheet"
@@ -34,13 +34,12 @@
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     
-  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+  <link rel="preload" as="script" href="../_static/js/index.d3f166471bb80abb5163.js">
 
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <script src="../_static/togglebutton.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -245,7 +244,7 @@
 <em class="property">class </em><code class="sig-prename descclassname">paramtools.parameters.</code><code class="sig-name descname">Parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">initial_state</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">index_rates</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">sort_values</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">ops</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/parameters.html#Parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.parameters.Parameters" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="paramtools.parameters.Parameters.adjust">
-<code class="sig-name descname">adjust</code><span class="sig-paren">(</span><em class="sig-param">params_or_path: Union[str, Mapping[str, List[NewType.&lt;locals&gt;.new_type]]], ignore_warnings: bool = False, raise_errors: bool = True, extend_adj: bool = True, clobber: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/parameters.html#Parameters.adjust"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.parameters.Parameters.adjust" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">adjust</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params_or_path</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>List<span class="p">[</span>ValueObject<span class="p">]</span><span class="p">]</span><span class="p">]</span></span></em>, <em class="sig-param"><span class="n">ignore_warnings</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">raise_errors</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">extend_adj</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">clobber</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/parameters.html#Parameters.adjust"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.parameters.Parameters.adjust" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deserialize and validate parameter adjustments. <cite>params_or_path</cite>
 can be a file path or a <cite>dict</cite> that has not been fully deserialized.
 The adjusted values replace the current values stored in the
@@ -319,7 +318,7 @@ labels.</p></li>
 
 <dl class="py method">
 <dt id="paramtools.parameters.Parameters.extend_func">
-<code class="sig-name descname">extend_func</code><span class="sig-paren">(</span><em class="sig-param">param: str</em>, <em class="sig-param">extend_vo: NewType.&lt;locals&gt;.new_type</em>, <em class="sig-param">known_vo: NewType.&lt;locals&gt;.new_type</em>, <em class="sig-param">extend_grid: List</em>, <em class="sig-param">label: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/parameters.html#Parameters.extend_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.parameters.Parameters.extend_func" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extend_func</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">extend_vo</span><span class="p">:</span> <span class="n">ValueObject</span></em>, <em class="sig-param"><span class="n">known_vo</span><span class="p">:</span> <span class="n">ValueObject</span></em>, <em class="sig-param"><span class="n">extend_grid</span><span class="p">:</span> <span class="n">List</span></em>, <em class="sig-param"><span class="n">label</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/parameters.html#Parameters.extend_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.parameters.Parameters.extend_func" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for applying indexing rates to parameter values as they
 are extended. Projects may implement their own <cite>extend_func</cite> by
 overriding this one. Projects need to write their own <cite>indexing_rate</cite>
@@ -493,6 +492,66 @@ This is not supported by ParamTools when using array_first.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="paramtools.parameters.Parameters.transaction">
+<code class="sig-name descname">transaction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">defer_validation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">raise_errors</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ignore_warnings</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/parameters.html#Parameters.transaction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.parameters.Parameters.transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rollback any changes to parameter state after the context block closes.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">paramtools</span>
+
+<span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">paramtools</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
+    <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;min_param&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Min param&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Must be less than &#39;max_param&#39;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;validators&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;range&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="s2">&quot;max_param&quot;</span><span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;max_param&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Max param&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">3</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">params</span><span class="o">.</span><span class="n">transaction</span><span class="p">():</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;min_param&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">adjust</span><span class="p">({</span><span class="s2">&quot;max_param&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><strong>Parameters:</strong></dt><dd><ul class="simple">
+<li><p><cite>defer_validation</cite>: Defer schema-level validation until the end of the block.</p></li>
+<li><p><cite>ignore_warnings</cite>: Whether to raise an error on warnings or ignore them.</p></li>
+<li><p><cite>raise_errors</cite>: Either raise errors or simply store the error messages.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="paramtools.parameters.Parameters.validate">
+<code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">raise_errors</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">ignore_warnings</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/parameters.html#Parameters.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.parameters.Parameters.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate parameter adjustment without modifying existing values.</p>
+<p>For example, validate the current parameter values:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">specification</span><span class="p">(</span><span class="n">use_state</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><strong>Parameters:</strong></dt><dd><ul class="simple">
+<li><p><cite>params</cite>: Parameters to validate.</p></li>
+<li><p><cite>ignore_warnings</cite>: Whether to raise an error on warnings or ignore them.</p></li>
+<li><p><cite>raise_errors</cite>: Either raise errors or simply store the error messages.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="paramtools.parameters.Parameters.view_state">
 <code class="sig-name descname">view_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/parameters.html#Parameters.view_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.parameters.Parameters.view_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Access the label state of the <code class="docutils literal notranslate"><span class="pre">Parameters</span></code> instance.</p>
@@ -505,7 +564,7 @@ This is not supported by ParamTools when using array_first.</p></li>
 <h2>Values<a class="headerlink" href="#values" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="paramtools.values.Values">
-<em class="property">class </em><code class="sig-prename descclassname">paramtools.values.</code><code class="sig-name descname">Values</code><span class="sig-paren">(</span><em class="sig-param">values: List[NewType.&lt;locals&gt;.new_type], keyfuncs: Dict[str, Any] = None, skls: Dict[str, paramtools.sorted_key_list.SortedKeyList] = None, index: List[Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/values.html#Values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.values.Values" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">paramtools.values.</code><code class="sig-name descname">Values</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span><span class="p">:</span> <span class="n">List<span class="p">[</span>ValueObject<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">keyfuncs</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Dict<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">skls</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Dict<span class="p">[</span>str<span class="p">, </span>paramtools.sorted_key_list.SortedKeyList<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/paramtools/values.html#Values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paramtools.values.Values" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Values class is used to query and update parameter values.</p>
 <p>For more information, checkout the
 <a class="reference external" href="https://paramtools.dev/api/viewing-data.html">Viewing Data</a> docs.</p>
@@ -652,7 +711,7 @@ This is not supported by ParamTools when using array_first.</p></li>
     </div>
 
     
-  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+  <script src="../_static/js/index.d3f166471bb80abb5163.js"></script>
 
 
     
