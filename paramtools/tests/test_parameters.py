@@ -656,6 +656,23 @@ class TestAdjust:
         assert params.min_int_param == adjustment["min_int_param"]
         assert params.max_int_param == adjustment["max_int_param"]
 
+    def test_transaction(self, TestParams):
+        """
+        Use transaction manager to defer schema level validation until all adjustments
+        are complete.
+        """
+        params = TestParams()
+        params.set_state(label0="zero", label1=1)
+        adjustment = {
+            "min_int_param": [{"label0": "zero", "label1": 1, "value": 4}],
+            "max_int_param": [{"label0": "zero", "label1": 1, "value": 5}],
+        }
+        with params.transaction(defer_validation=True):
+            params.adjust({"min_int_param": adjustment["min_int_param"]})
+            params.adjust({"max_int_param": adjustment["max_int_param"]})
+        assert params.min_int_param == adjustment["min_int_param"]
+        assert params.max_int_param == adjustment["max_int_param"]
+
     def test_adjust_many_labels(self, TestParams):
         """
         Adjust min_int_param above original max_int_param value at same time as
@@ -1220,9 +1237,9 @@ class TestValidationMessages:
         with pytest.raises(ValidationError):
             params.adjust({"param": params.when_param - 1})
 
-    def test_is_deserialized(self, TestParams):
+    def test_deserialized(self, TestParams):
         params = TestParams()
-        params._adjust({"min_int_param": [{"value": 1}]}, is_deserialized=True)
+        params._adjust({"min_int_param": [{"value": 1}]}, deserialized=True)
         assert params.min_int_param == [
             {"label0": "zero", "label1": 1, "value": 1},
             {"label0": "one", "label1": 2, "value": 1},
@@ -1231,7 +1248,7 @@ class TestValidationMessages:
         params._adjust(
             {"min_int_param": [{"value": -1}]},
             raise_errors=False,
-            is_deserialized=True,
+            deserialized=True,
         )
 
         assert params.errors["min_int_param"] == ["min_int_param -1 < min 0 "]

@@ -233,10 +233,10 @@ class BaseValidatorSchema(Schema):
             raise exc
         return data
 
-    def load(self, data, ignore_warnings, is_deserialized=False):
+    def load(self, data, ignore_warnings, deserialized=False):
         self.ignore_warnings = ignore_warnings
         try:
-            if is_deserialized:
+            if deserialized:
                 return self.validate_only(data)
             else:
                 return super().load(data)
@@ -270,7 +270,12 @@ class BaseValidatorSchema(Schema):
         """
         Do range validation for a parameter.
         """
-        validators = self.validators(param_name, param_spec, raw_data)
+        validate_schema = not getattr(
+            self.context["spec"], "_defer_validation", False
+        )
+        validators = self.validators(
+            param_name, param_spec, raw_data, validate_schema=validate_schema
+        )
         warnings = []
         errors = []
         for validator in validators:
@@ -296,7 +301,9 @@ class BaseValidatorSchema(Schema):
         data = self.context["spec"]._data[param_name]
         return get_type(data, self.validators(param_name))
 
-    def validators(self, param_name, param_spec=None, raw_data=None):
+    def validators(
+        self, param_name, param_spec=None, raw_data=None, validate_schema=True
+    ):
         if param_spec is None:
             param_spec = {}
         if raw_data is None:
@@ -310,7 +317,12 @@ class BaseValidatorSchema(Schema):
             if vname == "range" and param_info.get("type", None) in ("date",):
                 vname = "date_range"
             validator = getattr(self, self.WRAPPER_MAP[vname])(
-                vname, vdata, param_name, param_spec, raw_data
+                vname,
+                vdata,
+                param_name,
+                param_spec,
+                raw_data,
+                validate_schema=validate_schema,
             )
             validators.append(validator)
         return validators
@@ -323,7 +335,10 @@ class BaseValidatorSchema(Schema):
         param_spec,
         raw_data,
         ndim_restriction=False,
+        validate_schema=True,
     ):
+        if not validate_schema:
+            return
         when_param = when_dict["param"]
 
         if (
@@ -334,7 +349,7 @@ class BaseValidatorSchema(Schema):
                 f"'{when_param}' is not a specified parameter."
             )
 
-        oth_param, when_vos = self._resolve_op_value(
+        oth_param, when_vos = self._get_related_value(
             when_param, param_name, param_spec, raw_data
         )
         then_validators = []
@@ -393,6 +408,7 @@ class BaseValidatorSchema(Schema):
         param_spec,
         raw_data,
         ndim_restriction=False,
+        validate_schema=True,
     ):
         if vname == "range":
             range_class = contrib.validate.Range
@@ -403,20 +419,26 @@ class BaseValidatorSchema(Schema):
                 f"{vname} is not an allowed validator."
             )
         min_value = range_dict.get("min", None)
-        if min_value is not None:
-            min_oth_param, min_vos = self._resolve_op_value(
+        is_related_param = min_value == "default" or min_value in self.fields
+        if min_value is None or (is_related_param and not validate_schema):
+            min_oth_param, min_vos = None, []
+        elif is_related_param and validate_schema:
+            min_oth_param, min_vos = self._get_related_value(
                 min_value, param_name, param_spec, raw_data
             )
         else:
-            min_oth_param, min_vos = None, []
+            min_oth_param, min_vos = None, [{"value": min_value}]
 
         max_value = range_dict.get("max", None)
-        if max_value is not None:
-            max_oth_param, max_vos = self._resolve_op_value(
+        is_related_param = max_value == "default" or max_value in self.fields
+        if max_value is None or (is_related_param and not validate_schema):
+            max_oth_param, max_vos = None, []
+        elif is_related_param and validate_schema:
+            max_oth_param, max_vos = self._get_related_value(
                 max_value, param_name, param_spec, raw_data
             )
         else:
-            max_oth_param, max_vos = None, []
+            max_oth_param, max_vos = None, [{"value": max_value}]
         self._check_ndim_restriction(
             param_name,
             min_oth_param,
@@ -425,8 +447,14 @@ class BaseValidatorSchema(Schema):
         )
         min_vos = self._sort_by_label_to_extend(min_vos)
         max_vos = self._sort_by_label_to_extend(max_vos)
-        error_min = f"{param_name}{{labels}} {{input}} < min {{min}} {min_oth_param}{{oth_labels}}"
-        error_max = f"{param_name}{{labels}} {{input}} > max {{max}} {max_oth_param}{{oth_labels}}"
+        error_min = (
+            f"{param_name}{{labels}} {{input}} < min {{min}} "
+            f"{min_oth_param or ''}{{oth_labels}}"
+        ).strip()
+        error_max = (
+            f"{param_name}{{labels}} {{input}} > max {{max}} "
+            f"{max_oth_param or ''}{{oth_labels}}"
+        ).strip()
         return range_class(
             min_vo=min_vos,
             max_vo=max_vos,
@@ -460,6 +488,7 @@ class BaseValidatorSchema(Schema):
         param_spec,
         raw_data,
         ndim_restriction=False,
+        validate_schema=True,
     ):
         choices = choice_dict["choices"]
         labels = utils.make_label_str(param_spec)
@@ -482,20 +511,7 @@ class BaseValidatorSchema(Schema):
             choices, error=error, level=choice_dict.get("level")
         )
 
-    def _resolve_op_value(self, op_value, param_name, param_spec, raw_data):
-        """
-        Operator values (`op_value`) are the values pointed to by the "min"
-        and "max" keys. These can be values to compare against, another
-        variable to compare against, or the default value of the adjusted
-        variable.
-        """
-        if op_value in self.fields or op_value == "default":
-            return self._get_comparable_value(
-                op_value, param_name, param_spec, raw_data
-            )
-        return "", [{"value": op_value}]
-
-    def _get_comparable_value(
+    def _get_related_value(
         self, oth_param_name, param_name, param_spec, raw_data
     ):
         """
