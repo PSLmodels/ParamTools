@@ -13,16 +13,18 @@ from paramtools import (
 )
 
 
-@pytest.mark.network_bound
 class TestRead:
+    @pytest.mark.network_bound
     def test_read_s3(self):
         res = read_json("s3://paramtools-test/defaults.json", {"anon": True})
         assert isinstance(res, dict)
 
+    @pytest.mark.network_bound
     def test_read_gcp(self):
         res = read_json("gs://paramtools-dev/defaults.json", {"token": "anon"})
         assert isinstance(res, dict)
 
+    @pytest.mark.network_bound
     def test_read_http(self):
         http_path = (
             "https://raw.githubusercontent.com/PSLmodels/ParamTools/master/"
@@ -31,6 +33,7 @@ class TestRead:
         res = read_json(http_path)
         assert isinstance(res, dict)
 
+    @pytest.mark.network_bound
     def test_read_github(self):
         gh_path = "github://PSLmodels:ParamTools@master/paramtools/tests/defaults.json"
         res = read_json(gh_path)
@@ -58,6 +61,39 @@ class TestRead:
 
         with pytest.raises(TypeError):
             read_json(None)
+
+    def test_strip_comments_simple(self):
+        """test strip comment"""
+        params = """
+        // my comment
+        // another
+        {
+            "hello": "world"
+        }
+        """
+        assert read_json(params) == {"hello": "world"}
+
+    def test_strip_comments_multiline(self):
+        """test strip comment"""
+        params = """
+        /* my comment
+        another
+        */
+        {
+            "hello": "world"
+        }
+        """
+        assert read_json(params) == {"hello": "world"}
+
+    def test_strip_comments_ignores_url(self):
+        """test strips comment but doesn't affect http://..."""
+        params = """
+        // my comment
+        {
+            "hello": "http://world"
+        }
+        """
+        assert read_json(params) == {"hello": "http://world"}
 
 
 def test_get_leaves():
