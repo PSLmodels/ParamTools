@@ -65,12 +65,9 @@ def remove_comments(string):
     def _replacer(match):
         # if the 2nd group (capturing comments) is not None,
         # it means we have captured a non-quoted (real) comment string.
-        # breakpoint()
         if match.group(2) is not None:
-            # print("match.group(2)", match.group(2))
             return "\n"  # preserve line numbers
         else:  # otherwise, we will return the 1st group
-            # print("match.group(1)", match.group(1))
             return match.group(1)  # captured quoted-string
 
     return regex.sub(_replacer, string)
