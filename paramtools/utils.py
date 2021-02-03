@@ -1,9 +1,12 @@
 import json
+import re
 import os
 from collections import OrderedDict
 from typing import Optional, List, Dict, Any
+from urllib.parse import urlparse
 
 import fsspec
+from fsspec.registry import known_implementations
 
 from paramtools.typing import ValueObject, FileDictStringLike
 
@@ -25,18 +28,49 @@ def _read(
     if isinstance(params_or_path, str) and os.path.exists(params_or_path):
         with open(params_or_path, "r") as f:
             return f.read()
-    elif isinstance(params_or_path, str) and "://" in params_or_path:
-        with fsspec.open(params_or_path, "r", **(storage_options or {})) as f:
-            return f.read()
-    elif isinstance(params_or_path, str):
+
+    if isinstance(params_or_path, str):
+        uri = urlparse(params_or_path)
+        if uri.scheme in known_implementations:
+            with fsspec.open(
+                params_or_path, "r", **(storage_options or {})
+            ) as f:
+                return f.read()
+
+    if isinstance(params_or_path, str):
         return params_or_path
-    elif isinstance(params_or_path, dict):
+
+    if isinstance(params_or_path, dict):
         return params_or_path
+
     else:
         raise TypeError(
             f"Unable to read data of type: {type(params_or_path)}\n"
             "           Data must be a File Path, URL, String, or Dict."
         )
+
+
+def remove_comments(string):
+    """
+    Remove single and multiline comments from JSON.
+
+    StackOverflow magic:
+    https://stackoverflow.com/a/18381470/9100772
+    """
+    pattern = r"(\".*?\"|\'.*?\')|(/\*.*?\*/|//[^\r\n]*$)"
+    # first group captures quoted strings (double or single)
+    # second group captures comments (//single-line or /* multi-line */)
+    regex = re.compile(pattern, re.MULTILINE | re.DOTALL)
+
+    def _replacer(match):
+        # if the 2nd group (capturing comments) is not None,
+        # it means we have captured a non-quoted (real) comment string.
+        if match.group(2) is not None:
+            return "\n"  # preserve line numbers
+        else:  # otherwise, we will return the 1st group
+            return match.group(1)  # captured quoted-string
+
+    return regex.sub(_replacer, string)
 
 
 def read_json(
@@ -56,9 +90,9 @@ def read_json(
 
     """
     res = _read(params_or_path, storage_options)
-
     if isinstance(res, str):
         try:
+            res = remove_comments(res)
             return json.loads(res, object_pairs_hook=OrderedDict)
         except json.JSONDecodeError as je:
             if len(res) > 100:
