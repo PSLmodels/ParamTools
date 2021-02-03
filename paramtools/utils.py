@@ -3,12 +3,29 @@ import re
 import os
 from collections import OrderedDict
 from typing import Optional, List, Dict, Any
-from urllib.parse import urlparse
 
 import fsspec
 from fsspec.registry import known_implementations
+import marshmallow as ma
 
 from paramtools.typing import ValueObject, FileDictStringLike
+
+
+def _is_url(maybe_url):
+    """
+    Determine whether string is a URL or not using marshmallow and the URL
+    schemes available through fsspec.
+    """
+    schemes = (
+        set(["http"])
+        | known_implementations.keys()
+        | set(list(fsspec.registry))
+    )
+    try:
+        ma.validate.URL(schemes=schemes, require_tld=False)(maybe_url)
+        return True
+    except ma.exceptions.ValidationError:
+        return False
 
 
 def _read(
@@ -29,13 +46,9 @@ def _read(
         with open(params_or_path, "r") as f:
             return f.read()
 
-    if isinstance(params_or_path, str):
-        uri = urlparse(params_or_path)
-        if uri.scheme in known_implementations:
-            with fsspec.open(
-                params_or_path, "r", **(storage_options or {})
-            ) as f:
-                return f.read()
+    if isinstance(params_or_path, str) and _is_url(params_or_path):
+        with fsspec.open(params_or_path, "r", **(storage_options or {})) as f:
+            return f.read()
 
     if isinstance(params_or_path, str):
         return params_or_path
