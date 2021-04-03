@@ -324,7 +324,12 @@ class BaseValidatorSchema(Schema):
                 raw_data,
                 validate_schema=validate_schema,
             )
+            # OK to skip validator if validate_schema is False
+            if validator is None and not validate_schema:
+                continue
+
             validators.append(validator)
+
         return validators
 
     def _get_when_validator(
