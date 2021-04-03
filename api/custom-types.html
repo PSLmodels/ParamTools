@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
     <title>Custom Types &#8212; ParamTools</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
@@ -26,7 +27,7 @@
 
     
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx-book-theme.40e2e510f6b7d1648584402491bb10fe.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.e7340bb3dbd8dde6db86f25597f54a1b.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
@@ -44,7 +45,7 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script >var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
-    <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
+    <script src="../_static/sphinx-book-theme.7d483ff0a819d6edff12ce0b1ead3928.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -90,7 +91,7 @@
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p>
  <span class="caption-text">
   API
  </span>
@@ -132,7 +133,7 @@
   </a>
  </li>
 </ul>
-<p class="caption collapsible-parent">
+<p>
  <span class="caption-text">
   Parameters
  </span>
@@ -160,21 +161,21 @@
           
 <main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
     
-    <div class="row topbar fixed-top container-xl">
-    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
-    </div>
-    <div class="col pl-2 topbar-main">
-        
-        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
-            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
-            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
-            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
-            <i class="fas fa-bars"></i>
-            <i class="fas fa-arrow-left"></i>
-            <i class="fas fa-arrow-up"></i>
-        </button>
-        
-        
+    <div class="topbar container-xl fixed-top">
+    <div class="topbar-contents row">
+        <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show"></div>
+        <div class="col pl-md-4 topbar-main">
+            
+            <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+                data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+                aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+                title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+                <i class="fas fa-bars"></i>
+                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            
+            
 <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
             class="fas fa-download"></i></button>
@@ -192,16 +193,16 @@
     </div>
 </div>
 
-        <!-- Source interaction buttons -->
+            <!-- Source interaction buttons -->
 
 
-        <!-- Full screen (wrap in <a> to have style consistency -->
-        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
-                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
-                title="Fullscreen mode"><i
-                    class="fas fa-expand"></i></button></a>
+            <!-- Full screen (wrap in <a> to have style consistency -->
+            <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                    data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                    title="Fullscreen mode"><i
+                        class="fas fa-expand"></i></button></a>
 
-        <!-- Launch buttons -->
+            <!-- Launch buttons -->
 
 <div class="dropdown-buttons-trigger">
     <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
@@ -220,13 +221,14 @@
     </div>
 </div>
 
-    </div>
+        </div>
 
-    <!-- Table of contents -->
-    <div class="d-none d-md-block col-md-2 bd-toc show">
-        
+        <!-- Table of contents -->
+        <div class="d-none d-md-block col-md-2 bd-toc show">
+            
         <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
+            <i class="fas fa-list"></i>
+            Contents
         </div>
         <nav id="bd-toc-nav">
             <ul class="nav section-nav flex-column">
@@ -251,6 +253,7 @@
 
         </nav>
         
+        </div>
     </div>
 </div>
     <div id="main-content" class="row">
@@ -258,11 +261,11 @@
         
               <div>
                 
-  <div class="section" id="custom-types">
+  <section id="custom-types">
 <h1>Custom Types<a class="headerlink" href="#custom-types" title="Permalink to this headline">¶</a></h1>
 <p>Often, the behavior for a field needs to be customized to support a particular shape or validation method that ParamTools does not support out of the box. In this case, you may use the <code class="docutils literal notranslate"><span class="pre">register_custom_type</span></code> function to add your new <code class="docutils literal notranslate"><span class="pre">type</span></code> to the ParamTools type registry. Each <code class="docutils literal notranslate"><span class="pre">type</span></code> has a corresponding <code class="docutils literal notranslate"><span class="pre">field</span></code> that is used for serialization and deserialization. ParamTools will then use this <code class="docutils literal notranslate"><span class="pre">field</span></code> any time it is handling a <code class="docutils literal notranslate"><span class="pre">value</span></code>, <code class="docutils literal notranslate"><span class="pre">label</span></code>, or <code class="docutils literal notranslate"><span class="pre">member</span></code> that is of this <code class="docutils literal notranslate"><span class="pre">type</span></code>.</p>
 <p>ParamTools is built on top of <a class="reference external" href="https://github.com/marshmallow-code/marshmallow"><code class="docutils literal notranslate"><span class="pre">marshmallow</span></code></a>, a general purpose validation library. This means that you must implement a custom <code class="docutils literal notranslate"><span class="pre">marshmallow</span></code> field to go along with your new type. Please refer to the <code class="docutils literal notranslate"><span class="pre">marshmallow</span></code> <a class="reference external" href="https://marshmallow.readthedocs.io/en/stable/">docs</a> if you have questions about the use of <code class="docutils literal notranslate"><span class="pre">marshmallow</span></code> in the examples below.</p>
-<div class="section" id="bit-integer-example">
+<section id="bit-integer-example">
 <h2>32 Bit Integer Example<a class="headerlink" href="#bit-integer-example" title="Permalink to this headline">¶</a></h2>
 <p>ParamTools’s default integer field uses NumPy’s <code class="docutils literal notranslate"><span class="pre">int64</span></code> type. This example shows you how to define an <code class="docutils literal notranslate"><span class="pre">int32</span></code> type and reference it in your <code class="docutils literal notranslate"><span class="pre">defaults</span></code>.</p>
 <p>First, let’s define the Marshmallow class:</p>
@@ -341,7 +344,7 @@
 </div>
 </div>
 </div>
-<div class="section" id="marshmallow-validator">
+<section id="marshmallow-validator">
 <h3>Marshmallow Validator<a class="headerlink" href="#marshmallow-validator" title="Permalink to this headline">¶</a></h3>
 <p>Fortunately, you can specify a custom validator with <code class="docutils literal notranslate"><span class="pre">marshmallow</span></code> or ParamTools. Making this works requires modifying the <code class="docutils literal notranslate"><span class="pre">_deserialize</span></code> method to check for overflow like this:</p>
 <div class="cell docutils container">
@@ -446,8 +449,8 @@
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="paramtools-validator">
+</section>
+<section id="paramtools-validator">
 <h3>ParamTools Validator<a class="headerlink" href="#paramtools-validator" title="Permalink to this headline">¶</a></h3>
 <p>Finally, we will use ParamTools to solve this problem. We need to modify how we create our custom <code class="docutils literal notranslate"><span class="pre">marshmallow</span></code> field so that it’s wrapped by ParamTools’s <code class="docutils literal notranslate"><span class="pre">PartialField</span></code>. This makes it clear that your field still needs to be initialized, and that your custom field is able to receive validation information from the <code class="docutils literal notranslate"><span class="pre">defaults</span></code> configuration:</p>
 <div class="cell docutils container">
@@ -519,9 +522,9 @@
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
     <script type="text/x-thebe-config">
     {
@@ -545,15 +548,15 @@
 
               </div>
               
-        </div>
-    </div>
-    
-    
-    <div class='prev-next-bottom'>
         
+        <div class='prev-next-bottom'>
+            
     <a class='left-prev' id="prev-link" href="custom-adjust.html" title="previous page">Custom Adjustments</a>
     <a class='right-next' id="next-link" href="reference.html" title="next page">API Reference</a>
 
+        </div>
+        
+        </div>
     </div>
     <footer class="footer mt-5 mt-md-0">
     <div class="container">
