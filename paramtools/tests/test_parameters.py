@@ -673,6 +673,17 @@ class TestAdjust:
         assert params.min_int_param == adjustment["min_int_param"]
         assert params.max_int_param == adjustment["max_int_param"]
 
+    def test_transaction_with_when_parameter(self, TestParams):
+        """
+        When validator returns None when validate_schema is False for performance
+        reasons.
+        """
+        params = TestParams()
+        with params.transaction(defer_validation=True):
+            params.adjust({"when_param": 2, "str_choice_param": "value1"})
+
+        assert params.when_param == [{"value": 2}]
+
     def test_adjust_many_labels(self, TestParams):
         """
         Adjust min_int_param above original max_int_param value at same time as
