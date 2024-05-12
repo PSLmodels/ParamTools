@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9, "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout
@@ -21,7 +21,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Miniconda using Python ${{ matrix.python-version }}
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           activate-environment: paramtools-dev
           environment-file: environment.yml
