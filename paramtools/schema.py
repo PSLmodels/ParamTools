@@ -106,10 +106,10 @@ class BaseParamSchema(Schema):
         attribute="type",
         data_key="type",
     )
-    number_dims = fields.Integer(required=False, missing=0)
+    number_dims = fields.Integer(required=False, load_default=0)
     value = fields.Field(required=True)  # will be specified later
     validators = fields.Nested(
-        ValueValidatorSchema(), required=False, missing={}
+        ValueValidatorSchema(), required=False, load_default={}
     )
     indexed = fields.Boolean(required=False)
 
@@ -580,9 +580,9 @@ class LabelSchema(Schema):
         attribute="type",
         data_key="type",
     )
-    number_dims = fields.Integer(required=False, missing=0)
+    number_dims = fields.Integer(required=False, load_default=0)
     validators = fields.Nested(
-        ValueValidatorSchema(), required=False, missing={}
+        ValueValidatorSchema(), required=False, load_default={}
     )
 
 
@@ -594,7 +594,7 @@ def make_additional_members(allowed_types):
             attribute="type",
             data_key="type",
         )
-        number_dims = fields.Integer(required=False, missing=0)
+        number_dims = fields.Integer(required=False, load_default=0)
 
     return AdditionalMembersSchema
 
@@ -611,13 +611,13 @@ def make_schema(allowed_types):
             keys=fields.Str(),
             values=fields.Nested(LabelSchema()),
             required=False,
-            missing={},
+            load_default={},
         )
         additional_members = fields.Dict(
             keys=fields.Str(),
             values=fields.Nested(make_additional_members(allowed_types)()),
             required=False,
-            missing={},
+            load_default={},
         )
         operators = fields.Nested(OperatorsSchema, required=False)
 
