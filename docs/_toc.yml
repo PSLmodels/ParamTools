@@ -1,5 +1,7 @@
-- file: intro
-- part: API
+format: jb-book
+root: intro
+parts:
+- caption: API
   chapters:
     - file: api/guide
     - file: api/viewing-data
@@ -8,6 +10,6 @@
     - file: api/custom-adjust
     - file: api/custom-types
     - file: api/reference
-- part: Parameters
+- caption: Parameters
   chapters:
     - file: parameters
