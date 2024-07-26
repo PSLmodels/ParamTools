@@ -137,6 +137,36 @@ class TestSchema:
         assert params.hello_world == "hello world"
         assert params.label_grid == {}
 
+    def test_get_defaults_override(self):
+        class Params(Parameters):
+            array_first = True
+            defaults = {
+                "schema": {
+                    "labels": {
+                        "somelabel": {
+                            "type": "int",
+                            "validators": {"range": {"min": 0, "max": 2}},
+                        }
+                    }
+                },
+                "hello_world": {
+                    "title": "Hello, World!",
+                    "description": "Simplest config possible.",
+                    "type": "str",
+                    "value": "hello world",
+                },
+            }
+
+            def get_defaults(self):
+                label = self.defaults["schema"]["labels"]["somelabel"]
+                label["validators"]["range"]["max"] = 5
+                return self.defaults
+
+        params = Params()
+        assert params.hello_world == "hello world"
+        assert params.label_grid == {"somelabel": [0, 1, 2, 3, 4, 5]}
+
+
     def test_schema_not_dropped(self, defaults_spec_path):
         with open(defaults_spec_path, "r") as f:
             defaults_ = json.loads(f.read())
