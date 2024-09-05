@@ -204,7 +204,7 @@ class BaseValidatorSchema(Schema):
             error_store=error_store, data=data, many=None
         )
         # Run schema-level validation
-        if self._has_processors(decorators.VALIDATES_SCHEMA):
+        if self._hooks[decorators.VALIDATES_SCHEMA]:
             field_errors = bool(error_store.errors)
             self._invoke_schema_validators(
                 error_store=error_store,
