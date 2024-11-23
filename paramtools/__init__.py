@@ -89,6 +89,7 @@ __all__ = [
     "select_ne",
     "read_json",
     "get_example_paths",
+    "get_defaults",
     "LeafGetter",
     "get_leaves",
     "ravel",

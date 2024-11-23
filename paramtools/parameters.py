@@ -80,7 +80,7 @@ class Parameters:
         sort_values: bool = True,
         **ops,
     ):
-        schemafactory = SchemaFactory(self.defaults)
+        schemafactory = SchemaFactory(self.get_defaults())
         (
             self._defaults_schema,
             self._validator_schema,
@@ -1403,3 +1403,15 @@ class Parameters:
                 )[param]
                 setattr(self, param, sorted_values)
         return data
+
+    def get_defaults(self):
+        """
+        Hook for implementing custom behavior for getting the default parameters.
+
+
+        **Returns**
+
+          - `params`: String if URL or file path. Dict if this is the loaded params
+            dict.
+        """
+        return utils.read_json(self.defaults)

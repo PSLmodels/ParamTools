@@ -8,7 +8,6 @@ from paramtools.schema import (
     get_param_schema,
     ParamToolsSchema,
 )
-from paramtools import utils
 
 
 class SchemaFactory:
@@ -26,7 +25,6 @@ class SchemaFactory:
     """
 
     def __init__(self, defaults):
-        defaults = utils.read_json(defaults)
         self.defaults = {k: v for k, v in defaults.items() if k != "schema"}
         self.schema = ParamToolsSchema().load(defaults.get("schema", {}))
         (self.BaseParamSchema, self.label_validators) = get_param_schema(

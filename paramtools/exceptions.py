@@ -94,6 +94,7 @@ collision_list = [
     "to_dict",
     "_parse_validation_messages",
     "sel",
+    "get_defaults",
 ]
 
 
