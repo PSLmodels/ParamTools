@@ -19,10 +19,10 @@ class TestRead:
         res = read_json("s3://paramtools-test/defaults.json", {"anon": True})
         assert isinstance(res, dict)
 
-    # @pytest.mark.network_bound
-    # def test_read_gcp(self):
-    #     res = read_json("gs://paramtools-dev/defaults.json", {"token": "anon"})
-    #     assert isinstance(res, dict)
+    @pytest.mark.network_bound
+    def test_read_gcp(self):
+        res = read_json("gs://paramtools-dev/defaults.json", {"token": "anon"})
+        assert isinstance(res, dict)
 
     @pytest.mark.network_bound
     def test_read_http(self):
