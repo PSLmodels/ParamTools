@@ -6,7 +6,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="paramtools",
-    version=os.environ.get("VERSION", "0.18.3"),
+    version=os.environ.get("VERSION", "0.19.0"),
     author="Hank Doupe",
     author_email="henrymdoupe@gmail.com",
     description=(

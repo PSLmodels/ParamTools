@@ -8,6 +8,7 @@ dependencies:
   - "pytest>=6.0.0"
   - pandas
   - fsspec
+  - pyopenssl
   - s3fs # required for tests but not most usage.
   - gcsfs # required for tests but not most usage.
   - requests # required for tests but not most usage.
