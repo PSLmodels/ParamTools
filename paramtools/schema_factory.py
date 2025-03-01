@@ -1,7 +1,6 @@
-from marshmallow import fields
+from marshmallow import fields, Schema
 
 from paramtools.schema import (
-    OrderedSchema,
     BaseValidatorSchema,
     ValueObject,
     get_type,
@@ -67,9 +66,7 @@ class SchemaFactory:
             # if not isinstance(v["value"], list):
             #     v["value"] = [{"value": v["value"]}]
 
-            validator_dict[k] = type(
-                "ValidatorItem", (OrderedSchema,), classattrs
-            )
+            validator_dict[k] = type("ValidatorItem", (Schema,), classattrs)
 
             classattrs = {"value": ValueObject(validator_dict[k], many=True)}
             param_dict[k] = type(
@@ -77,7 +74,7 @@ class SchemaFactory:
             )
 
         classattrs = {k: fields.Nested(v) for k, v in param_dict.items()}
-        DefaultsSchema = type("DefaultsSchema", (OrderedSchema,), classattrs)
+        DefaultsSchema = type("DefaultsSchema", (Schema,), classattrs)
         defaults_schema = DefaultsSchema()
 
         classattrs = {

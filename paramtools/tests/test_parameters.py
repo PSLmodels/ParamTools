@@ -166,7 +166,6 @@ class TestSchema:
         assert params.hello_world == "hello world"
         assert params.label_grid == {"somelabel": [0, 1, 2, 3, 4, 5]}
 
-
     def test_schema_not_dropped(self, defaults_spec_path):
         with open(defaults_spec_path, "r") as f:
             defaults_ = json.loads(f.read())
@@ -378,14 +377,6 @@ class TestAccess:
         assert set(spec1.keys()) == set(exp.keys())
 
         assert spec1["min_int_param"] == exp["min_int_param"]["value"]
-
-    def test_is_ordered(self, TestParams):
-        params = TestParams()
-        spec1 = params.specification()
-        assert isinstance(spec1, OrderedDict)
-
-        spec2 = params.specification(meta_data=True, serializable=True)
-        assert isinstance(spec2, OrderedDict)
 
     def test_specification_query(self, TestParams):
         params = TestParams()
@@ -1047,7 +1038,9 @@ class TestValidationMessages:
             ]
         }
         params.adjust(adj, raise_errors=False)
-        exp = ["float_list_param[label0=zero, label1=1] [np.float64(-1.0), np.float64(1.0)] < min 0 "]
+        exp = [
+            "float_list_param[label0=zero, label1=1] [np.float64(-1.0), np.float64(1.0)] < min 0 "
+        ]
 
         assert params.errors["float_list_param"] == exp
 

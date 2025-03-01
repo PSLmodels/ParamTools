@@ -113,9 +113,6 @@ class BaseParamSchema(Schema):
     )
     indexed = fields.Boolean(required=False)
 
-    class Meta:
-        ordered = True
-
 
 class EmptySchema(Schema):
     """
@@ -124,15 +121,6 @@ class EmptySchema(Schema):
     """
 
     pass
-
-
-class OrderedSchema(Schema):
-    """
-    Same as `EmptySchema`, but preserves the order of its fields.
-    """
-
-    class Meta:
-        ordered = True
 
 
 class ValueObject(fields.Nested):
@@ -181,9 +169,6 @@ class BaseValidatorSchema(Schema):
     `build_schema.SchemaBuilder` for how parameters are defined onto this
     class.
     """
-
-    class Meta:
-        ordered = True
 
     WRAPPER_MAP = {
         "range": "_get_range_validator",
