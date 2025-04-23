@@ -28,14 +28,14 @@ class RangeSchema(Schema):
     }
     """
 
-    _min = fields.Field(attribute="min", data_key="min")
-    _max = fields.Field(attribute="max", data_key="max")
-    step = fields.Field()
+    _min = fields.Raw(attribute="min", data_key="min")
+    _max = fields.Raw(attribute="max", data_key="max")
+    step = fields.Raw()
     level = fields.String(validate=[validate.OneOf(["warn", "error"])])
 
 
 class ChoiceSchema(Schema):
-    choices = fields.List(fields.Field)
+    choices = fields.List(fields.Raw)
     level = fields.String(validate=[validate.OneOf(["warn", "error"])])
 
 
@@ -53,9 +53,9 @@ class ValueValidatorSchema(Schema):
 
 
 class IsSchema(Schema):
-    equal_to = fields.Field(required=False)
-    greater_than = fields.Field(required=False)
-    less_than = fields.Field(required=False)
+    equal_to = fields.Raw(required=False)
+    greater_than = fields.Raw(required=False)
+    less_than = fields.Raw(required=False)
 
     @validates_schema
     def just_one(self, data, **kwargs):
@@ -107,14 +107,11 @@ class BaseParamSchema(Schema):
         data_key="type",
     )
     number_dims = fields.Integer(required=False, load_default=0)
-    value = fields.Field(required=True)  # will be specified later
+    value = fields.Raw(required=True)  # will be specified later
     validators = fields.Nested(
         ValueValidatorSchema(), required=False, load_default={}
     )
     indexed = fields.Boolean(required=False)
-
-    class Meta:
-        ordered = True
 
 
 class EmptySchema(Schema):
@@ -124,15 +121,6 @@ class EmptySchema(Schema):
     """
 
     pass
-
-
-class OrderedSchema(Schema):
-    """
-    Same as `EmptySchema`, but preserves the order of its fields.
-    """
-
-    class Meta:
-        ordered = True
 
 
 class ValueObject(fields.Nested):
@@ -181,9 +169,6 @@ class BaseValidatorSchema(Schema):
     `build_schema.SchemaBuilder` for how parameters are defined onto this
     class.
     """
-
-    class Meta:
-        ordered = True
 
     WRAPPER_MAP = {
         "range": "_get_range_validator",
