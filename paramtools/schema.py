@@ -179,6 +179,7 @@ class BaseValidatorSchema(Schema):
 
     def __init__(self):
         self.context = {}
+        self.fields = {}
 
     def validate_only(self, data):
         """
