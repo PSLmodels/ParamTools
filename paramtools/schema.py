@@ -192,6 +192,9 @@ class BaseValidatorSchema(Schema):
         "when": "_get_when_validator",
     }
 
+    def __init__(self):
+        self.context = {}
+
     def validate_only(self, data):
         """
         Bypass deserialization and just run field validators. This is taken
