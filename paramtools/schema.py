@@ -177,8 +177,9 @@ class BaseValidatorSchema(Schema):
         "when": "_get_when_validator",
     }
 
-    def __init__(self, data):
-        self.context = {}
+    def __init__(self, *args, **kwargs):
+        self.pt_context = {}
+        super().__init__(*args, **kwargs)
 
     def validate_only(self, data):
         """
@@ -186,7 +187,7 @@ class BaseValidatorSchema(Schema):
         from the marshmallow _do_load function:
         https://github.com/marshmallow-code/marshmallow/blob/3.5.2/src/marshmallow/schema.py#L807
         """
-        self.fields = data.keys()
+        # self.fields = data.keys()
         error_store = ErrorStore()
         # Run field-level validation
         self._invoke_field_validators(
@@ -260,7 +261,7 @@ class BaseValidatorSchema(Schema):
         Do range validation for a parameter.
         """
         validate_schema = not getattr(
-            self.context["spec"], "_defer_validation", False
+            self.pt_context["spec"], "_defer_validation", False
         )
         validators = self.validators(
             param_name, param_spec, raw_data, validate_schema=validate_schema
@@ -279,7 +280,7 @@ class BaseValidatorSchema(Schema):
         return warnings, errors
 
     def field_keyfunc(self, param_name):
-        data = self.context["spec"]._data[param_name]
+        data = self.pt_context["spec"]._data[param_name]
         field = get_type(data, self.validators(param_name))
         try:
             return field.cmp_funcs()["key"]
@@ -287,7 +288,7 @@ class BaseValidatorSchema(Schema):
             return None
 
     def field(self, param_name):
-        data = self.context["spec"]._data[param_name]
+        data = self.pt_context["spec"]._data[param_name]
         return get_type(data, self.validators(param_name))
 
     def validators(
@@ -298,7 +299,7 @@ class BaseValidatorSchema(Schema):
         if raw_data is None:
             raw_data = {}
 
-        param_info = self.context["spec"]._data[param_name]
+        param_info = self.pt_context["spec"]._data[param_name]
         # sort keys to guarantee order.
         validator_spec = param_info.get("validators", {})
         validators = []
@@ -336,7 +337,7 @@ class BaseValidatorSchema(Schema):
         when_param = when_dict["param"]
 
         if (
-            when_param not in self.context["spec"]._data.keys()
+            when_param not in self.pt_context["spec"]._data.keys()
             and when_param != "default"
         ):
             raise MarshmallowValidationError(
@@ -371,8 +372,8 @@ class BaseValidatorSchema(Schema):
                 )
             )
 
-        _type = self.context["spec"]._data[oth_param]["type"]
-        number_dims = self.context["spec"]._data[oth_param]["number_dims"]
+        _type = self.pt_context["spec"]._data[oth_param]["type"]
+        number_dims = self.pt_context["spec"]._data[oth_param]["number_dims"]
 
         error_then = (
             f"When {oth_param}{{when_labels}}{{ix}} is {{is_val}}, "
@@ -458,9 +459,9 @@ class BaseValidatorSchema(Schema):
         )
 
     def _sort_by_label_to_extend(self, vos):
-        label_to_extend = self.context["spec"].label_to_extend
+        label_to_extend = self.pt_context["spec"].label_to_extend
         if label_to_extend is not None:
-            label_grid = self.context["spec"]._stateless_label_grid
+            label_grid = self.pt_context["spec"]._stateless_label_grid
             extend_vals = label_grid[label_to_extend]
             return sorted(
                 vos,
@@ -522,9 +523,9 @@ class BaseValidatorSchema(Schema):
             # If comparing against the "default" value then get the current
             # value of the parameter being updated.
             if oth_param_name == "default":
-                oth_param = self.context["spec"]._data[param_name]
+                oth_param = self.pt_context["spec"]._data[param_name]
             else:
-                oth_param = self.context["spec"]._data[oth_param_name]
+                oth_param = self.pt_context["spec"]._data[oth_param_name]
             vals = oth_param["value"]
         labs_to_check = {k for k in param_spec if k not in ("value", "_auto")}
         if labs_to_check:
@@ -549,11 +550,11 @@ class BaseValidatorSchema(Schema):
                 if other_param is None:
                     continue
                 if other_param == "default":
-                    ndims = self.context["spec"]._data[param_name][
+                    ndims = self.pt_context["spec"]._data[param_name][
                         "number_dims"
                     ]
                 else:
-                    ndims = self.context["spec"]._data[other_param][
+                    ndims = self.pt_context["spec"]._data[other_param][
                         "number_dims"
                     ]
                 if ndims > 0:
