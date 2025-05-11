@@ -198,7 +198,7 @@ class BaseValidatorSchema(Schema):
             field_errors = bool(error_store.errors)
             self._invoke_schema_validators(
                 error_store=error_store,
-                pass_many=True,
+                pass_collection=True,
                 data=data,
                 original_data=data,
                 many=None,
@@ -207,7 +207,7 @@ class BaseValidatorSchema(Schema):
             )
             self._invoke_schema_validators(
                 error_store=error_store,
-                pass_many=False,
+                pass_collection=False,
                 data=data,
                 original_data=data,
                 many=None,
