@@ -7,6 +7,7 @@ from marshmallow import (
     validates_schema,
     ValidationError as MarshmallowValidationError,
     decorators,
+    RAISE as RAISEUNKNOWNOPTION,
 )
 from marshmallow.error_store import ErrorStore
 
@@ -204,6 +205,7 @@ class BaseValidatorSchema(Schema):
                 many=None,
                 partial=None,
                 field_errors=field_errors,
+                unknown=RAISEUNKNOWNOPTION,
             )
             self._invoke_schema_validators(
                 error_store=error_store,
@@ -213,6 +215,7 @@ class BaseValidatorSchema(Schema):
                 many=None,
                 partial=None,
                 field_errors=field_errors,
+                unknown=RAISEUNKNOWNOPTION,
             )
         errors = error_store.errors
         if errors:
