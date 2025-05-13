@@ -188,7 +188,6 @@ class BaseValidatorSchema(Schema):
         from the marshmallow _do_load function:
         https://github.com/marshmallow-code/marshmallow/blob/3.5.2/src/marshmallow/schema.py#L807
         """
-        # self.fields = data.keys()
         error_store = ErrorStore()
         # Run field-level validation
         self._invoke_field_validators(
