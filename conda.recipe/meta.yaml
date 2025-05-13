@@ -5,13 +5,13 @@ package:
 requirements:
   build:
     - python
-    - "marshmallow>=3.0.0rc4"
+    - "marshmallow>=4.0.0"
     - "numpy>=1.13"
     - "python-dateutil>=2.8.0"
 
   run:
     - python
-    - "marshmallow>=3.0.0rc4"
+    - "marshmallow>=4.0.0"
     - "numpy>=1.13"
     - "python-dateutil>=2.8.0"
 
