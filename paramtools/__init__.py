@@ -53,7 +53,7 @@ from paramtools.values import Values, Slice, QueryResult
 
 
 name = "paramtools"
-__version__ = "0.19.0"
+__version__ = "0.20.0"
 
 __all__ = [
     "SchemaFactory",

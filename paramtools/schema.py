@@ -7,6 +7,7 @@ from marshmallow import (
     validates_schema,
     ValidationError as MarshmallowValidationError,
     decorators,
+    RAISE as RAISEUNKNOWNOPTION,
 )
 from marshmallow.error_store import ErrorStore
 
@@ -28,14 +29,14 @@ class RangeSchema(Schema):
     }
     """
 
-    _min = fields.Field(attribute="min", data_key="min")
-    _max = fields.Field(attribute="max", data_key="max")
-    step = fields.Field()
+    _min = fields.Raw(attribute="min", data_key="min")
+    _max = fields.Raw(attribute="max", data_key="max")
+    step = fields.Raw()
     level = fields.String(validate=[validate.OneOf(["warn", "error"])])
 
 
 class ChoiceSchema(Schema):
-    choices = fields.List(fields.Field)
+    choices = fields.List(fields.Raw)
     level = fields.String(validate=[validate.OneOf(["warn", "error"])])
 
 
@@ -53,9 +54,9 @@ class ValueValidatorSchema(Schema):
 
 
 class IsSchema(Schema):
-    equal_to = fields.Field(required=False)
-    greater_than = fields.Field(required=False)
-    less_than = fields.Field(required=False)
+    equal_to = fields.Raw(required=False)
+    greater_than = fields.Raw(required=False)
+    less_than = fields.Raw(required=False)
 
     @validates_schema
     def just_one(self, data, **kwargs):
@@ -107,14 +108,11 @@ class BaseParamSchema(Schema):
         data_key="type",
     )
     number_dims = fields.Integer(required=False, load_default=0)
-    value = fields.Field(required=True)  # will be specified later
+    value = fields.Raw(required=True)  # will be specified later
     validators = fields.Nested(
         ValueValidatorSchema(), required=False, load_default={}
     )
     indexed = fields.Boolean(required=False)
-
-    class Meta:
-        ordered = True
 
 
 class EmptySchema(Schema):
@@ -124,15 +122,6 @@ class EmptySchema(Schema):
     """
 
     pass
-
-
-class OrderedSchema(Schema):
-    """
-    Same as `EmptySchema`, but preserves the order of its fields.
-    """
-
-    class Meta:
-        ordered = True
 
 
 class ValueObject(fields.Nested):
@@ -182,15 +171,16 @@ class BaseValidatorSchema(Schema):
     class.
     """
 
-    class Meta:
-        ordered = True
-
     WRAPPER_MAP = {
         "range": "_get_range_validator",
         "date_range": "_get_range_validator",
         "choice": "_get_choice_validator",
         "when": "_get_when_validator",
     }
+
+    def __init__(self, *args, **kwargs):
+        self.pt_context = {}
+        super().__init__(*args, **kwargs)
 
     def validate_only(self, data):
         """
@@ -208,21 +198,23 @@ class BaseValidatorSchema(Schema):
             field_errors = bool(error_store.errors)
             self._invoke_schema_validators(
                 error_store=error_store,
-                pass_many=True,
+                pass_collection=True,
                 data=data,
                 original_data=data,
                 many=None,
                 partial=None,
                 field_errors=field_errors,
+                unknown=RAISEUNKNOWNOPTION,
             )
             self._invoke_schema_validators(
                 error_store=error_store,
-                pass_many=False,
+                pass_collection=False,
                 data=data,
                 original_data=data,
                 many=None,
                 partial=None,
                 field_errors=field_errors,
+                unknown=RAISEUNKNOWNOPTION,
             )
         errors = error_store.errors
         if errors:
@@ -271,7 +263,7 @@ class BaseValidatorSchema(Schema):
         Do range validation for a parameter.
         """
         validate_schema = not getattr(
-            self.context["spec"], "_defer_validation", False
+            self.pt_context["spec"], "_defer_validation", False
         )
         validators = self.validators(
             param_name, param_spec, raw_data, validate_schema=validate_schema
@@ -290,7 +282,7 @@ class BaseValidatorSchema(Schema):
         return warnings, errors
 
     def field_keyfunc(self, param_name):
-        data = self.context["spec"]._data[param_name]
+        data = self.pt_context["spec"]._data[param_name]
         field = get_type(data, self.validators(param_name))
         try:
             return field.cmp_funcs()["key"]
@@ -298,7 +290,7 @@ class BaseValidatorSchema(Schema):
             return None
 
     def field(self, param_name):
-        data = self.context["spec"]._data[param_name]
+        data = self.pt_context["spec"]._data[param_name]
         return get_type(data, self.validators(param_name))
 
     def validators(
@@ -309,7 +301,7 @@ class BaseValidatorSchema(Schema):
         if raw_data is None:
             raw_data = {}
 
-        param_info = self.context["spec"]._data[param_name]
+        param_info = self.pt_context["spec"]._data[param_name]
         # sort keys to guarantee order.
         validator_spec = param_info.get("validators", {})
         validators = []
@@ -347,7 +339,7 @@ class BaseValidatorSchema(Schema):
         when_param = when_dict["param"]
 
         if (
-            when_param not in self.context["spec"]._data.keys()
+            when_param not in self.pt_context["spec"]._data.keys()
             and when_param != "default"
         ):
             raise MarshmallowValidationError(
@@ -382,8 +374,8 @@ class BaseValidatorSchema(Schema):
                 )
             )
 
-        _type = self.context["spec"]._data[oth_param]["type"]
-        number_dims = self.context["spec"]._data[oth_param]["number_dims"]
+        _type = self.pt_context["spec"]._data[oth_param]["type"]
+        number_dims = self.pt_context["spec"]._data[oth_param]["number_dims"]
 
         error_then = (
             f"When {oth_param}{{when_labels}}{{ix}} is {{is_val}}, "
@@ -469,9 +461,9 @@ class BaseValidatorSchema(Schema):
         )
 
     def _sort_by_label_to_extend(self, vos):
-        label_to_extend = self.context["spec"].label_to_extend
+        label_to_extend = self.pt_context["spec"].label_to_extend
         if label_to_extend is not None:
-            label_grid = self.context["spec"]._stateless_label_grid
+            label_grid = self.pt_context["spec"]._stateless_label_grid
             extend_vals = label_grid[label_to_extend]
             return sorted(
                 vos,
@@ -533,9 +525,9 @@ class BaseValidatorSchema(Schema):
             # If comparing against the "default" value then get the current
             # value of the parameter being updated.
             if oth_param_name == "default":
-                oth_param = self.context["spec"]._data[param_name]
+                oth_param = self.pt_context["spec"]._data[param_name]
             else:
-                oth_param = self.context["spec"]._data[oth_param_name]
+                oth_param = self.pt_context["spec"]._data[oth_param_name]
             vals = oth_param["value"]
         labs_to_check = {k for k in param_spec if k not in ("value", "_auto")}
         if labs_to_check:
@@ -560,11 +552,11 @@ class BaseValidatorSchema(Schema):
                 if other_param is None:
                     continue
                 if other_param == "default":
-                    ndims = self.context["spec"]._data[param_name][
+                    ndims = self.pt_context["spec"]._data[param_name][
                         "number_dims"
                     ]
                 else:
-                    ndims = self.context["spec"]._data[other_param][
+                    ndims = self.pt_context["spec"]._data[other_param][
                         "number_dims"
                     ]
                 if ndims > 0:

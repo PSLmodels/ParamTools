@@ -101,7 +101,7 @@ class Parameters:
             else:
                 self._stateless_label_grid[name] = []
         self.label_grid = copy.deepcopy(self._stateless_label_grid)
-        self._validator_schema.context["spec"] = self
+        self._validator_schema.pt_context["spec"] = self
         self._warnings = {}
         self._errors = {}
         self._defer_validation = False
@@ -364,7 +364,7 @@ class Parameters:
                 for param, value in parsed_params.items():
                     self._update_param(param, value)
 
-        self._validator_schema.context["spec"] = self
+        self._validator_schema.pt_context["spec"] = self
 
         has_errors = bool(self._errors.get("messages"))
         has_warnings = bool(self._warnings.get("messages"))
@@ -525,7 +525,7 @@ class Parameters:
         if self.label_to_extend is not None and extend_adj:
             self.extend()
 
-        self._validator_schema.context["spec"] = self
+        self._validator_schema.pt_context["spec"] = self
 
         has_errors = bool(self._errors.get("messages"))
         has_warnings = bool(self._warnings.get("messages"))
