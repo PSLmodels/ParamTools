@@ -15,11 +15,11 @@ jobs:
           persist-credentials: false
 
       - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           activate-environment: paramtools-dev
           environment-file: environment.yml
-          python-version: 3.8
+          python-version: 3.12
           auto-activate-base: false
 
       - name: Build # Build Jupyter Book
